@@ -1,12 +1,31 @@
 spring:
-  datasource:
-    url: jdbc:h2:tcp://localhost/~/demo
-    username: sa
-    driver-class-name: org.h2.Driver
+  cloud:
+    aws:
+      parameterstore:
+        enabled: true
+  config:
+    import: "aws-parameterstore:/demo/config/"
+  main:
+    allow-circular-references: true
   jpa:
     hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
+      ddl-auto: none
+      naming:
+        physical-strategy: com._2cha.demo.global.config.UppercaseNamingStrategy
+    open-in-view: false
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+logging:
+  level:
+    root: WARN
+    com:
+      _2cha:
+        demo:
+          DemoApplication: INFO
+          global.interceptor.LogInterceptor: INFO
+

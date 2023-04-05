@@ -1,0 +1,86 @@
+package com._2cha.demo.review.domain;
+
+import com._2cha.demo.member.domain.Member;
+import com._2cha.demo.place.domain.Place;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Review {
+
+  @Id
+  @GeneratedValue
+  @Column(name = "REV_ID")
+  private Long id;
+
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "PLACE_ID", nullable = false)
+  private Place place;
+
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "MEMBER_ID", nullable = false)
+  private Member member;
+
+  //  @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL)
+  @ManyToMany
+  @JoinTable(
+      name = "TAG_IN_REVIEW",
+      joinColumns = @JoinColumn(name = "REV_ID"),
+      inverseJoinColumns = @JoinColumn(name = "TAG_ID")
+  )
+  private List<Tag> tags = new ArrayList<>();
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL)
+  private List<ReviewImage> images = new ArrayList<>();
+
+  LocalDateTime created;
+
+  /*-----------
+   @ Methods
+   ----------*/
+  public static Review createReview(Place place, Member member,
+                                    List<Tag> tagList,
+                                    List<String> imgUrlList
+                                   ) {
+
+    Review review = new Review();
+
+    review.place = place;
+    review.member = member;
+    for (Tag tag : tagList) {
+      review.addTag(tag);
+    }
+    for (String imgUrl : imgUrlList) {
+      review.addImage(imgUrl);
+    }
+
+    return review;
+  }
+
+
+  public void addTag(Tag tag) {
+    this.tags.add(tag);
+  }
+
+  public void addImage(String imgUrl) {
+    ReviewImage reviewImage = new ReviewImage(this, imgUrl);
+    this.images.add(reviewImage);
+  }
+}
