@@ -28,4 +28,4 @@ logging:
         demo:
           DemoApplication: INFO
           global.interceptor.LogInterceptor: INFO
-
+    io.awspring.cloud: DEBUG
