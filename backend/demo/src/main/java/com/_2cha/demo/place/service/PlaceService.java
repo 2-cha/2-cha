@@ -1,6 +1,7 @@
 package com._2cha.demo.place.service;
 
 import com._2cha.demo.global.exception.NotFoundException;
+import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PlaceService {
 
   private final PlaceRepository placeRepository;
+  private final Integer REVIEW_SUMMARY_SIZE = 3;
 
 
   private ReviewService reviewService;
@@ -97,7 +99,36 @@ public class PlaceService {
                                                              Integer pageSize) {
 
     List<Object[]> places = placeRepository.findAround(lat, lon, minDist, maxDist, pageSize);
+    return place2placeBriefWithDistanceResponseList(places);
+  }
 
+
+  public List<PlaceBriefWithDistanceResponse> getNearbyPlaceWithTagFilter(Double lat, Double lon,
+                                                                          Double minDist,
+                                                                          Double maxDist,
+                                                                          Integer pageSize,
+                                                                          List<Long> tagIds) {
+
+    List<Object[]> places = placeRepository.findAroundWithTagFilter(lat, lon,
+                                                                    minDist, maxDist,
+                                                                    pageSize, tagIds);
+    return place2placeBriefWithDistanceResponseList(places);
+  }
+
+  public List<PlaceBriefWithDistanceResponse> getNearbyPlaceWithCategoryFilter(Double lat,
+                                                                               Double lon,
+                                                                               Double minDist,
+                                                                               Double maxDist,
+                                                                               Integer pageSize,
+                                                                               List<Category> categories) {
+    List<Object[]> places = placeRepository.findAroundWithCategoryFilter(lat, lon,
+                                                                         minDist, maxDist,
+                                                                         pageSize, categories);
+    return place2placeBriefWithDistanceResponseList(places);
+  }
+
+  private List<PlaceBriefWithDistanceResponse> place2placeBriefWithDistanceResponseList(
+      List<Object[]> places) {
     return places.stream().map((placeWithDistance) -> {
       PlaceBriefWithDistanceResponse brief = new PlaceBriefWithDistanceResponse();
       Place place = (Place) placeWithDistance[0];
@@ -108,6 +139,8 @@ public class PlaceService {
       brief.setCategory(place.getCategory());
       brief.setAddress(place.getAddress());
       brief.setThumbnail(place.getThumbnail());
+      brief.setTagSummary(
+          reviewService.getReviewTagCountByPlaceId(place.getId(), REVIEW_SUMMARY_SIZE));
       brief.setDistance(distGap);
       return brief;
     }).toList();

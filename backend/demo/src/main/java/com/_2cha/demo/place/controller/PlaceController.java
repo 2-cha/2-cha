@@ -1,7 +1,10 @@
 package com._2cha.demo.place.controller;
 
 import com._2cha.demo.global.annotation.Auth;
+import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.dto.NearbyPlaceRequest;
+import com._2cha.demo.place.dto.NearbyPlaceWithCategoryFilterRequest;
+import com._2cha.demo.place.dto.NearbyPlaceWithTagFilterRequest;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
 import com._2cha.demo.place.service.PlaceService;
@@ -37,5 +40,33 @@ public class PlaceController {
 
     return placeService.getNearbyPlace(dto.getLat(), dto.getLon(),
                                        dto.getMinDist(), dto.getMaxDist(), dto.getPageSize());
+  }
+
+  @GetMapping("/places/nearby/tag")
+  public List<PlaceBriefWithDistanceResponse> getNearbyPlaceWithTagFilter(
+      @RequestParam(name = "tag_ids") List<Long> tagIds,
+      @RequestParam Map<String, Object> params) {
+
+    params.put("tag_ids", tagIds);
+    NearbyPlaceWithTagFilterRequest dto = objectMapper.convertValue(params,
+                                                                    NearbyPlaceWithTagFilterRequest.class);
+
+    return placeService.getNearbyPlaceWithTagFilter(dto.getLat(), dto.getLon(),
+                                                    dto.getMinDist(), dto.getMaxDist(),
+                                                    dto.getPageSize(), dto.getTagIds());
+  }
+
+  @GetMapping("/places/nearby/category")
+  public List<PlaceBriefWithDistanceResponse> getNearbyPlaceWithCategoryFilter(
+      @RequestParam(name = "categories") List<Category> categories,
+      @RequestParam Map<String, Object> params) {
+
+    params.put("categories", categories);
+    NearbyPlaceWithCategoryFilterRequest dto = objectMapper.convertValue(params,
+                                                                         NearbyPlaceWithCategoryFilterRequest.class);
+
+    return placeService.getNearbyPlaceWithCategoryFilter(dto.getLat(), dto.getLon(),
+                                                         dto.getMinDist(), dto.getMaxDist(),
+                                                         dto.getPageSize(), dto.getCategories());
   }
 }

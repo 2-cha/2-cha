@@ -1,5 +1,6 @@
 package com._2cha.demo.place.repository;
 
+import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
 import java.util.List;
 
@@ -27,4 +28,12 @@ public interface PlaceRepository {
    */
   List<Object[]> findAround(Double latitude, Double longitude,
                             Double minDist, Double maxDist, Integer pageSize);
+
+  List<Object[]> findAroundWithTagFilter(Double latitude, Double longitude,
+                                         Double minDist, Double maxDist,
+                                         Integer pageSize, List<Long> tagIds);
+
+  List<Object[]> findAroundWithCategoryFilter(Double latitude, Double longitude,
+                                              Double minDist, Double maxDist,
+                                              Integer pageSize, List<Category> categories);
 }
