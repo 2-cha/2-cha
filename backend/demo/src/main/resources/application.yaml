@@ -4,7 +4,8 @@ spring:
       parameterstore:
         enabled: true
   config:
-    import: "aws-parameterstore:/demo/config/"
+    import[0]: "aws-parameterstore:/demo/config/prod/auth"
+    import[1]: "aws-parameterstore:/demo/config/prod/db"
   main:
     allow-circular-references: true
   jpa:
