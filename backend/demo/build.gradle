@@ -12,6 +12,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    querydsl.extendsFrom compileClasspath
 }
 
 repositories {
@@ -41,7 +42,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
-    implementation "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    developmentOnly 'com.h2database:h2'
+    testImplementation 'com.h2database:h2'
 }
 
 ext {
@@ -67,4 +73,3 @@ bootJar {
 tasks.named('test') {
     useJUnitPlatform()
 }
-
