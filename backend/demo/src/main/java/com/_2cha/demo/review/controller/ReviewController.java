@@ -4,6 +4,7 @@ import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
 import com._2cha.demo.review.dto.MemberReviewResponse;
 import com._2cha.demo.review.dto.PlaceReviewResponse;
+import com._2cha.demo.review.dto.WriteReviewRequest;
 import com._2cha.demo.review.service.ReviewService;
 import jakarta.validation.Valid;
 import java.util.List;
