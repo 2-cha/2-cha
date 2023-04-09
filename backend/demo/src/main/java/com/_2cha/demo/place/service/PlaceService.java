@@ -1,14 +1,18 @@
 package com._2cha.demo.place.service;
 
+import com._2cha.demo.global.exception.BadRequestException;
 import com._2cha.demo.global.exception.NotFoundException;
 import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
+import com._2cha.demo.place.dto.FilterBy;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
+import com._2cha.demo.place.dto.SortBy;
 import com._2cha.demo.place.repository.PlaceRepository;
 import com._2cha.demo.review.service.ReviewService;
 import com._2cha.demo.util.GeomUtils;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -94,45 +98,35 @@ public class PlaceService {
     return dto;
   }
 
-  public List<PlaceBriefWithDistanceResponse> getNearbyPlace(Double lat, Double lon,
-                                                             Double minDist, Double maxDist,
-                                                             Integer pageSize) {
+  public List<PlaceBriefWithDistanceResponse>
+  searchPlacesWithFilterAndSorting(Double lat, Double lon, Double minDist, Double maxDist,
+                                   Integer pageSize,
+                                   SortBy sortBy, FilterBy filterBy, List<String> filterValues) {
 
-    List<Object[]> places = placeRepository.findAround(lat, lon, minDist, maxDist, pageSize);
-    return place2placeBriefWithDistanceResponseList(places);
-  }
+    if (sortBy == SortBy.TAG_COUNT && filterBy != FilterBy.TAG) {
+      throw new BadRequestException("Sorting by tag count is only allowed with tag filter",
+                                    "badSortStrategy");
+    }
+    List<Object> convertedFilterValues = new ArrayList<>();
 
+    if (filterValues != null) {
+      for (var val : filterValues) {
+        Object converted = switch (filterBy) {
+          case DEFAULT -> val;
+          case TAG -> Long.valueOf(val);
+          case CATEGORY -> Category.valueOf(val);
+        };
+        convertedFilterValues.add(converted);
+      }
+    }
+    List<Object[]> placesWithDist = placeRepository.findAround(lat, lon, minDist, maxDist, pageSize,
+                                                               sortBy, filterBy,
+                                                               convertedFilterValues);
 
-  public List<PlaceBriefWithDistanceResponse> getNearbyPlaceWithTagFilter(Double lat, Double lon,
-                                                                          Double minDist,
-                                                                          Double maxDist,
-                                                                          Integer pageSize,
-                                                                          List<Long> tagIds) {
-
-    List<Object[]> places = placeRepository.findAroundWithTagFilter(lat, lon,
-                                                                    minDist, maxDist,
-                                                                    pageSize, tagIds);
-    return place2placeBriefWithDistanceResponseList(places);
-  }
-
-  public List<PlaceBriefWithDistanceResponse> getNearbyPlaceWithCategoryFilter(Double lat,
-                                                                               Double lon,
-                                                                               Double minDist,
-                                                                               Double maxDist,
-                                                                               Integer pageSize,
-                                                                               List<Category> categories) {
-    List<Object[]> places = placeRepository.findAroundWithCategoryFilter(lat, lon,
-                                                                         minDist, maxDist,
-                                                                         pageSize, categories);
-    return place2placeBriefWithDistanceResponseList(places);
-  }
-
-  private List<PlaceBriefWithDistanceResponse> place2placeBriefWithDistanceResponseList(
-      List<Object[]> places) {
-    return places.stream().map((placeWithDistance) -> {
+    return placesWithDist.stream().map((placeWithDist) -> {
       PlaceBriefWithDistanceResponse brief = new PlaceBriefWithDistanceResponse();
-      Place place = (Place) placeWithDistance[0];
-      Double distGap = (Double) placeWithDistance[1];
+      Place place = (Place) placeWithDist[0];
+      Double distGap = (Double) placeWithDist[1];
 
       brief.setId(place.getId());
       brief.setName(place.getName());

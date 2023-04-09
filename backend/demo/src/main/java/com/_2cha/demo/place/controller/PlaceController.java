@@ -1,12 +1,11 @@
 package com._2cha.demo.place.controller;
 
 import com._2cha.demo.global.annotation.Auth;
-import com._2cha.demo.place.domain.Category;
+import com._2cha.demo.place.dto.FilterBy;
 import com._2cha.demo.place.dto.NearbyPlaceRequest;
-import com._2cha.demo.place.dto.NearbyPlaceWithCategoryFilterRequest;
-import com._2cha.demo.place.dto.NearbyPlaceWithTagFilterRequest;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
+import com._2cha.demo.place.dto.SortBy;
 import com._2cha.demo.place.service.PlaceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -31,42 +30,20 @@ public class PlaceController {
     return placeService.getPlaceDetailById(placeId);
   }
 
-  //  @Auth(Role.ADMIN)
   @GetMapping("/places/nearby")
-  public List<PlaceBriefWithDistanceResponse> getNearbyPlace(
-      @RequestParam Map<String, String> params) {
+  public List<PlaceBriefWithDistanceResponse> getNearbyPlaceTest(
+      @RequestParam(name = "filter_values", required = false) List<String> filterValues,
+      @RequestParam Map<String, Object> params) {
 
+    params.put("filter_by", FilterBy.valueOf(((String) params.get("filter_by")).toUpperCase()));
+    params.put("sort_by", SortBy.valueOf(((String) params.get("sort_by")).toUpperCase()));
+    params.put("filter_values", filterValues);
     NearbyPlaceRequest dto = objectMapper.convertValue(params, NearbyPlaceRequest.class);
-
-    return placeService.getNearbyPlace(dto.getLat(), dto.getLon(),
-                                       dto.getMinDist(), dto.getMaxDist(), dto.getPageSize());
-  }
-
-  @GetMapping("/places/nearby/tag")
-  public List<PlaceBriefWithDistanceResponse> getNearbyPlaceWithTagFilter(
-      @RequestParam(name = "tag_ids") List<Long> tagIds,
-      @RequestParam Map<String, Object> params) {
-
-    params.put("tag_ids", tagIds);
-    NearbyPlaceWithTagFilterRequest dto = objectMapper.convertValue(params,
-                                                                    NearbyPlaceWithTagFilterRequest.class);
-
-    return placeService.getNearbyPlaceWithTagFilter(dto.getLat(), dto.getLon(),
-                                                    dto.getMinDist(), dto.getMaxDist(),
-                                                    dto.getPageSize(), dto.getTagIds());
-  }
-
-  @GetMapping("/places/nearby/category")
-  public List<PlaceBriefWithDistanceResponse> getNearbyPlaceWithCategoryFilter(
-      @RequestParam(name = "categories") List<Category> categories,
-      @RequestParam Map<String, Object> params) {
-
-    params.put("categories", categories);
-    NearbyPlaceWithCategoryFilterRequest dto = objectMapper.convertValue(params,
-                                                                         NearbyPlaceWithCategoryFilterRequest.class);
-
-    return placeService.getNearbyPlaceWithCategoryFilter(dto.getLat(), dto.getLon(),
+    return placeService.searchPlacesWithFilterAndSorting(dto.getLat(), dto.getLon(),
                                                          dto.getMinDist(), dto.getMaxDist(),
-                                                         dto.getPageSize(), dto.getCategories());
+                                                         dto.getPageSize(),
+                                                         dto.getSortBy(), dto.getFilterBy(),
+                                                         dto.getFilterValues()
+                                                        );
   }
 }

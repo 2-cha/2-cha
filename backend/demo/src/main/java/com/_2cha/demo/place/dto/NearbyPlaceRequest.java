@@ -3,6 +3,7 @@ package com._2cha.demo.place.dto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -23,4 +24,13 @@ public class NearbyPlaceRequest {
 
   @NotNull
   private Integer pageSize;
+
+  @NotNull
+  private FilterBy filterBy;
+
+  private List<String> filterValues;
+
+  @NotNull
+  private SortBy sortBy;
 }
+
