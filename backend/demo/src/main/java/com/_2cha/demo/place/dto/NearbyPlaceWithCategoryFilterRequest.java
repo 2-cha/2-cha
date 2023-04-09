@@ -1,5 +1,6 @@
 package com._2cha.demo.place.dto;
 
+import com._2cha.demo.place.domain.Category;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotNull;
@@ -8,29 +9,9 @@ import lombok.Data;
 
 @Data
 @JsonNaming(SnakeCaseStrategy.class)
-public class NearbyPlaceRequest {
+public class NearbyPlaceWithCategoryFilterRequest extends NearbyPlaceRequest {
+
 
   @NotNull
-  private Double lat;
-
-  @NotNull
-  private Double lon;
-
-  @NotNull
-  private Double minDist;
-
-  @NotNull
-  private Double maxDist;
-
-  @NotNull
-  private Integer pageSize;
-
-  @NotNull
-  private FilterBy filterBy;
-
-  private List<String> filterValues;
-
-  @NotNull
-  private SortBy sortBy;
+  private List<Category> categories;
 }
-

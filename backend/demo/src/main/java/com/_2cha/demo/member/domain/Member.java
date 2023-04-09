@@ -92,8 +92,7 @@ public class Member {
 
   public void follow(Member member) {
     Relationship relationship = Relationship.createRelationship(this, member);
-
-    this.followings.add(relationship);  //! 이시점에 Lazy Loading 이미 된다..?
+    this.followings.add(relationship);
     member.followers.add(relationship);
   }
 

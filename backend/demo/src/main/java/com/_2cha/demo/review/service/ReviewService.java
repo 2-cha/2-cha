@@ -20,9 +20,11 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReviewService {
 
   private final Integer SUMMARY_SIZE = 3;
@@ -82,29 +84,30 @@ public class ReviewService {
 
     reviews.forEach(review ->
                         review.getTags()
-                              .stream()
                               .forEach(
                                   tag -> tagCountMap.put(tag, tagCountMap.getOrDefault(tag, 0) + 1))
                    );
 
-    Stream<Entry<Tag, Integer>> sorted = tagCountMap.entrySet()
-                                                    .stream()
-                                                    .sorted(Entry.comparingByValue());
+    Stream<Entry<Tag, Integer>> entryStream = tagCountMap.entrySet().stream();
+
     if (size != null) {
-      sorted.limit(size);
+      entryStream = entryStream.limit(size);
     }
-    return sorted.map(entry -> {
-                   TagCountResponse dto = new TagCountResponse();
-                   Tag tag = entry.getKey();
-                   dto.setId(tag.getId());
-                   dto.setEmoji(tag.getEmoji());
-                   dto.setMessage(tag.getMsg());
-                   dto.setCount(entry.getValue());
-                   return dto;
-                 })
-                 .toList();
+
+    return entryStream.sorted(Entry.comparingByValue())
+                      .map(entry -> {
+                        TagCountResponse dto = new TagCountResponse();
+                        Tag tag = entry.getKey();
+                        dto.setId(tag.getId());
+                        dto.setEmoji(tag.getEmoji());
+                        dto.setMessage(tag.getMsg());
+                        dto.setCount(entry.getValue());
+                        return dto;
+                      })
+                      .toList();
   }
 
+  @Transactional
   public void writeReview(Long memberId, Long placeId,
                           List<Long> tagIdList, List<String> imageUrlList) {
 
@@ -114,9 +117,11 @@ public class ReviewService {
     Member member = memberService.getMemberById(memberId);
     Place place = placeService.getPlaceById(placeId);
 
-    Review.createReview(place, member, tagList, imageUrlList);
+    Review review = Review.createReview(place, member, tagList, imageUrlList);
+    reviewRepository.save(review);
   }
 
+  @Transactional
   public void deleteReview(Long memberId, Long reviewId) {
     Review review = reviewRepository.findReviewById(reviewId);
     if (review.getMember().getId() != memberId) {

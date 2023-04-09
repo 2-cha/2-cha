@@ -3,6 +3,7 @@ package com._2cha.demo.global.advice;
 import com._2cha.demo.global.exception.HttpException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -74,6 +75,25 @@ public class ApiErrorAdvice extends ResponseEntityExceptionHandler {
     ApiError apiError = new ApiError<>(e);
 
     return new ResponseEntity<>(apiError, e.getStatus());
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<ApiError> handleConstraintViolationException(
+      ConstraintViolationException e) {
+
+    List<String> messages = e.getConstraintViolations().stream()
+                             .map(cv -> cv.getPropertyPath() + ": " +
+                                        cv.getInvalidValue() + " (@" +
+                                        cv.getConstraintDescriptor().getAnnotation()
+                                          .annotationType().getSimpleName() + ")"
+                                 ).toList();
+
+    ApiError apiError = new ApiError<>(e);
+    apiError.setStatus(HttpStatus.BAD_REQUEST);
+    apiError.setMessage(messages);
+    apiError.setCode("queryParamNotValid");
+
+    return new ResponseEntity<>(apiError, apiError.getStatus());
   }
 
   @ExceptionHandler
