@@ -41,7 +41,6 @@ public class ApiErrorAdvice extends ResponseEntityExceptionHandler {
                                                                 HttpHeaders headers,
                                                                 HttpStatusCode status,
                                                                 WebRequest request) {
-    log.error("Here!");
     ApiError apiError = new ApiError<>(ex);
     List<String> messages = ex.getFieldErrors().stream()
                               .map((fieldError) -> fieldError.getField() + ": " +
