@@ -35,6 +35,12 @@ public class PlaceController {
       @RequestParam(name = "filter_values", required = false) List<String> filterValues,
       @RequestParam Map<String, Object> params) {
 
+    if (params.get("filter_by") == null) {
+      params.put("filter_by", "default");
+    }
+    if (params.get("sort_by") == null) {
+      params.put("sort_by", "distance");
+    }
     params.put("filter_by", FilterBy.valueOf(((String) params.get("filter_by")).toUpperCase()));
     params.put("sort_by", SortBy.valueOf(((String) params.get("sort_by")).toUpperCase()));
     params.put("filter_values", filterValues);
