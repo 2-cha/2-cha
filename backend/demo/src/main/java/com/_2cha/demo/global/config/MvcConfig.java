@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -18,6 +19,8 @@ public class MvcConfig implements WebMvcConfigurer {
 
   @Autowired
   AuthService authService;
+  @Autowired
+  CorsConfig corsConfig;
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
@@ -33,5 +36,10 @@ public class MvcConfig implements WebMvcConfigurer {
   @Override
   public void addFormatters(FormatterRegistry registry) {
     registry.addConverter(new PathToProviderEnumConverter());
+  }
+
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping("/**").allowedOrigins(corsConfig.getOrigins().toArray(String[]::new));
   }
 }

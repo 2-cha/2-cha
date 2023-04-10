@@ -6,6 +6,7 @@ spring:
   config:
     import[0]: "aws-parameterstore:/config/demo/prod/auth/"
     import[1]: "aws-parameterstore:/config/demo/prod/db/"
+    import[2]: "aws-parameterstore:/config/demo/prod/security/"
   main:
     allow-circular-references: true
   jpa:
