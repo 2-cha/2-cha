@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -29,6 +31,7 @@ public class MemberAchievement {
   @Id
   @ManyToOne
   @JoinColumn(name = "ACHV_ID")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Achievement achievement;
 
   @Column(nullable = false)

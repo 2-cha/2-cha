@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+//TODO: Member / Place 삭제 시 동작 논의
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,15 +31,15 @@ public class Review {
   @Column(name = "REV_ID")
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "PLACE_ID", nullable = false)
   private Place place;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "MEMBER_ID", nullable = false)
   private Member member;
 
-  @ManyToMany
+  @ManyToMany(cascade = CascadeType.ALL)
   @JoinTable(
       name = "TAG_IN_REVIEW",
       joinColumns = @JoinColumn(name = "REV_ID"),
@@ -46,7 +47,7 @@ public class Review {
   )
   private List<Tag> tags = new ArrayList<>();
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = false)
   private List<ReviewImage> images = new ArrayList<>();
 
   LocalDateTime created;

@@ -50,13 +50,13 @@ public class Member {
   private String oidcId;
 
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "follower", cascade = CascadeType.ALL)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Relationship> followings = new ArrayList<>();
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "following", cascade = CascadeType.ALL)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Relationship> followers = new ArrayList<>();
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<MemberAchievement> achievements = new ArrayList<>();
 
   /*-----------
