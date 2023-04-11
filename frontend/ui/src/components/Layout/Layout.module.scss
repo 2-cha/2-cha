@@ -1,0 +1,18 @@
+@use 'mixins';
+
+.root {
+  @include mixins.flex(column);
+  min-height: 100vh;
+
+  @include mixins.media('>small') {
+    max-width: map-get(mixins.$breakpoints, small);
+    margin: 0 auto;
+  }
+
+  &__content {
+    @include mixins.flex(column, flex-start, center);
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+  }
+}
