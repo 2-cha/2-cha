@@ -49,6 +49,7 @@ public class Review {
   )
   private List<Tag> tags = new ArrayList<>();
 
+  @BatchSize(size = 100)
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = false)
   private List<ReviewImage> images = new ArrayList<>();
 
