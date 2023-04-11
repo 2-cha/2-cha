@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Auth
 @RestController
 @RequiredArgsConstructor
 public class PlaceController {
@@ -23,8 +24,6 @@ public class PlaceController {
   private final PlaceService placeService;
   private final ObjectMapper objectMapper;
 
-
-  @Auth
   @GetMapping("/places/{placeId}")
   public PlaceDetailResponse getPlaceDetailById(@PathVariable Long placeId) {
     return placeService.getPlaceDetailById(placeId);
