@@ -4,6 +4,7 @@ import com._2cha.demo.global.exception.UnauthorizedException;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.place.domain.Place;
+import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.place.service.PlaceService;
 import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.domain.Tag;
@@ -12,9 +13,12 @@ import com._2cha.demo.review.dto.PlaceReviewResponse;
 import com._2cha.demo.review.dto.TagCountResponse;
 import com._2cha.demo.review.repository.ReviewRepository;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -48,16 +52,31 @@ public class ReviewService {
   public List<MemberReviewResponse> getReviewsByMemberId(Long memberId) {
     List<Review> reviews = reviewRepository.findReviewsByMemberId(memberId);
     List<MemberReviewResponse> dtos = new ArrayList<>();
+    Set<Long> placeIds = new TreeSet<>();
+    Map<Review, Long> reviewWithPlaceIdMap = new HashMap<>();
 
     reviews.forEach(
         review -> {
-          MemberReviewResponse dto = new MemberReviewResponse();
-          Place place = review.getPlace();
-          dto.setPlace(placeService.getPlaceBriefById(place.getId(), SUMMARY_SIZE));
-          dto.fetchTagsAndImagesFromReview(review);
-          dtos.add(dto);
+          Long placeId = review.getPlace().getId();
+          placeIds.add(placeId);
+          reviewWithPlaceIdMap.put(review, placeId);
         });
+    List<PlaceBriefResponse> placesBrief = placeService.getPlacesBriefByIdIn(
+        placeIds.stream().toList(),
+        SUMMARY_SIZE);
 
+    Map<Long, PlaceBriefResponse> placesBriefWithIdMap = new HashMap<>();
+    for (var placeBrief : placesBrief) {
+      placesBriefWithIdMap.put(placeBrief.getId(), placeBrief);
+    }
+
+    reviewWithPlaceIdMap.forEach((review, placeId) -> {
+      MemberReviewResponse dto = new MemberReviewResponse();
+      dto.setId(review.getId());
+      dto.fetchTagsAndImagesFromReview(review);
+      dto.setPlace(placesBriefWithIdMap.get(placeId));
+      dtos.add(dto);
+    });
     return dtos;
   }
 
@@ -72,6 +91,7 @@ public class ReviewService {
           Member member = review.getMember();
           dto.setMember(memberService.getMemberProfileById(member.getId()));
           dto.fetchTagsAndImagesFromReview(review);
+          dto.setId(review.getId());
           dtos.add(dto);
         });
 
@@ -107,13 +127,54 @@ public class ReviewService {
                       .toList();
   }
 
+  public Map<Long, List<TagCountResponse>> getReviewTagCountsByPlaceIdIn(List<Long> placeIds,
+                                                                         Integer tagSizeLimit) {
+    List<Review> reviews = reviewRepository.findReviewsByPlaceIdIn(placeIds);
+
+    Map<Long, Map<Tag, Integer>> placesTagCountMap = new HashMap<>();
+    Map<Long, List<TagCountResponse>> placesTagCountResponseMap = new HashMap<>();
+
+    for (Long placeId : placeIds) {
+      placesTagCountMap.put(placeId, new HashMap<>());
+    }
+
+    reviews.forEach(review -> {
+                      Map<Tag, Integer> tagCountMap = placesTagCountMap.get(review.getPlace().getId());
+                      review.getTags()
+                            .forEach(
+                                tag -> tagCountMap.put(tag, tagCountMap.getOrDefault(tag, 0) + 1));
+                    }
+                   );
+
+    placesTagCountMap.forEach(
+        (placeId, tagCountMap) -> {
+          Stream<Entry<Tag, Integer>> tagCounts = tagCountMap.entrySet().stream();
+          if (tagSizeLimit != null) {
+            tagCounts = tagCounts.limit(tagSizeLimit);
+          }
+
+          List<TagCountResponse> tagCountResponses = tagCounts.sorted(Entry.comparingByValue())
+                                                              .map(entry -> {
+                                                                TagCountResponse tagCount = new TagCountResponse();
+                                                                Tag tag = entry.getKey();
+                                                                tagCount.setId(tag.getId());
+                                                                tagCount.setEmoji(tag.getEmoji());
+                                                                tagCount.setMessage(tag.getMsg());
+                                                                tagCount.setCount(entry.getValue());
+                                                                return tagCount;
+                                                              })
+                                                              .toList();
+          placesTagCountResponseMap.put(placeId, tagCountResponses);
+        });
+    return placesTagCountResponseMap;
+  }
+
+
   @Transactional
   public void writeReview(Long memberId, Long placeId,
                           List<Long> tagIdList, List<String> imageUrlList) {
 
-    List<Tag> tagList = tagIdList.stream()
-                                 .map(tagId -> tagService.getTagById(tagId))
-                                 .toList();
+    List<Tag> tagList = tagService.getTagByIdIn(tagIdList);
     Member member = memberService.getMemberById(memberId);
     Place place = placeService.getPlaceById(placeId);
 

@@ -22,6 +22,10 @@ public class TagService {
     return tagRepository.findTagById(id);
   }
 
+  public List<Tag> getTagByIdIn(List<Long> ids) {
+    return tagRepository.findTagsByIdIn(ids);
+  }
+
   public List<TagWithIdResponse> fuzzySearchTagsByHangul(String queryText) {
     String queryRegex = this.makeQueryRegex(queryText);
     List<Tag> tags = tagRepository.findTagsByMsgMatchesRegex(queryRegex);

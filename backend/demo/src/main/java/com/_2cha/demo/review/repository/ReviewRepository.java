@@ -15,5 +15,7 @@ public interface ReviewRepository extends Repository<Review, Long> {
 
   List<Review> findReviewsByPlaceId(Long placeId);
 
+  List<Review> findReviewsByPlaceIdIn(List<Long> placeId);
+
   void deleteReviewById(Long id);
 }

@@ -19,6 +19,7 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 //TODO: Member / Place 삭제 시 동작 논의
 @Entity
@@ -39,6 +40,7 @@ public class Review {
   @JoinColumn(name = "MEMBER_ID", nullable = false)
   private Member member;
 
+  @BatchSize(size = 100)
   @ManyToMany(cascade = CascadeType.ALL)
   @JoinTable(
       name = "TAG_IN_REVIEW",
@@ -47,6 +49,7 @@ public class Review {
   )
   private List<Tag> tags = new ArrayList<>();
 
+  @BatchSize(size = 100)
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = false)
   private List<ReviewImage> images = new ArrayList<>();
 
