@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public abstract class ReviewResponse {
 
+  Long id;
   List<TagResponse> tags;
   List<String> images;
 

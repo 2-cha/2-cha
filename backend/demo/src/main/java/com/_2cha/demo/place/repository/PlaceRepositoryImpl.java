@@ -1,5 +1,7 @@
 package com._2cha.demo.place.repository;
 
+import static com._2cha.demo.place.domain.QPlace.place;
+
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.dto.FilterBy;
 import com._2cha.demo.place.dto.SortBy;
@@ -59,6 +61,14 @@ public class PlaceRepositoryImpl implements PlaceRepository {
   }
 
   @Override
+  public List<Place> findByIdIn(List<Long> ids) {
+    return queryFactory.select(place)
+                       .from(place)
+                       .where(place.id.in(ids))
+                       .fetch();
+  }
+
+  @Override
   public Place findByName(String name) {
     return em.createQuery("select p from Place p where name like :name", Place.class)
              .setParameter("name", name)
@@ -78,7 +88,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
                                    Integer pageSize,
                                    SortBy sortBy, FilterBy filterBy,
                                    List<?> filterValues) {
-    
+
     Point location = GeomUtils.createPoint(latitude, longitude);
     FilterSortContext context = new FilterSortContext(queryFactory,
                                                       filterStrategyMap.get(filterBy),

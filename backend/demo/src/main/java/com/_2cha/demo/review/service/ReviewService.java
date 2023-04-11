@@ -4,6 +4,7 @@ import com._2cha.demo.global.exception.UnauthorizedException;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.place.domain.Place;
+import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.place.service.PlaceService;
 import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.domain.Tag;
@@ -16,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -49,16 +52,31 @@ public class ReviewService {
   public List<MemberReviewResponse> getReviewsByMemberId(Long memberId) {
     List<Review> reviews = reviewRepository.findReviewsByMemberId(memberId);
     List<MemberReviewResponse> dtos = new ArrayList<>();
+    Set<Long> placeIds = new TreeSet<>();
+    Map<Review, Long> reviewWithPlaceIdMap = new HashMap<>();
 
     reviews.forEach(
         review -> {
-          MemberReviewResponse dto = new MemberReviewResponse();
-          Place place = review.getPlace();
-          dto.setPlace(placeService.getPlaceBriefById(place.getId(), SUMMARY_SIZE));
-          dto.fetchTagsAndImagesFromReview(review);
-          dtos.add(dto);
+          Long placeId = review.getPlace().getId();
+          placeIds.add(placeId);
+          reviewWithPlaceIdMap.put(review, placeId);
         });
+    List<PlaceBriefResponse> placesBrief = placeService.getPlacesBriefByIdIn(
+        placeIds.stream().toList(),
+        SUMMARY_SIZE);
 
+    Map<Long, PlaceBriefResponse> placesBriefWithIdMap = new HashMap<>();
+    for (var placeBrief : placesBrief) {
+      placesBriefWithIdMap.put(placeBrief.getId(), placeBrief);
+    }
+
+    reviewWithPlaceIdMap.forEach((review, placeId) -> {
+      MemberReviewResponse dto = new MemberReviewResponse();
+      dto.setId(review.getId());
+      dto.fetchTagsAndImagesFromReview(review);
+      dto.setPlace(placesBriefWithIdMap.get(placeId));
+      dtos.add(dto);
+    });
     return dtos;
   }
 
@@ -73,6 +91,7 @@ public class ReviewService {
           Member member = review.getMember();
           dto.setMember(memberService.getMemberProfileById(member.getId()));
           dto.fetchTagsAndImagesFromReview(review);
+          dto.setId(review.getId());
           dtos.add(dto);
         });
 

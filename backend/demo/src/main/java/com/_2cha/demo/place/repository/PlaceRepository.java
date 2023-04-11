@@ -7,15 +7,16 @@ import java.util.List;
 
 public interface PlaceRepository {
 
-  public Place findById(Long id);
+  Place findById(Long id);
+
+  List<Place> findByIdIn(List<Long> ids);
 
 
-  public Place findByName(String name);
+  Place findByName(String name);
 
-  public List<Place> findAll();
+  List<Place> findAll();
 
-
-  public void save(Place place);
+  void save(Place place);
 
   List<Object[]> findAround(Double latitude, Double longitude,
                             Double minDist, Double maxDist,

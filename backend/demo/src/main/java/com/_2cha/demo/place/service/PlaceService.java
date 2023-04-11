@@ -84,6 +84,29 @@ public class PlaceService {
     return dto;
   }
 
+  public List<PlaceBriefResponse> getPlacesBriefByIdIn(List<Long> placeIds, Integer summarySize) {
+    List<Place> places = placeRepository.findByIdIn(placeIds);
+    List<PlaceBriefResponse> dtos = new ArrayList<>();
+    if (places.isEmpty()) {
+      throw new NotFoundException("No place with id " + placeIds, "noSuchPlace");
+    }
+    Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
+        places.stream().map(place -> place.getId()).toList(), REVIEW_SUMMARY_SIZE);
+    
+    places.forEach(place -> {
+      PlaceBriefResponse dto = new PlaceBriefResponse();
+      dto.setId(place.getId());
+      dto.setName(place.getName());
+      dto.setCategory(place.getCategory());
+      dto.setAddress(place.getAddress());
+      dto.setThumbnail(place.getThumbnail());
+      dto.setTagSummary(placesTagCounts.get(place.getId()));
+      dtos.add(dto);
+    });
+
+    return dtos;
+  }
+
   public PlaceDetailResponse getPlaceDetailById(Long id) {
     Place place = placeRepository.findById(id);
     if (place == null) {
