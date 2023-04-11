@@ -11,15 +11,11 @@ import jakarta.persistence.Lob;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString //XXX
-@Slf4j //XXX
 public class Place {
 
 
@@ -31,7 +27,6 @@ public class Place {
   /*-----------
    @ Columns
    ----------*/
-
   //  @Column(nullable = false, unique = true)
   @Column(nullable = false)
   private String name;

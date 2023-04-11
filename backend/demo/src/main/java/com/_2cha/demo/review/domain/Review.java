@@ -38,7 +38,6 @@ public class Review {
   @JoinColumn(name = "MEMBER_ID", nullable = false)
   private Member member;
 
-  //  @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL)
   @ManyToMany
   @JoinTable(
       name = "TAG_IN_REVIEW",

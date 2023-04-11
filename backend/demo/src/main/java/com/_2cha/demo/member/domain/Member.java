@@ -15,9 +15,7 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j //XXX
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -61,13 +59,10 @@ public class Member {
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
   private List<MemberAchievement> achievements = new ArrayList<>();
 
-
-
   /*-----------
    @ Methods
    ----------*/
 
-  // NOTE: Domain has a dependency on tech..
   public static Member createMember(String email, String hashedPassword, String name) {
     Member member = new Member();
     member.email = email;
