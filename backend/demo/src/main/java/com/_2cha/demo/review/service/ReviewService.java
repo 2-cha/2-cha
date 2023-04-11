@@ -174,9 +174,7 @@ public class ReviewService {
   public void writeReview(Long memberId, Long placeId,
                           List<Long> tagIdList, List<String> imageUrlList) {
 
-    List<Tag> tagList = tagIdList.stream()
-                                 .map(tagId -> tagService.getTagById(tagId))
-                                 .toList();
+    List<Tag> tagList = tagService.getTagByIdIn(tagIdList);
     Member member = memberService.getMemberById(memberId);
     Place place = placeService.getPlaceById(placeId);
 
