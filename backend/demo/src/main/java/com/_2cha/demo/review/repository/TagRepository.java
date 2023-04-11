@@ -11,6 +11,8 @@ public interface TagRepository extends Repository<Tag, Long> {
 
   Tag findTagById(Long id);
 
+  List<Tag> findTagsByIdIn(List<Long> id);
+
   List<Tag> findAll();
 
   @Query(value = "SELECT * FROM TAG WHERE MSG ~ ?1", nativeQuery = true)
