@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Auth
 @RestController
 @RequiredArgsConstructor
 public class ReviewController {
@@ -32,14 +33,12 @@ public class ReviewController {
     return reviewService.getReviewsByMemberId(memberId);
   }
 
-  @Auth
   @PostMapping("/places/{placeId}/reviews")
   public void writePlaceReview(@Authed Long memberId, @PathVariable Long placeId,
                                @Valid @RequestBody WriteReviewRequest dto) {
     reviewService.writeReview(memberId, placeId, dto.getTagIds(), dto.getImgUrls());
   }
 
-  @Auth
   @DeleteMapping("/reviews/{reviewId}")
   public void deleteReview(@Authed Long memberId, @PathVariable Long reviewId) {
     reviewService.deleteReview(memberId, reviewId);

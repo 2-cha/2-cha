@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Auth
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -18,7 +19,6 @@ public class TagController {
 
   private final TagService tagService;
 
-  @Auth
   @GetMapping("/tags")
   public List<TagWithIdResponse> fuzzySearchTagsByHangul(@Hangul @RequestParam String query) {
     return tagService.fuzzySearchTagsByHangul(query);

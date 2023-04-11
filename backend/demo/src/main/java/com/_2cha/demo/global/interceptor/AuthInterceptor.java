@@ -26,7 +26,11 @@ public class AuthInterceptor implements HandlerInterceptor {
   public boolean preHandle(HttpServletRequest request,
                            HttpServletResponse response,
                            Object handler) {
-    if (!hasAuthAnnotation(handler)) {
+    if (!(handler instanceof HandlerMethod)) {
+      return true;
+    }
+    HandlerMethod handlerMethod = (HandlerMethod) handler;
+    if (!hasAuthAnnotation(handlerMethod)) {
       return true;
     }
     String authHeader = request.getHeader("Authorization");
@@ -39,38 +43,38 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     JwtTokenPayload payload = authService.verifyJwt(bearerToken[1]);
-    Role requiredRole = getRole(handler);
+    Role requiredRole = getRole(handlerMethod);
     Role memberRole = payload.getRole();
 
     if (memberRole.ordinal() < requiredRole.ordinal()) {
       throw new NoPrivilegeException(requiredRole.toString());
     }
 
-    if (hasAuthedAnnotationParameter(handler)) {
+    if (hasAuthedAnnotationParameter(handlerMethod)) {
       request.setAttribute("authedMemberId", payload.getSub());
     }
     return true;
   }
 
-  private boolean hasAuthAnnotation(Object handlerMethod) {
-    if (handlerMethod instanceof HandlerMethod) {
-      return ((HandlerMethod) handlerMethod).hasMethodAnnotation(Auth.class);
-    }
-    return false;
+  private boolean hasAuthAnnotation(HandlerMethod handlerMethod) {
+    return handlerMethod.getBeanType().getAnnotation(Auth.class) != null ||
+           handlerMethod.hasMethodAnnotation(Auth.class);
   }
 
-  private boolean hasAuthedAnnotationParameter(Object handlerMethod) {
-    if (handlerMethod instanceof HandlerMethod) {
-      return Arrays.stream(((HandlerMethod) handlerMethod).getMethodParameters())
-                   .anyMatch(param -> param.hasParameterAnnotation(Authed.class) &&
-                                      Long.class.isAssignableFrom(param.getParameterType())
-                            );
-    }
-    return false;
+  private boolean hasAuthedAnnotationParameter(HandlerMethod handlerMethod) {
+    return Arrays.stream(handlerMethod.getMethodParameters())
+                 .anyMatch(param -> param.hasParameterAnnotation(Authed.class) &&
+                                    Long.class.isAssignableFrom(param.getParameterType())
+                          );
   }
 
-  private Role getRole(Object handlerMethod) {
-    Auth authAnnotation = ((HandlerMethod) handlerMethod).getMethodAnnotation(Auth.class);
-    return authAnnotation.value();
+  private Role getRole(HandlerMethod handlerMethod) {
+    Auth classAnnotation = handlerMethod.getBeanType().getAnnotation(Auth.class);
+    Auth methodAnnotation = handlerMethod.getMethodAnnotation(Auth.class);
+
+    if (methodAnnotation != null) {
+      return methodAnnotation.value();
+    }
+    return classAnnotation.value();
   }
 }
