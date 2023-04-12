@@ -2,6 +2,11 @@ import { GetServerSidePropsContext } from 'next';
 import { Place, QueryResponse } from '@/types';
 import { fetchServer } from '@/lib/fetchServer';
 
+// api route를 제외한 runtime은 아직 experimental-edge로 설정해야 함
+export const config = {
+  runtime: 'experimental-edge',
+};
+
 async function fetchPlace(placeId: string) {
   const response = await fetchServer<QueryResponse<Place>>(
     `/places/${placeId}`
