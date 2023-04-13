@@ -1,6 +1,8 @@
 import { GetServerSidePropsContext } from 'next';
 import { Place, QueryResponse } from '@/types';
 import { fetchServer } from '@/lib/fetchServer';
+import NavStackHeader from '@/components/Layout/NavStackHeader';
+import MetaData from '@/components/MetaData';
 
 // api route를 제외한 runtime은 아직 experimental-edge로 설정해야 함
 export const config = {
@@ -41,12 +43,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 export default function PlaceInfo({ placeInfo }: PlaceInfoProps) {
   return (
-    <div>
-      <h1>{placeInfo.name}</h1>
-      <p>{placeInfo.address}</p>
-      {placeInfo.tags.map((tag) => (
-        <span key={tag.id}>{tag.message}</span>
-      ))}
-    </div>
+    <>
+      <MetaData title={placeInfo.name} />
+      <NavStackHeader>
+        <p>상세 정보</p>
+      </NavStackHeader>
+      <div>
+        <h1>{placeInfo.name}</h1>
+        <p>{placeInfo.address}</p>
+        {placeInfo.tags.map((tag) => (
+          <span key={tag.id}>{tag.message}</span>
+        ))}
+      </div>
+    </>
   );
 }
