@@ -1,0 +1,18 @@
+@use 'mixins';
+@use 'components';
+@use 'var';
+
+.root {
+  @include mixins.flex(column, flex-start, flex-start);
+  width: 100%;
+
+  .thumbnail {
+    position: relative;
+    top: calc(-1 * var.$header-height);
+  }
+
+  .title {
+    @extend %reset;
+    @extend %text-xl;
+  }
+}

@@ -8,6 +8,10 @@
 
   position: sticky;
   top: 0;
+  z-index: 100;
+
+  background: transparent;
+  border: 0;
 
   $button-width: 24px;
 
@@ -20,10 +24,7 @@
   }
 
   &__backButton {
-    @extend %reset;
-    background: inherit;
-    border: 0;
-    font: inherit;
+    @extend %reset-button;
     width: $button-width;
   }
 }

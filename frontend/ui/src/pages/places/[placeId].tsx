@@ -3,6 +3,7 @@ import { Place, QueryResponse } from '@/types';
 import { fetchServer } from '@/lib/fetchServer';
 import NavStackHeader from '@/components/Layout/NavStackHeader';
 import MetaData from '@/components/MetaData';
+import PlaceInfo from '@/components/PlaceInfo';
 
 // api route를 제외한 runtime은 아직 experimental-edge로 설정해야 함
 export const config = {
@@ -19,7 +20,7 @@ async function fetchPlace(placeId: string) {
   return response.data;
 }
 
-interface PlaceInfoProps {
+interface PlaceInfoPageProps {
   placeInfo: Place;
 }
 
@@ -41,20 +42,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 }
 
-export default function PlaceInfo({ placeInfo }: PlaceInfoProps) {
+export default function PlaceInfoPage({ placeInfo }: PlaceInfoPageProps) {
   return (
     <>
       <MetaData title={placeInfo.name} />
-      <NavStackHeader>
-        <p>상세 정보</p>
-      </NavStackHeader>
-      <div>
-        <h1>{placeInfo.name}</h1>
-        <p>{placeInfo.address}</p>
-        {placeInfo.tags.map((tag) => (
-          <span key={tag.id}>{tag.message}</span>
-        ))}
-      </div>
+      <NavStackHeader />
+      <PlaceInfo placeInfo={placeInfo} />
+      {/* TODO: 지도, 리뷰 */}
     </>
   );
 }
