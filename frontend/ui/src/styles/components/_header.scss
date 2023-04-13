@@ -1,8 +1,8 @@
-@use 'variables' as var;
+@use 'var';
 
 %header {
   width: 100%;
-  height: 50px;
+  height: var.$header-height;
   padding: var.$p-md var.$p-lg;
   border-bottom: 0.5px solid var(--border-color);
 }

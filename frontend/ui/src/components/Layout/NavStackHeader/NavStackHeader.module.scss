@@ -1,6 +1,6 @@
 @use 'mixins';
 @use 'components';
-@use 'variables' as var;
+@use 'var';
 
 .root {
   @extend %header;
