@@ -1,0 +1,28 @@
+@use 'mixins';
+
+.navbar {
+  @include mixins.flex(row, space-between);
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+  width: 100%;
+  height: 64px;
+
+  background: var(--background-color);
+
+  &__item {
+    @include mixins.flex(row);
+    width: 100%;
+    height: 100%;
+    transition: color 0.1s ease-in-out;
+
+    &_active,
+    &:hover {
+      color: var(--background-active-color);
+    }
+  }
+
+  &__link {
+    text-transform: capitalize;
+  }
+}

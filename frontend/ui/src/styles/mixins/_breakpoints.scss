@@ -1,0 +1,140 @@
+/*! include-media | MIT License | github.com/eduardoboucas/include-media */
+
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:string';
+
+$breakpoints: (
+  'small': 480px,
+  'medium': 640px,
+  'large': 960px,
+) !default;
+
+////
+/// include-media public exposed API
+/// @author Eduardo Boucas
+/// @access public
+////
+
+///
+/// Generates a media query based on a list of conditions
+///
+/// @param {Arglist}   $conditions  - Media query conditions
+///
+/// @example scss - With a single set breakpoint
+///  @include media('>small') { }
+///
+/// @example scss - With two set breakpoints
+///  @include media('>small', '<=medium') { }
+///
+/// @example scss - With custom values
+///  @include media('>=358px', '<850px') { }
+///
+/// @example scss - With set breakpoints with custom values
+///  @include media('>large', '<=1350px') { }
+///
+@mixin media($conditions...) {
+  @if (list.length($conditions) == 0) {
+    @content;
+  } @else {
+    @media only screen and #{string.unquote(-parse(list.nth($conditions, 1)))} {
+      @include media(-slice($conditions, 2)...) {
+        @content;
+      }
+    }
+  }
+}
+
+// private functions
+@function -parse($expression) {
+  $operator: -get-expression-operator($expression);
+  $prefix: -get-expression-prefix($operator);
+  $value: -get-expression-value($expression, $operator);
+
+  @return '(#{$prefix}-width: #{$value})';
+}
+
+@function -get-expression-operator($expression) {
+  @each $operator in ('<=', '>=', '<', '>') {
+    @if string.index($expression, $operator) {
+      @return $operator;
+    }
+  }
+}
+
+@function -get-expression-prefix($operator) {
+  @return if(list.index(('<', '<='), $operator), 'max', 'min');
+}
+
+@function -get-expression-value($expression, $operator) {
+  $value: string.slice($expression, string.length($operator) + 1);
+
+  @if map.has-key($breakpoints, $value) {
+    $value: map.get($breakpoints, $value);
+  } @else {
+    $value: -to-number($value);
+  }
+
+  $interval: 1px;
+  @if $operator == '>' {
+    $value: $value + $interval;
+  } @else if $operator == '<' {
+    $value: $value - $interval;
+  }
+
+  @return $value;
+}
+
+@function -to-number($value) {
+  @if type-of($value) == 'number' {
+    @return $value;
+  }
+
+  $result: 0;
+  $numbers: (
+    '0': 0,
+    '1': 1,
+    '2': 2,
+    '3': 3,
+    '4': 4,
+    '5': 5,
+    '6': 6,
+    '7': 7,
+    '8': 8,
+    '9': 9,
+  );
+  $units: (
+    'px': 1px,
+    'em': 1em,
+    'rem': 1rem,
+    'vw': 1vw,
+    'vh': 1vh,
+    'vmin': 1vmin,
+    'vmax': 1vmax,
+  );
+
+  @for $i from 1 through string.length($value) {
+    $char: string.slice($value, $i, $i);
+
+    @if not(map.has-key($numbers, $char)) {
+      @return $result * map.get($units, string.slice($value, $i));
+    }
+
+    $result: $result * 10 + map.get($numbers, $char);
+  }
+  @return $result;
+}
+
+@function -slice($list, $start: 1, $end: list.length($list)) {
+  @if list.length($list) < 1 or $start > $end {
+    @return ();
+  }
+
+  $result: ();
+
+  @for $i from $start through $end {
+    $result: list.append($result, list.nth($list, $i), comma);
+  }
+
+  @return $result;
+}

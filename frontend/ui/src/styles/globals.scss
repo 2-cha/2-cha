@@ -1,0 +1,24 @@
+@use 'sanitize';
+@use 'theme';
+
+html,
+body {
+  background: var(--background-color);
+  color: var(--text-color);
+}
+
+::selection {
+  background: var(--background-active-color);
+  color: var(--text-color);
+}
+
+ul,
+ol {
+  list-style-type: none;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

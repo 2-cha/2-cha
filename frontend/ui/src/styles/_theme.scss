@@ -1,0 +1,29 @@
+$themes: (
+  light: (
+    background-color: #fff,
+    background-inactive-color: #ccc,
+    background-active-color: #82e,
+
+    text-color: #000,
+
+    border-color: #999,
+  ),
+  dark: (
+    background-color: #2e2e2e,
+    background-inactive-color: #222,
+    background-active-color: #82e,
+
+    text-color: #fff,
+
+    border-color: #ccc,
+  ),
+);
+
+// set css variables at the root level
+@each $type, $theme in $themes {
+  html[data-theme='#{$type}'] {
+    @each $key, $value in $theme {
+      --#{$key}: #{$value};
+    }
+  }
+}
