@@ -24,27 +24,25 @@ public class ExecutionTimeAspect {
 
   @Around(value = "stopWatchMethod()")
   public Object runStopWatch(ProceedingJoinPoint pjp) throws Throwable {
+    MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
+    Method method = methodSignature.getMethod();
+
+    StopWatch stopWatch = new StopWatch();
+    Stopwatch annotation = method.getAnnotation(Stopwatch.class);
+
+    stopWatch.start();
     Object retVal = pjp.proceed();
-    
+    stopWatch.stop();
+    String executionTime = switch (annotation.value()) {
+      case SECONDS -> stopWatch.getTotalTimeSeconds() + " s";
+      case MILLISECONDS -> stopWatch.getTotalTimeMillis() + " ms";
+      case NANOSECONDS -> stopWatch.getTotalTimeNanos() + " ns";
+    };
     if (log.isDebugEnabled()) {
-      MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
-      Method method = methodSignature.getMethod();
-
-      StopWatch stopWatch = new StopWatch();
-      Stopwatch annotation = method.getAnnotation(Stopwatch.class);
-
-      stopWatch.start();
-      stopWatch.stop();
-      String executionTime = switch (annotation.value()) {
-        case SECONDS -> stopWatch.getTotalTimeSeconds() + " s";
-        case MILLISECONDS -> stopWatch.getTotalTimeMillis() + " ms";
-        case NANOSECONDS -> stopWatch.getTotalTimeNanos() + " ns";
-      };
-
-      log.debug("[{}#{}] Took {}",
-                pjp.getTarget().getClass().getSimpleName(),
-                method.getName(),
-                executionTime);
+      log.warn("[{}#{}] Took {}",
+               pjp.getTarget().getClass().getSimpleName(),
+               method.getName(),
+               executionTime);
     }
 
     return retVal;
