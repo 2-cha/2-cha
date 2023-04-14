@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 
 @RestControllerAdvice
-@Slf4j
+@Slf4j(topic = "ExceptionLogger")
 public class ApiErrorAdvice extends ResponseEntityExceptionHandler {
 
 

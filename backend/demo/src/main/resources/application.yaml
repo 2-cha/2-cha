@@ -29,5 +29,6 @@ logging:
       _2cha:
         demo:
           DemoApplication: INFO
-          global.interceptor.LogInterceptor: INFO
+    RequestLogger: INFO
+    ExecutionTimeLogger: DEBUG
     io.awspring.cloud: DEBUG

@@ -14,7 +14,7 @@ import org.springframework.util.StopWatch;
 
 @Aspect
 @Component
-@Slf4j(topic = "ExecutionTime")
+@Slf4j(topic = "ExecutionTimeLogger")
 public class ExecutionTimeAspect {
 
   @Pointcut("@annotation(com._2cha.demo.global.annotation.Stopwatch)")
