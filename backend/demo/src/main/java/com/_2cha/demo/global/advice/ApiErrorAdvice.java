@@ -60,13 +60,14 @@ public class ApiErrorAdvice extends ResponseEntityExceptionHandler {
    @ Others
    ------------------------*/
   @ExceptionHandler
-  public ApiError handleExceptionFallback(Exception e) {
+  public ResponseEntity<ApiError> handleExceptionFallback(Exception e) {
     ApiError apiError = new ApiError(e);
 
+    log.error("[Unhandled Exception] {}", e.getClass().getName(), e);
     apiError.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
     apiError.setCode("unhandledException");
     apiError.setMessage("[" + e.getClass().getName() + "]\n-> " + apiError.getMessage());
-    return apiError;
+    return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   @ExceptionHandler
