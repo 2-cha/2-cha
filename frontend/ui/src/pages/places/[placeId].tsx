@@ -4,6 +4,7 @@ import { fetchServer } from '@/lib/fetchServer';
 import NavStackHeader from '@/components/Layout/NavStackHeader';
 import MetaData from '@/components/MetaData';
 import PlaceInfo from '@/components/PlaceInfo';
+import { useIntersection } from '@/hooks/intersection';
 
 // api route를 제외한 runtime은 아직 experimental-edge로 설정해야 함
 export const config = {
@@ -43,11 +44,15 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 export default function PlaceInfoPage({ placeInfo }: PlaceInfoPageProps) {
+  const { ref, isIntersecting } = useIntersection({ initialState: true });
+
   return (
     <>
       <MetaData title={placeInfo.name} />
-      <NavStackHeader />
-      <PlaceInfo placeInfo={placeInfo} />
+      <NavStackHeader hideTitle={isIntersecting}>
+        {placeInfo.name}
+      </NavStackHeader>
+      <PlaceInfo placeInfo={placeInfo} ref={ref} />
       {/* TODO: 지도, 리뷰 */}
     </>
   );
