@@ -3,6 +3,7 @@ package com._2cha.demo.global.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.message.MapMessage;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Slf4j
@@ -12,15 +13,9 @@ public class LogInterceptor implements HandlerInterceptor {
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
       throws Exception {
 
-    log.info("[{}] Request", request.getRequestURI());
-    return true;
-  }
+    log.info("[{}][{}] {}", request.getMethod(), request.getRequestURI(),
+             new MapMessage<>(request.getParameterMap()));
 
-  @Override
-  public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
-                              Object handler, Exception ex) throws Exception {
-    if (ex != null) {
-      log.warn("[{}] <{}> {}", request.getRequestURI(), ex.getClass().getName(), ex.getMessage());
-    }
+    return true;
   }
 }
