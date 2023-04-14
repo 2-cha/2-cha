@@ -14,7 +14,7 @@ import org.springframework.util.StopWatch;
 
 @Aspect
 @Component
-@Slf4j
+@Slf4j(topic = "ExecutionTime")
 public class ExecutionTimeAspect {
 
   @Pointcut("@annotation(com._2cha.demo.global.annotation.Stopwatch)")
@@ -39,10 +39,10 @@ public class ExecutionTimeAspect {
       case NANOSECONDS -> stopWatch.getTotalTimeNanos() + " ns";
     };
     if (log.isDebugEnabled()) {
-      log.warn("[{}#{}] Took {}",
-               pjp.getTarget().getClass().getSimpleName(),
-               method.getName(),
-               executionTime);
+      log.debug("[{}#{}] Took {}",
+                pjp.getTarget().getClass().getName(),
+                method.getName(),
+                executionTime);
     }
 
     return retVal;
