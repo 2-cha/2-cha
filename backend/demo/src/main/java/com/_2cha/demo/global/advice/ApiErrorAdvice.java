@@ -3,6 +3,7 @@ package com._2cha.demo.global.advice;
 import com._2cha.demo.global.exception.HttpException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +61,7 @@ public class ApiErrorAdvice extends ResponseEntityExceptionHandler {
    @ Others
    ------------------------*/
   @ExceptionHandler
-  public ResponseEntity<ApiError> handleExceptionFallback(Exception e) {
+  public ResponseEntity<ApiError> handleExceptionFallback(HttpServletRequest request, Exception e) {
     ApiError apiError = new ApiError(e);
 
     log.error("[Unhandled Exception] {}", e.getClass().getName(), e);
