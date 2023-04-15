@@ -11,7 +11,6 @@
 }
 
 .placeList {
-  @extend %reset;
   @include mixins.flex(column);
   width: 100%;
 
@@ -32,13 +31,11 @@
   }
 
   &__title {
-    @extend %reset;
     @extend %text-lg;
     padding: var.$p-sm 0;
   }
 
   &__address {
-    @extend %reset;
     @extend %text-sm;
   }
 

@@ -24,7 +24,8 @@
   }
 
   &__backButton {
-    @extend %reset-button;
+    background: inherit;
+    color: inherit;
     width: $button-width;
   }
 }

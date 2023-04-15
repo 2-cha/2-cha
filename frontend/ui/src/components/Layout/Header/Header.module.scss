@@ -8,7 +8,6 @@
   gap: var.$p-md;
 
   &__title {
-    @extend %reset;
     @extend %text-lg;
   }
 }
