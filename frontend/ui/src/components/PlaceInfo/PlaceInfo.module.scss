@@ -15,3 +15,36 @@
     @extend %text-xl;
   }
 }
+
+.menu {
+  @include mixins.flex(row, space-around, flex-start);
+  width: 100%;
+  height: var.$header-height;
+  margin-top: var.$p-lg * 2;
+
+  position: sticky;
+  top: var.$header-height;
+
+  .active {
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  &__item {
+    @extend %text-md;
+    background-color: inherit;
+    color: inherit;
+    cursor: pointer;
+    padding: var.$p-md;
+    flex: 1 1 0;
+
+    &:hover,
+    &:active,
+    &:focus {
+      @extend .active;
+    }
+  }
+
+  &__itemActive {
+    @extend .active;
+  }
+}

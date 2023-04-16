@@ -19,7 +19,6 @@ export default function PlaceInfoPage() {
       {isLoading || isError ? null : (
         <PlaceInfo placeInfo={placeInfo} ref={ref} />
       )}
-      {/* TODO: 지도, 리뷰 */}
     </>
   );
 }
