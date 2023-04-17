@@ -7,6 +7,7 @@ import com._2cha.demo.member.repository.MemberRepository;
 import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.repository.PlaceRepository;
+import jakarta.persistence.EntityManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,9 +33,13 @@ public class DataLoader implements ApplicationRunner {
   private final AchievementRepository achvRepository;
 
 
+  private final EntityManager em;
+
   @Transactional
   @Override
   public void run(ApplicationArguments args) throws Exception {
+    em.createNativeQuery("CREATE EXTENSION postgis;");
+
     //XXX
     //loadCsv("와인바", Category.WINE_BAR);
     //loadCsv("위스키바", Category.WHISKEY_BAR);
