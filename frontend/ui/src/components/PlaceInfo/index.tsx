@@ -1,4 +1,5 @@
 import { forwardRef, useState } from 'react';
+import { usePlaceReviewsQuery } from '@/hooks/reviews';
 import { Place } from '@/types';
 import cn from 'classnames';
 import s from './PlaceInfo.module.scss';
@@ -53,7 +54,7 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
         </div>
 
         {currentMenu === menuItems.review ? (
-          <PlaceReviews />
+          <PlaceReviews placeId={placeInfo.id} />
         ) : currentMenu === menuItems.map ? (
           <PlaceMap />
         ) : currentMenu === menuItems.info ? (
@@ -64,9 +65,19 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
   }
 );
 
-function PlaceReviews() {
-  // TODO: reviews api
-  return <div>리뷰</div>;
+function PlaceReviews({ placeId }: { placeId: number }) {
+  const { data: reviews, isLoading, isError } = usePlaceReviewsQuery(placeId);
+
+  // TODO: 레이아웃 디자인, 무한스크롤
+  return (
+    <div>
+      <ul>
+        {reviews?.map((review) => (
+          <li key={review.id}>{JSON.stringify(review)}</li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 function PlaceMap() {
