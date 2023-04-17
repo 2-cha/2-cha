@@ -12,7 +12,7 @@ spring:
     allow-circular-references: true
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       naming:
         physical-strategy: com._2cha.demo.global.config.UppercaseNamingStrategy
     open-in-view: false
