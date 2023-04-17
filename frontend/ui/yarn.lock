@@ -1734,6 +1734,11 @@ json5@^1.0.2:
     array-includes "^3.1.5"
     object.assign "^4.1.3"
 
+kakao.maps.d.ts@^0.1.34:
+  version "0.1.35"
+  resolved "https://registry.yarnpkg.com/kakao.maps.d.ts/-/kakao.maps.d.ts-0.1.35.tgz#496faa71f14158be0a880e918f2a870ded14cb05"
+  integrity sha512-qBSlE68TmY2y6XS8dea5xoB1boHciV7bm9+MLcIZCsHtB5ohbT8x009rWz1D3mhXag1Si/B5CLqtP+Ka3eNrRA==
+
 language-subtag-registry@~0.3.2:
   version "0.3.22"
   resolved "https://registry.yarnpkg.com/language-subtag-registry/-/language-subtag-registry-0.3.22.tgz#2e1500861b2e457eba7e7ae86877cbd08fa1fd1d"
@@ -2250,6 +2255,13 @@ react-is@^16.13.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
+
+react-kakao-maps-sdk@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/react-kakao-maps-sdk/-/react-kakao-maps-sdk-1.1.8.tgz#b4a503946fd378a7e1ff809272da3b7749242e30"
+  integrity sha512-rO9d84hOdm1RQYZSNv0zMCh849UcTe9qlyyDGX8lwz9NY/3eXCptCJAxsIk85c89PTS3hUo+DdDoob99C7R6Yg==
+  dependencies:
+    kakao.maps.d.ts "^0.1.34"
 
 react@18.2.0:
   version "18.2.0"
