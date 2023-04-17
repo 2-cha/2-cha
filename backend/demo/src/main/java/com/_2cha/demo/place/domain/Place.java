@@ -27,8 +27,7 @@ public class Place {
   /*-----------
    @ Columns
    ----------*/
-  //  @Column(nullable = false, unique = true)
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String name;
 
   @Column(nullable = false)

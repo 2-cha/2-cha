@@ -7,6 +7,7 @@ import com._2cha.demo.member.repository.MemberRepository;
 import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.repository.PlaceRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,21 +42,26 @@ public class DataLoader implements ApplicationRunner {
     em.createNativeQuery("CREATE EXTENSION postgis;");
 
     //XXX
-    //loadCsv("와인바", Category.WINE_BAR);
-    //loadCsv("위스키바", Category.WHISKEY_BAR);
-    //loadCsv("칵테일바", Category.COCKTAIL_BAR);
-    //createMockMember();
+    loadCsv("와인바", Category.WINE_BAR);
+    loadCsv("위스키바", Category.WHISKEY_BAR);
+    loadCsv("칵테일바", Category.COCKTAIL_BAR);
+    createMockMember();
   }
 
   @Transactional
   public void createMockMember() {
 
-    achvRepository.save(Achievement.createMockAchievement());
-    Member admin = Member.createMember("admin@2cha.com", BCryptHashingUtils.hash("1234"), "admin");
-    Member member = Member.createMember("member@2cha.com", BCryptHashingUtils.hash("1234"),
-                                        "member");
-    memberRepository.save(admin);
-    memberRepository.save(member);
+    try {
+      achvRepository.save(Achievement.createMockAchievement());
+      Member admin = Member.createMember("admin@2cha.com", BCryptHashingUtils.hash("1234"),
+                                         "admin");
+      Member member = Member.createMember("member@2cha.com", BCryptHashingUtils.hash("1234"),
+                                          "member");
+      memberRepository.save(admin);
+      memberRepository.save(member);
+    } catch (EntityExistsException e) {
+      
+    }
   }
 
   @Transactional
@@ -86,7 +92,11 @@ public class DataLoader implements ApplicationRunner {
           latitude,
           thumbnail
                                      );
-      placeRepository.save(place);
+      try {
+        placeRepository.save(place);
+      } catch (EntityExistsException e) {
+
+      }
     }
   }
 }
