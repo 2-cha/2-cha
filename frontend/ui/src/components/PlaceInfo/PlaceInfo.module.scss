@@ -11,8 +11,18 @@
     top: calc(-1 * var.$header-height);
   }
 
-  .title {
-    @extend %text-xl;
+  .summary {
+    padding: 0 var.$p-xl;
+
+    &__title {
+      @extend %text-xl;
+    }
+
+    &__category {
+      @extend %text-sm;
+      // TODO: declare this color
+      color: var(--text-secondary-color);
+    }
   }
 }
 

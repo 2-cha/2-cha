@@ -27,10 +27,12 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
           />
         )}
 
-        <p className={s.title} ref={ref}>
-          {placeInfo.name}
-        </p>
-        <p>{placeInfo.address}</p>
+        <div className={s.summary}>
+          <p className={s.summary__title} ref={ref}>
+            {placeInfo.name}
+          </p>
+          <p className={s.summary__category}>{placeInfo.category}</p>
+        </div>
         {placeInfo.tags.map((tag) => (
           <span key={tag.id}>{tag.message}</span>
         ))}
