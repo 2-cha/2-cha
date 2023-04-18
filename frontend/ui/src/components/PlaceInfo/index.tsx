@@ -1,4 +1,5 @@
 import { forwardRef, useState } from 'react';
+import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { usePlaceReviewsQuery } from '@/hooks/reviews';
 import { Place } from '@/types';
 import cn from 'classnames';
@@ -17,6 +18,7 @@ interface PlaceInfoProps {
 export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
   function PlaceInfo({ placeInfo }: PlaceInfoProps, ref) {
     const [currentMenu, setCurrentMenu] = useState(menuItems.review);
+
     return (
       <div className={s.root}>
         {placeInfo.thumbnail && (
@@ -56,7 +58,7 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
         {currentMenu === menuItems.review ? (
           <PlaceReviews placeId={placeInfo.id} />
         ) : currentMenu === menuItems.map ? (
-          <PlaceMap />
+          <PlaceMap placeInfo={placeInfo} />
         ) : currentMenu === menuItems.info ? (
           <PlaceDetail />
         ) : null}
@@ -80,9 +82,18 @@ function PlaceReviews({ placeId }: { placeId: number }) {
   );
 }
 
-function PlaceMap() {
-  // TODO: import kakao map
-  return <div>지도</div>;
+function PlaceMap({ placeInfo }: { placeInfo: Place }) {
+  // TODO: placeInfo에서 실제 좌표 받기
+  const coord = {
+    lat: 37.4879759679358,
+    lng: 127.065527640082,
+  };
+
+  return (
+    <Map center={coord} level={4} className={s.map}>
+      <MapMarker position={coord} />
+    </Map>
+  );
 }
 
 function PlaceDetail() {
