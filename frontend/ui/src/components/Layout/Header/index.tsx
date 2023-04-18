@@ -16,7 +16,7 @@ export default function Header() {
         {/* TODO: replace to icon */}
         refresh
       </button>
-      <h2 className={s.header__title}>{region?.region_3depth_name}</h2>
+      <p className={s.header__title}>{region?.region_3depth_name}</p>
     </header>
   );
 }

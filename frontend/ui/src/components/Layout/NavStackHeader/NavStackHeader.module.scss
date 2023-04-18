@@ -1,0 +1,35 @@
+@use 'mixins';
+@use 'components';
+@use 'var';
+
+.root {
+  @extend %header;
+  @include mixins.flex(row, space-between);
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  background: transparent;
+  border: 0;
+
+  $button-width: 24px;
+
+  &__title {
+    flex-shrink: 1;
+    padding-right: $button-width;
+    margin: 0 auto;
+
+    @extend %text-lg;
+  }
+
+  &__backButton {
+    background: inherit;
+    color: inherit;
+    width: $button-width;
+  }
+}
+
+.hidden {
+  visibility: hidden;
+}

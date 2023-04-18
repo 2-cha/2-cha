@@ -1,0 +1,65 @@
+@use 'mixins';
+@use 'components';
+@use 'var';
+
+.root {
+  @include mixins.flex(column, flex-start, flex-start);
+  width: 100%;
+
+  .thumbnail {
+    position: relative;
+    top: calc(-1 * var.$header-height);
+  }
+
+  .summary {
+    padding: 0 var.$p-xl;
+
+    &__title {
+      @extend %text-xl;
+    }
+
+    &__category {
+      @extend %text-sm;
+      // TODO: declare this color
+      color: var(--text-secondary-color);
+    }
+  }
+}
+
+.menu {
+  @include mixins.flex(row, space-around, flex-start);
+  width: 100%;
+  height: var.$header-height;
+  margin-top: var.$p-lg * 2;
+
+  position: sticky;
+  top: var.$header-height;
+
+  .active {
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  &__item {
+    @extend %text-md;
+    background-color: inherit;
+    color: inherit;
+    cursor: pointer;
+    padding: var.$p-md;
+    flex: 1 1 0;
+
+    &:hover,
+    &:active,
+    &:focus {
+      @extend .active;
+    }
+  }
+
+  &__itemActive {
+    @extend .active;
+  }
+}
+
+.map {
+  width: 100%;
+  height: 420px;
+}
