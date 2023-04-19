@@ -5,7 +5,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -13,6 +15,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cacheable
 @Getter
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
 
   @Id
@@ -25,4 +28,12 @@ public class Tag {
 
   @Column(nullable = false)
   private String emoji;
+
+  public static Tag createTag(String msg, String emoji) {
+    Tag tag = new Tag();
+    tag.msg = msg;
+    tag.emoji = emoji;
+
+    return tag;
+  }
 }
