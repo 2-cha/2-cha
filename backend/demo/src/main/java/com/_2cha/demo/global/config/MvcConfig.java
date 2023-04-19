@@ -2,7 +2,9 @@ package com._2cha.demo.global.config;
 
 import com._2cha.demo.auth.service.AuthService;
 import com._2cha.demo.global.argresolver.AuthedMemberIdArgumentResolver;
+import com._2cha.demo.global.converter.FilterByRequestParamConverter;
 import com._2cha.demo.global.converter.PathToProviderEnumConverter;
+import com._2cha.demo.global.converter.SortByRequestParamConverter;
 import com._2cha.demo.global.interceptor.AuthInterceptor;
 import com._2cha.demo.global.interceptor.RequestLogInterceptor;
 import java.util.List;
@@ -36,6 +38,8 @@ public class MvcConfig implements WebMvcConfigurer {
   @Override
   public void addFormatters(FormatterRegistry registry) {
     registry.addConverter(new PathToProviderEnumConverter());
+    registry.addConverter(new FilterByRequestParamConverter());
+    registry.addConverter(new SortByRequestParamConverter());
   }
 
   @Override

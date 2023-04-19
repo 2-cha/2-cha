@@ -5,8 +5,10 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -52,6 +54,31 @@ public class ApiErrorAdvice extends ResponseEntityExceptionHandler {
     apiError.setStatus(status);
     apiError.setCode("argumentNotValid");
     apiError.setMessage(messages);
+
+    return new ResponseEntity<>(apiError, status);
+  }
+
+  @Override
+  protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers,
+                                                      HttpStatusCode status, WebRequest request) {
+    ApiError apiError = new ApiError<>(ex);
+
+    String message = ex.getPropertyName() + ": " + ex.getValue();
+    Class<?> requiredType = ex.getRequiredType();
+    Object[] validValues;
+    if (requiredType != null && (validValues = requiredType.getEnumConstants()) != null) {
+
+      List<String> validStrings = Arrays.stream(validValues).map((o) ->
+                                                                 {
+                                                                   Enum e = (Enum) o;
+                                                                   return e.name();
+                                                                 }
+                                                                ).toList();
+      message += "(@" + validStrings + ")";
+    }
+    apiError.setStatus(status);
+    apiError.setCode("queryParamNotValid");
+    apiError.setMessage(message);
 
     return new ResponseEntity<>(apiError, status);
   }
