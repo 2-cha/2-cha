@@ -6,9 +6,11 @@ import {
 } from 'msw';
 import { setupServer } from 'msw/node';
 import { serverHandlers } from './handlers/server';
+import { kakaoHandlers } from './handlers/kakao';
 
 const handlers: RestHandler<MockedRequest<DefaultBodyType>>[] = [
   ...serverHandlers,
+  ...kakaoHandlers,
 ];
 
 function initMocks() {
