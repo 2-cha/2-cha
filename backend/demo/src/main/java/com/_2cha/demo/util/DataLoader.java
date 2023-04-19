@@ -44,8 +44,10 @@ public class DataLoader implements ApplicationRunner {
 
   @Transactional
   public void createMockMember() {
-
-    achvRepository.save(Achievement.createMockAchievement());
+    Achievement achievement = Achievement.createAchievement("Rising Star",
+                                                            "You got first follower",
+                                                            "https://picsum.photos/64/64");
+    achvRepository.save(achievement);
     Member admin = Member.createMember("admin@2cha.com", BCryptHashingUtils.hash("1234"), "admin");
     Member member = Member.createMember("member@2cha.com", BCryptHashingUtils.hash("1234"),
                                         "member");

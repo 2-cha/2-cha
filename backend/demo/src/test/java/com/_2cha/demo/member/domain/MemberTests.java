@@ -27,12 +27,14 @@ public class MemberTests {
     Member member2 = Member.createMember("member2@2cha.com", "1234", "member2");
     Member member3 = Member.createMember("member3@2cha.com", "1234", "member3");
 
-    Achievement mockAchievement = Achievement.createMockAchievement();
+    Achievement achievement = Achievement.createAchievement("Rising Star",
+                                                            "You got first follower",
+                                                            "https://picsum.photos/64/64");
 
     em.persist(member1);
     em.persist(member2);
     em.persist(member3);
-    em.persist(mockAchievement);
+    em.persist(achievement);
     em.flush();
     em.clear();
   }

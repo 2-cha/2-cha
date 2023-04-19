@@ -31,13 +31,13 @@ public class Achievement {
 
   @Column(nullable = false)
   private String badgeUrl;
-
-  public static Achievement createMockAchievement() {
+  
+  public static Achievement createAchievement(String name, String description, String badgeUrl) {
 
     Achievement achievement = new Achievement();
-    achievement.name = "Rising Star";
-    achievement.description = "You got first follower";
-    achievement.badgeUrl = "https://picsum.photos/64/64";
+    achievement.name = name;
+    achievement.description = description;
+    achievement.badgeUrl = badgeUrl;
     return achievement;
   }
 }
