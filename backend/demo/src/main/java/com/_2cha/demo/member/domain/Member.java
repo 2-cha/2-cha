@@ -95,7 +95,7 @@ public class Member {
     Relationship relationship = Relationship.createRelationship(this, member);
 
     this.followings.remove(relationship);
-    member.followings.remove(relationship);
+    member.followers.remove(relationship);
   }
 
   public void addAchievement(Achievement achievement) {
