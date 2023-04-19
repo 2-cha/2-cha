@@ -49,6 +49,7 @@ dependencies {
 
     developmentOnly 'com.h2database:h2'
     testImplementation 'com.h2database:h2'
+    testImplementation 'org.orbisgis:h2gis:2.1.0'
 }
 
 ext {
