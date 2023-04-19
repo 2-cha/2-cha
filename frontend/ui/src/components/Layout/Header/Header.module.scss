@@ -10,4 +10,15 @@
   &__title {
     @extend %text-lg;
   }
+
+  &__button {
+    background-color: inherit;
+    color: inherit;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: var(--text-active-color);
+    }
+  }
 }
