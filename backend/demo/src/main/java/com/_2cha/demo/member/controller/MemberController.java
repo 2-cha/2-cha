@@ -52,7 +52,7 @@ public class MemberController {
   @Auth
   @GetMapping("/{memberId}/achievements")
   public List<AchievementResponse> getExposedMemberAchievements(@PathVariable Long memberId) {
-    return memberService.getAllMemberAchievements(memberId);
+    return memberService.getExposedMemberAchievements(memberId);
   }
 
 
