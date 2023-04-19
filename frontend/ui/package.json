@@ -44,5 +44,8 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,css,scss}": "yarn prettier:file"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }
