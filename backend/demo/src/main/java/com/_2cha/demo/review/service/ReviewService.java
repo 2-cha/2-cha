@@ -1,6 +1,6 @@
 package com._2cha.demo.review.service;
 
-import com._2cha.demo.global.exception.UnauthorizedException;
+import com._2cha.demo.global.exception.ForbiddenException;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.place.domain.Place;
@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +48,37 @@ public class ReviewService {
     this.placeService = placeService;
   }
 
+  /*-----------
+   @ Commands
+   ----------*/
+
+  @Transactional
+  public void writeReview(Long memberId, Long placeId,
+                          List<Long> tagIdList, List<String> imageUrlList) {
+
+    List<Tag> tagList = tagService.getTagByIdIn(tagIdList);
+    Member member = memberService.findById(memberId);
+    Place place = placeService.getPlaceById(placeId);
+
+    Review review = Review.createReview(place, member, tagList, imageUrlList);
+    reviewRepository.save(review);
+  }
+
+  @Transactional
+  public void deleteReview(Long memberId, Long reviewId) {
+    Review review = reviewRepository.findReviewById(reviewId);
+    if (review.getMember().getId() != memberId) {
+      throw new ForbiddenException("Cannot delete other member's review");
+    }
+
+    reviewRepository.deleteReviewById(reviewId);
+  }
+
+
+  /*-----------
+   @ Queries
+   ----------*/
+
   public List<MemberReviewResponse> getReviewsByMemberId(Long memberId) {
     List<Review> reviews = reviewRepository.findReviewsByMemberId(memberId);
     if (reviews.isEmpty()) {
@@ -75,9 +105,7 @@ public class ReviewService {
     }
 
     reviewWithPlaceIdMap.forEach((review, placeId) -> {
-      MemberReviewResponse dto = new MemberReviewResponse();
-      dto.setId(review.getId());
-      dto.fetchTagsAndImagesFromReview(review);
+      MemberReviewResponse dto = new MemberReviewResponse(review);
       dto.setPlace(placesBriefWithIdMap.get(placeId));
       dtos.add(dto);
     });
@@ -91,11 +119,10 @@ public class ReviewService {
 
     reviews.forEach(
         review -> {
-          PlaceReviewResponse dto = new PlaceReviewResponse();
           Member member = review.getMember();
+          PlaceReviewResponse dto = new PlaceReviewResponse(review);
+          //TODO: In Operator
           dto.setMember(memberService.getMemberProfileById(member.getId()));
-          dto.fetchTagsAndImagesFromReview(review);
-          dto.setId(review.getId());
           dtos.add(dto);
         });
 
@@ -104,7 +131,7 @@ public class ReviewService {
 
   public List<TagCountResponse> getReviewTagCountByPlaceId(Long placeId, Integer size) {
     List<Review> reviews = reviewRepository.findReviewsByPlaceId(placeId);
-    Map<Tag, Integer> tagCountMap = new ConcurrentHashMap<>();
+    Map<Tag, Integer> tagCountMap = new HashMap<>();
 
     reviews.forEach(review ->
                         review.getTags()
@@ -120,15 +147,7 @@ public class ReviewService {
     }
 
     return entryStream.sorted(Entry.comparingByValue())
-                      .map(entry -> {
-                        TagCountResponse dto = new TagCountResponse();
-                        Tag tag = entry.getKey();
-                        dto.setId(tag.getId());
-                        dto.setEmoji(tag.getEmoji());
-                        dto.setMessage(tag.getMsg());
-                        dto.setCount(entry.getValue());
-                        return dto;
-                      })
+                      .map(entry -> new TagCountResponse(entry.getKey(), entry.getValue()))
                       .toList();
   }
 
@@ -147,8 +166,7 @@ public class ReviewService {
                       Map<Tag, Integer> tagCountMap = placesTagCountMap.get(review.getPlace()
                                                                                   .getId());
                       review.getTags()
-                            .forEach(
-                                tag -> tagCountMap.put(tag, tagCountMap.getOrDefault(tag, 0) + 1));
+                            .forEach(tag -> tagCountMap.put(tag, tagCountMap.getOrDefault(tag, 0) + 1));
                     }
                    );
 
@@ -161,42 +179,12 @@ public class ReviewService {
           }
 
           List<TagCountResponse> tagCountResponses = tagCounts.sorted(Entry.comparingByValue())
-                                                              .map(entry -> {
-                                                                TagCountResponse tagCount = new TagCountResponse();
-                                                                Tag tag = entry.getKey();
-                                                                tagCount.setId(tag.getId());
-                                                                tagCount.setEmoji(tag.getEmoji());
-                                                                tagCount.setMessage(tag.getMsg());
-                                                                tagCount.setCount(entry.getValue());
-                                                                return tagCount;
-                                                              })
+                                                              .map(entry -> new TagCountResponse(
+                                                                  entry.getKey(), entry.getValue()
+                                                              ))
                                                               .toList();
           placesTagCountResponseMap.put(placeId, tagCountResponses);
         });
     return placesTagCountResponseMap;
-  }
-
-
-  @Transactional
-  public void writeReview(Long memberId, Long placeId,
-                          List<Long> tagIdList, List<String> imageUrlList) {
-
-    List<Tag> tagList = tagService.getTagByIdIn(tagIdList);
-    Member member = memberService.findById(memberId);
-    Place place = placeService.getPlaceById(placeId);
-
-    Review review = Review.createReview(place, member, tagList, imageUrlList);
-    reviewRepository.save(review);
-  }
-
-  @Transactional
-  public void deleteReview(Long memberId, Long reviewId) {
-    Review review = reviewRepository.findReviewById(reviewId);
-    if (review.getMember()
-              .getId() != memberId) {
-      throw new UnauthorizedException("Cannot delete other member's review");
-    }
-
-    reviewRepository.deleteReviewById(reviewId);
   }
 }
