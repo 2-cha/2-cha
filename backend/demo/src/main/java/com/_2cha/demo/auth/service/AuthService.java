@@ -101,9 +101,10 @@ public class AuthService {
 
   public TokenResponse signInWithAccount(SignInWithAccountRequest dto) {
     // email / password
-    MemberCredResponse response = memberService.getMemberCredByEmail(
-        dto.getEmail());
-    if (response == null) {
+    MemberCredResponse response;
+    try {
+      response = memberService.getMemberCredByEmail(dto.getEmail());
+    } catch (NoSuchMemberException e) {
       throw new UnauthorizedException("No such member", "noSuchMember");
     }
 

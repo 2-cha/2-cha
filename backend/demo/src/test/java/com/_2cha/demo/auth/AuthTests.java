@@ -6,7 +6,6 @@ import com._2cha.demo.auth.dto.JwtTokenPayload;
 import com._2cha.demo.auth.dto.SignInWithAccountRequest;
 import com._2cha.demo.auth.dto.TokenResponse;
 import com._2cha.demo.auth.service.AuthService;
-import com._2cha.demo.global.exception.NoSuchMemberException;
 import com._2cha.demo.global.exception.UnauthorizedException;
 import com._2cha.demo.member.controller.MemberController;
 import com._2cha.demo.member.dto.SignUpRequest;
@@ -64,7 +63,7 @@ class AuthTests {
 
     request.setEmail("dummy@2cha.com");
     Assertions.assertThatThrownBy(() -> authController.signInWithAccount(request))
-              .isInstanceOf(NoSuchMemberException.class);
+              .isInstanceOf(UnauthorizedException.class);
   }
 
   @Test
