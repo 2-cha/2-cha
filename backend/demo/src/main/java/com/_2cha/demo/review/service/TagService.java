@@ -14,18 +14,21 @@ public class TagService {
 
   private final TagRepository tagRepository;
 
-  public List<Tag> getAllTags() {
+  public List<Tag> findAll() {
     return tagRepository.findAll();
   }
 
-  public Tag getTagById(Long id) {
+  public Tag findById(Long id) {
     return tagRepository.findTagById(id);
   }
 
-  public List<Tag> getTagByIdIn(List<Long> ids) {
+  public List<Tag> findTagsByIdIn(List<Long> ids) {
     return tagRepository.findTagsByIdIn(ids);
   }
 
+  /*-----------
+   @ Queries
+   ----------*/
   public List<TagWithIdResponse> fuzzySearchTagsByHangul(String queryText) {
     String queryRegex = this.makeQueryRegex(queryText);
     List<Tag> tags = tagRepository.findTagsByMsgMatchesRegex(queryRegex);

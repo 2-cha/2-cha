@@ -36,6 +36,14 @@ public class MemberService {
   private final MemberQueryRepository memberQueryRepository;
   private final AchievementRepository achvRepository;
 
+
+  public Member findById(Long id) {
+    Member member = memberRepository.findById(id);
+    if (member == null) throw new NoSuchMemberException();
+
+    return member;
+  }
+
   /*------------
    @ Commands
    ------------*/
@@ -117,12 +125,7 @@ public class MemberService {
   /*------------
    @ Queries
    ------------*/
-  public Member findById(Long id) {
-    Member member = memberRepository.findById(id);
-    if (member == null) throw new NoSuchMemberException();
 
-    return member;
-  }
 
   public MemberProfileResponse getMemberProfileById(Long id) {
 

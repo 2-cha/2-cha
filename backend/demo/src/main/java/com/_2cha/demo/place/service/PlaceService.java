@@ -42,7 +42,7 @@ public class PlaceService {
     this.reviewService = reviewService;
   }
 
-  public Place getPlaceById(Long id) {
+  public Place findPlaceById(Long id) {
     Place place = placeRepository.findById(id);
     if (place == null) {
       throw new NotFoundException("No place with id " + id, "noSuchPlace");

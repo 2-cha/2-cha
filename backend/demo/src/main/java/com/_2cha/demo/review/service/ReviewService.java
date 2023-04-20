@@ -56,9 +56,9 @@ public class ReviewService {
   public void writeReview(Long memberId, Long placeId,
                           List<Long> tagIdList, List<String> imageUrlList) {
 
-    List<Tag> tagList = tagService.getTagByIdIn(tagIdList);
+    List<Tag> tagList = tagService.findTagsByIdIn(tagIdList);
     Member member = memberService.findById(memberId);
-    Place place = placeService.getPlaceById(placeId);
+    Place place = placeService.findPlaceById(placeId);
 
     Review review = Review.createReview(place, member, tagList, imageUrlList);
     reviewRepository.save(review);
