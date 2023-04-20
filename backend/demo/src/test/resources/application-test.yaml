@@ -8,3 +8,5 @@ spring:
       ddl-auto: create
 cors.origins:
   - /**
+jwt.key: test
+jwt.issuer: http://2cha.test
