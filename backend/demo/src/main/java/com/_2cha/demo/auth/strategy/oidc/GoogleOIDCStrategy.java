@@ -34,7 +34,7 @@ public class GoogleOIDCStrategy implements OIDCStrategy {
   private final GoogleOIDCConfig config;
 
 
-  public String getAuthCode() {
+  public String getAuthCodeURI() {
     return UriComponentsBuilder.fromUriString(config.getOauthEndpoint())
                                .queryParam("client_id", config.getClientId())
                                .queryParam("redirect_uri", config.getRedirectUri())
@@ -76,8 +76,10 @@ public class GoogleOIDCStrategy implements OIDCStrategy {
 
   @Override
   public OIDCUserProfile getProfile(String idToken) throws JsonProcessingException {
-    String base64payload = JWT.decode(idToken).getPayload();  // not decoded
-    String payload = new String(Base64.getDecoder().decode(base64payload));
+    String base64payload = JWT.decode(idToken)
+                              .getPayload();  // not decoded
+    String payload = new String(Base64.getDecoder()
+                                      .decode(base64payload));
 
     GoogleIdTokenPayload idTokenPayload = objectMapper.readValue(payload,
                                                                  GoogleIdTokenPayload.class);
