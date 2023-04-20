@@ -51,19 +51,23 @@ public class ReviewService {
 
   public List<MemberReviewResponse> getReviewsByMemberId(Long memberId) {
     List<Review> reviews = reviewRepository.findReviewsByMemberId(memberId);
+    if (reviews.isEmpty()) {
+      return new ArrayList<>();
+    }
     List<MemberReviewResponse> dtos = new ArrayList<>();
     Set<Long> placeIds = new TreeSet<>();
     Map<Review, Long> reviewWithPlaceIdMap = new HashMap<>();
 
     reviews.forEach(
         review -> {
-          Long placeId = review.getPlace().getId();
+          Long placeId = review.getPlace()
+                               .getId();
           placeIds.add(placeId);
           reviewWithPlaceIdMap.put(review, placeId);
         });
-    List<PlaceBriefResponse> placesBrief = placeService.getPlacesBriefByIdIn(
-        placeIds.stream().toList(),
-        SUMMARY_SIZE);
+    List<PlaceBriefResponse> placesBrief = placeService.getPlacesBriefByIdIn(placeIds.stream()
+                                                                                     .toList(),
+                                                                             SUMMARY_SIZE);
 
     Map<Long, PlaceBriefResponse> placesBriefWithIdMap = new HashMap<>();
     for (var placeBrief : placesBrief) {
@@ -108,7 +112,8 @@ public class ReviewService {
                                   tag -> tagCountMap.put(tag, tagCountMap.getOrDefault(tag, 0) + 1))
                    );
 
-    Stream<Entry<Tag, Integer>> entryStream = tagCountMap.entrySet().stream();
+    Stream<Entry<Tag, Integer>> entryStream = tagCountMap.entrySet()
+                                                         .stream();
 
     if (size != null) {
       entryStream = entryStream.limit(size);
@@ -139,7 +144,8 @@ public class ReviewService {
     }
 
     reviews.forEach(review -> {
-                      Map<Tag, Integer> tagCountMap = placesTagCountMap.get(review.getPlace().getId());
+                      Map<Tag, Integer> tagCountMap = placesTagCountMap.get(review.getPlace()
+                                                                                  .getId());
                       review.getTags()
                             .forEach(
                                 tag -> tagCountMap.put(tag, tagCountMap.getOrDefault(tag, 0) + 1));
@@ -148,7 +154,8 @@ public class ReviewService {
 
     placesTagCountMap.forEach(
         (placeId, tagCountMap) -> {
-          Stream<Entry<Tag, Integer>> tagCounts = tagCountMap.entrySet().stream();
+          Stream<Entry<Tag, Integer>> tagCounts = tagCountMap.entrySet()
+                                                             .stream();
           if (tagSizeLimit != null) {
             tagCounts = tagCounts.limit(tagSizeLimit);
           }
@@ -185,7 +192,8 @@ public class ReviewService {
   @Transactional
   public void deleteReview(Long memberId, Long reviewId) {
     Review review = reviewRepository.findReviewById(reviewId);
-    if (review.getMember().getId() != memberId) {
+    if (review.getMember()
+              .getId() != memberId) {
       throw new UnauthorizedException("Cannot delete other member's review");
     }
 
