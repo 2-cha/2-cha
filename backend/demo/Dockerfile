@@ -11,5 +11,5 @@ RUN addgroup --system javauser && adduser -S -s /usr/sbin/nologin -G javauser ja
 COPY --from=Builder /project/build/libs/2cha-demo.jar app.jar
 RUN chown -R javauser:javauser /app
 USER javauser
-CMD ["dumb-init", "java", "-jar", "app.jar"]
+CMD ["dumb-init", "java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
 # TODO: inject configurations
