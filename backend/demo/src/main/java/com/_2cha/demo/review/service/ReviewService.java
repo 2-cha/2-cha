@@ -182,7 +182,7 @@ public class ReviewService {
                           List<Long> tagIdList, List<String> imageUrlList) {
 
     List<Tag> tagList = tagService.getTagByIdIn(tagIdList);
-    Member member = memberService.getMemberById(memberId);
+    Member member = memberService.findById(memberId);
     Place place = placeService.getPlaceById(placeId);
 
     Review review = Review.createReview(place, member, tagList, imageUrlList);

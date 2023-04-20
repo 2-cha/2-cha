@@ -1,10 +1,12 @@
 package com._2cha.demo.member.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class RelationshipOperationResponse {
 
-  Long followerId;
-  Long followingId;
+  private Long followerId;
+  private Long followingId;
 }

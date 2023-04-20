@@ -12,8 +12,8 @@ import com._2cha.demo.auth.strategy.oidc.OIDCStrategy;
 import com._2cha.demo.global.exception.NoSuchMemberException;
 import com._2cha.demo.global.exception.UnauthorizedException;
 import com._2cha.demo.member.domain.OIDCProvider;
+import com._2cha.demo.member.dto.MemberCredResponse;
 import com._2cha.demo.member.dto.MemberInfoResponse;
-import com._2cha.demo.member.dto.MemberInfoWithCredResponse;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.util.BCryptHashingUtils;
 import com.auth0.jwt.JWT;
@@ -101,21 +101,26 @@ public class AuthService {
 
   public TokenResponse signInWithAccount(SignInWithAccountRequest dto) {
     // email / password
-    MemberInfoWithCredResponse response = memberService.getMemberInfoWithCred(
+    MemberCredResponse response = memberService.getMemberCredByEmail(
         dto.getEmail());
     if (response == null) {
       throw new UnauthorizedException("No such member", "noSuchMember");
     }
 
-    if (response.getPassword() == null)
+    if (response.getPassword() == null) {
       throw new UnauthorizedException("The member has not password. (signed up with OIDC)",
                                       "noPasswordMember");
+    }
 
     if (!BCryptHashingUtils.verify(dto.getPassword(), response.getPassword())) {
       throw new UnauthorizedException("Invalid password", "invalidPassword");
     }
 
-    MemberInfoResponse memberProfile = response.getMemberInfoResponse();
+    MemberInfoResponse memberProfile = new MemberInfoResponse(response.getId(),
+                                                              response.getEmail(),
+                                                              response.getName(),
+                                                              response.getRole());
+
     return issueAccessTokenAndRefreshToken(profile2JwtTokenPayload(memberProfile));
   }
 
@@ -133,8 +138,8 @@ public class AuthService {
     OIDCUserProfile oidcProfile = strategy.authenticate(dto.getCode());
     MemberInfoResponse memberProfile;
     try {
-      memberProfile = memberService.getOIDCMemberInfo(provider,
-                                                      oidcProfile.getId());
+      memberProfile = memberService.getMemberInfoByOidcId(provider,
+                                                          oidcProfile.getId());
     } catch (NoSuchMemberException e) {
       memberProfile = null;
     }
