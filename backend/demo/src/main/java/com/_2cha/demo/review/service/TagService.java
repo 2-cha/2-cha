@@ -33,13 +33,7 @@ public class TagService {
     String queryRegex = this.makeQueryRegex(queryText);
     List<Tag> tags = tagRepository.findTagsByMsgMatchesRegex(queryRegex);
 
-    return tags.stream().map(tag -> {
-      TagWithIdResponse dto = new TagWithIdResponse();
-      dto.setId(tag.getId());
-      dto.setMessage(tag.getMsg());
-      dto.setEmoji(tag.getEmoji());
-      return dto;
-    }).toList();
+    return tags.stream().map(TagWithIdResponse::new).toList();
   }
 
 
