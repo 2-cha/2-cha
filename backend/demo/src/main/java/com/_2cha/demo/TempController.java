@@ -6,7 +6,6 @@ import com._2cha.demo.member.domain.OIDCProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,20 +24,16 @@ public class TempController {
 
   @GetMapping(value = "front/{provider}/callback")
   public String frontCallback(@PathVariable OIDCProvider provider,
-                              @RequestParam String code,
-                              HttpServletResponse response) throws IOException {
-    GoogleOIDCStrategy strategy = new GoogleOIDCStrategy(objectMapper, oidcConfig);
-
+                              @RequestParam String code) {
     return code;
   }
 
   @GetMapping(value = "front/{provider}/login")
   public String front(@PathVariable OIDCProvider provider,
-                      @RequestParam Map<String, String> queries,
                       HttpServletResponse response) throws IOException {
     GoogleOIDCStrategy strategy = new GoogleOIDCStrategy(objectMapper, oidcConfig);
-    response.sendRedirect(strategy.getAuthCode());
-    return "Bye";
+    response.sendRedirect(strategy.getAuthCodeURI());
+    return strategy.getAuthCodeURI();
   }
 }
 
