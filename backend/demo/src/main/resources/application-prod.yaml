@@ -8,28 +8,11 @@ spring:
     import[1]: "aws-parameterstore:/config/demo/prod/db/"
     import[2]: "aws-parameterstore:/config/demo/prod/security/"
     import[3]: "aws-parameterstore:/config/demo/prod/notification/"
-  main:
-    allow-circular-references: true
   jpa:
     hibernate:
-      ddl-auto: update
-      naming:
-        physical-strategy: com._2cha.demo.global.config.UppercaseNamingStrategy
-    open-in-view: false
-  mvc:
-    throw-exception-if-no-handler-found: true
-  web:
-    resources:
-      add-mappings: false
-  jackson:
-    property-naming-strategy: SNAKE_CASE
+      ddl-auto: none
 logging:
   level:
     root: WARN
-    com:
-      _2cha:
-        demo:
-          DemoApplication: INFO
-    RequestLogger: INFO
     ExecutionTimeLogger: DEBUG
     io.awspring.cloud: DEBUG

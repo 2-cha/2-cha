@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchClient } from '@/lib/fetchClient';
 import { Coordinate } from '@/atoms/location';
-import { Place, QueryResponse } from '@/types';
+import { PlaceSearchResult, QueryResponse } from '@/types';
 import { useCurrentLocation } from './location';
 
 async function fetchPlaces({
@@ -17,7 +17,7 @@ async function fetchPlaces({
     max_dist: min_dist + 1000,
     page_size: 10,
   };
-  const { data } = await fetchClient.get<QueryResponse<Place[]>>(
+  const { data } = await fetchClient.get<QueryResponse<PlaceSearchResult[]>>(
     '/places/nearby',
     { params }
   );

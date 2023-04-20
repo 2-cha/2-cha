@@ -5,6 +5,10 @@ import Layout from '@/components/Layout';
 import type { AppProps } from 'next/app';
 import '@/styles/globals.scss';
 
+if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+  require('@/mocks');
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
