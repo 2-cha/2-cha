@@ -1,16 +1,13 @@
 @use 'mixins';
 @use 'components';
-@use 'variables' as var;
+@use 'var';
 
 .header {
+  @extend %header;
   @include mixins.flex(row, flex-start, center);
   gap: var.$p-md;
-  width: 100%;
-  height: 100%;
-  padding: var.$p-md var.$p-lg;
-  border-bottom: 1px solid var(--border-color);
 
   &__title {
-    @extend %reset;
+    @extend %text-lg;
   }
 }

@@ -1,10 +1,10 @@
 import { Fragment } from 'react';
 import Link from 'next/link';
-import { Place } from '@/types';
+import { PlaceSearchResult } from '@/types';
 import s from './PlaceList.module.scss';
 
 interface PlaceListProps {
-  pages: Place[][];
+  pages: PlaceSearchResult[][];
 }
 
 export default function PlaceList({ pages }: PlaceListProps) {
@@ -26,7 +26,7 @@ export default function PlaceList({ pages }: PlaceListProps) {
 }
 
 interface PlaceItemProps {
-  place: Place;
+  place: PlaceSearchResult;
 }
 
 export function PlaceItem({ place }: PlaceItemProps) {

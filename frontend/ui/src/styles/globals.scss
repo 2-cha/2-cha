@@ -1,4 +1,5 @@
 @use 'sanitize';
+@use 'reset';
 @use 'theme';
 
 html,
@@ -21,4 +22,8 @@ ol {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+button {
+  cursor: pointer;
 }

@@ -1,18 +1,26 @@
+import { TagWithCount } from './tag';
+
 export interface Place {
   id: number;
   name: string;
   category: string;
   address: string;
   thumbnail?: string;
+  tags: TagWithCount[];
+}
+
+export interface PlaceSearchResult extends Place {
   distance: number;
 }
-export const placesMockData: Place[] = [
+
+export const placesMockData: PlaceSearchResult[] = [
   {
     id: 1,
     name: '내추럴펭귄와인샵',
     address: '서울 서초구 신반포로23길 30 117호',
     category: 'WINE_BAR',
     distance: 200,
+    tags: [],
   },
   {
     id: 2,
@@ -22,6 +30,7 @@ export const placesMockData: Place[] = [
     distance: 200,
     thumbnail:
       'https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Ffiy_reboot%2Fplace%2F8460AA977B6A4EDF991DC6BDAC46B01A',
+    tags: [],
   },
   {
     id: 3,
@@ -31,6 +40,7 @@ export const placesMockData: Place[] = [
     distance: 200,
     thumbnail:
       'https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Ffiy_reboot%2Fplace%2FFDAD264AF54C487DAC623112CD7CB3BF',
+    tags: [],
   },
   {
     id: 4,
@@ -38,6 +48,7 @@ export const placesMockData: Place[] = [
     address: '서울 서초구 논현로 21 1층',
     category: 'WINE_BAR',
     distance: 200,
+    tags: [],
   },
   {
     id: 5,
@@ -47,6 +58,7 @@ export const placesMockData: Place[] = [
     distance: 200,
     thumbnail:
       'https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocalfiy%2FA71F9ACA872B4849BF02D5BE94CD1FB4',
+    tags: [],
   },
   {
     id: 6,
@@ -56,6 +68,7 @@ export const placesMockData: Place[] = [
     distance: 200,
     thumbnail:
       'https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F63DA209DA08C41F58264B7B847230597',
+    tags: [],
   },
   {
     id: 7,
@@ -65,6 +78,7 @@ export const placesMockData: Place[] = [
     distance: 200,
     thumbnail:
       'https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2F8B54E7BE30474437933F7BF29F827E05',
+    tags: [],
   },
   {
     id: 8,
@@ -74,6 +88,7 @@ export const placesMockData: Place[] = [
     distance: 200,
     thumbnail:
       'https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocalfiy%2Fsearchregister_1518718838',
+    tags: [],
   },
   {
     id: 9,
@@ -83,6 +98,7 @@ export const placesMockData: Place[] = [
     distance: 200,
     thumbnail:
       'https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F471E3B804314403E975D369F547AFA0F',
+    tags: [],
   },
   {
     id: 10,
@@ -92,6 +108,7 @@ export const placesMockData: Place[] = [
     distance: 200,
     thumbnail:
       'https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fcfile%2F197A4D464F5D539004',
+    tags: [],
   },
   {
     id: 11,
@@ -101,6 +118,7 @@ export const placesMockData: Place[] = [
     distance: 200,
     thumbnail:
       'https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F0FFFE5D83B174CB1960EAE5588B98F76',
+    tags: [],
   },
   {
     id: 12,
@@ -110,5 +128,6 @@ export const placesMockData: Place[] = [
     distance: 200,
     thumbnail:
       'https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocalfiy%2F3EF08ADF8A8C46F2888C6F57D6486E84',
+    tags: [],
   },
 ];

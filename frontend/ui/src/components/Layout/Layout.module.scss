@@ -1,8 +1,9 @@
 @use 'mixins';
+@use 'var';
 
 .root {
-  @include mixins.flex(column);
-  min-height: 100vh;
+  @include mixins.flex(column, flex-start, center);
+  position: relative;
 
   @include mixins.media('>small') {
     max-width: map-get(mixins.$breakpoints, small);
@@ -11,8 +12,8 @@
 
   &__content {
     @include mixins.flex(column, flex-start, center);
+    position: relative;
     width: 100%;
-    height: 100%;
-    flex-grow: 1;
+    min-height: calc(100vh - var.$navbar-height);
   }
 }
