@@ -9,6 +9,7 @@ import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
 import com._2cha.demo.place.dto.SortBy;
+import com._2cha.demo.place.repository.PlaceQueryRepository;
 import com._2cha.demo.place.repository.PlaceRepository;
 import com._2cha.demo.review.dto.TagCountResponse;
 import com._2cha.demo.review.service.ReviewService;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PlaceService {
 
   private final PlaceRepository placeRepository;
+  private final PlaceQueryRepository placeQueryRepository;
   private final Integer REVIEW_SUMMARY_SIZE = 3;
 
 
@@ -47,80 +49,54 @@ public class PlaceService {
     }
     return place;
   }
+  /*-----------
+   @ Commands
+   ----------*/
 
-  public PlaceBriefWithDistanceResponse getPlaceBriefWithDistance(Long id, Double lon, Double lat) {
-    Place place = placeRepository.findById(id);
-    if (place == null) {
-      throw new NotFoundException("No place with id " + id, "noSuchPlace");
-    }
-
-    PlaceBriefWithDistanceResponse dto = new PlaceBriefWithDistanceResponse();
-    dto.setId(id);
-    dto.setName(place.getName());
-    dto.setCategory(place.getCategory());
-    dto.setAddress(place.getAddress());
-    dto.setThumbnail(place.getThumbnail());
+  /*-----------
+   @ Queries
+   ----------*/
+  public PlaceBriefWithDistanceResponse getPlaceBriefWithDistance(Long placeId, Double lat,
+                                                                  Double lon, Integer summarySize) {
     Point cur = GeomUtils.createPoint(lat, lon);
-    dto.setDistance(cur.distance(place.getLocation()));
+    PlaceBriefWithDistanceResponse brief = placeQueryRepository.getPlaceBriefWithDistance(placeId,
+                                                                                          cur);
+    if (brief == null) throw new NotFoundException("No place with id " + placeId, "noSuchPlace");
 
-    return dto;
+    brief.setTagSummary(reviewService.getReviewTagCountByPlaceId(placeId, summarySize));
+
+    return brief;
   }
 
 
   public PlaceBriefResponse getPlaceBriefById(Long placeId, Integer summarySize) {
-    Place place = placeRepository.findById(placeId);
-    if (place == null) {
-      throw new NotFoundException("No place with id " + placeId, "noSuchPlace");
-    }
 
-    PlaceBriefResponse dto = new PlaceBriefResponse();
-    dto.setId(placeId);
-    dto.setName(place.getName());
-    dto.setCategory(place.getCategory());
-    dto.setAddress(place.getAddress());
-    dto.setThumbnail(place.getThumbnail());
-    dto.setTagSummary(reviewService.getReviewTagCountByPlaceId(placeId, summarySize));
+    PlaceBriefResponse brief = placeQueryRepository.getPlaceBriefById(placeId);
+    if (brief == null) throw new NotFoundException("No place with id " + placeId, "noSuchPlace");
 
-    return dto;
+    brief.setTagSummary(reviewService.getReviewTagCountByPlaceId(placeId, summarySize));
+
+    return brief;
   }
 
   public List<PlaceBriefResponse> getPlacesBriefByIdIn(List<Long> placeIds, Integer summarySize) {
-    List<Place> places = placeRepository.findByIdIn(placeIds);
-    List<PlaceBriefResponse> dtos = new ArrayList<>();
-    if (places.isEmpty()) {
-      throw new NotFoundException("No place with id " + placeIds, "noSuchPlace");
-    }
-    Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
-        places.stream().map(place -> place.getId()).toList(), REVIEW_SUMMARY_SIZE);
-    
-    places.forEach(place -> {
-      PlaceBriefResponse dto = new PlaceBriefResponse();
-      dto.setId(place.getId());
-      dto.setName(place.getName());
-      dto.setCategory(place.getCategory());
-      dto.setAddress(place.getAddress());
-      dto.setThumbnail(place.getThumbnail());
-      dto.setTagSummary(placesTagCounts.get(place.getId()));
-      dtos.add(dto);
-    });
+    List<PlaceBriefResponse> briefs = placeQueryRepository.getPlacesBriefsByIdIn(placeIds);
 
-    return dtos;
+    Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
+        briefs.stream().map(place -> place.getId()).toList(), summarySize);
+
+    briefs.forEach(brief -> brief.setTagSummary(placesTagCounts.get(brief.getId())));
+
+    return briefs;
   }
 
   public PlaceDetailResponse getPlaceDetailById(Long id) {
-    Place place = placeRepository.findById(id);
-    if (place == null) {
-      throw new NotFoundException("No place with id " + id, "noSuchPlace");
-    }
-    PlaceDetailResponse dto = new PlaceDetailResponse();
-    dto.setId(id);
-    dto.setName(place.getName());
-    dto.setCategory(place.getCategory());
-    dto.setAddress(place.getAddress());
-    dto.setThumbnail(place.getThumbnail());
-    dto.setTags(reviewService.getReviewTagCountByPlaceId(id, null));
+    PlaceDetailResponse detail = placeQueryRepository.getPlaceDetailById(id);
+    if (detail == null) throw new NotFoundException("No place with id " + id, "noSuchPlace");
 
-    return dto;
+    detail.setTags(reviewService.getReviewTagCountByPlaceId(id, null));
+
+    return detail;
   }
 
   public List<PlaceBriefWithDistanceResponse>
@@ -144,9 +120,10 @@ public class PlaceService {
         convertedFilterValues.add(converted);
       }
     }
-    List<Object[]> placesWithDist = placeRepository.findAround(lat, lon, minDist, maxDist, pageSize,
-                                                               sortBy, filterBy,
-                                                               convertedFilterValues);
+    List<Object[]> placesWithDist = placeQueryRepository.findAround(lat, lon, minDist, maxDist,
+                                                                    pageSize,
+                                                                    sortBy, filterBy,
+                                                                    convertedFilterValues);
     List<Place> places = new ArrayList<>();
     List<Double> distances = new ArrayList<>();
 
@@ -159,17 +136,10 @@ public class PlaceService {
         places.stream().map(place -> place.getId()).toList(), REVIEW_SUMMARY_SIZE);
 
     return placesWithDist.stream().map((placeWithDist) -> {
-      PlaceBriefWithDistanceResponse brief = new PlaceBriefWithDistanceResponse();
       Place place = (Place) placeWithDist[0];
       Double distGap = (Double) placeWithDist[1];
-
-      brief.setId(place.getId());
-      brief.setName(place.getName());
-      brief.setCategory(place.getCategory());
-      brief.setAddress(place.getAddress());
-      brief.setThumbnail(place.getThumbnail());
+      PlaceBriefWithDistanceResponse brief = new PlaceBriefWithDistanceResponse(place, distGap);
       brief.setTagSummary(placesTagCounts.get(place.getId()));
-      brief.setDistance(distGap);
       return brief;
     }).toList();
   }
