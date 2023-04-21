@@ -6,10 +6,10 @@ export interface Region {
   region_type: string;
   code: string;
   address_name: string;
-  region_1depth_name: string;
-  region_2depth_name: string;
-  region_3depth_name: string;
-  region_4depth_name: string;
+  region_1depth_name: string; // 시도 단위
+  region_2depth_name: string; // 구 단위
+  region_3depth_name: string; // 동 단위
+  region_4depth_name: string; // 리 단위
   x: number;
   y: number;
 }
