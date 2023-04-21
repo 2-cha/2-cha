@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 const LOCATION_KEY = 'location';
 
-async function getCurrentPosition(timeout = 5000) {
+async function getCurrentPosition(timeout = 10000) {
   return Promise.race<Promise<GeolocationPosition>[]>([
     new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject);
