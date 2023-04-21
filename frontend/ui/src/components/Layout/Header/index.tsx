@@ -1,11 +1,11 @@
 import { useCurrentLocation } from '@/hooks/location';
-import { useRegion } from '@/hooks/region';
+import { useRegionQuery } from '@/hooks/region';
 import LocationIcon from '@/components/Icons/LocationIcon';
 import s from './Header.module.scss';
 
 export default function Header() {
-  const { refresh, isLoading, isError } = useCurrentLocation();
-  const { data: region } = useRegion();
+  const { refresh, location, isLoading, isError } = useCurrentLocation();
+  const { data: region } = useRegionQuery(location);
 
   if (isError) {
     // TODO: 에러 처리
