@@ -2,7 +2,18 @@ import { rest } from 'msw';
 
 export const kakaoHandlers = [
   rest.get('/api/region', (req, res, ctx) => {
-    const { lon, lat } = req.params;
+    const params = req.url.searchParams;
+    const lat = params.get('lat');
+    const lon = params.get('lon');
+
+    if (!lat || !lon) {
+      return res(
+        ctx.status(400),
+        ctx.json({
+          error: 'lat and lon are required',
+        })
+      );
+    }
 
     return res(
       ctx.status(200),
@@ -20,7 +31,7 @@ export const kakaoHandlers = [
     );
   }),
   rest.get('api/address', (req, res, ctx) => {
-    const { query } = req.params;
+    const query = req.url.searchParams.get('query');
 
     if (!query) {
       return res(

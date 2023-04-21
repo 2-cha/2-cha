@@ -12,7 +12,7 @@ let id = 0;
 
 export const serverHandlers = [
   rest.get(`${BASE_URL}/places/nearby`, (req, res, ctx) => {
-    const { min_dist } = req.params;
+    const min_dist = req.url.searchParams.get('min_dist');
 
     return res(
       ctx.status(200),
@@ -28,7 +28,7 @@ export const serverHandlers = [
     );
   }),
   rest.get(`${BASE_URL}/places/:placeId`, (req, res, ctx) => {
-    const { placeId } = req.params;
+    const placeId = req.url.searchParams.get('placeId');
 
     return res(
       ctx.status(200),
