@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import { useCurrentLocation } from './location';
 import { Coordinate } from '@/atoms/location';
 import { Region } from '@/pages/api/region';
 
@@ -12,11 +11,11 @@ async function fetchRegion(location: Coordinate) {
   return data;
 }
 
-export function useRegion() {
-  const { location } = useCurrentLocation();
+export function useRegionQuery(location: Coordinate | null) {
   const result = useQuery({
     queryKey: ['region', location],
     queryFn: () => fetchRegion(location!),
+    staleTime: 1000 * 60 * 60 * 24,
     enabled: !!location,
   });
 

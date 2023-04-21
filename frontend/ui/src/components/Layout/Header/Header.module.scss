@@ -2,6 +2,11 @@
 @use 'components';
 @use 'var';
 
+.root {
+  @include mixins.flex(column, flex-start, center);
+  width: 100%;
+}
+
 .header {
   @extend %header;
   @include mixins.flex(row, flex-start, center);
@@ -9,5 +14,51 @@
 
   &__title {
     @extend %text-lg;
+  }
+
+  &__button {
+    background-color: inherit;
+    color: inherit;
+
+    &:hover,
+    &:active {
+      color: var(--text-active-color);
+    }
+  }
+}
+
+.searchForm {
+  @include mixins.flex(row, flex-start, center);
+  width: 100%;
+  gap: var.$p-md;
+
+  &__input {
+    width: 100%;
+    padding: var.$p-md var.$p-lg;
+    background-color: var(--background-inactive-color);
+    color: inherit;
+    border: 0;
+  }
+
+  &__button {
+    padding: var.$p-md var.$p-lg;
+    background-color: inherit;
+    color: inherit;
+    border: 0;
+  }
+}
+
+.addressList {
+  @include mixins.flex(column, flex-start, flex-start);
+  width: 100%;
+  border-bottom: 0.5px solid var(--border-color);
+
+  & > li {
+    width: 100%;
+    padding: var.$p-md var.$p-lg;
+    & > button {
+      background-color: inherit;
+      color: inherit;
+    }
   }
 }

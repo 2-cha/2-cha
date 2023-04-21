@@ -2,23 +2,22 @@ import { NextRequest } from 'next/server';
 
 const KAKAO_API_URL = 'https://dapi.kakao.com';
 
-export interface Region {
-  region_type: string;
-  code: string;
+export interface Address {
   address_name: string;
-  region_1depth_name: string; // 시도 단위
-  region_2depth_name: string; // 구 단위
-  region_3depth_name: string; // 동 단위
-  region_4depth_name: string; // 리 단위
-  x: number;
-  y: number;
+  address_type: string; // 'REGION' | 'ROAD' | 'REGION_ADDR' | 'ROAD_ADDR'
+  x: string;
+  y: string;
+  address: unknown;
+  road_address: unknown;
 }
 
-interface RegionResponse {
+interface AddressResponse {
+  documents: Address[];
   meta: {
+    is_end: boolean;
+    pageable_count: number;
     total_count: number;
   };
-  documents: Region[];
 }
 
 export const config = {
@@ -29,11 +28,10 @@ export default async function handler(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const params = new URLSearchParams({
-      x: searchParams.get('lon') as string,
-      y: searchParams.get('lat') as string,
+      query: searchParams.get('query') || '',
     });
     const response = await fetch(
-      `${KAKAO_API_URL}/v2/local/geo/coord2regioncode.json?${params.toString()}`,
+      `${KAKAO_API_URL}/v2/local/search/address.json?${params.toString()}`,
       {
         headers: {
           Authorization: `KakaoAK ${process.env.KAKAO_REST_API_KEY}`,
@@ -45,12 +43,8 @@ export default async function handler(req: NextRequest) {
       return response;
     }
 
-    const data: RegionResponse = await response.json();
-    if (data.meta.total_count === 0) {
-      return new Response('No region found', { status: 404 });
-    }
-
-    return new Response(JSON.stringify(data.documents[0]), {
+    const data: AddressResponse = await response.json();
+    return new Response(JSON.stringify(data.documents), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
