@@ -1,0 +1,21 @@
+@mixin box-shadow($direction: bottom, $size: 16px, $color: rgba(0, 0, 0, 0.1)) {
+  $offset-x: 0;
+  $offset-y: $size;
+  $blur-radius: $size * 2;
+  $spread-radius: $size * -1;
+
+  @if $direction == top {
+    $offset-x: 0;
+    $offset-y: $size * -1;
+  } @else if $direction == bottom {
+    $offset-x: 0;
+    $offset-y: $size;
+  } @else if $direction == left {
+    $offset-x: $size * -1;
+    $offset-y: 0;
+  } @else if $direction == right {
+    $offset-x: $size;
+    $offset-y: 0;
+  }
+  box-shadow: $offset-x $offset-y $blur-radius $spread-radius $color;
+}
