@@ -47,7 +47,8 @@ dependencies {
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
     implementation "com.querydsl:querydsl-sql-spatial:5.0.0"
 
-    developmentOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'org.orbisgis:h2gis:2.1.0'
     testImplementation 'com.h2database:h2'
     testImplementation 'org.orbisgis:h2gis:2.1.0'
 }
