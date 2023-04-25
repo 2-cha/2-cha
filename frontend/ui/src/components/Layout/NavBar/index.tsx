@@ -1,12 +1,16 @@
 import Link from 'next/link';
+import PlaceIcon from '@/components/Icons/PlaceIcon';
+import HashIcon from '@/components/Icons/HashIcon';
+import BookmarkIcon from '@/components/Icons/BookmarkIcon';
+import UserIcon from '@/components/Icons/UserIcon';
 import cn from 'classnames';
 import s from './NavBar.module.scss';
 
 const sections = [
-  { name: 'places', path: '/places' },
-  { name: 'reviews', path: '/reviews' },
-  { name: 'search', path: '/search' },
-  { name: 'profile', path: '/profile' },
+  { name: 'places', path: '/places', Icon: PlaceIcon },
+  { name: 'reviews', path: '/reviews', Icon: HashIcon },
+  { name: 'bookmark', path: '/bookmark', Icon: BookmarkIcon },
+  { name: 'profile', path: '/profile', Icon: UserIcon },
 ];
 
 interface NavBarProps {
@@ -22,6 +26,7 @@ export default function NavBar({ currentSection }: NavBarProps) {
           url={section.path}
           isActive={currentSection === section.name}
         >
+          <section.Icon isActive={currentSection === section.name} />
           {section.name}
         </NavItem>
       ))}
