@@ -26,6 +26,7 @@ public class ReviewResponse {
     review.getImages().forEach(img -> this.images.add(img.getUrl()));
     review.getTags().forEach(tag -> this.tags.add(new TagResponse(tag)));
 
+    this.id = review.getId();
     this.member = member;
     this.place = place;
   }
