@@ -1,6 +1,10 @@
 package com._2cha.demo.review.dto;
 
+import com._2cha.demo.member.dto.MemberProfileResponse;
+import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.review.domain.Review;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -9,14 +13,20 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class ReviewResponse {
+@JsonInclude(Include.NON_NULL)
+public class ReviewResponse {
 
   private Long id;
   private List<TagResponse> tags = new ArrayList<>();
   private List<String> images = new ArrayList<>();
+  private MemberProfileResponse member;
+  private PlaceBriefResponse place;
 
-  public ReviewResponse(Review review) {
-    review.getImages().forEach(img -> images.add(img.getUrl()));
-    review.getTags().forEach(tag -> tags.add(new TagResponse(tag)));
+  public ReviewResponse(Review review, MemberProfileResponse member, PlaceBriefResponse place) {
+    review.getImages().forEach(img -> this.images.add(img.getUrl()));
+    review.getTags().forEach(tag -> this.tags.add(new TagResponse(tag)));
+
+    this.member = member;
+    this.place = place;
   }
 }
