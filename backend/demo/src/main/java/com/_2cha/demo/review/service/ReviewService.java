@@ -53,7 +53,6 @@ public class ReviewService {
 
   public List<Review> findReviewsByIdInPreservingOrder(List<Long> ids) {
     List<Review> reviews = reviewRepository.findReviewsByIdIn(ids);
-
     // keep same order as requested
     return getOrderedReviews(ids, reviews);
   }
@@ -62,7 +61,8 @@ public class ReviewService {
     Map<Long, Review> reviewMap = reviews.stream().collect(Collectors.toMap(Review::getId, r -> r));
     List<Review> orderedReviews = new ArrayList<>(reviews.size());
     for (Long id : reviewIds) {
-      orderedReviews.add(reviewMap.get(id));
+      Review review = reviewMap.get(id);
+      if (review != null) {orderedReviews.add(review);}
     }
     return orderedReviews;
   }
