@@ -8,8 +8,7 @@ import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.review.controller.ReviewController;
 import com._2cha.demo.review.domain.Tag;
-import com._2cha.demo.review.dto.MemberReviewResponse;
-import com._2cha.demo.review.dto.PlaceReviewResponse;
+import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.dto.WriteReviewRequest;
 import jakarta.persistence.EntityManager;
 import java.util.Arrays;
@@ -62,30 +61,30 @@ class ReviewTests {
 
   @Test
   void getPlaceReviews() {
-    List<PlaceReviewResponse> place1Reviews = reviewController.getPlaceReviews(1L);
+    List<ReviewResponse> place1Reviews = reviewController.getPlaceReviews(1L);
     assertThat(place1Reviews).extracting("member")
                              .extracting("name")
                              .containsExactly("member1");
 
-    List<PlaceReviewResponse> place2Reviews = reviewController.getPlaceReviews(2L);
+    List<ReviewResponse> place2Reviews = reviewController.getPlaceReviews(2L);
     assertThat(place2Reviews).isEmpty();
   }
 
   @Test
   void getMemberReviews() {
-    List<MemberReviewResponse> member1Reviews = reviewController.getMemberReviews(1L);
+    List<ReviewResponse> member1Reviews = reviewController.getMemberReviews(1L);
     assertThat(member1Reviews).extracting("place")
                               .extracting("name")
                               .containsExactly("히든아워");
 
-    List<MemberReviewResponse> member2Reviews = reviewController.getMemberReviews(2L);
+    List<ReviewResponse> member2Reviews = reviewController.getMemberReviews(2L);
     assertThat(member2Reviews).isEmpty();
   }
 
   @Test
   void deleteReview() {
-    List<MemberReviewResponse> memberReviews;
-    List<PlaceReviewResponse> placeReviews = reviewController.getPlaceReviews(1L);
+    List<ReviewResponse> memberReviews;
+    List<ReviewResponse> placeReviews = reviewController.getPlaceReviews(1L);
 
     assertThat(placeReviews).extracting("member")
                             .extracting("name")
