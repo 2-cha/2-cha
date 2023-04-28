@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com._2cha.demo.collection.controller.CollectionController;
 import com._2cha.demo.collection.domain.Collection;
-import com._2cha.demo.collection.domain.ReviewInCollection;
 import com._2cha.demo.collection.dto.CollectionCreateRequest;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
 import com._2cha.demo.collection.dto.CollectionRemovedResponse;
@@ -19,10 +18,7 @@ import com._2cha.demo.global.exception.ForbiddenException;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
-import com._2cha.demo.place.dto.PlaceBriefResponse;
-import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.domain.Tag;
-import com._2cha.demo.review.dto.MemberReviewResponse;
 import com._2cha.demo.review.service.ReviewService;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -314,15 +310,7 @@ public class CollectionTests {
     reviewIds.clear();
     reviewIds = coll.getReviews().stream().map(cr -> cr.getReview().getId()).toList();
 
-    List<MemberReviewResponse> reviewResponses = new ArrayList<>();
-    for (ReviewInCollection revInColl : coll.getReviews()) {
-      Review review = revInColl.getReview();
-      MemberReviewResponse reviewResponse = new MemberReviewResponse(review);
-      reviewResponse.setPlace(new PlaceBriefResponse(review.getPlace()));
-      reviewResponses.add(reviewResponse);
-    }
     System.out.println("coll = " + coll);
-    System.out.println(reviewResponses);
     //!=========================================================================================!//
 
     assertThat(coll.getReviews()).extracting("id")
