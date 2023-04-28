@@ -1,12 +1,20 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:test
+    url: jdbc:h2:tcp://localhost/~/demo
     driver-class-name: org.h2.Driver
     username: sa
   jpa:
     hibernate:
       ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        show_sql: true
+
 cors.origins:
   - /**
 jwt.key: test
 jwt.issuer: http://2cha.test
+logging.level:
+  org.hibernate.orm.jdbc.bind: trace

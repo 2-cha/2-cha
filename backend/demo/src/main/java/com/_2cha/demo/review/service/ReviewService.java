@@ -48,6 +48,10 @@ public class ReviewService {
     this.placeService = placeService;
   }
 
+  public List<Review> findReviewsByIdIn(List<Long> ids) {
+    return reviewRepository.findReviewsByIdIn(ids);
+  }
+
   /*-----------
    @ Commands
    ----------*/

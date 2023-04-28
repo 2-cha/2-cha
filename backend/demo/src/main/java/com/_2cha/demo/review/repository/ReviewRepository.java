@@ -11,6 +11,8 @@ public interface ReviewRepository extends Repository<Review, Long> {
 
   Review findReviewById(Long id);
 
+  List<Review> findReviewsByIdIn(List<Long> ids);
+
   List<Review> findReviewsByMemberId(Long memberId);
 
   List<Review> findReviewsByPlaceId(Long placeId);
