@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,22 @@ public class ReviewService {
   @Autowired
   public void setPlaceService(PlaceService placeService) {
     this.placeService = placeService;
+  }
+
+  public List<Review> findReviewsByIdInPreservingOrder(List<Long> ids) {
+    List<Review> reviews = reviewRepository.findReviewsByIdIn(ids);
+    // keep same order as requested
+    return getOrderedReviews(ids, reviews);
+  }
+
+  private List<Review> getOrderedReviews(List<Long> reviewIds, List<Review> reviews) {
+    Map<Long, Review> reviewMap = reviews.stream().collect(Collectors.toMap(Review::getId, r -> r));
+    List<Review> orderedReviews = new ArrayList<>(reviews.size());
+    for (Long id : reviewIds) {
+      Review review = reviewMap.get(id);
+      if (review != null) {orderedReviews.add(review);}
+    }
+    return orderedReviews;
   }
 
   /*-----------
@@ -80,6 +97,37 @@ public class ReviewService {
   /*-----------
    @ Queries
    ----------*/
+  public List<ReviewResponse> getReviewsByIdInPreservingOrder(List<Long> reviewIds) {
+    List<Review> reviews = this.findReviewsByIdInPreservingOrder(reviewIds);
+    if (reviews.isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    Set<Long> placeIds = reviews.stream().map(review -> review.getPlace().getId()).collect(toSet());
+    Set<Long> memberIds = reviews.stream().map(review -> review.getMember().getId())
+                                 .collect(toSet());
+    Map<Long, PlaceBriefResponse> placeMap = placeService.getPlacesBriefByIdIn(
+                                                             placeIds.stream().toList(),
+                                                             SUMMARY_SIZE)
+                                                         .stream()
+                                                         .collect(
+                                                             toMap(PlaceBriefResponse::getId,
+                                                                   p -> p
+                                                                  ));
+    Map<Long, MemberProfileResponse> memberMap = memberService.getMemberProfileByIdIn(
+                                                                  memberIds.stream().toList())
+                                                              .stream()
+                                                              .collect(
+                                                                  toMap(
+                                                                      MemberProfileResponse::getId,
+                                                                      m -> m));
+    return reviews.stream().map(review -> new ReviewResponse(review,
+                                                             memberMap.get(
+                                                                 review.getMember().getId()),
+                                                             placeMap.get(review.getPlace().getId())
+
+    )).toList();
+  }
 
   public List<ReviewResponse> getReviewsByMemberId(Long memberId) {
     List<Review> reviews = reviewRepository.findReviewsByMemberId(memberId);
