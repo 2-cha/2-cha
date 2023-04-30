@@ -39,11 +39,6 @@ public class ReviewInCollection {
   public static @Nullable ReviewInCollection createReviewInCollection(Member member,
                                                                       Collection collection,
                                                                       Review review) {
-
-    //TODO: to service layer (could be MSA)
-    if (member != collection.getMember() ||
-        member != review.getMember()) {return null;}
-
     ReviewInCollection r = new ReviewInCollection();
     r.member = member;
     r.collection = collection;

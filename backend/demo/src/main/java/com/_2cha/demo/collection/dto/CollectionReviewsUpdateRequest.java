@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class CollectionUpdateReviewRequest {
+public class CollectionReviewsUpdateRequest {
 
   @NotEmpty
   private List<Long> reviewIds;

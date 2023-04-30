@@ -4,16 +4,19 @@ import com._2cha.demo.collection.domain.Collection;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
 import com._2cha.demo.collection.dto.CollectionRemovedResponse;
 import com._2cha.demo.collection.dto.CollectionReviewsResponse;
+import com._2cha.demo.collection.dto.CollectionReviewsUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionViewResponse;
 import com._2cha.demo.collection.repository.CollectionQueryRepository;
 import com._2cha.demo.collection.repository.CollectionRepository;
 import com._2cha.demo.collection.repository.ReviewInCollectionRepository;
+import com._2cha.demo.global.exception.BadRequestException;
 import com._2cha.demo.global.exception.ForbiddenException;
 import com._2cha.demo.global.exception.NotFoundException;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.review.domain.Review;
+import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.service.ReviewService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -41,11 +44,18 @@ public class CollectionService {
     return memberCollections;
   }
 
-  //TODO
   @Transactional(readOnly = true)
   public CollectionReviewsResponse getCollectionDetail(Long memberId, Long collId) {
-    // member check
-    return collectionQueryRepository.getCollectionDetail(collId);
+    Collection collection = collectionRepository.findCollectionById(collId);
+    if (collection == null) {
+      throw new NotFoundException("No collection with such id.", "noSuchCollection");
+    }
+    List<Long> reviewIds = collection.getReviews()
+                                     .stream()
+                                     .map(revInColl -> revInColl.getReview().getId())
+                                     .toList();
+    List<ReviewResponse> reviews = reviewService.getReviewsByIdInPreservingOrder(reviewIds);
+    return new CollectionReviewsResponse(collection, reviews);
   }
 
 
@@ -56,7 +66,10 @@ public class CollectionService {
                                                     String description, String thumbnail,
                                                     List<Long> reviewIds) {
     Member member = memberService.findById(memberId);
-    List<Review> reviews = reviewService.findReviewsByIdIn(reviewIds);
+    List<Review> reviews = reviewService.findReviewsByIdInPreservingOrder(reviewIds);
+    if (reviews.size() != reviewIds.size()) {
+      throw new BadRequestException("Invalid id was included.", "invalidIdIncluded");
+    }
     for (Review review : reviews) {
       if (!review.getMember().getId().equals(memberId)) {
         throw new ForbiddenException("Cannot create collection with other member's review.");
@@ -102,10 +115,11 @@ public class CollectionService {
     if (thumbnail != null) collection.updateThumbnail(thumbnail);
     if (exposure != null) collection.toggleExposure(exposure);
 
-    return new CollectionUpdatedResponse(); //TODO: DTO
+    return new CollectionUpdatedResponse(collection);
   }
 
-  public CollectionUpdatedResponse updateReviews(Long memberId, Long collId, List<Long> reviewIds) {
+  public CollectionReviewsUpdatedResponse updateReviews(Long memberId, Long collId,
+                                                        List<Long> reviewIds) {
     Collection collection = collectionRepository.findCollectionById(collId);
     if (collection == null) {
       throw new NotFoundException("No collection with such id.", "noSuchCollection");
@@ -115,7 +129,11 @@ public class CollectionService {
       throw new ForbiddenException("Cannot update other member's collection.");
     }
 
-    List<Review> reviews = reviewService.findReviewsByIdIn(reviewIds);
+    List<Review> reviews = reviewService.findReviewsByIdInPreservingOrder(reviewIds);
+    if (reviews.size() != reviewIds.size()) {
+      throw new BadRequestException("Invalid id was included.", "invalidIdIncluded");
+    }
+
     for (Review review : reviews) {
       if (!review.getMember().getId().equals(memberId)) {
         throw new ForbiddenException("Cannot create collection with other member's review.");
@@ -124,6 +142,6 @@ public class CollectionService {
 
     collection.updateReviews(reviews);
 
-    return new CollectionUpdatedResponse();
+    return new CollectionReviewsUpdatedResponse(collection);
   }
 }

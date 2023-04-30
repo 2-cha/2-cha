@@ -4,12 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com._2cha.demo.collection.controller.CollectionController;
-import com._2cha.demo.collection.domain.Collection;
 import com._2cha.demo.collection.dto.CollectionCreateRequest;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
 import com._2cha.demo.collection.dto.CollectionRemovedResponse;
+import com._2cha.demo.collection.dto.CollectionReviewsResponse;
+import com._2cha.demo.collection.dto.CollectionReviewsUpdateRequest;
+import com._2cha.demo.collection.dto.CollectionReviewsUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionUpdateRequest;
-import com._2cha.demo.collection.dto.CollectionUpdateReviewRequest;
 import com._2cha.demo.collection.dto.CollectionUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionViewResponse;
 import com._2cha.demo.collection.repository.CollectionQueryRepository;
@@ -130,6 +131,13 @@ public class CollectionTests {
     assertThatThrownBy(
         () -> sendCreateRequest(1L, reviewIds, "title", "description", "http://dummy.img"))
         .isInstanceOf(BadRequestException.class);
+
+    //fail with invalid reviews
+    reviewIds.clear();
+    reviewIds.add(999L);
+    assertThatThrownBy(
+        () -> sendCreateRequest(1L, reviewIds, "title", "description", "http://dummy.img"))
+        .isInstanceOf(BadRequestException.class);
   }
 
   @Test
@@ -162,8 +170,6 @@ public class CollectionTests {
     assertThat(memberCollections).extracting("title").containsExactly("New Collection");
     assertThat(memberCollections).extracting("description").containsExactly(" ");
     assertThat(memberCollections).extracting("thumbnail").containsExactly("https://dummy.img");
-
-    //TODO: fail
   }
 
   @Test
@@ -181,8 +187,6 @@ public class CollectionTests {
     assertThat(memberCollections).extracting("title").containsExactly("Test Collection");
     assertThat(memberCollections).extracting("description").containsExactly("Short Description");
     assertThat(memberCollections).extracting("thumbnail").containsExactly("https://dummy.img");
-
-    //TODO: fail
   }
 
   @Test
@@ -200,8 +204,6 @@ public class CollectionTests {
     assertThat(memberCollections).extracting("title").containsExactly("Test Collection");
     assertThat(memberCollections).extracting("description").containsExactly(" ");
     assertThat(memberCollections).extracting("thumbnail").containsExactly("https://new.img");
-
-    //TODO: fail
   }
 
   @Test
@@ -222,8 +224,6 @@ public class CollectionTests {
     assertThat(memberCollections).extracting("title").containsExactly("Test Collection");
     assertThat(memberCollections).extracting("description").containsExactly(" ");
     assertThat(memberCollections).extracting("thumbnail").containsExactly("https://dummy.img");
-
-    //TODO: fail
   }
 
   @Test
@@ -280,44 +280,32 @@ public class CollectionTests {
     assertThat(memberCollections).hasSize(1);
   }
 
-  //TODO
+
   @Test
   void updateReviewsTest() {
     final SessionImplementor session = em.unwrap(SessionImplementor.class);
     final PersistenceContext pc = session.getPersistenceContext();
 
-    em.flush();
     List<Long> reviewIds = new ArrayList<>();
     reviewIds.add(1L);
     reviewIds.add(3L);
     sendCreateRequest(1L, reviewIds, "Member1 Collection", " ", "https://dummy.img");
 
-//    CollectionReviewsResponse collection1;
-//    collection1 = collectionController.getCollectionDetail(1L, 1L);
-
-    //!=========================================================================================!//
-
-    em.flush();
-    em.clear();
-    Collection coll = em.createQuery(
-                            "select c from Collection c "
-                            + "join fetch c.reviews cr "
-                            + "join fetch cr.review r where c.id = :collId ",
-                            Collection.class)
-                        .setParameter("collId", 1L)
-                        .getSingleResult();
+    CollectionReviewsResponse collection1 = collectionController.getCollectionDetail(1L, 1L);
+    assertThat(collection1.getReviews()).extracting("id")
+                                        .containsExactly(1L, 3L);
 
     reviewIds.clear();
-    reviewIds = coll.getReviews().stream().map(cr -> cr.getReview().getId()).toList();
+    reviewIds.add(2L);
+    reviewIds.add(1L);
+    sendUpdateReviewsRequest(1L, 1L, reviewIds);
 
-    System.out.println("coll = " + coll);
-    //!=========================================================================================!//
-
-    assertThat(coll.getReviews()).extracting("id")
-                                 .containsExactly(1L, 3L);
+    collection1 = collectionController.getCollectionDetail(1L, 1L);
+    assertThat(collection1.getReviews()).extracting("id")
+                                        .containsExactly(2L, 1L);
   }
 
-  //TODO
+
   @Test
   void updateReviewsFail() {
     List<Long> reviewIds = new ArrayList<>();
@@ -325,17 +313,25 @@ public class CollectionTests {
     reviewIds.add(3L);
     sendCreateRequest(1L, reviewIds, "Member1 Collection", " ", "https://dummy.img");
 
-    List<CollectionViewResponse> memberCollections;
-    memberCollections = collectionController.getMemberCollections(1L);
-    assertThat(memberCollections).extracting("id")
-                                 .containsExactly(1L, 3L);
+    CollectionReviewsResponse collection1 = collectionController.getCollectionDetail(1L, 1L);
+    assertThat(collection1.getReviews()).extracting("id")
+                                        .containsExactly(1L, 3L);
 
-    reviewIds.add(2L);
-    reviewIds.remove(1L);
-    sendUpdateReviewsRequest(1L, 1L, reviewIds);
-    memberCollections = collectionController.getMemberCollections(1L);
-    assertThat(memberCollections).extracting("id")
-                                 .containsExactly(2L, 3L);
+    // other member's review
+    reviewIds.clear();
+    reviewIds.add(4L);
+    assertThatThrownBy(() -> sendUpdateReviewsRequest(1L, 1L, reviewIds))
+        .isInstanceOf(ForbiddenException.class);
+
+    // empty reviews
+    reviewIds.clear();
+    assertThatThrownBy(() -> sendUpdateReviewsRequest(1L, 1L, reviewIds))
+        .isInstanceOf(BadRequestException.class);
+
+    // invalid review id
+    reviewIds.add(99L);
+    assertThatThrownBy(() -> sendUpdateReviewsRequest(1L, 1L, reviewIds))
+        .isInstanceOf(BadRequestException.class);
   }
 
 
@@ -378,10 +374,14 @@ public class CollectionTests {
   }
 
 
-  public CollectionUpdatedResponse sendUpdateReviewsRequest(Long memberId, Long collId,
-                                                            List<Long> reviewIds) {
-    CollectionUpdateReviewRequest request = new CollectionUpdateReviewRequest();
+  public CollectionReviewsUpdatedResponse sendUpdateReviewsRequest(Long memberId, Long collId,
+                                                                   List<Long> reviewIds) {
+    CollectionReviewsUpdateRequest request = new CollectionReviewsUpdateRequest();
     request.setReviewIds(reviewIds);
+
+    Set<ConstraintViolation<CollectionReviewsUpdateRequest>> violations = validator.validate(
+        request);
+    if (!violations.isEmpty()) throw new BadRequestException("");
 
     return collectionController.updateReviews(memberId, collId, request);
   }

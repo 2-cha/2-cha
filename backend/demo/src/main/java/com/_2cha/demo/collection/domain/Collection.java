@@ -14,6 +14,7 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter
@@ -34,6 +35,7 @@ public class Collection {
   @Column(nullable = false)
   private String thumbnail;
 
+  @BatchSize(size = 100)
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "collection", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ReviewInCollection> reviews = new ArrayList<>();
 

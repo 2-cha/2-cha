@@ -4,8 +4,9 @@ import com._2cha.demo.collection.dto.CollectionCreateRequest;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
 import com._2cha.demo.collection.dto.CollectionRemovedResponse;
 import com._2cha.demo.collection.dto.CollectionReviewsResponse;
+import com._2cha.demo.collection.dto.CollectionReviewsUpdateRequest;
+import com._2cha.demo.collection.dto.CollectionReviewsUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionUpdateRequest;
-import com._2cha.demo.collection.dto.CollectionUpdateReviewRequest;
 import com._2cha.demo.collection.dto.CollectionUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionViewResponse;
 import com._2cha.demo.collection.service.CollectionService;
@@ -78,8 +79,9 @@ public class CollectionController {
 
   @Auth
   @PutMapping("/collections/{collId}/reviews")
-  public CollectionUpdatedResponse updateReviews(@Authed Long memberId, @PathVariable Long collId,
-                                                 @RequestBody @Valid CollectionUpdateReviewRequest dto) {
+  public CollectionReviewsUpdatedResponse updateReviews(@Authed Long memberId,
+                                                        @PathVariable Long collId,
+                                                        @RequestBody @Valid CollectionReviewsUpdateRequest dto) {
     return collectionService.updateReviews(memberId, collId, dto.getReviewIds());
   }
 }
