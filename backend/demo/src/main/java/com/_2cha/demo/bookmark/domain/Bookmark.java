@@ -4,7 +4,9 @@ import com._2cha.demo.collection.domain.Collection;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.review.domain.Review;
+import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Converter;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
@@ -14,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 
 @Entity
@@ -29,8 +32,14 @@ public abstract class Bookmark {
   @JoinColumn(name = "MEMBER_ID")
   private Member member;
 
+  @Lob
   @Column(nullable = false)
   protected String thumbnail;
+
+
+  @Column(name = "ITEM_TYPE", nullable = false, insertable = false, updatable = false)
+//  @Convert(converter = ItemTypeConverter.class)
+  private ItemType itemType;
 
 
   public Long getId() {
@@ -61,4 +70,20 @@ public abstract class Bookmark {
   public String getThumbnail() {return this.thumbnail;}
 
   public abstract Object getItem();
+
+
+  @Converter
+  public static class ItemTypeConverter
+      implements AttributeConverter<ItemType, String> {
+
+    @Override
+    public String convertToDatabaseColumn(ItemType attribute) {
+      return attribute.value;
+    }
+
+    @Override
+    public ItemType convertToEntityAttribute(String dbData) {
+      return ItemType.fromValue(dbData);
+    }
+  }
 }

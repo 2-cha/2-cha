@@ -9,6 +9,15 @@ public enum ItemType {
     this.value = value;
   }
 
+  public static ItemType fromValue(String value) {
+    return switch (value) {
+      case Values.REVIEW -> REVIEW;
+      case Values.COLLECTION -> COLLECTION;
+      case Values.PLACE -> PLACE;
+      default -> null;
+    };
+  }
+
   public static class Values {
 
     public static final String REVIEW = "R";
