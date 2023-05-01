@@ -5,10 +5,12 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 
@@ -99,11 +102,50 @@ public class ApiErrorAdvice extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler
+  public ResponseEntity<ApiError> handleSqlException(HttpServletRequest request,
+                                                     DataAccessException e) {
+    ApiError apiError = new ApiError(e);
+
+    boolean unhandled = false;
+    if (e.getRootCause() instanceof SQLException sqlException) {
+      switch (sqlException.getSQLState()) {
+        case "23505": {
+          apiError.setStatus(HttpStatus.CONFLICT);
+          apiError.setMessage("Resource already exists.");
+          apiError.setCode("alreadyExist");
+          break;
+        }
+        default:
+          unhandled = true;
+      }
+    }
+    if (unhandled) {
+      log.error("[Unhandled SQL Exception] {}", e.getClass().getName(), e);
+      apiError.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+      apiError.setCode("unhandledSqlException");
+      apiError.setMessage("[" + e.getClass().getName() + "]\n-> " + apiError.getMessage());
+    }
+
+    return new ResponseEntity<>(apiError, apiError.getStatus());
+  }
+
+  @ExceptionHandler
   public ResponseEntity<ApiError> handleHttpException(HttpException e) {
 
     ApiError apiError = new ApiError<>(e);
 
     return new ResponseEntity<>(apiError, e.getStatus());
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<ApiError> handleWebclientResponseException(WebClientResponseException e) {
+
+    ApiError apiError = new ApiError<>(e);
+    apiError.setMessage(e.getMessage() + "\n" + e.getResponseBodyAsString());
+    apiError.setStatus(HttpStatus.valueOf(e.getStatusCode().value()));
+    apiError.setCode("apiCallFailed");
+
+    return new ResponseEntity<>(apiError, e.getStatusCode());
   }
 
   @ExceptionHandler
