@@ -4,6 +4,7 @@ package com._2cha.demo.auth.strategy.oidc;
 import com._2cha.demo.auth.config.GoogleOIDCConfig;
 import com._2cha.demo.auth.dto.OIDCUserProfile;
 import com._2cha.demo.member.domain.OIDCProvider;
+import com._2cha.demo.member.domain.OIDCProvider.Values;
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,17 +16,17 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.BodyInserters.FormInserter;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
-@Slf4j
+@Component(Values.GOOGLE)
 @RequiredArgsConstructor
 public class GoogleOIDCStrategy implements OIDCStrategy {
 
