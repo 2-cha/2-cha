@@ -44,6 +44,18 @@ public class MemberQueryRepository {
                        .fetchOne();
   }
 
+  public List<MemberProfileResponse> getMemberProfileByIdIn(List<Long> ids) {
+    return queryFactory.select(constructor(MemberProfileResponse.class,
+                                           member.id,
+                                           member.name,
+                                           member.profImg,
+                                           member.profMsg
+                                          ))
+                       .from(member)
+                       .where(member.id.in(ids))
+                       .fetch();
+  }
+
   public MemberInfoResponse getMemberInfoById(Long id) {
     return queryFactory.select(constructor(MemberInfoResponse.class,
                                            member.id,

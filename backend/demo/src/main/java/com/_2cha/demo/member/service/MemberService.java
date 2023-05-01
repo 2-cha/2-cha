@@ -135,6 +135,12 @@ public class MemberService {
     return profile;
   }
 
+  public List<MemberProfileResponse> getMemberProfileByIdIn(List<Long> ids) {
+    return memberQueryRepository.getMemberProfileByIdIn(ids);
+  }
+
+  ;
+
   public MemberInfoResponse getMemberInfoById(Long id) {
     MemberInfoResponse memberInfo = memberQueryRepository.getMemberInfoById(id);
     if (memberInfo == null) throw new NoSuchMemberException();

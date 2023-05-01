@@ -2,8 +2,7 @@ package com._2cha.demo.review.controller;
 
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
-import com._2cha.demo.review.dto.MemberReviewResponse;
-import com._2cha.demo.review.dto.PlaceReviewResponse;
+import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.dto.WriteReviewRequest;
 import com._2cha.demo.review.service.ReviewService;
 import jakarta.validation.Valid;
@@ -24,12 +23,12 @@ public class ReviewController {
   private final ReviewService reviewService;
 
   @GetMapping("/places/{placeId}/reviews")
-  public List<PlaceReviewResponse> getPlaceReviews(@PathVariable Long placeId) {
+  public List<ReviewResponse> getPlaceReviews(@PathVariable Long placeId) {
     return reviewService.getReviewsByPlaceId(placeId);
   }
 
   @GetMapping("/members/{memberId}/reviews")
-  public List<MemberReviewResponse> getMemberReviews(@PathVariable Long memberId) {
+  public List<ReviewResponse> getMemberReviews(@PathVariable Long memberId) {
     return reviewService.getReviewsByMemberId(memberId);
   }
 
