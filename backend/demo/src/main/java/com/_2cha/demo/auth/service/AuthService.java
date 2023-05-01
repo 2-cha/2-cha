@@ -3,11 +3,8 @@ package com._2cha.demo.auth.service;
 import com._2cha.demo.auth.config.GoogleOIDCConfig;
 import com._2cha.demo.auth.config.JwtConfig;
 import com._2cha.demo.auth.dto.JwtTokenPayload;
-import com._2cha.demo.auth.dto.OAuth2Request;
 import com._2cha.demo.auth.dto.OIDCUserProfile;
-import com._2cha.demo.auth.dto.SignInWithAccountRequest;
 import com._2cha.demo.auth.dto.TokenResponse;
-import com._2cha.demo.auth.strategy.oidc.GoogleOIDCStrategy;
 import com._2cha.demo.auth.strategy.oidc.OIDCStrategy;
 import com._2cha.demo.global.exception.NoSuchMemberException;
 import com._2cha.demo.global.exception.UnauthorizedException;
@@ -42,9 +39,10 @@ public class AuthService {
   private final JwtConfig jwtConfig;
   private final GoogleOIDCConfig googleOIDCConfig;
 
-
   private final ObjectMapper objectMapper;  //thread-safe
-  private final MemberService memberService; //TODO: use Member Service API
+  private final MemberService memberService;
+
+  private final Map<String, OIDCStrategy> oidcStrategyMap;
 
 
   /**
@@ -53,7 +51,6 @@ public class AuthService {
    * @throws JWTVerificationException
    * @throws JsonProcessingException
    */
-
   public JwtTokenPayload verifyJwt(String token) {
 
     Verification verification = JWT.require(Algorithm.HMAC512(jwtConfig.getKey()));
@@ -91,19 +88,15 @@ public class AuthService {
   public String refreshJwt(String token) {return "TODO";}
 
   public TokenResponse issueAccessTokenAndRefreshToken(JwtTokenPayload payload) {
-    TokenResponse tokens = new TokenResponse();
-    tokens.setAccessToken(issueJwt(payload, jwtConfig.getAccessLifetime()));
-    tokens.setRefreshToken(issueJwt(payload, jwtConfig.getRefreshLifetime()));
-
-    return tokens;
+    return new TokenResponse(issueJwt(payload, jwtConfig.getAccessLifetime()),
+                             issueJwt(payload, jwtConfig.getRefreshLifetime()));
   }
 
 
-  public TokenResponse signInWithAccount(SignInWithAccountRequest dto) {
-    // email / password
+  public TokenResponse signInWithAccount(String email, String password) {
     MemberCredResponse response;
     try {
-      response = memberService.getMemberCredByEmail(dto.getEmail());
+      response = memberService.getMemberCredByEmail(email);
     } catch (NoSuchMemberException e) {
       throw new UnauthorizedException("No such member", "noSuchMember");
     }
@@ -113,7 +106,7 @@ public class AuthService {
                                       "noPasswordMember");
     }
 
-    if (!BCryptHashingUtils.verify(dto.getPassword(), response.getPassword())) {
+    if (!BCryptHashingUtils.verify(password, response.getPassword())) {
       throw new UnauthorizedException("Invalid password", "invalidPassword");
     }
 
@@ -125,18 +118,9 @@ public class AuthService {
     return issueAccessTokenAndRefreshToken(profile2JwtTokenPayload(memberProfile));
   }
 
-  public TokenResponse signInWithOIDC(OIDCProvider provider, OAuth2Request dto) {
-    OIDCStrategy strategy;
-
-    //TODO: factory
-    switch (provider) {
-      case KAKAO:
-      case GOOGLE:
-      default:
-        strategy = new GoogleOIDCStrategy(objectMapper, googleOIDCConfig);
-    }
-
-    OIDCUserProfile oidcProfile = strategy.authenticate(dto.getCode());
+  public TokenResponse signInWithOIDC(OIDCProvider provider, String authCode) {
+    OIDCStrategy strategy = oidcStrategyMap.get(provider.value);
+    OIDCUserProfile oidcProfile = strategy.authenticate(authCode);
     MemberInfoResponse memberProfile;
     try {
       memberProfile = memberService.getMemberInfoByOidcId(provider,
@@ -157,12 +141,12 @@ public class AuthService {
   }
 
   private JwtTokenPayload profile2JwtTokenPayload(MemberInfoResponse memberProfile) {
-    JwtTokenPayload payload = new JwtTokenPayload();
-    payload.setSub(memberProfile.getId());
-    payload.setEmail(memberProfile.getEmail());
-    payload.setName(memberProfile.getName());
-    payload.setRole(memberProfile.getRole());
-    return payload;
+    return new JwtTokenPayload(
+        memberProfile.getId(),
+        memberProfile.getEmail(),
+        memberProfile.getName(),
+        memberProfile.getRole()
+    );
   }
 }
 
