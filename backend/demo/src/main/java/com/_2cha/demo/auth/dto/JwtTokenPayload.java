@@ -7,8 +7,15 @@ import lombok.Data;
 @Data
 public class JwtTokenPayload {
 
-  Long sub;
-  String name;
-  String email;
-  Role role;
+  private Long sub;
+  private String name;
+  private String email;
+  private Role role;
+
+  public JwtTokenPayload(Long sub, String email, String name, Role role) {
+    this.sub = sub;
+    this.name = name;
+    this.email = email;
+    this.role = role;
+  }
 }

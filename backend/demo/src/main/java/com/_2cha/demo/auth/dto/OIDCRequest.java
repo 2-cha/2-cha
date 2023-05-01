@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class OAuth2Request {
+public class OIDCRequest {
 
   @NotEmpty
   private String code;

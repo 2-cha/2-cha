@@ -1,7 +1,7 @@
 package com._2cha.demo.auth.controller;
 
 
-import com._2cha.demo.auth.dto.OAuth2Request;
+import com._2cha.demo.auth.dto.OIDCRequest;
 import com._2cha.demo.auth.dto.SignInWithAccountRequest;
 import com._2cha.demo.auth.dto.TokenResponse;
 import com._2cha.demo.auth.service.AuthService;
@@ -24,15 +24,14 @@ public class AuthController {
   private final AuthService authService;
 
   @PostMapping("/signin")
-  public TokenResponse signInWithAccount(@Valid @RequestBody SignInWithAccountRequest dto)
-      throws Exception {
-    return authService.signInWithAccount(dto);
+  public TokenResponse signInWithAccount(@Valid @RequestBody SignInWithAccountRequest dto) {
+    return authService.signInWithAccount(dto.getEmail(), dto.getPassword());
   }
 
   @PostMapping(value = "/openid/{provider}/signin")
-  public TokenResponse OIDC(@PathVariable OIDCProvider provider,
-                            @Valid @RequestBody OAuth2Request dto) throws Exception {
+  public TokenResponse signInWithOIDC(@PathVariable OIDCProvider provider,
+                                      @Valid @RequestBody OIDCRequest dto) {
 
-    return authService.signInWithOIDC(provider, dto);
+    return authService.signInWithOIDC(provider, dto.getCode());
   }
 }
