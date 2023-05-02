@@ -1,12 +1,12 @@
 package com._2cha.demo.global.config;
 
+import com._2cha.demo.auth.converter.PathToProviderEnumConverter;
 import com._2cha.demo.auth.service.AuthService;
 import com._2cha.demo.global.argresolver.AuthedMemberIdArgumentResolver;
-import com._2cha.demo.global.converter.FilterByRequestParamConverter;
-import com._2cha.demo.global.converter.PathToProviderEnumConverter;
-import com._2cha.demo.global.converter.SortByRequestParamConverter;
 import com._2cha.demo.global.interceptor.AuthInterceptor;
 import com._2cha.demo.global.interceptor.RequestLogInterceptor;
+import com._2cha.demo.place.converter.FilterByRequestParamConverter;
+import com._2cha.demo.place.converter.SortByRequestParamConverter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

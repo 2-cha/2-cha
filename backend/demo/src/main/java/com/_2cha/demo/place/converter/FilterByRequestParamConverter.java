@@ -1,4 +1,4 @@
-package com._2cha.demo.global.converter;
+package com._2cha.demo.place.converter;
 
 import com._2cha.demo.place.dto.FilterBy;
 import org.springframework.core.convert.converter.Converter;

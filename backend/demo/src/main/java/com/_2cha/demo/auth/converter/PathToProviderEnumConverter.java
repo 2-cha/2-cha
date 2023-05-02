@@ -1,4 +1,4 @@
-package com._2cha.demo.global.converter;
+package com._2cha.demo.auth.converter;
 
 import com._2cha.demo.member.domain.OIDCProvider;
 import org.springframework.core.convert.converter.Converter;

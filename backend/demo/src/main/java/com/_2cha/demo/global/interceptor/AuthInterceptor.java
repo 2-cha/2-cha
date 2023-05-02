@@ -1,12 +1,12 @@
 package com._2cha.demo.global.interceptor;
 
 import com._2cha.demo.auth.dto.JwtTokenPayload;
+import com._2cha.demo.auth.exception.NoPrivilegeException;
+import com._2cha.demo.auth.exception.NoTokenException;
+import com._2cha.demo.auth.exception.NotBearerSchemeException;
 import com._2cha.demo.auth.service.AuthService;
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
-import com._2cha.demo.global.exception.NoPrivilegeException;
-import com._2cha.demo.global.exception.NoTokenException;
-import com._2cha.demo.global.exception.NotBearerSchemeException;
 import com._2cha.demo.member.domain.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
