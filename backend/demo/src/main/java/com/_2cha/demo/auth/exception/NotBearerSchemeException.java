@@ -1,4 +1,6 @@
-package com._2cha.demo.global.exception;
+package com._2cha.demo.auth.exception;
+
+import com._2cha.demo.global.exception.UnauthorizedException;
 
 public class NotBearerSchemeException extends UnauthorizedException {
 
