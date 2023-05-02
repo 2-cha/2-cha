@@ -1,5 +1,6 @@
 package com._2cha.demo.member.service;
 
+import com._2cha.demo.global.exception.NoSuchMemberException;
 import com._2cha.demo.member.domain.Achievement;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.domain.MemberAchievement;
@@ -9,14 +10,15 @@ import com._2cha.demo.member.dto.MemberCredResponse;
 import com._2cha.demo.member.dto.MemberInfoResponse;
 import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.dto.RelationshipOperationResponse;
+import com._2cha.demo.member.dto.SignUpRequest;
+import com._2cha.demo.member.dto.ToggleAchievementExposureRequest;
 import com._2cha.demo.member.dto.ToggleAchievementExposureResponse;
-import com._2cha.demo.member.exception.NoSuchAchievementException;
-import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.repository.AchievementRepository;
 import com._2cha.demo.member.repository.MemberQueryRepository;
 import com._2cha.demo.member.repository.MemberRepository;
 import com._2cha.demo.util.BCryptHashingUtils;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -46,10 +48,10 @@ public class MemberService {
    @ Commands
    ------------*/
   @Transactional
-  public MemberInfoResponse signUp(String email, String name, String password) {
-    String hashed = BCryptHashingUtils.hash(password);
+  public MemberInfoResponse signUp(SignUpRequest dto) {
+    String hashed = BCryptHashingUtils.hash(dto.getPassword());
 
-    Member member = Member.createMember(email, hashed, name);
+    Member member = Member.createMember(dto.getEmail(), hashed, dto.getName());
     memberRepository.save(member);
 
     return new MemberInfoResponse(member);
@@ -69,7 +71,6 @@ public class MemberService {
   public RelationshipOperationResponse follow(Long followerId, Long followingId) {
     Member follower = memberRepository.findById(followerId);
     Member following = memberRepository.findById(followingId);
-    if (follower == null || following == null) throw new NoSuchMemberException();
 
     follower.follow(following);
 
@@ -84,7 +85,6 @@ public class MemberService {
   public RelationshipOperationResponse unfollow(Long followerId, Long followingId) {
     Member follower = memberRepository.findById(followerId);
     Member following = memberRepository.findById(followingId);
-    if (follower == null || following == null) throw new NoSuchMemberException();
 
     follower.unfollow(following);
 
@@ -94,28 +94,27 @@ public class MemberService {
   @Transactional
   public void addAchievement(Long memberId, Long achvId) {
     Achievement achievement = achvRepository.findAchievementById(achvId);
-    if (achievement == null) throw new NoSuchAchievementException();
-
     Member member = memberRepository.findById(memberId);
-    if (member == null) throw new NoSuchMemberException();
-
     member.addAchievement(achievement);
   }
 
   @Transactional
   public List<ToggleAchievementExposureResponse> toggleAchievementsExposure(Long memberId,
-                                                                            Map<Long, Boolean> achvExposureMap) {
+                                                                            List<ToggleAchievementExposureRequest> dtos) {
     Member member = memberRepository.findById(memberId);
-    if (member == null) throw new NoSuchMemberException();
-
     List<MemberAchievement> memAchvs = member.getAchievements();
+
+    Map<Long, Boolean> requestedAchvMap = new HashMap<>();
+    for (ToggleAchievementExposureRequest dto : dtos) {
+      requestedAchvMap.put(dto.getAchvId(), dto.isExposure());
+    }
 
     List<ToggleAchievementExposureResponse> response = new ArrayList<>();
     memAchvs.forEach(
         memAchv -> {
           Long achvId = memAchv.getAchievement().getId();
-          if (achvExposureMap.containsKey(achvId)) {
-            memAchv.toggleExposure(achvExposureMap.get(achvId));
+          if (requestedAchvMap.containsKey(achvId)) {
+            memAchv.toggleExposure(requestedAchvMap.get(achvId));
             response.add(new ToggleAchievementExposureResponse(achvId, memAchv.isExposed()));
           }
         });
@@ -126,6 +125,8 @@ public class MemberService {
   /*------------
    @ Queries
    ------------*/
+
+
   public MemberProfileResponse getMemberProfileById(Long id) {
 
     MemberProfileResponse profile = memberQueryRepository.getMemberProfileById(id);
@@ -137,7 +138,9 @@ public class MemberService {
   public List<MemberProfileResponse> getMemberProfileByIdIn(List<Long> ids) {
     return memberQueryRepository.getMemberProfileByIdIn(ids);
   }
-  
+
+  ;
+
   public MemberInfoResponse getMemberInfoById(Long id) {
     MemberInfoResponse memberInfo = memberQueryRepository.getMemberInfoById(id);
     if (memberInfo == null) throw new NoSuchMemberException();
