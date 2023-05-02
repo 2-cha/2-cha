@@ -1,7 +1,5 @@
 package com._2cha.demo.member.service;
 
-import com._2cha.demo.global.exception.NoSuchMemberException;
-import com._2cha.demo.global.exception.NotFoundException;
 import com._2cha.demo.member.domain.Achievement;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.domain.MemberAchievement;
@@ -12,6 +10,8 @@ import com._2cha.demo.member.dto.MemberInfoResponse;
 import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.dto.RelationshipOperationResponse;
 import com._2cha.demo.member.dto.ToggleAchievementExposureResponse;
+import com._2cha.demo.member.exception.NoSuchAchievementException;
+import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.repository.AchievementRepository;
 import com._2cha.demo.member.repository.MemberQueryRepository;
 import com._2cha.demo.member.repository.MemberRepository;
@@ -94,13 +94,11 @@ public class MemberService {
   @Transactional
   public void addAchievement(Long memberId, Long achvId) {
     Achievement achievement = achvRepository.findAchievementById(achvId);
-    if (achievement == null) {
-      throw new NotFoundException("No achievement with such id.", "noSuchAchievement");
-    }
+    if (achievement == null) throw new NoSuchAchievementException();
+
     Member member = memberRepository.findById(memberId);
-    if (member == null) {
-      throw new NoSuchMemberException();
-    }
+    if (member == null) throw new NoSuchMemberException();
+
     member.addAchievement(achievement);
   }
 
@@ -109,6 +107,7 @@ public class MemberService {
                                                                             Map<Long, Boolean> achvExposureMap) {
     Member member = memberRepository.findById(memberId);
     if (member == null) throw new NoSuchMemberException();
+
     List<MemberAchievement> memAchvs = member.getAchievements();
 
     List<ToggleAchievementExposureResponse> response = new ArrayList<>();
@@ -127,8 +126,6 @@ public class MemberService {
   /*------------
    @ Queries
    ------------*/
-
-
   public MemberProfileResponse getMemberProfileById(Long id) {
 
     MemberProfileResponse profile = memberQueryRepository.getMemberProfileById(id);
@@ -140,9 +137,7 @@ public class MemberService {
   public List<MemberProfileResponse> getMemberProfileByIdIn(List<Long> ids) {
     return memberQueryRepository.getMemberProfileByIdIn(ids);
   }
-
-  ;
-
+  
   public MemberInfoResponse getMemberInfoById(Long id) {
     MemberInfoResponse memberInfo = memberQueryRepository.getMemberInfoById(id);
     if (memberInfo == null) throw new NoSuchMemberException();
