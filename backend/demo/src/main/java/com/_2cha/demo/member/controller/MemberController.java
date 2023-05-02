@@ -12,6 +12,8 @@ import com._2cha.demo.member.dto.ToggleAchievementExposureResponse;
 import com._2cha.demo.member.service.MemberService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +48,10 @@ public class MemberController {
   public List<ToggleAchievementExposureResponse> toggleAchvsExposure(@Authed Long memberId,
                                                                      @Valid @RequestBody List<ToggleAchievementExposureRequest> dto
                                                                     ) {
-    return memberService.toggleAchievementsExposure(memberId, dto);
+
+    Map<Long, Boolean> achvExposureMap = dto.stream().collect(
+        Collectors.toMap(d -> d.getAchvId(), d -> d.isExposure()));
+    return memberService.toggleAchievementsExposure(memberId, achvExposureMap);
   }
 
   @Auth
@@ -70,8 +75,8 @@ public class MemberController {
 
 
   @PostMapping
-  public MemberInfoResponse signUp(@Valid @RequestBody SignUpRequest dto) throws Exception {
-    return memberService.signUp(dto);
+  public MemberInfoResponse signUp(@Valid @RequestBody SignUpRequest dto) {
+    return memberService.signUp(dto.getEmail(), dto.getName(), dto.getPassword());
   }
 
   @Auth
