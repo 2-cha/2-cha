@@ -1,6 +1,7 @@
 package com._2cha.demo.member.service;
 
 import com._2cha.demo.global.exception.NoSuchMemberException;
+import com._2cha.demo.global.exception.NotFoundException;
 import com._2cha.demo.member.domain.Achievement;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.domain.MemberAchievement;
@@ -68,6 +69,7 @@ public class MemberService {
   public RelationshipOperationResponse follow(Long followerId, Long followingId) {
     Member follower = memberRepository.findById(followerId);
     Member following = memberRepository.findById(followingId);
+    if (follower == null || following == null) throw new NoSuchMemberException();
 
     follower.follow(following);
 
@@ -82,6 +84,7 @@ public class MemberService {
   public RelationshipOperationResponse unfollow(Long followerId, Long followingId) {
     Member follower = memberRepository.findById(followerId);
     Member following = memberRepository.findById(followingId);
+    if (follower == null || following == null) throw new NoSuchMemberException();
 
     follower.unfollow(following);
 
@@ -91,7 +94,13 @@ public class MemberService {
   @Transactional
   public void addAchievement(Long memberId, Long achvId) {
     Achievement achievement = achvRepository.findAchievementById(achvId);
+    if (achievement == null) {
+      throw new NotFoundException("No achievement with such id.", "noSuchAchievement");
+    }
     Member member = memberRepository.findById(memberId);
+    if (member == null) {
+      throw new NoSuchMemberException();
+    }
     member.addAchievement(achievement);
   }
 
@@ -99,6 +108,7 @@ public class MemberService {
   public List<ToggleAchievementExposureResponse> toggleAchievementsExposure(Long memberId,
                                                                             Map<Long, Boolean> achvExposureMap) {
     Member member = memberRepository.findById(memberId);
+    if (member == null) throw new NoSuchMemberException();
     List<MemberAchievement> memAchvs = member.getAchievements();
 
     List<ToggleAchievementExposureResponse> response = new ArrayList<>();
