@@ -72,6 +72,8 @@ public class DataLoader implements ApplicationRunner {
 
       String name = columns[0];
       String address = columns[2];
+      String lotAddress = columns[3];
+      String site = columns[5];
       Double latitude = Double.parseDouble(columns[6]);
       Double longitude = Double.parseDouble(columns[7]);
       String thumbnail = columns[8];
@@ -79,9 +81,11 @@ public class DataLoader implements ApplicationRunner {
           name,
           category,
           address,
+          lotAddress,
           longitude,
           latitude,
-          thumbnail
+          thumbnail,
+          site
                                      );
       placeRepository.save(place);
     }

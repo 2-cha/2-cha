@@ -12,15 +12,20 @@ public class PlaceDetailResponse {
   private String name;
   private Category category;
   private String address;
+  private String lotAddress;
   private String thumbnail;
+  private String site;
   private List<TagCountResponse> tags;
 
   public PlaceDetailResponse(Long id, String name, Category category, String address,
-                             String thumbnail) {
+                             String lotAddress,
+                             String thumbnail, String site) {
     this.id = id;
     this.name = name;
     this.category = category;
+    this.lotAddress = lotAddress;
     this.address = address;
     this.thumbnail = thumbnail;
+    this.site = site;
   }
 }
