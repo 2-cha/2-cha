@@ -1,3 +1,10 @@
+import { useAuth } from '@/hooks/auth';
+import { useMemberQuery } from '@/hooks/members';
+
 export default function Profile() {
-  return <div>Profile</div>;
+  const { user } = useAuth();
+  const memberId = user?.sub;
+  const { data: member } = useMemberQuery(memberId);
+
+  return <div>{member ? <p>hello {member.name}</p> : null}</div>;
 }
