@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useCurrentLocation } from '@/hooks/location';
-import { useRegionQuery } from '@/hooks/region';
-import { useAddressQuery } from '@/hooks/address';
+import { useCurrentLocation } from '@/hooks/useCurrentLocation';
+import { useRegionQuery } from '@/hooks/query/useRegion';
+import { useAddressQuery } from '@/hooks/query/useAddress';
 import { useSetRecoilState } from 'recoil';
 import { locationState } from '@/atoms/location';
 import { type Address } from '@/pages/api/address';
