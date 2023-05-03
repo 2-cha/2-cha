@@ -1,14 +1,14 @@
 import { selector } from 'recoil';
-import { accessTokenState } from './accessToken';
+import { tokenState } from './token';
 import jwtDecode from 'jwt-decode';
 import type { JwtPayload } from '@/types';
 
 export const jwtPayloadState = selector<JwtPayload | null>({
   key: 'jwtPayloadState',
   get: ({ get }) => {
-    const token = get(accessTokenState);
+    const token = get(tokenState);
     if (token) {
-      return jwtDecode<JwtPayload>(token);
+      return jwtDecode<JwtPayload>(token.access_token);
     }
     return null;
   },
