@@ -1,8 +1,8 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchClient } from '@/lib/fetchClient';
-import { Coordinate } from '@/atoms/location';
-import { PlaceSearchResult, QueryResponse } from '@/types';
-import { useCurrentLocation } from './location';
+import type { Coordinate } from '@/atoms/location';
+import type { PlaceSearchResult, QueryResponse } from '@/types';
+import { useCurrentLocation } from '@/hooks/useCurrentLocation';
 
 async function fetchPlaces({
   min_dist,

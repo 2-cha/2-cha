@@ -1,5 +1,5 @@
 import { fetchClient } from '@/lib/fetchClient';
-import { Place, QueryResponse } from '@/types';
+import type { Place, QueryResponse } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 
 async function fetchPlace(placeId: string) {

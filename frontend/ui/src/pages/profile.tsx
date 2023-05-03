@@ -1,5 +1,5 @@
-import { useAuth } from '@/hooks/auth';
-import { useMemberQuery } from '@/hooks/members';
+import { useAuth } from '@/hooks/useAuth';
+import { useMemberQuery } from '@/hooks/query/useMember';
 
 export default function Profile() {
   const { user } = useAuth();

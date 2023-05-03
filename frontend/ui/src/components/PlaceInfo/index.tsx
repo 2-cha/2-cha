@@ -1,6 +1,6 @@
 import { forwardRef, useState } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import { usePlaceReviewsQuery } from '@/hooks/reviews';
+import { usePlaceReviewsQuery } from '@/hooks/query/usePlaceReviews';
 import { Place } from '@/types';
 import cn from 'classnames';
 import s from './PlaceInfo.module.scss';
