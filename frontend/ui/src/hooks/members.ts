@@ -2,7 +2,7 @@ import { fetchClient } from '@/lib/fetchClient';
 import { useQuery } from '@tanstack/react-query';
 import type { Member, QueryResponse } from '@/types';
 
-async function fetchMember(memberId: number) {
+async function fetchMember(memberId: string) {
   const { data } = await fetchClient.get<QueryResponse<Member>>(
     `/members/${memberId}`
   );
@@ -13,7 +13,7 @@ async function fetchMember(memberId: number) {
   return data.data;
 }
 
-export function useMemberQuery(memberId?: number) {
+export function useMemberQuery(memberId?: string) {
   const result = useQuery({
     queryKey: ['members', memberId],
     queryFn: () => fetchMember(memberId!),
