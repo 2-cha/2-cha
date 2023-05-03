@@ -51,24 +51,48 @@ class PlaceTests {
           + "CALL H2GIS_SPATIAL();")
       .executeUpdate();
 
-    em.persist(Place.createPlace("히든아워", Category.WINE_BAR, "서울 종로구 종로32길 21 4층",
+    em.persist(Place.createPlace("히든아워", Category.WINE_BAR,
+                                 "서울 종로구 종로32길 21 4층",
+                                 "(지번) 종로5가 395-8",
                                  127.001312694, 37.570090435,
-                                 "https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F0732DF7C4D1D4631B167658FF31836B0,hnet/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fa910cd15332fa03d0924070d52f60092479bfa87%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F969c680aae8906d44bcd5e734b32b8c1d778ff8e%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F54660b5f751cbea3ec29cea8f80da0bd941c2e11%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fdf0d59883daabea5fe12f3fcbf99e2bef316e4a5%3Foriginal"));
-    em.persist(Place.createPlace("flux", Category.WINE_BAR, "서울 종로구 자하문로7길 24",
+                                 "https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F0732DF7C4D1D4631B167658FF31836B0,hnet/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fa910cd15332fa03d0924070d52f60092479bfa87%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F969c680aae8906d44bcd5e734b32b8c1d778ff8e%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F54660b5f751cbea3ec29cea8f80da0bd941c2e11%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fdf0d59883daabea5fe12f3fcbf99e2bef316e4a5%3Foriginal",
+                                 "https://instagram.com/hidden_hour"
+                                ));
+    em.persist(Place.createPlace("flux", Category.WINE_BAR,
+                                 "서울 종로구 자하문로7길 24",
+                                 "(지번) 통인동 149-5",
                                  126.970755522, 37.578890929,
-                                 ""));
-    em.persist(Place.createPlace("standbyme", Category.WINE_BAR, "서울 종로구 자하문로13길 4-7",
+                                 "",
+                                 ""
+                                ));
+    em.persist(Place.createPlace("standbyme", Category.WINE_BAR,
+                                 "서울 종로구 자하문로13길 4-7",
+                                 "(지번) 통인동 102",
                                  126.97077385, 37.58036915,
-                                 "https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2FA925100FB8364B0CB3ECE1A3BC9F6akaocdn.net/cthumb/local/R0x420/?fname=https%3A%2F%2Fpostfiles.pstatic.net%2FMjAyMzAxMzBfMTUg%2FMDAxNjc1MDc4MzQxMDA0.Xx17cmFel8skPPQctFdg543RC9LE_loe4GpVsxDXxTsg.KsdLbij7P8ABrieJ-2H-XKUAUdiChqQ2vGC_ZoUC2LUg.JPEG.hj1231k%2FIMG_6131.JPG%3Ftype%3Dw966,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=https%3A%2F%2Fpostfiles.pstatic.net%2FMjAyMzAxMzBfMTkz%2FMDAxNjc1MDc4MzM1OTQ2.Kc6YzATkcDe7L6aNQauaUK7I0D8lSg0O4tD1hFrjRrsg.I1bDyFh1m2ncjk8VBmoPYZRDGWQdad5u7sBpXn6uDFMg.JPEG.hj1231k%2FIMG_6127.JPG%3Ftype%3Dw966,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=https%3A%2F%2Fpostfiles.pstatic.net%2FMjAyMzAxMzBfMjkz%2FMDAxNjc1MDc4MzQxNzM3.8HWXKqZD61prfNSOPcsaEjT0JpuKo3eQjp9MHZgv_wMg.1NOjD6qxLRccR4wJBfEVieBppgXHLIwJ3wSOLq9Tv-Yg.JPEG.hj1231k%2FIMG_6120.JPG%3Ftype%3Dw966,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=https%3A%2F%2Fpostfiles.pstatic.net%2FMjAyMzAxMzBfMzIg%2FMDAxNjc1MDc4MzQwOTM3.tEp7j6SFDj1xhM04a1n9Uko0GM9iiKeaO4TSvvJfr64g.pMH2b5dNRJNUn93zQNKsF5bHKMuMolGUG-cP_sVEMDQg.JPEG.hj1231k%2FIMG_6130.JPG%3Ftype%3Dw966"));
-    em.persist(Place.createPlace("M바", Category.COCKTAIL_BAR, "서울 종로구 종로8길 16",
+                                 "https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2FA925100FB8364B0CB3ECE1A3BC9F6akaocdn.net/cthumb/local/R0x420/?fname=https%3A%2F%2Fpostfiles.pstatic.net%2FMjAyMzAxMzBfMTUg%2FMDAxNjc1MDc4MzQxMDA0.Xx17cmFel8skPPQctFdg543RC9LE_loe4GpVsxDXxTsg.KsdLbij7P8ABrieJ-2H-XKUAUdiChqQ2vGC_ZoUC2LUg.JPEG.hj1231k%2FIMG_6131.JPG%3Ftype%3Dw966,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=https%3A%2F%2Fpostfiles.pstatic.net%2FMjAyMzAxMzBfMTkz%2FMDAxNjc1MDc4MzM1OTQ2.Kc6YzATkcDe7L6aNQauaUK7I0D8lSg0O4tD1hFrjRrsg.I1bDyFh1m2ncjk8VBmoPYZRDGWQdad5u7sBpXn6uDFMg.JPEG.hj1231k%2FIMG_6127.JPG%3Ftype%3Dw966,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=https%3A%2F%2Fpostfiles.pstatic.net%2FMjAyMzAxMzBfMjkz%2FMDAxNjc1MDc4MzQxNzM3.8HWXKqZD61prfNSOPcsaEjT0JpuKo3eQjp9MHZgv_wMg.1NOjD6qxLRccR4wJBfEVieBppgXHLIwJ3wSOLq9Tv-Yg.JPEG.hj1231k%2FIMG_6120.JPG%3Ftype%3Dw966,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=https%3A%2F%2Fpostfiles.pstatic.net%2FMjAyMzAxMzBfMzIg%2FMDAxNjc1MDc4MzQwOTM3.tEp7j6SFDj1xhM04a1n9Uko0GM9iiKeaO4TSvvJfr64g.pMH2b5dNRJNUn93zQNKsF5bHKMuMolGUG-cP_sVEMDQg.JPEG.hj1231k%2FIMG_6130.JPG%3Ftype%3Dw966",
+                                 "https://www.instagram.com/standbyme_seoul"
+                                ));
+    em.persist(Place.createPlace("M바", Category.COCKTAIL_BAR,
+                                 "서울 종로구 종로8길 16",
+                                 "(지번) 관철동 44-3",
                                  126.98386315, 37.569345648,
-                                 ""));
-    em.persist(Place.createPlace("NYIL", Category.COCKTAIL_BAR, "서울 종로구 사직로 99",
+                                 "",
+                                 ""
+                                ));
+    em.persist(Place.createPlace("NYIL", Category.COCKTAIL_BAR,
+                                 "서울 종로구 사직로 99",
+                                 "(지번) 필운동 225-2",
                                  126.969806904, 37.576275315,
-                                 "https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2F50929B8EDFBD4AF481F8B6CD2FE552EF,https://img1thumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2FF3D8813CD53646F49FFD30ECE941A8F1,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2F1D3D0AC28D70484A9ED598D1B1B12582,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2F4C064724B643453EA95E86468525C5B1,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F7312cdb2530970dd9f7ff6de3b7a7d3e9f10f931%3Foriginal"));
-    em.persist(Place.createPlace("SAM1999 종로점", Category.COCKTAIL_BAR, "서울 종로구 종로12길 6-20 2층",
+                                 "https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2F50929B8EDFBD4AF481F8B6CD2FE552EF,https://img1thumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2FF3D8813CD53646F49FFD30ECE941A8F1,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2F1D3D0AC28D70484A9ED598D1B1B12582,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2F4C064724B643453EA95E86468525C5B1,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F7312cdb2530970dd9f7ff6de3b7a7d3e9f10f931%3Foriginal",
+                                 "https://instagram.com/nyil_seoul"
+                                ));
+    em.persist(Place.createPlace("SAM1999 종로점", Category.COCKTAIL_BAR,
+                                 "서울 종로구 종로12길 6-20 2층",
+                                 "(지번) 관철동 16-9",
                                  126.984614536, 37.569841204,
-                                 ""));
+                                 "",
+                                 ""
+                                ));
 
     em.persist(Member.createMember("member1@2cha.com", "1234", "member1"));
     em.persist(Tag.createTag("이야기 나누기 좋아요", "🗣️"));
