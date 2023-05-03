@@ -106,20 +106,19 @@ public class ApiErrorAdvice extends ResponseEntityExceptionHandler {
                                                      DataAccessException e) {
     ApiError apiError = new ApiError(e);
 
-    boolean unhandled = false;
+    boolean handled = false;
     if (e.getRootCause() instanceof SQLException sqlException) {
       switch (sqlException.getSQLState()) {
-        case "23505": {
+        case "23505" -> {
           apiError.setStatus(HttpStatus.CONFLICT);
           apiError.setMessage("Resource already exists.");
           apiError.setCode("alreadyExist");
-          break;
+          handled = true;
         }
-        default:
-          unhandled = true;
       }
     }
-    if (unhandled) {
+    //TODO: notifier
+    if (!handled) {
       log.error("[Unhandled SQL Exception] {}", e.getClass().getName(), e);
       apiError.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
       apiError.setCode("unhandledSqlException");
