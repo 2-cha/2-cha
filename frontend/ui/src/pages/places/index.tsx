@@ -1,8 +1,8 @@
 import PlaceList from '@/components/PlaceList';
 import MetaData from '@/components/MetaData';
 import Header from '@/components/Layout/Header';
-import { usePlacesQuery } from '@/hooks/places';
-import { useIntersection } from '@/hooks/intersection';
+import { usePlacesQuery } from '@/hooks/query/usePlaces';
+import { useIntersection } from '@/hooks/useIntersection';
 import { useCallback } from 'react';
 
 export default function Places() {
