@@ -34,6 +34,9 @@ public class Place {
   @Column(nullable = false)
   private String address;
 
+  @Column(nullable = false)
+  private String lotAddress;
+
   @Column(nullable = false, columnDefinition = "geometry(point,  4326)") // long, lat
   private Point location;
 
@@ -44,6 +47,8 @@ public class Place {
 
   @Lob
   private String thumbnail;
+  
+  private String site;
 
 
   /*-----------
@@ -53,16 +58,20 @@ public class Place {
       String name,
       Category category,
       String address,
+      String lotAddress,
       Double longitude,
       Double latitude,
-      String thumbnail
+      String thumbnail,
+      String site
                                  ) {
     Place place = new Place();
     place.name = name;
     place.category = category;
     place.address = address;
+    place.lotAddress = lotAddress;
     place.location = GeomUtils.createPoint(latitude, longitude);
     place.thumbnail = thumbnail;
+    place.site = site;
     return place;
   }
 }
