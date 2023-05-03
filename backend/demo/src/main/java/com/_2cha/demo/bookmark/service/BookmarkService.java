@@ -9,14 +9,16 @@ import com._2cha.demo.bookmark.dto.BookmarkCreatedResponse;
 import com._2cha.demo.bookmark.dto.BookmarkRemovedResponse;
 import com._2cha.demo.bookmark.dto.PlaceBookmarkResponse;
 import com._2cha.demo.bookmark.dto.ReviewBookmarkResponse;
+import com._2cha.demo.bookmark.exception.BookmarkTypeMismatchedException;
+import com._2cha.demo.bookmark.exception.CannotGetException;
+import com._2cha.demo.bookmark.exception.CannotRemoveException;
+import com._2cha.demo.bookmark.exception.DuplicatedBookmarkItemException;
+import com._2cha.demo.bookmark.exception.NoSuchBookmarkException;
+import com._2cha.demo.bookmark.exception.NoSuchItemException;
 import com._2cha.demo.bookmark.repository.BookmarkQueryRepository;
 import com._2cha.demo.bookmark.repository.BookmarkRepository;
 import com._2cha.demo.bookmark.service.itemfinder.BookmarkItemFinder;
 import com._2cha.demo.bookmark.service.itemfinder.BookmarkItemFinderFactory;
-import com._2cha.demo.global.exception.BadRequestException;
-import com._2cha.demo.global.exception.ConflictException;
-import com._2cha.demo.global.exception.ForbiddenException;
-import com._2cha.demo.global.exception.NotFoundException;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.service.MemberService;
@@ -25,6 +27,7 @@ import com._2cha.demo.place.service.PlaceService;
 import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.dto.ReviewResponse;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -63,13 +66,13 @@ public class BookmarkService {
 
     Bookmark bookmark = bookmarkRepository.findById(id);
     if (bookmark == null) {
-      throw new NotFoundException("No bookmark with such id.", "noSuchBookmark");
+      throw new NoSuchBookmarkException();
     }
-    if (bookmark.getMember().getId() != memberId) {
-      throw new ForbiddenException("Cannot get other member's bookmark");
+    if (!Objects.equals(bookmark.getMember().getId(), memberId)) {
+      throw new CannotGetException();
     }
     if (!(bookmark instanceof ReviewBookmark reviewBookmark)) {
-      throw new BadRequestException("Bookmark type mismatched", "wrongBookmarkType");
+      throw new BookmarkTypeMismatchedException();
     }
 
     Review review = reviewBookmark.getItem();
@@ -89,13 +92,13 @@ public class BookmarkService {
   public PlaceBookmarkResponse getPlaceBookmark(Long memberId, Long id) {
     Bookmark bookmark = bookmarkRepository.findById(id);
     if (bookmark == null) {
-      throw new NotFoundException("No bookmark with such id.", "noSuchBookmark");
+      throw new NoSuchBookmarkException();
     }
-    if (bookmark.getMember().getId() != memberId) {
-      throw new ForbiddenException("Cannot remove other member's bookmark");
+    if (!Objects.equals(bookmark.getMember().getId(), memberId)) {
+      throw new CannotRemoveException();
     }
     if (!(bookmark instanceof PlaceBookmark placeBookmark)) {
-      throw new BadRequestException("Bookmark type mismatched", "wrongBookmarkType");
+      throw new BookmarkTypeMismatchedException();
     }
 
     return new PlaceBookmarkResponse(placeBookmark.getId(),
@@ -111,10 +114,10 @@ public class BookmarkService {
     Member member = memberService.findById(memberId);
     BookmarkItemFinder itemFinder = itemFinderFactory.getItemFinder(itemType);
     Object item = itemFinder.findItemById(itemId);
-    if (item == null) throw new NotFoundException("No item with such id.", "noSuchItem");
-    
+    if (item == null) throw new NoSuchItemException();
+
     if (bookmarkRepository.findMemberBookmarkItem(itemType, itemId, memberId) != null) {
-      throw new ConflictException("Already bookmarked item.", "alreadyBookmarked");
+      throw new DuplicatedBookmarkItemException();
     }
     Bookmark bookmark = Bookmark.createBookmark(member, item);
 
@@ -127,10 +130,10 @@ public class BookmarkService {
   public BookmarkRemovedResponse removeBookmark(Long memberId, Long bookmarkId) {
     Bookmark bookmark = bookmarkRepository.findById(bookmarkId);
     if (bookmark == null) {
-      throw new NotFoundException("No bookmark with such id.", "noSuchBookmark");
+      throw new NoSuchBookmarkException();
     }
-    if (bookmark.getMember().getId() != memberId) {
-      throw new ForbiddenException("Cannot remove other member's bookmark");
+    if (!Objects.equals(bookmark.getMember().getId(), memberId)) {
+      throw new CannotRemoveException();
     }
 
     bookmarkRepository.deleteBookmarkById(bookmark.getId());
