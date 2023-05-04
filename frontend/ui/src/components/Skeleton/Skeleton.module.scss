@@ -1,0 +1,13 @@
+@use 'mixins';
+
+.root {
+  overflow: hidden;
+  position: relative;
+  background-color: var(--background-skeleton-color);
+  border-radius: 0.25rem;
+}
+
+.circle {
+  border-radius: 50%;
+  flex-shrink: 0;
+}
