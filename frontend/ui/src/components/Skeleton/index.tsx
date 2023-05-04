@@ -1,3 +1,4 @@
+import SkeletonFeed from './SkeletonFeed';
 import cn from 'classnames';
 import s from './Skeleton.module.scss';
 
@@ -18,5 +19,7 @@ function Skeleton({ type, width, height, className }: SkeletonProps) {
     />
   );
 }
+
+Skeleton.Feed = SkeletonFeed;
 
 export default Skeleton;
