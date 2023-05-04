@@ -52,6 +52,8 @@ dependencies {
     runtimeOnly 'org.orbisgis:h2gis:2.1.0'
     testImplementation 'com.h2database:h2'
     testImplementation 'org.orbisgis:h2gis:2.1.0'
+
+    implementation 'org.signal:embedded-redis:0.8.3'
 }
 
 ext {
