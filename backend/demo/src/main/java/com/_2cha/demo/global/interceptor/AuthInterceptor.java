@@ -1,6 +1,6 @@
 package com._2cha.demo.global.interceptor;
 
-import com._2cha.demo.auth.dto.JwtTokenPayload;
+import com._2cha.demo.auth.dto.JwtAccessTokenPayload;
 import com._2cha.demo.auth.exception.NoPrivilegeException;
 import com._2cha.demo.auth.exception.NoTokenException;
 import com._2cha.demo.auth.exception.NotBearerSchemeException;
@@ -42,7 +42,8 @@ public class AuthInterceptor implements HandlerInterceptor {
       throw new NotBearerSchemeException();
     }
 
-    JwtTokenPayload payload = authService.verifyJwt(bearerToken[1]);
+    JwtAccessTokenPayload payload = authService.verifyJwt(bearerToken[1],
+                                                          JwtAccessTokenPayload.class);
     Role requiredRole = getRole(handlerMethod);
     Role memberRole = payload.getRole();
 

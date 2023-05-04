@@ -2,9 +2,13 @@ package com._2cha.demo.auth.service;
 
 import com._2cha.demo.auth.config.GoogleOIDCConfig;
 import com._2cha.demo.auth.config.JwtConfig;
+import com._2cha.demo.auth.dto.JwtAccessTokenPayload;
+import com._2cha.demo.auth.dto.JwtRefreshTokenPayload;
 import com._2cha.demo.auth.dto.JwtTokenPayload;
 import com._2cha.demo.auth.dto.OIDCUserProfile;
 import com._2cha.demo.auth.dto.TokenResponse;
+import com._2cha.demo.auth.repository.RefreshToken;
+import com._2cha.demo.auth.repository.TokenRepository;
 import com._2cha.demo.auth.strategy.oidc.OIDCStrategy;
 import com._2cha.demo.global.exception.UnauthorizedException;
 import com._2cha.demo.member.domain.OIDCProvider;
@@ -16,7 +20,6 @@ import com._2cha.demo.util.BCryptHashingUtils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -43,19 +46,20 @@ public class AuthService {
   private final MemberService memberService;
 
   private final Map<String, OIDCStrategy> oidcStrategyMap;
+  private final TokenRepository tokenRepository;
 
+  public <T extends JwtTokenPayload> T verifyJwt(String token, Class<T> payloadType) {
+    String key;
+    if (payloadType.isAssignableFrom(JwtAccessTokenPayload.class)) {
+      key = jwtConfig.getAccessKey();
+    } else if (payloadType.isAssignableFrom(JwtRefreshTokenPayload.class)) {
+      key = jwtConfig.getRefreshKey();
+    } else {
+      throw new UnsupportedOperationException("Unsupported payload type.");
+    }
+    Verification verification = JWT.require(Algorithm.HMAC512(key));
 
-  /**
-   * @param token
-   * @return Decoded Payload
-   * @throws JWTVerificationException
-   * @throws JsonProcessingException
-   */
-  public JwtTokenPayload verifyJwt(String token) {
-
-    Verification verification = JWT.require(Algorithm.HMAC512(jwtConfig.getKey()));
-
-    Field[] claims = JwtTokenPayload.class.getDeclaredFields();
+    Field[] claims = payloadType.getDeclaredFields();
 
     Arrays.stream(claims).
           forEach(claim -> verification.withClaimPresence(claim.getName()));
@@ -69,29 +73,29 @@ public class AuthService {
     String decodedPayload = new String(Base64.getDecoder().decode(payload));
 
     try {
-      return objectMapper.readValue(decodedPayload, JwtTokenPayload.class);
+      return objectMapper.readValue(decodedPayload, payloadType);
     } catch (JsonProcessingException e) {
       throw new UnauthorizedException("Invalid payload format", "invalidJwtPayload");
     }
   }
 
-  public String issueJwt(JwtTokenPayload payload, Integer lifetime) {
-    return JWT.create()
-              .withPayload(objectMapper.convertValue(payload, Map.class))
-              .withIssuer(jwtConfig.getIssuer())
-              .withSubject(payload.getSub().toString())
-              .withExpiresAt(Instant.now().plus(lifetime, ChronoUnit.MINUTES))
-              .sign(Algorithm.HMAC512(jwtConfig.getKey()));
+  public TokenResponse refreshJwt(Long memberId, String refreshToken) {
+    JwtTokenPayload payload = verifyJwt(refreshToken, JwtRefreshTokenPayload.class);
+    RefreshToken storedToken = tokenRepository.findById(memberId);
+    if (storedToken == null) throw new UnauthorizedException("Cannot find such token");
+
+    String storedTokenValue = storedToken.getValue();
+    if (!refreshToken.equals(storedTokenValue)) {
+      throw new UnauthorizedException("Token not matched");
+    }
+
+    MemberInfoResponse memberInfo = memberService.getMemberInfoById(payload.getSub());
+    return new TokenResponse(issueJwt(info2AccessTokenPayload(memberInfo),
+                                      jwtConfig.getAccessKey(),
+                                      jwtConfig.getAccessLifetime()),
+                             storedTokenValue
+    );
   }
-
-  //TODO
-  public String refreshJwt(String token) {return "TODO";}
-
-  public TokenResponse issueAccessTokenAndRefreshToken(JwtTokenPayload payload) {
-    return new TokenResponse(issueJwt(payload, jwtConfig.getAccessLifetime()),
-                             issueJwt(payload, jwtConfig.getRefreshLifetime()));
-  }
-
 
   public TokenResponse signInWithAccount(String email, String password) {
     MemberCredResponse response;
@@ -110,43 +114,66 @@ public class AuthService {
       throw new UnauthorizedException("Invalid password", "invalidPassword");
     }
 
-    MemberInfoResponse memberProfile = new MemberInfoResponse(response.getId(),
-                                                              response.getEmail(),
-                                                              response.getName(),
-                                                              response.getRole());
+    MemberInfoResponse memberInfo = new MemberInfoResponse(response.getId(),
+                                                           response.getEmail(),
+                                                           response.getName(),
+                                                           response.getRole());
 
-    return issueAccessTokenAndRefreshToken(profile2JwtTokenPayload(memberProfile));
+    return issueAccessTokenAndRefreshToken(info2AccessTokenPayload(memberInfo));
   }
 
   public TokenResponse signInWithOIDC(OIDCProvider provider, String authCode) {
     OIDCStrategy strategy = oidcStrategyMap.get(provider.value);
     OIDCUserProfile oidcProfile = strategy.authenticate(authCode);
-    MemberInfoResponse memberProfile;
+    MemberInfoResponse memberInfo;
     try {
-      memberProfile = memberService.getMemberInfoByOidcId(provider,
-                                                          oidcProfile.getId());
+      memberInfo = memberService.getMemberInfoByOidcId(provider,
+                                                       oidcProfile.getId());
     } catch (NoSuchMemberException e) {
-      memberProfile = null;
+      memberInfo = null;
     }
 
     // implicit sign up with OIDC
-    if (memberProfile == null) {
-      memberProfile = memberService.signUpWithOIDC(provider,
-                                                   oidcProfile.getId(),
-                                                   oidcProfile.getName(),
-                                                   oidcProfile.getEmail());
+    if (memberInfo == null) {
+      memberInfo = memberService.signUpWithOIDC(provider,
+                                                oidcProfile.getId(),
+                                                oidcProfile.getName(),
+                                                oidcProfile.getEmail());
     }
 
-    return issueAccessTokenAndRefreshToken(profile2JwtTokenPayload(memberProfile));
+    return issueAccessTokenAndRefreshToken(info2AccessTokenPayload(memberInfo));
   }
 
-  private JwtTokenPayload profile2JwtTokenPayload(MemberInfoResponse memberProfile) {
-    return new JwtTokenPayload(
-        memberProfile.getId(),
-        memberProfile.getEmail(),
-        memberProfile.getName(),
-        memberProfile.getRole()
+  private JwtTokenPayload info2AccessTokenPayload(MemberInfoResponse memberInfo) {
+    return new JwtAccessTokenPayload(
+        memberInfo.getId(),
+        memberInfo.getEmail(),
+        memberInfo.getName(),
+        memberInfo.getRole()
     );
+  }
+
+  private TokenResponse issueAccessTokenAndRefreshToken(JwtTokenPayload payload) {
+    JwtRefreshTokenPayload refreshTokenPayload = new JwtRefreshTokenPayload();
+    refreshTokenPayload.setSub(payload.getSub());
+
+    String accessToken = issueJwt(payload, jwtConfig.getAccessKey(), jwtConfig.getAccessLifetime());
+    String refreshToken = issueJwt(refreshTokenPayload, jwtConfig.getRefreshKey(),
+                                   jwtConfig.getRefreshLifetime());
+
+    tokenRepository.save(new RefreshToken(payload.getSub(), refreshToken));
+
+    return new TokenResponse(accessToken, refreshToken);
+  }
+
+
+  private String issueJwt(JwtTokenPayload payload, String key, Integer lifetime) {
+    return JWT.create()
+              .withPayload(objectMapper.convertValue(payload, Map.class))
+              .withIssuer(jwtConfig.getIssuer())
+              .withSubject(payload.getSub().toString())
+              .withExpiresAt(Instant.now().plus(lifetime, ChronoUnit.MINUTES))
+              .sign(Algorithm.HMAC512(key));
   }
 }
 
