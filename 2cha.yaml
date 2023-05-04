@@ -23,7 +23,7 @@ paths:
           $ref: '#/components/responses/MemberProfileResponse'
       operationId: get-members-memberId
   /members/achievements:
-    parameters: []
+    parameters: [ ]
     get:
       summary: ''
       tags:
@@ -206,7 +206,15 @@ paths:
         - review
       responses:
         '200':
-          $ref: '#/components/responses/List_PlaceReviewResponse'
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReviewResponse'
+                  x-stoplight:
+                    id: z6bd2ghfw78wy
       operationId: get-places-placeId-reviews
     post:
       summary: ''
@@ -234,7 +242,15 @@ paths:
         - review
       responses:
         '200':
-          $ref: '#/components/responses/List_MemberReviewResponse'
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReviewResponse'
+                  x-stoplight:
+                    id: rgyrjan7czlp7
       operationId: get-members-memberId-reviews
   '/reviews/{reviewId}':
     parameters:
@@ -295,7 +311,7 @@ paths:
           description: 한글 초성 검색
           required: true
       requestBody:
-        content: {}
+        content: { }
   '/bookmarks/reviews/{bookmarkId}':
     parameters:
       - schema:
@@ -335,7 +351,7 @@ paths:
                 $ref: '#/components/schemas/PlaceBookmarkResponse'
       operationId: get-bookmarks-places-bookmarkId
       requestBody:
-        content: {}
+        content: { }
   '/bookmarks/{itemType}':
     parameters:
       - schema:
@@ -394,11 +410,11 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: {}
+                properties: { }
       tags:
         - bookmark
       requestBody:
-        content: {}
+        content: { }
   '/members/{memberId}/collections':
     parameters:
       - schema:
@@ -486,7 +502,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: {}
+                properties: { }
       tags:
         - collection
     patch:
@@ -521,7 +537,7 @@ paths:
       summary: ''
       tags:
         - collection
-      responses: {}
+      responses: { }
       operationId: get-collections-collectionId-reviews
     put:
       summary: ''
@@ -586,6 +602,24 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OIDCRequest'
+  /auth/refresh:
+    post:
+      summary: ''
+      operationId: post-auth-refresh
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JwtRefreshRequest'
+      tags:
+        - auth
 components:
   schemas:
     ToggleAchievementExposureRequest:
@@ -991,7 +1025,17 @@ components:
           type: string
           x-stoplight:
             id: k9peo6wil0g9o
-  requestBodies: {}
+    JwtRefreshRequest:
+      title: JwtRefreshRequest
+      x-stoplight:
+        id: pwb2u92b43tbr
+      type: object
+      properties:
+        refresh_token:
+          type: string
+          x-stoplight:
+            id: 6yvjrwrzk8cny
+  requestBodies: { }
   responses:
     PlaceDetailResponse:
       description: Example response
@@ -1001,7 +1045,7 @@ components:
             type: object
             properties:
               id:
-                type: number
+                type: integer
                 x-stoplight:
                   id: toayqgy08x0c4
               name:
@@ -1030,7 +1074,7 @@ components:
                   type: object
                   properties:
                     id:
-                      type: number
+                      type: integer
                       x-stoplight:
                         id: nhi57hw5ybjz7
                     emoji:
@@ -1042,9 +1086,26 @@ components:
                       x-stoplight:
                         id: 22fskadejk550
                     count:
-                      type: number
+                      type: integer
                       x-stoplight:
                         id: ytmpm5dj4b4zd
+              site:
+                type: string
+                x-stoplight:
+                  id: jkxg7fecy8v62
+              lot_address:
+                type: string
+                x-stoplight:
+                  id: t75u4wu89rx3a
+              lat:
+                type: number
+                x-stoplight:
+                  id: l9skhvcll4uj0
+              lon:
+                type: number
+                x-stoplight:
+                  id: xtofpg8uhpub5
+      headers: { }
     PlaceBriefWithDistanceResponse:
       description: Example response
       content:
@@ -1104,7 +1165,7 @@ components:
         application/xml:
           schema:
             type: object
-            properties: {}
+            properties: { }
     MemberProfileResponse:
       description: Example response
       content:
@@ -1232,147 +1293,4 @@ components:
         application/xml:
           schema:
             type: object
-            properties: {}
-    List_PlaceReviewResponse:
-      description: Example response
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              tags:
-                type: array
-                x-stoplight:
-                  id: 4kxtagyfnjpat
-                items:
-                  x-stoplight:
-                    id: qtm0mt9bgj9h8
-                  type: object
-                  properties:
-                    emoji:
-                      type: string
-                      x-stoplight:
-                        id: djdmmnwgfsp5h
-                    message:
-                      type: string
-                      x-stoplight:
-                        id: b9a7uyj067brp
-              images:
-                type: array
-                x-stoplight:
-                  id: gdaim586u40d2
-                items:
-                  x-stoplight:
-                    id: z92jsw7xjlpwn
-                  type: string
-              member:
-                type: object
-                x-stoplight:
-                  id: 8zrcw9g2wsr1s
-                properties:
-                  id:
-                    type: number
-                    x-stoplight:
-                      id: z24yqholvge86
-                  name:
-                    type: string
-                    x-stoplight:
-                      id: asy8ov6ixvfsf
-                  prof_img:
-                    type: string
-                    x-stoplight:
-                      id: il8wjofb27zrd
-                  prof_msg:
-                    type: string
-                    x-stoplight:
-                      id: jcfnwl0y82y10
-              id:
-                type: number
-                x-stoplight:
-                  id: djhk063gvdvvk
-    List_MemberReviewResponse:
-      description: Example response
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              tags:
-                type: array
-                x-stoplight:
-                  id: k5q0u5i7zpxlq
-                items:
-                  x-stoplight:
-                    id: f5pjlj918m1r0
-                  type: object
-                  properties:
-                    emoji:
-                      type: string
-                      x-stoplight:
-                        id: qx7mxm438nzbb
-                    message:
-                      type: string
-                      x-stoplight:
-                        id: h6dqidtjqq31j
-              images:
-                type: array
-                x-stoplight:
-                  id: r7qte1zbdlum7
-                items:
-                  x-stoplight:
-                    id: 1oaod4g0karl1
-                  type: string
-              place:
-                type: object
-                x-stoplight:
-                  id: wa6oq27risymd
-                properties:
-                  id:
-                    type: number
-                    x-stoplight:
-                      id: 7vpsp03rswmjy
-                  name:
-                    type: string
-                    x-stoplight:
-                      id: 0frb5qvs260hw
-                  category:
-                    type: string
-                    x-stoplight:
-                      id: ffdmac4j48spr
-                  address:
-                    type: string
-                    x-stoplight:
-                      id: brqeg3eb93pje
-                  thumbnail:
-                    type: string
-                    x-stoplight:
-                      id: 72vvu9fcajc6r
-                  tag_summary:
-                    type: array
-                    x-stoplight:
-                      id: kusqqrn9yp7zp
-                    items:
-                      x-stoplight:
-                        id: ly8wmp7161qka
-                      type: object
-                      properties:
-                        id:
-                          type: number
-                          x-stoplight:
-                            id: ca975ihfd46l2
-                        emoji:
-                          type: string
-                          x-stoplight:
-                            id: b5tgcwoki1ys1
-                        message:
-                          type: string
-                          x-stoplight:
-                            id: ewb2hn6rbcz8a
-                        count:
-                          type: integer
-                          x-stoplight:
-                            id: hqt9hwz006cva
-              id:
-                type: number
-                x-stoplight:
-                  id: 2zx8s8u4natmx
+            properties: { }
