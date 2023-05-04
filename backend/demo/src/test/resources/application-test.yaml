@@ -11,5 +11,3 @@ cors.origins:
 jwt.access-key: test
 jwt.refresh-key: test
 jwt.issuer: http://2cha.test
-redis.host: localhost
-redis.port: 6379
