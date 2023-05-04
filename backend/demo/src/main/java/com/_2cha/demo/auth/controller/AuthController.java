@@ -1,10 +1,13 @@
 package com._2cha.demo.auth.controller;
 
 
+import com._2cha.demo.auth.dto.JwtRefreshRequest;
 import com._2cha.demo.auth.dto.OIDCRequest;
 import com._2cha.demo.auth.dto.SignInWithAccountRequest;
 import com._2cha.demo.auth.dto.TokenResponse;
 import com._2cha.demo.auth.service.AuthService;
+import com._2cha.demo.global.annotation.Auth;
+import com._2cha.demo.global.annotation.Authed;
 import com._2cha.demo.member.domain.OIDCProvider;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,13 @@ public class AuthController {
   @PostMapping("/signin")
   public TokenResponse signInWithAccount(@Valid @RequestBody SignInWithAccountRequest dto) {
     return authService.signInWithAccount(dto.getEmail(), dto.getPassword());
+  }
+
+  @Auth
+  @PostMapping("/refresh")
+  public TokenResponse refreshJwt(@Authed Long memberId,
+                                  @Valid @RequestBody JwtRefreshRequest dto) {
+    return authService.refreshJwt(memberId, dto.getRefreshToken());
   }
 
   @PostMapping(value = "/openid/{provider}/signin")

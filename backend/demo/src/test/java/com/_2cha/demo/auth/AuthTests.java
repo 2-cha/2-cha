@@ -9,7 +9,6 @@ import com._2cha.demo.auth.service.AuthService;
 import com._2cha.demo.global.exception.UnauthorizedException;
 import com._2cha.demo.member.controller.MemberController;
 import com._2cha.demo.member.dto.SignUpRequest;
-import java.io.IOException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +32,7 @@ class AuthTests {
   TempController tempController;
 
   @BeforeEach
-  void mockUp() throws Exception {
+  void mockUp() {
     SignUpRequest request = new SignUpRequest();
     request.setName("admin");
     request.setEmail("admin@2cha.com");
@@ -42,13 +41,13 @@ class AuthTests {
   }
 
   @Test
-  void signIn() throws Exception {
+  void signIn() {
     SignInWithAccountRequest request = new SignInWithAccountRequest();
     request.setEmail("admin@2cha.com");
     request.setPassword("1234");
 
     TokenResponse response = authController.signInWithAccount(request);
-    Assertions.assertThat(authService.verifyJwt(response.getAccessToken()))
+    Assertions.assertThat(authService.verifyJwt(response.getAccessToken(), JwtTokenPayload.class))
               .isInstanceOf(JwtTokenPayload.class);
   }
 
@@ -67,7 +66,7 @@ class AuthTests {
   }
 
   @Test
-  void OIDC() throws IOException {
+  void OIDC() {
     //TODO
   }
 }
