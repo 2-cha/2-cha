@@ -143,7 +143,8 @@ public class PlaceQueryRepository {
                                            place.address,
                                            place.lotAddress,
                                            place.thumbnail,
-                                           place.site
+                                           place.site,
+                                           place.location
                                           ))
                        .from(place)
                        .where(place.id.eq(id))
