@@ -4,6 +4,7 @@ import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.review.dto.TagCountResponse;
 import java.util.List;
 import lombok.Data;
+import org.locationtech.jts.geom.Point;
 
 @Data
 public class PlaceDetailResponse {
@@ -15,11 +16,13 @@ public class PlaceDetailResponse {
   private String lotAddress;
   private String thumbnail;
   private String site;
+  private Double lat;
+  private Double lon;
   private List<TagCountResponse> tags;
 
   public PlaceDetailResponse(Long id, String name, Category category, String address,
                              String lotAddress,
-                             String thumbnail, String site) {
+                             String thumbnail, String site, Point location) {
     this.id = id;
     this.name = name;
     this.category = category;
@@ -27,5 +30,7 @@ public class PlaceDetailResponse {
     this.address = address;
     this.thumbnail = thumbnail;
     this.site = site;
+    this.lat = location.getY();
+    this.lon = location.getX();
   }
 }
