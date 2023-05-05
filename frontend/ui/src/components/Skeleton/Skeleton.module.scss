@@ -1,0 +1,31 @@
+@use 'mixins';
+
+.root {
+  overflow: hidden;
+  position: relative;
+  background-color: var(--background-skeleton-color);
+  border-radius: 0.25rem;
+}
+
+.circle {
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.wrapper {
+  padding: 0.5rem;
+}
+
+.flexRow {
+  width: 100%;
+  gap: 0.5rem;
+
+  @include mixins.flex();
+}
+
+.flexColumn {
+  width: 100%;
+  gap: 0.5rem;
+
+  @include mixins.flex(column, $align: flex-start);
+}

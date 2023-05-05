@@ -1,6 +1,7 @@
 import PlaceList from '@/components/PlaceList';
 import MetaData from '@/components/MetaData';
 import Header from '@/components/Layout/Header';
+import Skeleton from '@/components/Skeleton';
 import { usePlacesQuery } from '@/hooks/query/usePlaces';
 import { useIntersection } from '@/hooks/useIntersection';
 import { useCallback } from 'react';
@@ -18,9 +19,12 @@ export default function Places() {
     <>
       <MetaData title="Places" />
       <Header />
-      {/* TODO: fallback 컴포넌트 만들기 */}
       {isLoading ? (
-        <div>loading</div>
+        <>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton.Feed key={i} />
+          ))}
+        </>
       ) : isError ? (
         <div>error</div>
       ) : (
