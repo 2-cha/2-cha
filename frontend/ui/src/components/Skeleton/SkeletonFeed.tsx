@@ -7,7 +7,7 @@ export default function SkeletonPost() {
       <div className={s.flexRow}>
         <div
           className={cn(s.root, s.circle)}
-          style={{ width: 64, height: 64 }}
+          style={{ width: 42, height: 42 }}
         />
         <div className={s.flexColumn}>
           <div className={s.root} style={{ width: '80%', height: '1.2rem' }} />
