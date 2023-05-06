@@ -1,7 +1,7 @@
 import { forwardRef, useState } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { usePlaceReviewsQuery } from '@/hooks/query/usePlaceReviews';
-import { Place } from '@/types';
+import type { Place } from '@/types';
 import cn from 'classnames';
 import s from './PlaceInfo.module.scss';
 
@@ -58,7 +58,7 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
         {currentMenu === menuItems.review ? (
           <PlaceReviews placeId={placeInfo.id} />
         ) : currentMenu === menuItems.map ? (
-          <PlaceMap placeInfo={placeInfo} />
+          <PlaceMap position={{ lat: placeInfo.lat, lng: placeInfo.lon }} />
         ) : currentMenu === menuItems.info ? (
           <PlaceDetail />
         ) : null}
@@ -82,16 +82,10 @@ function PlaceReviews({ placeId }: { placeId: number }) {
   );
 }
 
-function PlaceMap({ placeInfo }: { placeInfo: Place }) {
-  // TODO: placeInfo에서 실제 좌표 받기
-  const coord = {
-    lat: 37.4879759679358,
-    lng: 127.065527640082,
-  };
-
+function PlaceMap({ position }: { position: { lat: number; lng: number } }) {
   return (
-    <Map center={coord} level={4} className={s.map}>
-      <MapMarker position={coord} />
+    <Map center={position} level={4} className={s.map}>
+      <MapMarker position={position} />
     </Map>
   );
 }
