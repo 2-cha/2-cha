@@ -55,6 +55,9 @@ dependencies {
     testImplementation 'org.orbisgis:h2gis:2.1.0'
 
     implementation 'org.signal:embedded-redis:0.8.3'
+
+    implementation 'net.coobird:thumbnailator:0.4.19'
+    implementation 'org.apache.tika:tika-core:2.7.0' // detect file ext
 }
 
 ext {
