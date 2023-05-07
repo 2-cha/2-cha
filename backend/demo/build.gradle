@@ -31,6 +31,7 @@ dependencies {
 
 
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
     implementation 'software.amazon.awssdk:sts'
     implementation 'net.datafaker:datafaker:1.8.1'
 
