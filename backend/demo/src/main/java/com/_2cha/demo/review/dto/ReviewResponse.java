@@ -23,7 +23,7 @@ public class ReviewResponse {
   private PlaceBriefResponse place;
 
   public ReviewResponse(Review review, MemberProfileResponse member, PlaceBriefResponse place) {
-    review.getImages().forEach(img -> this.images.add(img.getUrl()));
+    review.getImages().forEach(img -> this.images.add(img.getUrlPath()));
     review.getTags().forEach(tag -> this.tags.add(new TagResponse(tag)));
 
     this.id = review.getId();

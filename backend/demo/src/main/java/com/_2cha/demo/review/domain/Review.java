@@ -60,7 +60,8 @@ public class Review {
    ----------*/
   public static Review createReview(Place place, Member member,
                                     List<Tag> tagList,
-                                    List<String> imgUrlList
+                                    List<String> imgUrlPaths,
+                                    List<String> thumbUrlPaths
                                    ) {
 
     Review review = new Review();
@@ -70,8 +71,10 @@ public class Review {
     for (Tag tag : tagList) {
       review.addTag(tag);
     }
-    for (String imgUrl : imgUrlList) {
-      review.addImage(imgUrl);
+
+    if (imgUrlPaths.size() != thumbUrlPaths.size()) return null;
+    for (int i = 0; i < imgUrlPaths.size(); i++) {
+      review.addImage(imgUrlPaths.get(i), thumbUrlPaths.get(i));
     }
 
     return review;
@@ -82,8 +85,8 @@ public class Review {
     this.tags.add(tag);
   }
 
-  public void addImage(String imgUrl) {
-    ReviewImage reviewImage = new ReviewImage(this, imgUrl);
+  public void addImage(String urlPath, String thumbUrlPath) {
+    ReviewImage reviewImage = new ReviewImage(this, urlPath, thumbUrlPath);
     this.images.add(reviewImage);
   }
 }
