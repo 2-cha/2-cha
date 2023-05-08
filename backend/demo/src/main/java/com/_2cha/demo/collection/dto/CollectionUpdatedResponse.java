@@ -16,7 +16,7 @@ public class CollectionUpdatedResponse {
     this.id = collection.getId();
     this.title = collection.getTitle();
     this.description = collection.getDescription();
-    this.thumbnail = collection.getThumbnail();
+    this.thumbnail = collection.getThumbnailUrlPath();
     this.exposure = collection.isExposed();
   }
 }

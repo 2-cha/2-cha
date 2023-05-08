@@ -64,7 +64,7 @@ public class CollectionService {
    @ Commands
    ----------*/
   public CollectionCreatedResponse createCollection(Long memberId, String title,
-                                                    String description, String thumbnail,
+                                                    String description, String thumbnailUrlPath,
                                                     List<Long> reviewIds) {
     Member member = memberService.findById(memberId);
     List<Review> reviews = reviewService.findReviewsByIdInPreservingOrder(reviewIds);
@@ -73,7 +73,8 @@ public class CollectionService {
       if (!Objects.equals(review.getMember().getId(), memberId)) throw new CannotCreateException();
     }
 
-    Collection collection = Collection.createCollection(member, title, description, thumbnail,
+    Collection collection = Collection.createCollection(member, title, description,
+                                                        thumbnailUrlPath,
                                                         reviews);
     collectionRepository.save(collection);
 
@@ -92,7 +93,7 @@ public class CollectionService {
   }
 
   public CollectionUpdatedResponse updateCollection(Long memberId, Long collId, String title,
-                                                    String description, String thumbnail,
+                                                    String description, String thumbnailUrl,
                                                     Boolean exposure) {
     Collection collection = collectionRepository.findCollectionById(collId);
     if (collection == null) throw new NoSuchCollectionException();
@@ -103,7 +104,7 @@ public class CollectionService {
     // for PATCH method
     if (title != null) collection.updateTitle(title);
     if (description != null) collection.updateDescription(description);
-    if (thumbnail != null) collection.updateThumbnail(thumbnail);
+    if (thumbnailUrl != null) collection.updateThumbnail(thumbnailUrl); //TODO: extract subpath
     if (exposure != null) collection.toggleExposure(exposure);
 
     return new CollectionUpdatedResponse(collection);

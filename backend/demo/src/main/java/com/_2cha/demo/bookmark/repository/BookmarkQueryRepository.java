@@ -26,7 +26,7 @@ public class BookmarkQueryRepository {
 
     return queryFactory.select(constructor(BookmarkBriefResponse.class,
                                            reviewBookmark.id,
-                                           reviewBookmark.thumbnail
+                                           reviewBookmark.thumbnailUrlPath
                                           ))
                        .from(reviewBookmark)
                        .where(reviewBookmark.member.id.eq(memberId))
@@ -37,7 +37,7 @@ public class BookmarkQueryRepository {
 
     return queryFactory.select(constructor(BookmarkBriefResponse.class,
                                            collectionBookmark.id,
-                                           collectionBookmark.thumbnail
+                                           collectionBookmark.thumbnailUrlPath
                                           ))
                        .from(collectionBookmark)
                        .where(collectionBookmark.member.id.eq(memberId))
@@ -48,7 +48,7 @@ public class BookmarkQueryRepository {
 
     return queryFactory.select(constructor(BookmarkBriefResponse.class,
                                            placeBookmark.id,
-                                           placeBookmark.thumbnail
+                                           placeBookmark.thumbnailUrlPath
                                           ))
                        .from(placeBookmark)
                        .where(placeBookmark.member.id.eq(memberId))

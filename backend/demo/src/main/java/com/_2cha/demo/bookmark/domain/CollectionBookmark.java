@@ -20,6 +20,6 @@ public class CollectionBookmark extends Bookmark {
 
   CollectionBookmark(Collection item) {
     this.item = item;
-    this.thumbnail = item.getThumbnail();
+    this.thumbnailUrlPath = item.getThumbnailUrlPath();
   }
 }

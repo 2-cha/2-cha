@@ -29,7 +29,7 @@ public class CollectionQueryRepository {
                                            collection.id,
                                            collection.title,
                                            collection.description,
-                                           collection.thumbnail
+                                           collection.thumbnailUrlPath
                                           ))
                        .from(collection)
                        .where(collection.member.id.eq(memberId), isExposed(exposureCond))

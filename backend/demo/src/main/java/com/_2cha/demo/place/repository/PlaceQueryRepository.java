@@ -85,7 +85,7 @@ public class PlaceQueryRepository {
                                            place.name,
                                            place.category,
                                            place.address,
-                                           place.thumbnail
+                                           place.thumbnailUrlPath
                                           ))
                        .from(place)
                        .where(place.id.eq(id))
@@ -102,7 +102,7 @@ public class PlaceQueryRepository {
                                            place.name,
                                            place.category,
                                            place.address,
-                                           place.thumbnail
+                                           place.thumbnailUrlPath
                                           ))
                        .from(place)
                        .where(place.id.in(ids))
@@ -123,7 +123,7 @@ public class PlaceQueryRepository {
                                            place.name,
                                            place.category,
                                            place.address,
-                                           place.thumbnail,
+                                           place.thumbnailUrlPath,
                                            distance.as("distance")
                                           ))
                        .from(place)
@@ -142,7 +142,7 @@ public class PlaceQueryRepository {
                                            place.category,
                                            place.address,
                                            place.lotAddress,
-                                           place.thumbnail,
+                                           place.thumbnailUrlPath,
                                            place.site,
                                            place.location
                                           ))

@@ -21,12 +21,12 @@ public class PlaceBriefResponse {
   private List<TagCountResponse> tagSummary;
 
   public PlaceBriefResponse(Long id, String name, Category category, String address,
-                            String thumbnail) {
+                            String thumbnailUrl) {
     this.id = id;
     this.name = name;
     this.category = category;
     this.address = address;
-    this.thumbnail = thumbnail;
+    this.thumbnail = thumbnailUrl;
   }
 
   public PlaceBriefResponse(Place place) {
@@ -34,6 +34,6 @@ public class PlaceBriefResponse {
     this.name = place.getName();
     this.category = place.getCategory();
     this.address = place.getAddress();
-    this.thumbnail = place.getThumbnail();
+    this.thumbnail = place.getThumbnailUrlPath();
   }
 }

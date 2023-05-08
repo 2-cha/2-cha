@@ -46,8 +46,8 @@ public class Place {
   private Category category;
 
   @Lob
-  private String thumbnail;
-  
+  private String thumbnailUrlPath;
+
   private String site;
 
 
@@ -61,7 +61,7 @@ public class Place {
       String lotAddress,
       Double longitude,
       Double latitude,
-      String thumbnail,
+      String thumbnailUrlPath,
       String site
                                  ) {
     Place place = new Place();
@@ -70,7 +70,7 @@ public class Place {
     place.address = address;
     place.lotAddress = lotAddress;
     place.location = GeomUtils.createPoint(latitude, longitude);
-    place.thumbnail = thumbnail;
+    place.thumbnailUrlPath = thumbnailUrlPath;
     place.site = site;
     return place;
   }
