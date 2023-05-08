@@ -1,6 +1,8 @@
 package com._2cha.demo.global.infra.storage.service;
 
 import com._2cha.demo.global.config.S3Config;
+import com._2cha.demo.global.infra.storage.exception.InvalidBaseUrlException;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -28,5 +30,12 @@ public class FileStorageService {
 
   public String getBaseUrl() {
     return s3Config.getBucketBaseUrl();
+  }
+
+  public String extractPath(String url) {
+    if (StringUtils.isEmpty(url) || !url.startsWith(s3Config.getBucketBaseUrl())) {
+      throw new InvalidBaseUrlException();
+    }
+    return url.replace(s3Config.getBucketBaseUrl(), "");
   }
 }
