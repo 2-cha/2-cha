@@ -3,6 +3,7 @@ package com._2cha.demo.review;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
@@ -29,6 +30,8 @@ class ReviewTests {
 
   @Autowired
   ReviewController reviewController;
+  @Autowired
+  FileStorageService fileStorageService;
 
   @Autowired
   EntityManager em;
@@ -36,6 +39,13 @@ class ReviewTests {
   @BeforeEach
   @Transactional
   void mockUp() {
+    String baseUrl = fileStorageService.getBaseUrl();
+
+    em.createNativeQuery(
+          "CREATE ALIAS IF NOT EXISTS H2GIS_SPATIAL FOR \"org.h2gis.functions.factory.H2GISFunctions.load\";\n"
+          + "CALL H2GIS_SPATIAL();")
+      .executeUpdate();
+
     em.persist(Tag.createTag("이야기 나누기 좋아요", "🗣️"));
     em.persist(Tag.createTag("책 읽기 좋아요", "📖️"));
     em.persist(Member.createMember("member1@2cha.com", "1234", "member1"));
@@ -44,21 +54,22 @@ class ReviewTests {
                                  "서울 종로구 종로32길 21 4층",
                                  "(지번) 종로5가 395-8",
                                  127.001312694, 37.570090435,
-                                 "https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F0732DF7C4D1D4631B167658FF31836B0,hnet/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fa910cd15332fa03d0924070d52f60092479bfa87%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F969c680aae8906d44bcd5e734b32b8c1d778ff8e%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F54660b5f751cbea3ec29cea8f80da0bd941c2e11%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fdf0d59883daabea5fe12f3fcbf99e2bef316e4a5%3Foriginal",
-                                 "https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F0732DF7C4D1D4631B167658FF31836B0,hnet/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fa910cd15332fa03d0924070d52f60092479bfa87%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F969c680aae8906d44bcd5e734b32b8c1d778ff8e%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F54660b5f751cbea3ec29cea8f80da0bd941c2e11%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fdf0d59883daabea5fe12f3fcbf99e2bef316e4a5%3Foriginal",
+                                 "images/1.png",
+                                 "images/thumb_1.png",
                                  "https://instagram.com/hidden_hour"));
     em.persist(Place.createPlace("flux", Category.WINE_BAR,
                                  "서울 종로구 자하문로7길 24",
                                  "(지번) 통인동 149-5",
                                  126.970755522, 37.578890929,
-                                 "",
-                                 "",
+                                 "images/2.png",
+                                 "images/thumb_2.png",
                                  ""));
 
-    Long[] ids = {1L};
-    String[] imgs = {"abc", "def"};
+    Long[] tagIds = {1L};
+    String[] imgs = {baseUrl + "images/abc.png", baseUrl + "images/def.png"};
+
     WriteReviewRequest request = new WriteReviewRequest();
-    request.setTagIds(Arrays.stream(ids)
+    request.setTagIds(Arrays.stream(tagIds)
                             .toList());
     request.setImgUrls(Arrays.stream(imgs)
                              .toList());
