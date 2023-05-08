@@ -1,6 +1,6 @@
 import { forwardRef, useState } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import { usePlaceReviewsQuery } from '@/hooks/query/usePlaceReviews';
+import PlaceReviews from './PlaceReviewsMenu';
 import PlaceDetail from './PlaceDetailMenu';
 import type { Place } from '@/types';
 import cn from 'classnames';
@@ -67,21 +67,6 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
     );
   }
 );
-
-function PlaceReviews({ placeId }: { placeId: number }) {
-  const { data: reviews, isLoading, isError } = usePlaceReviewsQuery(placeId);
-
-  // TODO: 레이아웃 디자인, 무한스크롤
-  return (
-    <div>
-      <ul>
-        {reviews?.map((review) => (
-          <li key={review.id}>{JSON.stringify(review)}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
 
 function PlaceMap({ position }: { position: { lat: number; lng: number } }) {
   return (

@@ -1,0 +1,14 @@
+@use 'components';
+@use 'mixins';
+@use 'var';
+
+.root {
+  width: 100%;
+  min-height: var.$place-info-menu-min-height;
+
+  @include mixins.flex();
+
+  .hasNoReview {
+    @extend %text-lg;
+  }
+}

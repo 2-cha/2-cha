@@ -4,10 +4,12 @@
 
 .root {
   width: 100%;
+  min-height: var.$place-info-menu-min-height;
   padding: var.$p-md var.$p-lg;
+  margin-top: var.$p-md;
   gap: var.$p-md;
 
-  @include mixins.flex(column, center, flex-start);
+  @include mixins.flex(column, flex-start, flex-start);
 
   .item {
     @include mixins.flex(row, $align: flex-start);
