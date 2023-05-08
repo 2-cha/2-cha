@@ -66,6 +66,8 @@ public class PlaceService {
     if (brief == null) throw new NotFoundException("No place with id " + placeId, "noSuchPlace");
 
     brief.setTagSummary(reviewService.getReviewTagCountByPlaceId(placeId, summarySize));
+    String imageUrl = fileStorageService.getBaseUrl() + brief.getImage();
+    brief.setImage(imageUrl);
 
     return brief;
   }
@@ -77,6 +79,8 @@ public class PlaceService {
     if (brief == null) throw new NotFoundException("No place with id " + placeId, "noSuchPlace");
 
     brief.setTagSummary(reviewService.getReviewTagCountByPlaceId(placeId, summarySize));
+    String imageUrl = fileStorageService.getBaseUrl() + brief.getImage();
+    brief.setImage(imageUrl);
 
     return brief;
   }
@@ -87,7 +91,11 @@ public class PlaceService {
     Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
         briefs.stream().map(place -> place.getId()).toList(), summarySize);
 
-    briefs.forEach(brief -> brief.setTagSummary(placesTagCounts.get(brief.getId())));
+    String imageBaseUrl = fileStorageService.getBaseUrl();
+    briefs.forEach(brief -> {
+      brief.setTagSummary(placesTagCounts.get(brief.getId()));
+      brief.setImage(imageBaseUrl + brief.getImage());
+    });
 
     return briefs;
   }
@@ -139,10 +147,13 @@ public class PlaceService {
     Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
         places.stream().map(place -> place.getId()).toList(), REVIEW_SUMMARY_SIZE);
 
+    String imageBaseUrl = fileStorageService.getBaseUrl();
     return placesWithDist.stream().map((placeWithDist) -> {
       Place place = (Place) placeWithDist[0];
       Double distGap = (Double) placeWithDist[1];
-      PlaceBriefWithDistanceResponse brief = new PlaceBriefWithDistanceResponse(place, distGap);
+
+      PlaceBriefWithDistanceResponse brief = new PlaceBriefWithDistanceResponse(place, distGap,
+                                                                                imageBaseUrl);
       brief.setTagSummary(placesTagCounts.get(place.getId()));
       return brief;
     }).toList();

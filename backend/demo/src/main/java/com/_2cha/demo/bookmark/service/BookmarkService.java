@@ -19,6 +19,7 @@ import com._2cha.demo.bookmark.repository.BookmarkQueryRepository;
 import com._2cha.demo.bookmark.repository.BookmarkRepository;
 import com._2cha.demo.bookmark.service.itemfinder.BookmarkItemFinder;
 import com._2cha.demo.bookmark.service.itemfinder.BookmarkItemFinderFactory;
+import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.service.MemberService;
@@ -42,6 +43,7 @@ public class BookmarkService {
   private final BookmarkRepository bookmarkRepository;
   private final BookmarkQueryRepository bookmarkQueryRepository;
   private final BookmarkItemFinderFactory itemFinderFactory;
+  private final FileStorageService fileStorageService;
   private final MemberService memberService;
   private final PlaceService placeService;
 
@@ -102,7 +104,8 @@ public class BookmarkService {
     }
 
     return new PlaceBookmarkResponse(placeBookmark.getId(),
-                                     new PlaceBriefResponse(placeBookmark.getItem()));
+                                     new PlaceBriefResponse(placeBookmark.getItem(),
+                                                            fileStorageService.getBaseUrl()));
   }
 
 

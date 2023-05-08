@@ -78,6 +78,8 @@ public class PlaceQueryRepository {
   /**
    * @param id
    * @return PlaceBriefResponse, without tagSummary
+   * <p>
+   * field "image" needs to be joined with base url.
    */
   public PlaceBriefResponse getPlaceBriefById(Long id) {
     return queryFactory.select(constructor(PlaceBriefResponse.class,
@@ -85,7 +87,7 @@ public class PlaceQueryRepository {
                                            place.name,
                                            place.category,
                                            place.address,
-                                           place.thumbnailUrlPath
+                                           place.imageUrlPath
                                           ))
                        .from(place)
                        .where(place.id.eq(id))
@@ -95,6 +97,8 @@ public class PlaceQueryRepository {
   /**
    * @param ids
    * @return PlaceBriefResponse, without tagSummary
+   * <p>
+   * field "image" needs to be joined with base url.
    */
   public List<PlaceBriefResponse> getPlacesBriefsByIdIn(List<Long> ids) {
     return queryFactory.select(constructor(PlaceBriefResponse.class,
@@ -102,7 +106,7 @@ public class PlaceQueryRepository {
                                            place.name,
                                            place.category,
                                            place.address,
-                                           place.thumbnailUrlPath
+                                           place.imageUrlPath
                                           ))
                        .from(place)
                        .where(place.id.in(ids))
@@ -112,6 +116,8 @@ public class PlaceQueryRepository {
   /**
    * @param id
    * @return PlaceBriefWithDistanceResponse, without tagSummary
+   * <p>
+   * field "image" needs to be joined with base url.
    */
   public PlaceBriefWithDistanceResponse getPlaceBriefWithDistance(Long id, Point location) {
     NumberTemplate<Double> distance = Expressions.numberTemplate(Double.class,
@@ -123,7 +129,7 @@ public class PlaceQueryRepository {
                                            place.name,
                                            place.category,
                                            place.address,
-                                           place.thumbnailUrlPath,
+                                           place.imageUrlPath,
                                            distance.as("distance")
                                           ))
                        .from(place)
