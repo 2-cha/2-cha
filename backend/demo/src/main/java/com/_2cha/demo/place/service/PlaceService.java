@@ -2,6 +2,7 @@ package com._2cha.demo.place.service;
 
 import com._2cha.demo.global.exception.BadRequestException;
 import com._2cha.demo.global.exception.NotFoundException;
+import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.dto.FilterBy;
@@ -32,6 +33,7 @@ public class PlaceService {
 
   private final PlaceRepository placeRepository;
   private final PlaceQueryRepository placeQueryRepository;
+  private final FileStorageService fileStorageService;
   private final Integer REVIEW_SUMMARY_SIZE = 3;
 
 
@@ -95,6 +97,8 @@ public class PlaceService {
     if (detail == null) throw new NotFoundException("No place with id " + id, "noSuchPlace");
 
     detail.setTags(reviewService.getReviewTagCountByPlaceId(id, null));
+    String imageUrl = fileStorageService.getBaseUrl() + detail.getImage();
+    detail.setImage(imageUrl);
 
     return detail;
   }

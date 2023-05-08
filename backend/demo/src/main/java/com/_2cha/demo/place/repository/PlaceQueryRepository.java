@@ -134,6 +134,8 @@ public class PlaceQueryRepository {
   /**
    * @param id
    * @return PlaceDetailResponse, without tags
+   * <p>
+   * field "image" needs to be joined with base url.
    */
   public PlaceDetailResponse getPlaceDetailById(Long id) {
     return queryFactory.select(constructor(PlaceDetailResponse.class,
@@ -142,7 +144,7 @@ public class PlaceQueryRepository {
                                            place.category,
                                            place.address,
                                            place.lotAddress,
-                                           place.thumbnailUrlPath,
+                                           place.imageUrlPath,
                                            place.site,
                                            place.location
                                           ))

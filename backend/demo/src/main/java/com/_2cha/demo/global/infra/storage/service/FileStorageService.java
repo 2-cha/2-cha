@@ -25,4 +25,8 @@ public class FileStorageService {
 
     return s3Config.getBucketBaseUrl() + filename;
   }
+
+  public String getBaseUrl() {
+    return s3Config.getBucketBaseUrl();
+  }
 }
