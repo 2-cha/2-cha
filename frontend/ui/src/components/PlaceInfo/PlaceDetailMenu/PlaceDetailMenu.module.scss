@@ -1,0 +1,64 @@
+@use 'components';
+@use 'mixins';
+@use 'var';
+
+.root {
+  width: 100%;
+  padding: var.$p-md var.$p-lg;
+  gap: var.$p-md;
+
+  @include mixins.flex(column, center, flex-start);
+
+  .item {
+    @include mixins.flex(row, $align: flex-start);
+
+    &__group {
+      height: 100%;
+      gap: 8px;
+
+      @include mixins.flex();
+    }
+  }
+
+  $icon-width: 48px;
+  .icon {
+    width: $icon-width;
+
+    @include mixins.flex(row, flex-start);
+
+    &__secondary {
+      $icon-size: 14px;
+      width: $icon-size;
+      height: $icon-size;
+      color: var(--text-secondary-color);
+    }
+  }
+
+  .address {
+    &__content {
+      height: 100%;
+
+      @include mixins.flex(column);
+    }
+
+    &__1 {
+      @extend %text-md;
+    }
+
+    &__2 {
+      color: var(--text-secondary-color);
+
+      @extend %text-sm;
+    }
+  }
+
+  .button {
+    color: inherit;
+    background-color: inherit;
+  }
+
+  .site {
+    color: var(--text-secondary-color);
+    text-decoration: underline;
+  }
+}

@@ -1,6 +1,7 @@
 import { forwardRef, useState } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { usePlaceReviewsQuery } from '@/hooks/query/usePlaceReviews';
+import PlaceDetail from './PlaceDetailMenu';
 import type { Place } from '@/types';
 import cn from 'classnames';
 import s from './PlaceInfo.module.scss';
@@ -60,7 +61,7 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
         ) : currentMenu === menuItems.map ? (
           <PlaceMap position={{ lat: placeInfo.lat, lng: placeInfo.lon }} />
         ) : currentMenu === menuItems.info ? (
-          <PlaceDetail />
+          <PlaceDetail placeInfo={placeInfo} />
         ) : null}
       </div>
     );
@@ -88,12 +89,4 @@ function PlaceMap({ position }: { position: { lat: number; lng: number } }) {
       <MapMarker position={position} />
     </Map>
   );
-}
-
-function PlaceDetail() {
-  // TODO:
-  // 1. 복사 가능한 주소
-  // 2. 홈페이지 링크
-  // 3. 기타 코멘트 혹은 소개글 같은 것도 여기에 속할듯
-  return <div>상세 정보</div>;
 }

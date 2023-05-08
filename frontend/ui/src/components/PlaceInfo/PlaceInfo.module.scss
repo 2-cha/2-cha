@@ -20,7 +20,6 @@
 
     &__category {
       @extend %text-sm;
-      // TODO: declare this color
       color: var(--text-secondary-color);
     }
   }
