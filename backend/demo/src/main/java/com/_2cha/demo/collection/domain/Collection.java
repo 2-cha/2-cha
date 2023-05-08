@@ -53,7 +53,7 @@ public class Collection {
     collection.member = member;
     collection.updateTitle(title);
     collection.updateDescription(description);
-    collection.updateThumbnail(thumbnailUrlPath);
+    collection.updateThumbnailUrlPath(thumbnailUrlPath);
     collection.updateReviews(reviews);
     return collection;
   }
@@ -73,7 +73,7 @@ public class Collection {
     this.description = description;
   }
 
-  public void updateThumbnail(String thumbnailUrlPath) {
+  public void updateThumbnailUrlPath(String thumbnailUrlPath) {
     this.thumbnailUrlPath = thumbnailUrlPath;
   }
 

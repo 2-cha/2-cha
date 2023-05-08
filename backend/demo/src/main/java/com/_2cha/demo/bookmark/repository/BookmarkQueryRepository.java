@@ -22,6 +22,12 @@ public class BookmarkQueryRepository {
     this.queryFactory = new JPAQueryFactory(em);
   }
 
+  /**
+   * @param memberId
+   * @return List &lt;BookmarkBriefResponse&gt;
+   * <p>
+   * field "thumbnail" need to be joined with base url.
+   */
   public List<BookmarkBriefResponse> getReviewBookmarksByMemberId(Long memberId) {
 
     return queryFactory.select(constructor(BookmarkBriefResponse.class,
@@ -33,6 +39,12 @@ public class BookmarkQueryRepository {
                        .fetch();
   }
 
+  /**
+   * @param memberId
+   * @return List &lt;BookmarkBriefResponse&gt;
+   * <p>
+   * field "thumbnail" need to be joined with base url.
+   */
   public List<BookmarkBriefResponse> getCollectionBookmarksByMemberId(Long memberId) {
 
     return queryFactory.select(constructor(BookmarkBriefResponse.class,
@@ -44,6 +56,12 @@ public class BookmarkQueryRepository {
                        .fetch();
   }
 
+  /**
+   * @param memberId
+   * @return List &lt;BookmarkBriefResponse&gt;
+   * <p>
+   * field "thumbnail" need to be joined with base url.
+   */
   public List<BookmarkBriefResponse> getPlaceBookmarksByMemberId(Long memberId) {
 
     return queryFactory.select(constructor(BookmarkBriefResponse.class,

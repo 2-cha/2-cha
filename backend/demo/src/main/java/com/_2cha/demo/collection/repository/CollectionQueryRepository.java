@@ -24,6 +24,13 @@ public class CollectionQueryRepository {
     this.queryFactory = new JPAQueryFactory(JPQLTemplates.DEFAULT, em);
   }
 
+  /**
+   * @param memberId
+   * @param exposureCond
+   * @return CollectionViewResponse
+   * <p>
+   * field "thumbnail" needs to be joined with base url.
+   */
   public List<CollectionViewResponse> getMemberCollections(Long memberId, boolean exposureCond) {
     return queryFactory.select(constructor(CollectionViewResponse.class,
                                            collection.id,

@@ -51,15 +51,34 @@ public class BookmarkService {
    @ Queries
    ----------*/
   public List<BookmarkBriefResponse> getReviewBookmarkList(Long memberId) {
-    return bookmarkQueryRepository.getReviewBookmarksByMemberId(memberId);
+
+    List<BookmarkBriefResponse> bookmarks = bookmarkQueryRepository.getReviewBookmarksByMemberId(
+        memberId);
+
+    bookmarks.forEach(
+        bookmark -> bookmark.setThumbnail(fileStorageService.getBaseUrl() + bookmark.getThumbnail())
+                     );
+    return bookmarks;
   }
 
   public List<BookmarkBriefResponse> getCollectionBookmarkList(Long memberId) {
-    return bookmarkQueryRepository.getCollectionBookmarksByMemberId(memberId);
+    List<BookmarkBriefResponse> bookmarks = bookmarkQueryRepository.getCollectionBookmarksByMemberId(
+        memberId);
+
+    bookmarks.forEach(
+        bookmark -> bookmark.setThumbnail(fileStorageService.getBaseUrl() + bookmark.getThumbnail())
+                     );
+    return bookmarks;
   }
 
   public List<BookmarkBriefResponse> getPlaceBookmarkList(Long memberId) {
-    return bookmarkQueryRepository.getPlaceBookmarksByMemberId(memberId);
+    List<BookmarkBriefResponse> bookmarks = bookmarkQueryRepository.getPlaceBookmarksByMemberId(
+        memberId);
+
+    bookmarks.forEach(
+        bookmark -> bookmark.setThumbnail(fileStorageService.getBaseUrl() + bookmark.getThumbnail())
+                     );
+    return bookmarks;
   }
 
   // scrollable bookmark detail
