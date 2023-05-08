@@ -7,13 +7,17 @@ export interface Place {
   address: string;
   thumbnail?: string;
   tags: TagWithCount[];
+  lat: number;
+  lon: number;
+  site?: string;
+  lot_address?: string;
 }
 
 export interface PlaceSearchResult extends Place {
   distance: number;
 }
 
-export const placesMockData: PlaceSearchResult[] = [
+export const placesMockData = [
   {
     id: 1,
     name: '내추럴펭귄와인샵',
