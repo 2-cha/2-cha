@@ -135,7 +135,9 @@ public class ReviewService {
     return reviews.stream().map(review -> new ReviewResponse(review,
                                                              memberMap.get(
                                                                  review.getMember().getId()),
-                                                             placeMap.get(review.getPlace().getId())
+                                                             placeMap.get(
+                                                                 review.getPlace().getId()),
+                                                             fileStorageService.getBaseUrl()
 
     )).toList();
   }
@@ -160,7 +162,9 @@ public class ReviewService {
     return reviews.stream().map(review -> new ReviewResponse(review,
                                                              // set null to ignore in api response
                                                              member,
-                                                             placeMap.get(review.getPlace().getId())
+                                                             placeMap.get(
+                                                                 review.getPlace().getId()),
+                                                             fileStorageService.getBaseUrl()
 
     )).toList();
   }
@@ -185,7 +189,8 @@ public class ReviewService {
                   .map(review -> new ReviewResponse(review,
                                                     memberMap.get(review.getMember().getId()),
                                                     // set null to ignore in api response
-                                                    place))
+                                                    place,
+                                                    fileStorageService.getBaseUrl()))
                   .toList();
   }
 

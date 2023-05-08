@@ -45,13 +45,8 @@ public class CollectionService {
    ----------*/
   @Transactional(readOnly = true)
   public List<CollectionViewResponse> getMemberCollections(Long memberId, boolean exposedOnly) {
-    List<CollectionViewResponse> memberCollections = collectionQueryRepository.getMemberCollections(
-        memberId, exposedOnly);
-    memberCollections.forEach(collection ->
-                                  collection.setThumbnail(
-                                      fileStorageService.getBaseUrl() + collection.getThumbnail())
-                             );
-    return memberCollections;
+    return collectionQueryRepository.getMemberCollections(memberId, exposedOnly,
+                                                          fileStorageService.getBaseUrl());
   }
 
   @Transactional(readOnly = true)

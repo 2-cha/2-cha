@@ -22,51 +22,38 @@ public class BookmarkQueryRepository {
     this.queryFactory = new JPAQueryFactory(em);
   }
 
-  /**
-   * @param memberId
-   * @return List &lt;BookmarkBriefResponse&gt;
-   * <p>
-   * field "thumbnail" need to be joined with base url.
-   */
-  public List<BookmarkBriefResponse> getReviewBookmarksByMemberId(Long memberId) {
+
+  public List<BookmarkBriefResponse> getReviewBookmarksByMemberId(Long memberId,
+                                                                  String thumbBaseUrl) {
 
     return queryFactory.select(constructor(BookmarkBriefResponse.class,
                                            reviewBookmark.id,
-                                           reviewBookmark.thumbnailUrlPath
+                                           reviewBookmark.thumbnailUrlPath.prepend(thumbBaseUrl)
                                           ))
                        .from(reviewBookmark)
                        .where(reviewBookmark.member.id.eq(memberId))
                        .fetch();
   }
 
-  /**
-   * @param memberId
-   * @return List &lt;BookmarkBriefResponse&gt;
-   * <p>
-   * field "thumbnail" need to be joined with base url.
-   */
-  public List<BookmarkBriefResponse> getCollectionBookmarksByMemberId(Long memberId) {
+  public List<BookmarkBriefResponse> getCollectionBookmarksByMemberId(Long memberId,
+                                                                      String thumbBaseUrl) {
 
     return queryFactory.select(constructor(BookmarkBriefResponse.class,
                                            collectionBookmark.id,
-                                           collectionBookmark.thumbnailUrlPath
+                                           collectionBookmark.thumbnailUrlPath.prepend(thumbBaseUrl)
                                           ))
                        .from(collectionBookmark)
                        .where(collectionBookmark.member.id.eq(memberId))
                        .fetch();
   }
 
-  /**
-   * @param memberId
-   * @return List &lt;BookmarkBriefResponse&gt;
-   * <p>
-   * field "thumbnail" need to be joined with base url.
-   */
-  public List<BookmarkBriefResponse> getPlaceBookmarksByMemberId(Long memberId) {
+
+  public List<BookmarkBriefResponse> getPlaceBookmarksByMemberId(Long memberId,
+                                                                 String thumbBaseUrl) {
 
     return queryFactory.select(constructor(BookmarkBriefResponse.class,
                                            placeBookmark.id,
-                                           placeBookmark.thumbnailUrlPath
+                                           placeBookmark.thumbnailUrlPath.prepend(thumbBaseUrl)
                                           ))
                        .from(placeBookmark)
                        .where(placeBookmark.member.id.eq(memberId))

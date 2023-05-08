@@ -51,34 +51,18 @@ public class BookmarkService {
    @ Queries
    ----------*/
   public List<BookmarkBriefResponse> getReviewBookmarkList(Long memberId) {
-
-    List<BookmarkBriefResponse> bookmarks = bookmarkQueryRepository.getReviewBookmarksByMemberId(
-        memberId);
-
-    bookmarks.forEach(
-        bookmark -> bookmark.setThumbnail(fileStorageService.getBaseUrl() + bookmark.getThumbnail())
-                     );
-    return bookmarks;
+    return bookmarkQueryRepository.getReviewBookmarksByMemberId(memberId,
+                                                                fileStorageService.getBaseUrl());
   }
 
   public List<BookmarkBriefResponse> getCollectionBookmarkList(Long memberId) {
-    List<BookmarkBriefResponse> bookmarks = bookmarkQueryRepository.getCollectionBookmarksByMemberId(
-        memberId);
-
-    bookmarks.forEach(
-        bookmark -> bookmark.setThumbnail(fileStorageService.getBaseUrl() + bookmark.getThumbnail())
-                     );
-    return bookmarks;
+    return bookmarkQueryRepository.getCollectionBookmarksByMemberId(memberId,
+                                                                    fileStorageService.getBaseUrl());
   }
 
   public List<BookmarkBriefResponse> getPlaceBookmarkList(Long memberId) {
-    List<BookmarkBriefResponse> bookmarks = bookmarkQueryRepository.getPlaceBookmarksByMemberId(
-        memberId);
-
-    bookmarks.forEach(
-        bookmark -> bookmark.setThumbnail(fileStorageService.getBaseUrl() + bookmark.getThumbnail())
-                     );
-    return bookmarks;
+    return bookmarkQueryRepository.getPlaceBookmarksByMemberId(memberId,
+                                                               fileStorageService.getBaseUrl());
   }
 
   // scrollable bookmark detail
@@ -106,7 +90,8 @@ public class BookmarkService {
                                       new ReviewResponse(
                                           reviewBookmark.getItem(),
                                           reviewWriter,
-                                          place));
+                                          place,
+                                          fileStorageService.getBaseUrl()));
   }
 
   // scrollable bookmark detail

@@ -62,12 +62,11 @@ public class PlaceService {
                                                                   Double lon, Integer summarySize) {
     Point cur = GeomUtils.createPoint(lat, lon);
     PlaceBriefWithDistanceResponse brief = placeQueryRepository.getPlaceBriefWithDistance(placeId,
-                                                                                          cur);
+                                                                                          cur,
+                                                                                          fileStorageService.getBaseUrl());
     if (brief == null) throw new NotFoundException("No place with id " + placeId, "noSuchPlace");
 
     brief.setTagSummary(reviewService.getReviewTagCountByPlaceId(placeId, summarySize));
-    String imageUrl = fileStorageService.getBaseUrl() + brief.getImage();
-    brief.setImage(imageUrl);
 
     return brief;
   }
@@ -75,38 +74,33 @@ public class PlaceService {
 
   public PlaceBriefResponse getPlaceBriefById(Long placeId, Integer summarySize) {
 
-    PlaceBriefResponse brief = placeQueryRepository.getPlaceBriefById(placeId);
+    PlaceBriefResponse brief = placeQueryRepository.getPlaceBriefById(placeId,
+                                                                      fileStorageService.getBaseUrl());
     if (brief == null) throw new NotFoundException("No place with id " + placeId, "noSuchPlace");
 
     brief.setTagSummary(reviewService.getReviewTagCountByPlaceId(placeId, summarySize));
-    String imageUrl = fileStorageService.getBaseUrl() + brief.getImage();
-    brief.setImage(imageUrl);
 
     return brief;
   }
 
   public List<PlaceBriefResponse> getPlacesBriefByIdIn(List<Long> placeIds, Integer summarySize) {
-    List<PlaceBriefResponse> briefs = placeQueryRepository.getPlacesBriefsByIdIn(placeIds);
+    List<PlaceBriefResponse> briefs = placeQueryRepository.getPlacesBriefsByIdIn(placeIds,
+                                                                                 fileStorageService.getBaseUrl());
 
     Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
         briefs.stream().map(place -> place.getId()).toList(), summarySize);
 
-    String imageBaseUrl = fileStorageService.getBaseUrl();
-    briefs.forEach(brief -> {
-      brief.setTagSummary(placesTagCounts.get(brief.getId()));
-      brief.setImage(imageBaseUrl + brief.getImage());
-    });
+    briefs.forEach(brief -> brief.setTagSummary(placesTagCounts.get(brief.getId())));
 
     return briefs;
   }
 
   public PlaceDetailResponse getPlaceDetailById(Long id) {
-    PlaceDetailResponse detail = placeQueryRepository.getPlaceDetailById(id);
+    PlaceDetailResponse detail = placeQueryRepository.getPlaceDetailById(id,
+                                                                         fileStorageService.getBaseUrl());
     if (detail == null) throw new NotFoundException("No place with id " + id, "noSuchPlace");
 
     detail.setTags(reviewService.getReviewTagCountByPlaceId(id, null));
-    String imageUrl = fileStorageService.getBaseUrl() + detail.getImage();
-    detail.setImage(imageUrl);
 
     return detail;
   }
@@ -147,13 +141,11 @@ public class PlaceService {
     Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
         places.stream().map(place -> place.getId()).toList(), REVIEW_SUMMARY_SIZE);
 
-    String imageBaseUrl = fileStorageService.getBaseUrl();
     return placesWithDist.stream().map((placeWithDist) -> {
       Place place = (Place) placeWithDist[0];
       Double distGap = (Double) placeWithDist[1];
-
       PlaceBriefWithDistanceResponse brief = new PlaceBriefWithDistanceResponse(place, distGap,
-                                                                                imageBaseUrl);
+                                                                                fileStorageService.getBaseUrl());
       brief.setTagSummary(placesTagCounts.get(place.getId()));
       return brief;
     }).toList();
