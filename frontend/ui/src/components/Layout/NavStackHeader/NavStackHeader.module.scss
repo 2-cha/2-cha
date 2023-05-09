@@ -1,17 +1,15 @@
 @use 'mixins';
-@use 'components';
 @use 'var';
 
 .root {
-  @extend %header;
-  @include mixins.flex(row, space-between);
-
   position: sticky;
   top: 0;
   z-index: 100;
-
   background: transparent;
   border: 0;
+
+  @include mixins.header;
+  @include mixins.flex(row, space-between);
 
   $button-width: 24px;
 
@@ -20,7 +18,7 @@
     padding-right: $button-width;
     margin: 0 auto;
 
-    @extend %text-lg;
+    @include mixins.text-lg;
   }
 
   &__backButton {

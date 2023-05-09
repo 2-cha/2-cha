@@ -1,10 +1,10 @@
 @use 'mixins';
-@use 'components';
 @use 'var';
 
 .root {
-  @include mixins.flex(column, flex-start, flex-start);
   width: 100%;
+
+  @include mixins.flex(column, flex-start, flex-start);
 
   .thumbnail {
     position: relative;
@@ -15,36 +15,37 @@
     padding: 0 var.$p-xl;
 
     &__title {
-      @extend %text-xl;
+      @include mixins.text-xl;
     }
 
     &__category {
-      @extend %text-sm;
+      @include mixins.text-sm;
       color: var(--text-secondary-color);
     }
   }
 }
 
 .menu {
-  @include mixins.flex(row, space-around, flex-start);
+  position: sticky;
+  top: var.$header-height;
   width: 100%;
   height: var.$header-height;
   margin-top: var.$p-lg * 2;
 
-  position: sticky;
-  top: var.$header-height;
+  @include mixins.flex(row, space-around, flex-start);
 
   .active {
     border-bottom: 2px solid var(--border-color);
   }
 
   &__item {
-    @extend %text-md;
     background-color: inherit;
     color: inherit;
     cursor: pointer;
     padding: var.$p-md;
     flex: 1 1 0;
+
+    @include mixins.text-md;
 
     &:hover,
     &:active,

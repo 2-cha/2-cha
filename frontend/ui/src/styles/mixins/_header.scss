@@ -1,8 +1,9 @@
 @use 'var';
 
-%header {
+@mixin header($height: var.$header-height) {
   width: 100%;
-  height: var.$header-height;
+  height: $height;
   padding: var.$p-md var.$p-lg;
   border-bottom: 0.5px solid var(--border-color);
+  @content;
 }
