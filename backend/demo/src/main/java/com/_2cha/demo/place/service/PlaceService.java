@@ -2,6 +2,7 @@ package com._2cha.demo.place.service;
 
 import com._2cha.demo.global.exception.BadRequestException;
 import com._2cha.demo.global.exception.NotFoundException;
+import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.dto.FilterBy;
@@ -32,6 +33,7 @@ public class PlaceService {
 
   private final PlaceRepository placeRepository;
   private final PlaceQueryRepository placeQueryRepository;
+  private final FileStorageService fileStorageService;
   private final Integer REVIEW_SUMMARY_SIZE = 3;
 
 
@@ -60,7 +62,8 @@ public class PlaceService {
                                                                   Double lon, Integer summarySize) {
     Point cur = GeomUtils.createPoint(lat, lon);
     PlaceBriefWithDistanceResponse brief = placeQueryRepository.getPlaceBriefWithDistance(placeId,
-                                                                                          cur);
+                                                                                          cur,
+                                                                                          fileStorageService.getBaseUrl());
     if (brief == null) throw new NotFoundException("No place with id " + placeId, "noSuchPlace");
 
     brief.setTagSummary(reviewService.getReviewTagCountByPlaceId(placeId, summarySize));
@@ -71,7 +74,8 @@ public class PlaceService {
 
   public PlaceBriefResponse getPlaceBriefById(Long placeId, Integer summarySize) {
 
-    PlaceBriefResponse brief = placeQueryRepository.getPlaceBriefById(placeId);
+    PlaceBriefResponse brief = placeQueryRepository.getPlaceBriefById(placeId,
+                                                                      fileStorageService.getBaseUrl());
     if (brief == null) throw new NotFoundException("No place with id " + placeId, "noSuchPlace");
 
     brief.setTagSummary(reviewService.getReviewTagCountByPlaceId(placeId, summarySize));
@@ -80,7 +84,8 @@ public class PlaceService {
   }
 
   public List<PlaceBriefResponse> getPlacesBriefByIdIn(List<Long> placeIds, Integer summarySize) {
-    List<PlaceBriefResponse> briefs = placeQueryRepository.getPlacesBriefsByIdIn(placeIds);
+    List<PlaceBriefResponse> briefs = placeQueryRepository.getPlacesBriefsByIdIn(placeIds,
+                                                                                 fileStorageService.getBaseUrl());
 
     Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
         briefs.stream().map(place -> place.getId()).toList(), summarySize);
@@ -91,7 +96,8 @@ public class PlaceService {
   }
 
   public PlaceDetailResponse getPlaceDetailById(Long id) {
-    PlaceDetailResponse detail = placeQueryRepository.getPlaceDetailById(id);
+    PlaceDetailResponse detail = placeQueryRepository.getPlaceDetailById(id,
+                                                                         fileStorageService.getBaseUrl());
     if (detail == null) throw new NotFoundException("No place with id " + id, "noSuchPlace");
 
     detail.setTags(reviewService.getReviewTagCountByPlaceId(id, null));
@@ -138,7 +144,8 @@ public class PlaceService {
     return placesWithDist.stream().map((placeWithDist) -> {
       Place place = (Place) placeWithDist[0];
       Double distGap = (Double) placeWithDist[1];
-      PlaceBriefWithDistanceResponse brief = new PlaceBriefWithDistanceResponse(place, distGap);
+      PlaceBriefWithDistanceResponse brief = new PlaceBriefWithDistanceResponse(place, distGap,
+                                                                                fileStorageService.getBaseUrl());
       brief.setTagSummary(placesTagCounts.get(place.getId()));
       return brief;
     }).toList();

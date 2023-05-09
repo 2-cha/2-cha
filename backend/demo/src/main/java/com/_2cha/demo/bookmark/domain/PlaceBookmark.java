@@ -21,6 +21,6 @@ public class PlaceBookmark extends Bookmark {
 
   PlaceBookmark(Place item) {
     this.item = item;
-    this.thumbnail = item.getThumbnail();
+    this.thumbnailUrlPath = item.getThumbnailUrlPath();
   }
 }

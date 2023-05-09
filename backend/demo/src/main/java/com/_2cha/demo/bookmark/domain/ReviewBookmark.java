@@ -20,6 +20,6 @@ public class ReviewBookmark extends Bookmark {
 
   ReviewBookmark(Review item) {
     this.item = item;
-    this.thumbnail = item.getImages().get(0).getUrl();
+    this.thumbnailUrlPath = item.getImages().get(0).getThumbnailUrlPath();
   }
 }

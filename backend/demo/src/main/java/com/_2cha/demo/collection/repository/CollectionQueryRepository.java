@@ -24,12 +24,14 @@ public class CollectionQueryRepository {
     this.queryFactory = new JPAQueryFactory(JPQLTemplates.DEFAULT, em);
   }
 
-  public List<CollectionViewResponse> getMemberCollections(Long memberId, boolean exposureCond) {
+
+  public List<CollectionViewResponse> getMemberCollections(Long memberId, boolean exposureCond,
+                                                           String thumbBaseUrl) {
     return queryFactory.select(constructor(CollectionViewResponse.class,
                                            collection.id,
                                            collection.title,
                                            collection.description,
-                                           collection.thumbnail
+                                           collection.thumbnailUrlPath.prepend(thumbBaseUrl)
                                           ))
                        .from(collection)
                        .where(collection.member.id.eq(memberId), isExposed(exposureCond))

@@ -4,6 +4,8 @@ import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
 import com._2cha.demo.global.exception.ForbiddenException;
+import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
+import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.service.MemberService;
@@ -36,6 +38,8 @@ public class ReviewService {
   private final Integer SUMMARY_SIZE = 3;
   private final ReviewRepository reviewRepository;
   private final TagService tagService;
+  private final FileStorageService fileStorageService;
+  private final ImageUploadService imageUploadService;
 
   private MemberService memberService;
   private PlaceService placeService;
@@ -79,7 +83,14 @@ public class ReviewService {
     Member member = memberService.findById(memberId);
     Place place = placeService.findPlaceById(placeId);
 
-    Review review = Review.createReview(place, member, tagList, imageUrlList);
+    List<String> imageUrlPaths = imageUrlList.stream()
+                                             .map(fileStorageService::extractPath)
+                                             .toList();
+
+    List<String> thumbnailUrlPaths = imageUrlPaths.stream()
+                                                  .map(imageUploadService::getThumbnailPath)
+                                                  .toList();
+    Review review = Review.createReview(place, member, tagList, imageUrlPaths, thumbnailUrlPaths);
     reviewRepository.save(review);
   }
 
@@ -124,7 +135,9 @@ public class ReviewService {
     return reviews.stream().map(review -> new ReviewResponse(review,
                                                              memberMap.get(
                                                                  review.getMember().getId()),
-                                                             placeMap.get(review.getPlace().getId())
+                                                             placeMap.get(
+                                                                 review.getPlace().getId()),
+                                                             fileStorageService.getBaseUrl()
 
     )).toList();
   }
@@ -149,7 +162,9 @@ public class ReviewService {
     return reviews.stream().map(review -> new ReviewResponse(review,
                                                              // set null to ignore in api response
                                                              member,
-                                                             placeMap.get(review.getPlace().getId())
+                                                             placeMap.get(
+                                                                 review.getPlace().getId()),
+                                                             fileStorageService.getBaseUrl()
 
     )).toList();
   }
@@ -174,7 +189,8 @@ public class ReviewService {
                   .map(review -> new ReviewResponse(review,
                                                     memberMap.get(review.getMember().getId()),
                                                     // set null to ignore in api response
-                                                    place))
+                                                    place,
+                                                    fileStorageService.getBaseUrl()))
                   .toList();
   }
 

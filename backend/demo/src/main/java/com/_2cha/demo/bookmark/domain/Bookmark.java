@@ -34,7 +34,7 @@ public abstract class Bookmark {
 
   @Lob
   @Column(nullable = false)
-  protected String thumbnail;
+  protected String thumbnailUrlPath;
 
 
   @Column(name = "ITEM_TYPE", nullable = false, insertable = false, updatable = false)
@@ -67,7 +67,7 @@ public abstract class Bookmark {
     return bookmark;
   }
 
-  public String getThumbnail() {return this.thumbnail;}
+  public String getThumbnailUrlPath() {return this.thumbnailUrlPath;}
 
   public abstract Object getItem();
 

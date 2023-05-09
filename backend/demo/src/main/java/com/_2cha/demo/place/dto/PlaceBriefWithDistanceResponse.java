@@ -11,13 +11,13 @@ public class PlaceBriefWithDistanceResponse extends PlaceBriefResponse {
 
   public PlaceBriefWithDistanceResponse(Long id, String name,
                                         Category category, String address,
-                                        String thumbnail, Double distance) {
-    super(id, name, category, address, thumbnail);
+                                        String imageUrl, Double distance) {
+    super(id, name, category, address, imageUrl);
     this.distance = distance;
   }
 
-  public PlaceBriefWithDistanceResponse(Place place, Double distance) {
-    super(place);
+  public PlaceBriefWithDistanceResponse(Place place, Double distance, String imageBaseUrl) {
+    super(place, imageBaseUrl);
     this.distance = distance;
   }
 }

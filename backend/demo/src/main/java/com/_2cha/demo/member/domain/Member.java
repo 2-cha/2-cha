@@ -43,7 +43,12 @@ public class Member {
 
   @Lob
   private String profMsg;
-  private String profImg;
+
+  @Lob
+  private String profImgUrlPath;
+
+  @Lob
+  private String profImgThumbPath;
 
   @Enumerated(EnumType.STRING)
   private OIDCProvider oidcProvider;

@@ -85,8 +85,8 @@ public class DataLoader implements ApplicationRunner {
           longitude,
           latitude,
           thumbnail,
-          site
-                                     );
+          thumbnail,
+          site);
       placeRepository.save(place);
     }
   }
