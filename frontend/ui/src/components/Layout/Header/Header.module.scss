@@ -1,20 +1,21 @@
 @use 'mixins';
-@use 'components';
 @use 'var';
 
 .root {
+  width: 100%;
+
   @include mixins.flex(column, flex-start, center);
   @include mixins.box-shadow;
-  width: 100%;
 }
 
 .header {
-  @extend %header;
+  gap: var.$size-md;
+
+  @include mixins.header;
   @include mixins.flex(row, flex-start, center);
-  gap: var.$p-md;
 
   &__title {
-    @extend %text-lg;
+    @include mixins.text-lg;
   }
 
   &__button {
@@ -29,34 +30,43 @@
 }
 
 .searchForm {
-  @include mixins.flex(row, flex-start, center);
   width: 100%;
-  gap: var.$p-md;
+  gap: var.$size-md;
+
+  @include mixins.flex(row, flex-start, center);
 
   &__input {
     width: 100%;
-    padding: var.$p-md var.$p-lg;
     background-color: var(--background-inactive-color);
     color: inherit;
     border: 0;
+
+    @include mixins.padding(x, lg);
+    @include mixins.padding(y, md);
   }
 
   &__button {
-    padding: var.$p-md var.$p-lg;
     background-color: inherit;
     color: inherit;
     border: 0;
+
+    @include mixins.padding(x, lg);
+    @include mixins.padding(y, md);
   }
 }
 
 .addressList {
-  @include mixins.flex(column, flex-start, flex-start);
   width: 100%;
   border-bottom: 0.5px solid var(--border-color);
 
+  @include mixins.flex(column, flex-start, flex-start);
+
   & > li {
     width: 100%;
-    padding: var.$p-md var.$p-lg;
+
+    @include mixins.padding(x, lg);
+    @include mixins.padding(y, md);
+
     & > button {
       background-color: inherit;
       color: inherit;

@@ -1,19 +1,19 @@
-%text-sm {
+@mixin text-sm {
   font-size: 0.85rem;
   line-height: 1.35rem;
 }
 
-%text-md {
+@mixin text-md {
   font-size: 1rem;
   line-height: 1.5rem;
 }
 
-%text-lg {
+@mixin text-lg {
   font-size: 1.25rem;
   line-height: 1.75rem;
 }
 
-%text-xl {
+@mixin text-xl {
   font-size: 1.75rem;
   line-height: 2.25rem;
 }

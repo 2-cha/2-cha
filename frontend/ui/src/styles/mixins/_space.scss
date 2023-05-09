@@ -1,0 +1,53 @@
+@use 'var';
+
+@mixin padding($direction: all, $value: 0) {
+  $_value: 0;
+
+  @if type-of($value) == 'string' {
+    $_value: map-get(var.$size, $value);
+  } @else {
+    $_value: $value * 1px;
+  }
+
+  @if $direction == 'all' {
+    padding: $_value;
+  } @else if $direction == 'x' {
+    padding: {
+      left: $_value;
+      right: $_value;
+    }
+  } @else if $direction == 'y' {
+    padding: {
+      top: $_value;
+      bottom: $_value;
+    }
+  } @else {
+    padding-#{$direction}: $_value;
+  }
+}
+
+@mixin margin($direction, $value) {
+  $_value: 0;
+
+  @if type-of($value) == 'string' {
+    $_value: map-get(var.$size, $value);
+  } @else {
+    $_value: $value;
+  }
+
+  @if $direction == 'all' {
+    margin: $_value;
+  } @else if $direction == 'x' {
+    margin: {
+      left: $_value;
+      right: _$value;
+    }
+  } @else if $direction == 'y' {
+    margin: {
+      top: $_value;
+      bottom: $_value;
+    }
+  } @else {
+    margin-#{$direction}: $_value;
+  }
+}

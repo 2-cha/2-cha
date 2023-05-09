@@ -1,4 +1,3 @@
-@use 'components';
 @use 'mixins';
 @use 'var';
 
@@ -9,6 +8,6 @@
   @include mixins.flex();
 
   .hasNoReview {
-    @extend %text-lg;
+    @include mixins.text-lg;
   }
 }
