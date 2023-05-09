@@ -37,17 +37,21 @@
 
   &__input {
     width: 100%;
-    padding: var.$p-md var.$p-lg;
     background-color: var(--background-inactive-color);
     color: inherit;
     border: 0;
+
+    @include mixins.padding(x, lg);
+    @include mixins.padding(y, md);
   }
 
   &__button {
-    padding: var.$p-md var.$p-lg;
     background-color: inherit;
     color: inherit;
     border: 0;
+
+    @include mixins.padding(x, lg);
+    @include mixins.padding(y, md);
   }
 }
 
@@ -59,7 +63,10 @@
 
   & > li {
     width: 100%;
-    padding: var.$p-md var.$p-lg;
+
+    @include mixins.padding(x, lg);
+    @include mixins.padding(y, md);
+
     & > button {
       background-color: inherit;
       color: inherit;

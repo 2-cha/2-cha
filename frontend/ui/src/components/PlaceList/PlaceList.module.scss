@@ -26,15 +26,15 @@
 
   &__header {
     width: 100%;
-    padding: var.$p-md var.$p-lg;
 
     @include mixins.flex(column, center, flex-start);
+    @include mixins.padding(x, lg);
+    @include mixins.padding(y, md);
   }
 
   &__title {
-    padding: var.$p-sm 0;
-
     @include mixins.text-lg;
+    @include mixins.padding(y, sm);
   }
 
   &__address {

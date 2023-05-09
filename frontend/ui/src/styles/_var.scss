@@ -4,6 +4,14 @@ $p-md: 12px;
 $p-lg: 18px;
 $p-xl: 24px;
 
+$p: (
+  xs: $p-xs,
+  sm: $p-sm,
+  md: $p-md,
+  lg: $p-lg,
+  xl: $p-xl,
+);
+
 $navbar-height: 64px;
 $header-height: 50px;
 

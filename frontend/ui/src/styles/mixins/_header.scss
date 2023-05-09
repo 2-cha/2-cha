@@ -1,9 +1,18 @@
 @use 'var';
+@use 'space';
 
-@mixin header($height: var.$header-height) {
+@mixin header($height: var.$header-height, $border: bottom) {
   width: 100%;
   height: $height;
-  padding: var.$p-md var.$p-lg;
-  border-bottom: 0.5px solid var(--border-color);
+
+  @include space.padding(x, lg);
+  @include space.padding(y, md);
+
+  @if $border == 0 {
+    border: 0;
+  } @else {
+    border-#{$border}: 0.5px solid var(--border-color);
+  }
+
   @content;
 }

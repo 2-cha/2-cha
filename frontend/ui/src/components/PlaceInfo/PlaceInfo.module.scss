@@ -12,15 +12,16 @@
   }
 
   .summary {
-    padding: 0 var.$p-xl;
+    @include mixins.padding(x, xl);
 
     &__title {
       @include mixins.text-xl;
     }
 
     &__category {
-      @include mixins.text-sm;
       color: var(--text-secondary-color);
+
+      @include mixins.text-sm;
     }
   }
 }
@@ -30,9 +31,9 @@
   top: var.$header-height;
   width: 100%;
   height: var.$header-height;
-  margin-top: var.$p-lg * 2;
 
   @include mixins.flex(row, space-around, flex-start);
+  @include mixins.margin(top, var.$p-lg * 2);
 
   .active {
     border-bottom: 2px solid var(--border-color);
@@ -42,10 +43,10 @@
     background-color: inherit;
     color: inherit;
     cursor: pointer;
-    padding: var.$p-md;
     flex: 1 1 0;
 
     @include mixins.text-md;
+    @include mixins.padding(all, md);
 
     &:hover,
     &:active,
