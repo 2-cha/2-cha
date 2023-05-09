@@ -4,7 +4,7 @@
   $_value: 0;
 
   @if type-of($value) == 'string' {
-    $_value: map-get(var.$p, $value);
+    $_value: map-get(var.$size, $value);
   } @else {
     $_value: $value * 1px;
   }
@@ -30,7 +30,7 @@
   $_value: 0;
 
   @if type-of($value) == 'string' {
-    $_value: map-get(var.$p, $value);
+    $_value: map-get(var.$size, $value);
   } @else {
     $_value: $value;
   }

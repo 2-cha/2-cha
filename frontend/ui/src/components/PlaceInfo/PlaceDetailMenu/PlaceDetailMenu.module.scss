@@ -4,7 +4,7 @@
 .root {
   width: 100%;
   min-height: var.$place-info-menu-min-height;
-  gap: var.$p-md;
+  gap: var.$size-md;
 
   @include mixins.flex(column, flex-start, flex-start);
   @include mixins.padding(x, lg);

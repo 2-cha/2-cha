@@ -1,15 +1,15 @@
-$p-xs: 2px;
-$p-sm: 4px;
-$p-md: 12px;
-$p-lg: 18px;
-$p-xl: 24px;
+$size-xs: 2px;
+$size-sm: 4px;
+$size-md: 12px;
+$size-lg: 18px;
+$size-xl: 24px;
 
-$p: (
-  xs: $p-xs,
-  sm: $p-sm,
-  md: $p-md,
-  lg: $p-lg,
-  xl: $p-xl,
+$size: (
+  xs: $size-xs,
+  sm: $size-sm,
+  md: $size-md,
+  lg: $size-lg,
+  xl: $size-xl,
 );
 
 $navbar-height: 64px;

@@ -33,7 +33,7 @@
   height: var.$header-height;
 
   @include mixins.flex(row, space-around, flex-start);
-  @include mixins.margin(top, var.$p-lg * 2);
+  @include mixins.margin(top, var.$size-lg * 2);
 
   .active {
     border-bottom: 2px solid var(--border-color);
