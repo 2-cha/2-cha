@@ -23,6 +23,8 @@ export const serverHandlers = [
           ...place,
           id: id++,
           distance: Number(min_dist),
+          lat: 37.4879759679358,
+          lon: 127.065527640082,
         })),
       })
     );
@@ -37,9 +39,13 @@ export const serverHandlers = [
         status: 'OK',
         data: {
           id: Number(placeId),
-          name: '42',
+          name: '이노베이션 아카데미',
           address: '서울 강남구 개포로 416',
-          category: '카페',
+          lot_address: '서울 강남구 개포동 14-1',
+          site: 'https://42seoul.kr/',
+          lat: 37.4879759679358,
+          lon: 127.065527640082,
+          category: '클러스터',
           thumbnail: 'https://picsum.photos/420/420',
           tags: [],
         },
