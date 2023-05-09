@@ -1,15 +1,15 @@
-@use 'components';
 @use 'mixins';
 @use 'var';
 
 .root {
   width: 100%;
   min-height: var.$place-info-menu-min-height;
-  padding: var.$p-md var.$p-lg;
-  margin-top: var.$p-md;
-  gap: var.$p-md;
+  gap: var.$size-md;
 
   @include mixins.flex(column, flex-start, flex-start);
+  @include mixins.padding(x, lg);
+  @include mixins.padding(y, md);
+  @include mixins.margin(top, md);
 
   .item {
     @include mixins.flex(row, $align: flex-start);
@@ -44,13 +44,13 @@
     }
 
     &__1 {
-      @extend %text-md;
+      @include mixins.text-md;
     }
 
     &__2 {
       color: var(--text-secondary-color);
 
-      @extend %text-sm;
+      @include mixins.text-sm;
     }
   }
 
