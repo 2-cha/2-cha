@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -142,8 +143,8 @@ public class ReviewService {
     )).toList();
   }
 
-  public List<ReviewResponse> getReviewsByMemberId(Long memberId) {
-    List<Review> reviews = reviewRepository.findReviewsByMemberId(memberId);
+  public List<ReviewResponse> getReviewsByMemberId(Long memberId, Pageable pageParam) {
+    List<Review> reviews = reviewRepository.findReviewsByMemberId(memberId, pageParam);
     if (reviews.isEmpty()) {
       return new ArrayList<>();
     }

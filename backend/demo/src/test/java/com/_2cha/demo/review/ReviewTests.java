@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,12 +92,15 @@ class ReviewTests {
 
   @Test
   void getMemberReviews() {
-    List<ReviewResponse> member1Reviews = reviewController.getMemberReviews(1L);
+
+    List<ReviewResponse> member1Reviews = reviewController.getMemberReviews(1L,
+                                                                            PageRequest.of(0, 1));
     assertThat(member1Reviews).extracting("place")
                               .extracting("name")
                               .containsExactly("히든아워");
 
-    List<ReviewResponse> member2Reviews = reviewController.getMemberReviews(2L);
+    List<ReviewResponse> member2Reviews = reviewController.getMemberReviews(2L,
+                                                                            PageRequest.of(0, 1));
     assertThat(member2Reviews).isEmpty();
   }
 
@@ -113,7 +117,7 @@ class ReviewTests {
     placeReviews = reviewController.getPlaceReviews(1L);
     assertThat(placeReviews).isEmpty();
 
-    memberReviews = reviewController.getMemberReviews(1L);
+    memberReviews = reviewController.getMemberReviews(1L, PageRequest.of(0, 1));
     assertThat(memberReviews).isEmpty();
   }
 }
