@@ -91,11 +91,22 @@ const review: Review = {
   id: 1,
   member: member,
   place: place,
-  tags: [],
+  tags: [
+    {
+      id: 1,
+      emoji: '🍺',
+      message: '맥주',
+    },
+    {
+      id: 2,
+      emoji: '👍',
+      message: '좋아요',
+    },
+  ],
   images: [
-    'https://picsum.photos/240/320',
-    'https://picsum.photos/240/320',
-    'https://picsum.photos/240/320',
+    'https://picsum.photos/320/480',
+    'https://picsum.photos/320/480',
+    'https://picsum.photos/320/480',
   ],
 };
 
