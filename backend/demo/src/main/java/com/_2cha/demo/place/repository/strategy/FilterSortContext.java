@@ -39,7 +39,7 @@ public class FilterSortContext {
     JPAQuery<Tuple> query;
 
     query = sortStrategy.apply(qf, distanceSphere);
-    query = filterStrategy.apply(query, filterValues);
+    query = filterStrategy.apply(query, filterValues); // return empty if filterValues is empty
     query.where(distanceSphere.loe(maxDist));
     query.offset(offset);
     query.limit(pageSize);

@@ -56,6 +56,9 @@ public class PlaceQueryRepository {
   }
 
 
+  /**
+   * Note: return empty list if filter is applied but filterValues is empty
+   */
   public List<Object[]> findAround(NearbyPlaceSearchParams params) {
 
     Point location = GeomUtils.createPoint(params.getLat(), params.getLon());
