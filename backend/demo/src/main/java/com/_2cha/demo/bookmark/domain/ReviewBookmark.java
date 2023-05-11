@@ -4,6 +4,7 @@ import com._2cha.demo.bookmark.domain.ItemType.Values;
 import com._2cha.demo.review.domain.Review;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,10 +17,11 @@ import lombok.NoArgsConstructor;
 public class ReviewBookmark extends Bookmark {
 
   @OneToOne
+  @JoinColumn(name = "ITEM_ID")
   private Review item;
 
   ReviewBookmark(Review item) {
     this.item = item;
-    this.thumbnail = item.getImages().get(0).getUrl();
+    this.thumbnailUrlPath = item.getImages().get(0).getThumbnailUrlPath();
   }
 }

@@ -1,5 +1,6 @@
 package com._2cha.demo.member.service;
 
+import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Achievement;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.domain.MemberAchievement;
@@ -33,6 +34,7 @@ public class MemberService {
   private final MemberRepository memberRepository;
   private final MemberQueryRepository memberQueryRepository;
   private final AchievementRepository achvRepository;
+  private final FileStorageService fileStorageService;
 
 
   public Member findById(Long id) {
@@ -128,18 +130,20 @@ public class MemberService {
    ------------*/
   public MemberProfileResponse getMemberProfileById(Long id) {
 
-    MemberProfileResponse profile = memberQueryRepository.getMemberProfileById(id);
+    MemberProfileResponse profile = memberQueryRepository.getMemberProfileById(id,
+                                                                               fileStorageService.getBaseUrl());
     if (profile == null) throw new NoSuchMemberException();
 
     return profile;
   }
 
   public List<MemberProfileResponse> getMemberProfileByIdIn(List<Long> ids) {
-    return memberQueryRepository.getMemberProfileByIdIn(ids);
+    return memberQueryRepository.getMemberProfileByIdIn(ids, fileStorageService.getBaseUrl());
   }
-  
+
   public MemberInfoResponse getMemberInfoById(Long id) {
-    MemberInfoResponse memberInfo = memberQueryRepository.getMemberInfoById(id);
+    MemberInfoResponse memberInfo = memberQueryRepository.getMemberInfoById(id,
+                                                                            fileStorageService.getBaseUrl());
     if (memberInfo == null) throw new NoSuchMemberException();
 
     return memberInfo;
@@ -148,7 +152,7 @@ public class MemberService {
   public MemberInfoResponse getMemberInfoByOidcId(OIDCProvider oidcProvider,
                                                   String oidcId) {
     MemberInfoResponse memberInfo = memberQueryRepository.getMemberInfoByOidcId(
-        oidcProvider, oidcId);
+        oidcProvider, oidcId, fileStorageService.getBaseUrl());
     if (memberInfo == null) throw new NoSuchMemberException();
 
     return memberInfo;
@@ -162,11 +166,11 @@ public class MemberService {
   }
 
   public List<MemberProfileResponse> getFollowers(Long memberId) {
-    return memberQueryRepository.getFollowersProfiles(memberId);
+    return memberQueryRepository.getFollowersProfiles(memberId, fileStorageService.getBaseUrl());
   }
 
   public List<MemberProfileResponse> getFollowings(Long memberId) {
-    return memberQueryRepository.getFollowingsProfiles(memberId);
+    return memberQueryRepository.getFollowingsProfiles(memberId, fileStorageService.getBaseUrl());
   }
 
   public List<AchievementResponse> getAllMemberAchievements(Long memberId) {

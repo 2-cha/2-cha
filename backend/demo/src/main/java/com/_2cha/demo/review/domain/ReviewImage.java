@@ -26,11 +26,15 @@ public class ReviewImage {
   private Review review;
 
   @Column(nullable = false)
-  private String url;
+  private String urlPath;
+
+  @Column(nullable = false)
+  private String thumbnailUrlPath;
 
 
-  ReviewImage(Review review, String url) {
+  ReviewImage(Review review, String urlPath, String thumbnailUrlPath) {
     this.review = review;
-    this.url = url;
+    this.urlPath = urlPath;
+    this.thumbnailUrlPath = thumbnailUrlPath;
   }
 }

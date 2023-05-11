@@ -4,6 +4,7 @@ import com._2cha.demo.bookmark.domain.ItemType.Values;
 import com._2cha.demo.collection.domain.Collection;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,11 +16,12 @@ import lombok.NoArgsConstructor;
 @DiscriminatorValue(value = Values.COLLECTION)
 public class CollectionBookmark extends Bookmark {
 
-  @OneToOne
+  @OneToOne()
+  @JoinColumn(name = "ITEM_ID")
   private Collection item;
 
   CollectionBookmark(Collection item) {
     this.item = item;
-    this.thumbnail = item.getThumbnail();
+    this.thumbnailUrlPath = item.getThumbnailUrlPath();
   }
 }

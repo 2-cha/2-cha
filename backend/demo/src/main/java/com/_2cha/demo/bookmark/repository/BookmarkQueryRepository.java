@@ -22,33 +22,38 @@ public class BookmarkQueryRepository {
     this.queryFactory = new JPAQueryFactory(em);
   }
 
-  public List<BookmarkBriefResponse> getReviewBookmarksByMemberId(Long memberId) {
+
+  public List<BookmarkBriefResponse> getReviewBookmarksByMemberId(Long memberId,
+                                                                  String thumbBaseUrl) {
 
     return queryFactory.select(constructor(BookmarkBriefResponse.class,
                                            reviewBookmark.id,
-                                           reviewBookmark.thumbnail
+                                           reviewBookmark.thumbnailUrlPath.prepend(thumbBaseUrl)
                                           ))
                        .from(reviewBookmark)
                        .where(reviewBookmark.member.id.eq(memberId))
                        .fetch();
   }
 
-  public List<BookmarkBriefResponse> getCollectionBookmarksByMemberId(Long memberId) {
+  public List<BookmarkBriefResponse> getCollectionBookmarksByMemberId(Long memberId,
+                                                                      String thumbBaseUrl) {
 
     return queryFactory.select(constructor(BookmarkBriefResponse.class,
                                            collectionBookmark.id,
-                                           collectionBookmark.thumbnail
+                                           collectionBookmark.thumbnailUrlPath.prepend(thumbBaseUrl)
                                           ))
                        .from(collectionBookmark)
                        .where(collectionBookmark.member.id.eq(memberId))
                        .fetch();
   }
 
-  public List<BookmarkBriefResponse> getPlaceBookmarksByMemberId(Long memberId) {
+
+  public List<BookmarkBriefResponse> getPlaceBookmarksByMemberId(Long memberId,
+                                                                 String thumbBaseUrl) {
 
     return queryFactory.select(constructor(BookmarkBriefResponse.class,
                                            placeBookmark.id,
-                                           placeBookmark.thumbnail
+                                           placeBookmark.thumbnailUrlPath.prepend(thumbBaseUrl)
                                           ))
                        .from(placeBookmark)
                        .where(placeBookmark.member.id.eq(memberId))

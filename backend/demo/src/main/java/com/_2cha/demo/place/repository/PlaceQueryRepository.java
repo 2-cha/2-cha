@@ -79,13 +79,13 @@ public class PlaceQueryRepository {
    * @param id
    * @return PlaceBriefResponse, without tagSummary
    */
-  public PlaceBriefResponse getPlaceBriefById(Long id) {
+  public PlaceBriefResponse getPlaceBriefById(Long id, String imgBaseUrl) {
     return queryFactory.select(constructor(PlaceBriefResponse.class,
                                            place.id,
                                            place.name,
                                            place.category,
                                            place.address,
-                                           place.thumbnail
+                                           place.imageUrlPath.prepend(imgBaseUrl)
                                           ))
                        .from(place)
                        .where(place.id.eq(id))
@@ -96,13 +96,13 @@ public class PlaceQueryRepository {
    * @param ids
    * @return PlaceBriefResponse, without tagSummary
    */
-  public List<PlaceBriefResponse> getPlacesBriefsByIdIn(List<Long> ids) {
+  public List<PlaceBriefResponse> getPlacesBriefsByIdIn(List<Long> ids, String imgBaseUrl) {
     return queryFactory.select(constructor(PlaceBriefResponse.class,
                                            place.id,
                                            place.name,
                                            place.category,
                                            place.address,
-                                           place.thumbnail
+                                           place.imageUrlPath.prepend(imgBaseUrl)
                                           ))
                        .from(place)
                        .where(place.id.in(ids))
@@ -113,7 +113,8 @@ public class PlaceQueryRepository {
    * @param id
    * @return PlaceBriefWithDistanceResponse, without tagSummary
    */
-  public PlaceBriefWithDistanceResponse getPlaceBriefWithDistance(Long id, Point location) {
+  public PlaceBriefWithDistanceResponse getPlaceBriefWithDistance(Long id, Point location,
+                                                                  String imgBaseUrl) {
     NumberTemplate<Double> distance = Expressions.numberTemplate(Double.class,
                                                                  "function('ST_DistanceSphere', {0}, {1})",
                                                                  place.location,
@@ -123,7 +124,7 @@ public class PlaceQueryRepository {
                                            place.name,
                                            place.category,
                                            place.address,
-                                           place.thumbnail,
+                                           place.imageUrlPath.prepend(imgBaseUrl),
                                            distance.as("distance")
                                           ))
                        .from(place)
@@ -135,14 +136,14 @@ public class PlaceQueryRepository {
    * @param id
    * @return PlaceDetailResponse, without tags
    */
-  public PlaceDetailResponse getPlaceDetailById(Long id) {
+  public PlaceDetailResponse getPlaceDetailById(Long id, String imgBaseUrl) {
     return queryFactory.select(constructor(PlaceDetailResponse.class,
                                            place.id,
                                            place.name,
                                            place.category,
                                            place.address,
                                            place.lotAddress,
-                                           place.thumbnail,
+                                           place.imageUrlPath.prepend(imgBaseUrl),
                                            place.site,
                                            place.location
                                           ))

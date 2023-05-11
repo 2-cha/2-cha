@@ -7,7 +7,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,10 +30,10 @@ public class Place {
   @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false)
+  @Column
   private String address;
 
-  @Column(nullable = false)
+  @Column
   private String lotAddress;
 
   @Column(nullable = false, columnDefinition = "geometry(point,  4326)") // long, lat
@@ -45,9 +44,10 @@ public class Place {
   @Column(nullable = false)
   private Category category;
 
-  @Lob
-  private String thumbnail;
-  
+  private String imageUrlPath;
+
+  private String thumbnailUrlPath;
+
   private String site;
 
 
@@ -61,7 +61,7 @@ public class Place {
       String lotAddress,
       Double longitude,
       Double latitude,
-      String thumbnail,
+      String imageUrlPath, String thumbnailUrlPath,
       String site
                                  ) {
     Place place = new Place();
@@ -70,7 +70,8 @@ public class Place {
     place.address = address;
     place.lotAddress = lotAddress;
     place.location = GeomUtils.createPoint(latitude, longitude);
-    place.thumbnail = thumbnail;
+    place.imageUrlPath = imageUrlPath;
+    place.thumbnailUrlPath = thumbnailUrlPath;
     place.site = site;
     return place;
   }

@@ -9,7 +9,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
@@ -33,9 +32,8 @@ public class Collection {
 
   private boolean isExposed = true;
 
-  @Lob
   @Column(nullable = false)
-  private String thumbnail;
+  private String thumbnailUrlPath;
 
   @BatchSize(size = 100)
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "collection", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -46,14 +44,14 @@ public class Collection {
   private Member member;
 
   public static Collection createCollection(Member member, String title,
-                                            String description, String thumbnail,
+                                            String description, String thumbnailUrlPath,
                                             List<Review> reviews) {
 
     Collection collection = new Collection();
     collection.member = member;
     collection.updateTitle(title);
     collection.updateDescription(description);
-    collection.updateThumbnail(thumbnail);
+    collection.updateThumbnailUrlPath(thumbnailUrlPath);
     collection.updateReviews(reviews);
     return collection;
   }
@@ -73,8 +71,8 @@ public class Collection {
     this.description = description;
   }
 
-  public void updateThumbnail(String thumbnail) {
-    this.thumbnail = thumbnail;
+  public void updateThumbnailUrlPath(String thumbnailUrlPath) {
+    this.thumbnailUrlPath = thumbnailUrlPath;
   }
 
   public void toggleExposure(Boolean exposure) {
