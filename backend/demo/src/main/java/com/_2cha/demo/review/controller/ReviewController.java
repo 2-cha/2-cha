@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,13 +33,13 @@ public class ReviewController {
   private final ImageUploadService imageUploadService;
 
   @GetMapping("/places/{placeId}/reviews")
-  public List<ReviewResponse> getPlaceReviews(@PathVariable Long placeId) {
-    return reviewService.getReviewsByPlaceId(placeId);
+  public List<ReviewResponse> getPlaceReviews(@PathVariable Long placeId, Pageable pageParam) {
+    return reviewService.getReviewsByPlaceId(placeId, pageParam);
   }
 
   @GetMapping("/members/{memberId}/reviews")
-  public List<ReviewResponse> getMemberReviews(@PathVariable Long memberId) {
-    return reviewService.getReviewsByMemberId(memberId);
+  public List<ReviewResponse> getMemberReviews(@PathVariable Long memberId, Pageable pageParam) {
+    return reviewService.getReviewsByMemberId(memberId, pageParam);
   }
 
   @PostMapping("/places/{placeId}/reviews")
