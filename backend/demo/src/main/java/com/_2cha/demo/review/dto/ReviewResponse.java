@@ -24,7 +24,11 @@ public class ReviewResponse {
 
   public ReviewResponse(Review review, MemberProfileResponse member, PlaceBriefResponse place,
                         String imgBaseUrl) {
-    review.getImages().forEach(img -> this.images.add(imgBaseUrl + img.getUrlPath()));
+    review.getImages().forEach(img -> {
+      String path = img.getUrlPath();
+      this.images.add(path != null ? imgBaseUrl + img.getUrlPath() : null);
+    });
+
     review.getTags().forEach(tag -> this.tags.add(new TagResponse(tag)));
 
     this.id = review.getId();

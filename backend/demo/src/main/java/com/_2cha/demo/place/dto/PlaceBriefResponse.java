@@ -34,6 +34,7 @@ public class PlaceBriefResponse {
     this.name = place.getName();
     this.category = place.getCategory();
     this.address = place.getAddress();
-    this.image = imageBaseUrl + place.getImageUrlPath();
+    String path = place.getImageUrlPath();
+    this.image = path != null ? imageBaseUrl + path : null;
   }
 }
