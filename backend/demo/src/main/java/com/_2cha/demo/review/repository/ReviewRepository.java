@@ -16,6 +16,8 @@ public interface ReviewRepository extends Repository<Review, Long> {
 
   List<Review> findReviewsByMemberId(Long memberId, Pageable pageParam);
 
+  List<Review> findReviewsByPlaceId(Long placeId, Pageable pageParam);
+
   List<Review> findReviewsByPlaceId(Long placeId);
 
   List<Review> findReviewsByPlaceIdIn(List<Long> placeId);

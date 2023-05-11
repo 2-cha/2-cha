@@ -81,12 +81,14 @@ class ReviewTests {
 
   @Test
   void getPlaceReviews() {
-    List<ReviewResponse> place1Reviews = reviewController.getPlaceReviews(1L);
+    List<ReviewResponse> place1Reviews = reviewController.getPlaceReviews(1L,
+                                                                          PageRequest.of(0, 10));
     assertThat(place1Reviews).extracting("member")
                              .extracting("name")
                              .containsExactly("member1");
 
-    List<ReviewResponse> place2Reviews = reviewController.getPlaceReviews(2L);
+    List<ReviewResponse> place2Reviews = reviewController.getPlaceReviews(2L,
+                                                                          PageRequest.of(0, 10));
     assertThat(place2Reviews).isEmpty();
   }
 
@@ -94,30 +96,30 @@ class ReviewTests {
   void getMemberReviews() {
 
     List<ReviewResponse> member1Reviews = reviewController.getMemberReviews(1L,
-                                                                            PageRequest.of(0, 1));
+                                                                            PageRequest.of(0, 10));
     assertThat(member1Reviews).extracting("place")
                               .extracting("name")
                               .containsExactly("히든아워");
 
     List<ReviewResponse> member2Reviews = reviewController.getMemberReviews(2L,
-                                                                            PageRequest.of(0, 1));
+                                                                            PageRequest.of(0, 10));
     assertThat(member2Reviews).isEmpty();
   }
 
   @Test
   void deleteReview() {
     List<ReviewResponse> memberReviews;
-    List<ReviewResponse> placeReviews = reviewController.getPlaceReviews(1L);
+    List<ReviewResponse> placeReviews = reviewController.getPlaceReviews(1L, PageRequest.of(0, 10));
 
     assertThat(placeReviews).extracting("member")
                             .extracting("name")
                             .containsExactly("member1");
 
     reviewController.deleteReview(1L, 1L);
-    placeReviews = reviewController.getPlaceReviews(1L);
+    placeReviews = reviewController.getPlaceReviews(1L, PageRequest.of(0, 10));
     assertThat(placeReviews).isEmpty();
 
-    memberReviews = reviewController.getMemberReviews(1L, PageRequest.of(0, 1));
+    memberReviews = reviewController.getMemberReviews(1L, PageRequest.of(0, 10));
     assertThat(memberReviews).isEmpty();
   }
 }

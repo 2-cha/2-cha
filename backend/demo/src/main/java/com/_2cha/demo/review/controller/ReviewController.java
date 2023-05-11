@@ -33,8 +33,8 @@ public class ReviewController {
   private final ImageUploadService imageUploadService;
 
   @GetMapping("/places/{placeId}/reviews")
-  public List<ReviewResponse> getPlaceReviews(@PathVariable Long placeId) {
-    return reviewService.getReviewsByPlaceId(placeId);
+  public List<ReviewResponse> getPlaceReviews(@PathVariable Long placeId, Pageable pageParam) {
+    return reviewService.getReviewsByPlaceId(placeId, pageParam);
   }
 
   @GetMapping("/members/{memberId}/reviews")

@@ -171,8 +171,8 @@ public class ReviewService {
   }
 
 
-  public List<ReviewResponse> getReviewsByPlaceId(Long placeId) {
-    List<Review> reviews = reviewRepository.findReviewsByPlaceId(placeId);
+  public List<ReviewResponse> getReviewsByPlaceId(Long placeId, Pageable pageParam) {
+    List<Review> reviews = reviewRepository.findReviewsByPlaceId(placeId, pageParam);
     PlaceBriefResponse place = placeService.getPlaceBriefById(placeId, SUMMARY_SIZE);
 
     Set<Long> memberIds = reviews.stream()
