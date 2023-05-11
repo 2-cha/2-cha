@@ -5,6 +5,7 @@ import static com.querydsl.core.types.Projections.constructor;
 
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.dto.FilterBy;
+import com._2cha.demo.place.dto.NearbyPlaceSearchParams;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
@@ -55,17 +56,16 @@ public class PlaceQueryRepository {
   }
 
 
-  public List<Object[]> findAround(Double latitude, Double longitude, Double maxDist,
-                                   Long offset, Integer pageSize,
-                                   SortBy sortBy, FilterBy filterBy, List<?> filterValues) {
+  public List<Object[]> findAround(NearbyPlaceSearchParams params) {
 
-    Point location = GeomUtils.createPoint(latitude, longitude);
+    Point location = GeomUtils.createPoint(params.getLat(), params.getLon());
     FilterSortContext context = new FilterSortContext(queryFactory,
-                                                      filterStrategyMap.get(filterBy),
-                                                      sortStrategyMap.get(sortBy));
+                                                      filterStrategyMap.get(params.getFilterBy()),
+                                                      sortStrategyMap.get(params.getSortBy()));
 
     List<Object[]> results = new ArrayList<>();
-    List<Tuple> tuples = context.execute(location, maxDist, offset, pageSize, filterValues);
+    List<Tuple> tuples = context.execute(location, params.getMaxDist(), params.getOffset(),
+                                         params.getPageSize(), params.getFilterValues());
     tuples.forEach(tuple -> {
       results.add(new Object[]{tuple.get(0, Place.class), tuple.get(1, Double.class)});
     });
