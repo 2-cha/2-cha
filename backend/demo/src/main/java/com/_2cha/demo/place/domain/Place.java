@@ -30,10 +30,10 @@ public class Place {
   @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false)
+  @Column
   private String address;
 
-  @Column(nullable = false)
+  @Column
   private String lotAddress;
 
   @Column(nullable = false, columnDefinition = "geometry(point,  4326)") // long, lat
