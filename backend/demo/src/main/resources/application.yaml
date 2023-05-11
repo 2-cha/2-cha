@@ -13,6 +13,11 @@ spring:
       naming:
         physical-strategy: com._2cha.demo.global.config.UppercaseNamingStrategy
     open-in-view: false
+  data:
+    web.pageable:
+      page-parameter: page_number
+      size-parameter: page_size
+
 logging:
   level:
     com:
