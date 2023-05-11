@@ -23,9 +23,6 @@ public class NearbyPlaceRequest {
   private Double maxDist;
 
   @NotNull
-  private Integer pageSize;
-
-  @NotNull
   private FilterBy filterBy;
 
   private List<String> filterValues;
