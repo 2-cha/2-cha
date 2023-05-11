@@ -106,7 +106,7 @@ public class PlaceService {
   }
 
   public List<PlaceBriefWithDistanceResponse>
-  searchPlacesWithFilterAndSorting(Double lat, Double lon, Double minDist, Double maxDist,
+  searchPlacesWithFilterAndSorting(Double lat, Double lon, Double maxDist,
                                    Long offset, Integer pageSize,
                                    SortBy sortBy, FilterBy filterBy, List<String> filterValues) {
 
@@ -126,7 +126,7 @@ public class PlaceService {
         convertedFilterValues.add(converted);
       }
     }
-    List<Object[]> placesWithDist = placeQueryRepository.findAround(lat, lon, minDist, maxDist,
+    List<Object[]> placesWithDist = placeQueryRepository.findAround(lat, lon, maxDist,
                                                                     offset, pageSize,
                                                                     sortBy, filterBy,
                                                                     convertedFilterValues);

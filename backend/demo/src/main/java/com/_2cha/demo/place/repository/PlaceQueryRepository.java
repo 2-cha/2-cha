@@ -55,11 +55,9 @@ public class PlaceQueryRepository {
   }
 
 
-  public List<Object[]> findAround(Double latitude, Double longitude,
-                                   Double minDist, Double maxDist,
+  public List<Object[]> findAround(Double latitude, Double longitude, Double maxDist,
                                    Long offset, Integer pageSize,
-                                   SortBy sortBy, FilterBy filterBy,
-                                   List<?> filterValues) {
+                                   SortBy sortBy, FilterBy filterBy, List<?> filterValues) {
 
     Point location = GeomUtils.createPoint(latitude, longitude);
     FilterSortContext context = new FilterSortContext(queryFactory,
@@ -67,8 +65,7 @@ public class PlaceQueryRepository {
                                                       sortStrategyMap.get(sortBy));
 
     List<Object[]> results = new ArrayList<>();
-    List<Tuple> tuples = context.execute(location, minDist, maxDist, offset, pageSize,
-                                         filterValues);
+    List<Tuple> tuples = context.execute(location, maxDist, offset, pageSize, filterValues);
     tuples.forEach(tuple -> {
       results.add(new Object[]{tuple.get(0, Place.class), tuple.get(1, Double.class)});
     });

@@ -35,7 +35,6 @@ public class PlaceController {
       @RequestParam(name = "filter_by", required = false, defaultValue = "default") FilterBy filterBy,
       @RequestParam(name = "filter_values", required = false) List<String> filterValues,
       @RequestParam(name = "sort_by", required = false, defaultValue = "distance") SortBy sortBy,
-      @RequestParam(name = "min_dist") Double minDist,
       @RequestParam(name = "max_dist") Double maxDist,
       @RequestParam(name = "lat") Double lat,
       @RequestParam(name = "lon") Double lon,
@@ -48,7 +47,7 @@ public class PlaceController {
     NearbyPlaceRequest dto = objectMapper.convertValue(params, NearbyPlaceRequest.class);
 
     return placeService.searchPlacesWithFilterAndSorting(dto.getLat(), dto.getLon(),
-                                                         dto.getMinDist(), dto.getMaxDist(),
+                                                         dto.getMaxDist(),
                                                          pageParam.getOffset(),
                                                          pageParam.getPageSize(),
                                                          dto.getSortBy(), dto.getFilterBy(),
