@@ -36,8 +36,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+<<<<<<< HEAD
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
+=======
+>>>>>>> 90dbd8c (feat: implement review paging (#29))
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -195,10 +198,13 @@ public class ReviewService {
 
   public List<ReviewResponse> getReviewsByPlaceId(Long placeId, Pageable pageParam) {
     List<Review> reviews = reviewRepository.findReviewsByPlaceId(placeId, pageParam);
+<<<<<<< HEAD
     if (reviews.isEmpty()) {
       return new ArrayList<>();
     }
 
+=======
+>>>>>>> 90dbd8c (feat: implement review paging (#29))
     PlaceBriefResponse place = placeService.getPlaceBriefById(placeId, SUMMARY_SIZE);
 
     Set<Long> memberIds = reviews.stream()

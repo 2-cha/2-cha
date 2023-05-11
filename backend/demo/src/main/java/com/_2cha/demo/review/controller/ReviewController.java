@@ -22,7 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
+<<<<<<< HEAD
 import org.locationtech.jts.geom.Point;
+=======
+>>>>>>> 90dbd8c (feat: implement review paging (#29))
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,11 +55,14 @@ public class ReviewController {
   @GetMapping("/members/{memberId}/reviews")
   public List<ReviewResponse> getMemberReviews(@PathVariable Long memberId, Pageable pageParam) {
     return reviewService.getReviewsByMemberId(memberId, pageParam);
+<<<<<<< HEAD
   }
 
   @GetMapping("/reviews/{reviewId}")
   public ReviewResponse getReview(@PathVariable Long reviewId) {
     return reviewService.getReviewById(reviewId);
+=======
+>>>>>>> 90dbd8c (feat: implement review paging (#29))
   }
 
   @PostMapping("/places/{placeId}/reviews")
