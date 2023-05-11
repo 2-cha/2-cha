@@ -7,7 +7,6 @@ import com._2cha.demo.place.controller.PlaceController;
 import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.dto.FilterBy;
-import com._2cha.demo.place.dto.NearbyPlaceRequest;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
 import com._2cha.demo.place.dto.SortBy;
@@ -24,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -129,24 +129,19 @@ class PlaceTests {
 
   @Test
   void getNearbyPlace_Default() {
-    NearbyPlaceRequest request = new NearbyPlaceRequest();
-
     Map<String, Object> query = new HashMap<>();
     // 종로
-    query.put("min_dist", 0.0);
-    query.put("max_dist", 5000.0);
-    query.put("lat", 37.5957);
-    query.put("lon", 126.9803);
+    Double maxDist = 5000.0;
+    Double lat = 37.5957;
+    Double lon = 126.9803;
 
     List<PlaceBriefWithDistanceResponse> places =
         placeController.getNearbyPlace(FilterBy.DEFAULT, null,
                                        SortBy.DISTANCE,
-                                       5,
-                                       (Double) query.get("min_dist"),
-                                       (Double) query.get("max_dist"),
-                                       (Double) query.get("lat"),
-                                       (Double) query.get("lon"),
-                                       query
+                                       maxDist,
+                                       lat,
+                                       lon,
+                                       PageRequest.of(0, 5)
                                       );
     Assertions.assertThat(places).hasSize(5);
 
