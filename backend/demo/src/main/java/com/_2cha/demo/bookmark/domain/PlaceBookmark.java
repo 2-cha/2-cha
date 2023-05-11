@@ -4,6 +4,7 @@ import com._2cha.demo.bookmark.domain.ItemType.Values;
 import com._2cha.demo.place.domain.Place;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class PlaceBookmark extends Bookmark {
 
   @OneToOne
+  @JoinColumn(name = "ITEM_ID")
   private Place item;
 
 
