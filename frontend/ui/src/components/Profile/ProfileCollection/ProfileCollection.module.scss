@@ -7,4 +7,6 @@
   padding: 10px 0;
   overflow-x: scroll;
   overflow-y: hidden;
+  border-top: 2px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color);
 }
