@@ -16,7 +16,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 
 @Entity
@@ -32,7 +31,6 @@ public abstract class Bookmark {
   @JoinColumn(name = "MEMBER_ID")
   private Member member;
 
-  @Lob
   @Column(nullable = false)
   protected String thumbnailUrlPath;
 

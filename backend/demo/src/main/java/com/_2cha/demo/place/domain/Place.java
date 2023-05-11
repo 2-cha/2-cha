@@ -7,7 +7,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,10 +44,8 @@ public class Place {
   @Column(nullable = false)
   private Category category;
 
-  @Lob
   private String imageUrlPath;
 
-  @Lob
   private String thumbnailUrlPath;
 
   private String site;
