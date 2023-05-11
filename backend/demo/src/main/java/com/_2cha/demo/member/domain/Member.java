@@ -8,7 +8,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,13 +40,10 @@ public class Member {
   @Enumerated(EnumType.STRING)
   private Role role;
 
-  @Lob
   private String profMsg;
 
-  @Lob
   private String profImgUrlPath;
 
-  @Lob
   private String profImgThumbPath;
 
   @Enumerated(EnumType.STRING)
