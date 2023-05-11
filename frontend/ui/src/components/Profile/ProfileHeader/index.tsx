@@ -2,6 +2,8 @@ import Image from 'next/image';
 
 import { Member } from '@/types';
 
+import styles from './ProfileHeader.module.scss';
+
 interface Props {
   member: Member;
 }
@@ -9,8 +11,8 @@ interface Props {
 export default function ProfileHeader({ member }: Props) {
   console.log(member);
   return (
-    <header>
-      <div>
+    <header className={styles.root}>
+      <div className={styles.topdiv}>
         {/* <Image
           src={member.prof_img}
           width={120}
@@ -19,7 +21,8 @@ export default function ProfileHeader({ member }: Props) {
         />
 		// TODO: profile pic
 		*/}
-        <div>
+        <div className={styles.image}>프로필 이미지</div>
+        <div className={styles.profiledata}>
           <h1>{member.name}</h1>
           <h2>업적</h2>
           <button type="button">
@@ -27,9 +30,9 @@ export default function ProfileHeader({ member }: Props) {
           </button>
         </div>
       </div>
-      <div>
+      <div className={styles.tagdata}>
         <h3>Top 5</h3>
-        <ul>
+        <ul className={styles.taglist}>
           <li>태그</li>
           <li>태그</li>
           <li>태그</li>
