@@ -29,7 +29,8 @@ public class FilterSortContext {
     this.sortStrategy = sortStrategy;
   }
 
-  public List<Tuple> execute(Point location, Double minDist, Double maxDist, Integer pageSize,
+  public List<Tuple> execute(Point location, Double maxDist,
+                             Long offset, Integer pageSize,
                              List<?> filterValues) {
     NumberTemplate<Double> distanceSphere = Expressions.numberTemplate(Double.class,
                                                                        "function('ST_DistanceSphere', {0}, {1})",
@@ -38,9 +39,9 @@ public class FilterSortContext {
     JPAQuery<Tuple> query;
 
     query = sortStrategy.apply(qf, distanceSphere);
-    query = filterStrategy.apply(query, filterValues);
-    query.where(distanceSphere.gt(minDist),
-                distanceSphere.loe(maxDist));
+    query = filterStrategy.apply(query, filterValues); // return empty if filterValues is empty
+    query.where(distanceSphere.loe(maxDist));
+    query.offset(offset);
     query.limit(pageSize);
     return query.fetch();
   }

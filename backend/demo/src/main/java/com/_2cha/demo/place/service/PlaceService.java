@@ -3,9 +3,9 @@ package com._2cha.demo.place.service;
 import com._2cha.demo.global.exception.BadRequestException;
 import com._2cha.demo.global.exception.NotFoundException;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
-import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.dto.FilterBy;
+import com._2cha.demo.place.dto.NearbyPlaceSearchParams;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
@@ -106,30 +106,13 @@ public class PlaceService {
   }
 
   public List<PlaceBriefWithDistanceResponse>
-  searchPlacesWithFilterAndSorting(Double lat, Double lon, Double minDist, Double maxDist,
-                                   Integer pageSize,
-                                   SortBy sortBy, FilterBy filterBy, List<String> filterValues) {
-
-    if (sortBy == SortBy.TAG_COUNT && filterBy != FilterBy.TAG) {
+  searchPlacesWithFilterAndSorting(NearbyPlaceSearchParams searchParams) {
+    if (searchParams.getSortBy() == SortBy.TAG_COUNT &&
+        searchParams.getFilterBy() != FilterBy.TAG) {
       throw new BadRequestException("Sorting by tag count is only allowed with tag filter",
                                     "badSortStrategy");
     }
-    List<Object> convertedFilterValues = new ArrayList<>();
-
-    if (filterValues != null) {
-      for (var val : filterValues) {
-        Object converted = switch (filterBy) {
-          case DEFAULT -> val;
-          case TAG -> Long.valueOf(val);
-          case CATEGORY -> Category.valueOf(val);
-        };
-        convertedFilterValues.add(converted);
-      }
-    }
-    List<Object[]> placesWithDist = placeQueryRepository.findAround(lat, lon, minDist, maxDist,
-                                                                    pageSize,
-                                                                    sortBy, filterBy,
-                                                                    convertedFilterValues);
+    List<Object[]> placesWithDist = placeQueryRepository.findAround(searchParams);
     List<Place> places = new ArrayList<>();
     List<Double> distances = new ArrayList<>();
 
