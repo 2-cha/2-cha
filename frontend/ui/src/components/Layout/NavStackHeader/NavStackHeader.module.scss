@@ -5,7 +5,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: transparent;
+  background-color: var(--background-color);
 
   @include mixins.header($border: 0);
   @include mixins.flex(row, space-between);
@@ -25,6 +25,10 @@
     color: inherit;
     width: $button-width;
   }
+}
+
+.transparent {
+  background: transparent;
 }
 
 .hidden {
