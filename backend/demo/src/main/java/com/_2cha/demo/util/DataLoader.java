@@ -36,7 +36,7 @@ public class DataLoader implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) throws Exception {
     //XXX
-    //loadCsv("와인바", Category.WINE_BAR);
+    loadCsv("와인바", Category.WINE_BAR);
     //loadCsv("위스키바", Category.WHISKEY_BAR);
     //loadCsv("칵테일바", Category.COCKTAIL_BAR);
     //createMockMember();
