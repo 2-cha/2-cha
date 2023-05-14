@@ -1,0 +1,18 @@
+@use 'mixins';
+
+.tagcontainer {
+  flex-wrap: wrap;
+
+  @include mixins.flex(row, flex-start);
+
+  .tag {
+  }
+}
+
+.form {
+}
+
+.searchResults {
+  .selected {
+  }
+}
