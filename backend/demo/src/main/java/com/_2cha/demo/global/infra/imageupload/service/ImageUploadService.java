@@ -9,7 +9,9 @@ import com._2cha.demo.util.ImageUtils;
 import io.micrometer.common.util.StringUtils;
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,7 +32,8 @@ public class ImageUploadService {
    * <p>
    * both original image and generated thumbnail will be saved.
    */
-  public ImageSavedResponse save(byte[] imageBytes) throws IOException {
+  @Async("imageUploadTaskExecutor")
+  public CompletableFuture<ImageSavedResponse> save(byte[] imageBytes) throws IOException {
     String actualExt = ImageUtils.getActualExtension(imageBytes);
     if (actualExt == null) throw new NoDetectedExtensionException();
 
@@ -40,7 +43,7 @@ public class ImageUploadService {
     String filename = UUID.randomUUID() + actualExt;
     fileStorageService.uploadFile(IMAGE_PATH + THUMB_PREFIX + filename, thumbnailBytes);
     String url = fileStorageService.uploadFile(IMAGE_PATH + filename, imageBytes);
-    return new ImageSavedResponse(url);
+    return CompletableFuture.completedFuture(new ImageSavedResponse(url));
   }
 
   public String getThumbnailPath(String imagePath) {
