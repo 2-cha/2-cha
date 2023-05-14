@@ -11,6 +11,7 @@ import com._2cha.demo.review.service.ReviewService;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Future;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
@@ -54,7 +55,7 @@ public class ReviewController {
   }
 
   @PostMapping(value = "/reviews/images")
-  public ImageSavedResponse saveReviewImage(@RequestParam @ImageMime MultipartFile file)
+  public Future<ImageSavedResponse> saveReviewImage(@RequestParam @ImageMime MultipartFile file)
       throws IOException {
     return imageUploadService.save(file.getBytes());
   }
