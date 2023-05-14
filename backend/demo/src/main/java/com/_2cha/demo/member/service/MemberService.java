@@ -1,5 +1,6 @@
 package com._2cha.demo.member.service;
 
+import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Achievement;
 import com._2cha.demo.member.domain.Member;
@@ -17,6 +18,8 @@ import com._2cha.demo.member.repository.AchievementRepository;
 import com._2cha.demo.member.repository.MemberQueryRepository;
 import com._2cha.demo.member.repository.MemberRepository;
 import com._2cha.demo.util.BCryptHashingUtils;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +38,7 @@ public class MemberService {
   private final MemberQueryRepository memberQueryRepository;
   private final AchievementRepository achvRepository;
   private final FileStorageService fileStorageService;
+  private final ImageUploadService imageUploadService;
 
 
   public Member findById(Long id) {
@@ -59,9 +63,27 @@ public class MemberService {
 
   @Transactional
   public MemberInfoResponse signUpWithOIDC(OIDCProvider oidcProvider, String oidcId,
-                                           String name,
-                                           String email) {
-    Member member = Member.createMemberWithOIDC(oidcProvider, oidcId, email, name);
+                                           String name, String email,
+                                           String orgImgUrl
+                                          ) {
+    String savedImageUrlPath = null;
+    String savedThumbUrlPath = null;
+    if (orgImgUrl != null) {
+      byte[] imageBytes;
+      String savedUrl;
+      try (var in = new URL(orgImgUrl).openStream()) {
+        imageBytes = in.readAllBytes();
+        savedUrl = imageUploadService.save(imageBytes).getUrl();
+      } catch (IOException e) {
+        throw new RuntimeException(
+            "Invalid image url");  //TODO: define and handle exception in async
+      }
+      savedImageUrlPath = fileStorageService.extractPath(savedUrl);
+      savedThumbUrlPath = imageUploadService.getThumbnailPath(savedImageUrlPath);
+    }
+    Member member = Member.createMemberWithOIDC(oidcProvider, oidcId, email, name,
+                                                savedImageUrlPath,
+                                                savedThumbUrlPath);
     memberRepository.save(member);
 
     return new MemberInfoResponse(member);

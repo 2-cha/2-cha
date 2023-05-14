@@ -75,12 +75,15 @@ public class Member {
   }
 
   public static Member createMemberWithOIDC(OIDCProvider oidcProvider, String oidcId,
-                                            String email, String name) {
+                                            String email, String name, String profImgUrlPath,
+                                            String profImgThumbPath) {
     Member member = new Member();
     member.oidcProvider = oidcProvider;
     member.oidcId = oidcId;
     member.email = email;
     member.name = name;
+    member.profImgUrlPath = profImgUrlPath;
+    member.profImgThumbPath = profImgThumbPath;
     member.role = Role.MEMBER;
 
     return member;
