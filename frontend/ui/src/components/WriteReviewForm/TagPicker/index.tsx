@@ -57,7 +57,7 @@ interface TagSearchFormProps {
 }
 
 function TagSearchForm({ selected, toggleSelect }: TagSearchFormProps) {
-  const { register, handleSubmit, resetField } = useForm<TagFormData>();
+  const { register, handleSubmit } = useForm<TagFormData>();
 
   const [query, setQuery] = useState<string>('');
   const { data: tags, isError } = useTagsQuery(query);
@@ -77,10 +77,9 @@ function TagSearchForm({ selected, toggleSelect }: TagSearchFormProps) {
         <input
           {...register('name')}
           className={s.form__input}
-          type="text"
+          type="search"
           placeholder="초성으로 태그를 검색하세요"
           onChange={handleChange}
-          onClick={() => resetField('name')}
         />
       </form>
 
