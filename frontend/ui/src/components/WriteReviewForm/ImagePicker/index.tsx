@@ -106,6 +106,7 @@ export default function ImagePicker({ name }: ImagePickerProps) {
                 return { file };
               });
             setImages((prev) => [...prev, ...newImages]);
+            e.target.value = '';
           }}
         />
         <button
