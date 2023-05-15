@@ -43,7 +43,7 @@ export default function ImagePicker({ name }: ImagePickerProps) {
         <input
           ref={ref}
           type="file"
-          accept="image/*"
+          accept="image/png, image/jpeg, image/jpg, image/gif, image/bmp, image/webp"
           multiple
           hidden
           onChange={handleChange}
