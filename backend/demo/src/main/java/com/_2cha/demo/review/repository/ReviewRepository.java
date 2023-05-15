@@ -5,6 +5,7 @@ import java.util.List;
 
 import com._2cha.demo.review.domain.Tag;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
 
@@ -28,5 +29,7 @@ public interface ReviewRepository extends Repository<Review, Long> {
 
   List<Review> findAllByOrderByCreatedDesc();
 
+
+  @Query
   List<Review> findByTagsIn(List<Tag> tags);
 }
