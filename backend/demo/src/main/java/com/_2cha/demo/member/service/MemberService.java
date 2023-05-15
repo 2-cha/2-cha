@@ -12,6 +12,8 @@ import com._2cha.demo.member.dto.MemberInfoResponse;
 import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.dto.RelationshipOperationResponse;
 import com._2cha.demo.member.dto.ToggleAchievementExposureResponse;
+import com._2cha.demo.member.event.ProfileImageUpdateRequiredEvent;
+import com._2cha.demo.member.event.ProfileImageUploadRequiredEvent;
 import com._2cha.demo.member.exception.NoSuchAchievementException;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.repository.AchievementRepository;
@@ -23,10 +25,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @Service
@@ -39,6 +47,7 @@ public class MemberService {
   private final AchievementRepository achvRepository;
   private final FileStorageService fileStorageService;
   private final ImageUploadService imageUploadService;
+  private final ApplicationEventPublisher eventPublisher;
 
 
   public Member findById(Long id) {
@@ -61,30 +70,47 @@ public class MemberService {
     return new MemberInfoResponse(member);
   }
 
+  @Async("imageUploadTaskExecutor")
+  @TransactionalEventListener(value = ProfileImageUploadRequiredEvent.class, phase = TransactionPhase.AFTER_COMMIT)
+  public void uploadProfileImage(ProfileImageUploadRequiredEvent event)
+      throws InterruptedException, ExecutionException {
+    String srcImgUrl = event.getSourceImageUrl();
+
+    if (srcImgUrl != null) {
+      try (var in = new URL(srcImgUrl).openStream()) {
+        byte[] imageBytes = in.readAllBytes();
+        String savedUrl = imageUploadService.save(imageBytes).get().getUrl();
+        String savedImageUrlPath = fileStorageService.extractPath(savedUrl);
+        String savedThumbUrlPath = imageUploadService.getThumbnailPath(savedImageUrlPath);
+        eventPublisher.publishEvent(new ProfileImageUpdateRequiredEvent(this,
+                                                                        event.getMemberId(),
+                                                                        savedImageUrlPath,
+                                                                        savedThumbUrlPath));
+      } catch (IOException e) {
+        //TODO: handle in SimpleAsyncUncaughtExceptionHandler (Not in request lifecycle)
+        return;
+      }
+    }
+  }
+
+  @Async("imageUploadTaskExecutor")
+  @Transactional
+  @EventListener(value = ProfileImageUpdateRequiredEvent.class)
+  public void updateProfileImage(ProfileImageUpdateRequiredEvent event) {
+    Member member = memberRepository.findById(event.getMemberId());
+    member.updateProfileImage(event.getImageUrlPath(), event.getThumbUrlPath());
+    memberRepository.save(member);
+  }
+
   @Transactional
   public MemberInfoResponse signUpWithOIDC(OIDCProvider oidcProvider, String oidcId,
                                            String name, String email,
-                                           String orgImgUrl
+                                           String srcImgUrl
                                           ) {
-    String savedImageUrlPath = null;
-    String savedThumbUrlPath = null;
-    if (orgImgUrl != null) {
-      byte[] imageBytes;
-      String savedUrl;
-      try (var in = new URL(orgImgUrl).openStream()) {
-        imageBytes = in.readAllBytes();
-        savedUrl = imageUploadService.save(imageBytes).getUrl();
-      } catch (IOException e) {
-        throw new RuntimeException(
-            "Invalid image url");  //TODO: define and handle exception in async
-      }
-      savedImageUrlPath = fileStorageService.extractPath(savedUrl);
-      savedThumbUrlPath = imageUploadService.getThumbnailPath(savedImageUrlPath);
-    }
-    Member member = Member.createMemberWithOIDC(oidcProvider, oidcId, email, name,
-                                                savedImageUrlPath,
-                                                savedThumbUrlPath);
+    Member member = Member.createMemberWithOIDC(oidcProvider, oidcId, email, name, null, null);
     memberRepository.save(member);
+    eventPublisher.publishEvent(
+        new ProfileImageUploadRequiredEvent(this, member.getId(), srcImgUrl));
 
     return new MemberInfoResponse(member);
   }

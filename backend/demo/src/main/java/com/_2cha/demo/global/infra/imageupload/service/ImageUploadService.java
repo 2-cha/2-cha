@@ -32,6 +32,7 @@ public class ImageUploadService {
    * <p>
    * both original image and generated thumbnail will be saved.
    */
+  //TODO: return pair of img and thumbnail
   @Async("imageUploadTaskExecutor")
   public CompletableFuture<ImageSavedResponse> save(byte[] imageBytes) throws IOException {
     String actualExt = ImageUtils.getActualExtension(imageBytes);

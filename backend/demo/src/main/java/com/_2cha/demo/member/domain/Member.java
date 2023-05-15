@@ -107,4 +107,9 @@ public class Member {
                                                                                     achievement);
     this.achievements.add(memberAchievement);
   }
+
+  public void updateProfileImage(String profImgUrlPath, String profImgThumbPath) {
+    this.profImgUrlPath = profImgUrlPath;
+    this.profImgThumbPath = profImgThumbPath;
+  }
 }
