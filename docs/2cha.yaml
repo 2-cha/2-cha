@@ -179,6 +179,23 @@ paths:
               $ref: '#/components/schemas/SignUpRequest'
       tags:
         - member
+    put:
+      summary: ''
+      operationId: put-members
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberProfileResponse'
+      tags:
+        - member
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberProfileUpdateRequest'
   '/places/{placeId}':
     parameters:
       - schema:
@@ -694,6 +711,69 @@ paths:
               $ref: '#/components/schemas/JwtRefreshRequest'
       tags:
         - auth
+  /members/image:
+    put:
+      summary: ''
+      operationId: put-members-image
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberProfileResponse'
+      tags:
+        - member
+      description: Update member's profile image url
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberImageUpdateRequest'
+    post:
+      summary: ''
+      operationId: post-members-image
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageSavedResponse'
+      tags:
+        - member
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+              format: binary
+        description: Submit profile image file
+      description: ''
+  /reviews/images:
+    get:
+      summary: Your GET endpoint
+      tags: [ ]
+      responses: { }
+      operationId: get-reviews-images
+    post:
+      summary: ''
+      operationId: post-reviews-images
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageSavedResponse'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+              format: binary
+      tags:
+        - review
 components:
   schemas:
     ToggleAchievementExposureRequest:
@@ -1307,5 +1387,39 @@ components:
             id: pzpqh1z2nm882
       x-stoplight:
         id: qhaay9478h9io
+    MemberProfileUpdateRequest:
+      title: MemberProfileUpdateRequest
+      x-stoplight:
+        id: xoglnmnf04tq8
+      type: object
+      properties:
+        name:
+          type: string
+          x-stoplight:
+            id: xa7kdbs3z1amy
+        prof_msg:
+          type: string
+          x-stoplight:
+            id: xpmv59td09ojz
+    MemberImageUpdateRequest:
+      title: MemberImageUpdateRequest
+      x-stoplight:
+        id: 5zokx2dh4vum5
+      type: object
+      properties:
+        url:
+          type: string
+          x-stoplight:
+            id: hyfwdnv96mwnn
+    ImageSavedResponse:
+      title: ImageSavedResponse
+      x-stoplight:
+        id: r2ccoidw89c3t
+      type: object
+      properties:
+        url:
+          type: string
+          x-stoplight:
+            id: a56a60ugbtjsp
   requestBodies: { }
   responses: { }
