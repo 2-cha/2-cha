@@ -7,6 +7,7 @@ import com._2cha.demo.member.repository.MemberRepository;
 import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.repository.PlaceRepository;
+import jakarta.persistence.EntityManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,12 +31,17 @@ public class DataLoader implements ApplicationRunner {
   private final PlaceRepository placeRepository;
   private final MemberRepository memberRepository;
   private final AchievementRepository achvRepository;
+  private final EntityManager em;
 
 
   @Transactional
   @Override
   public void run(ApplicationArguments args) throws Exception {
     //XXX
+    //em.createNativeQuery(
+    //      "CREATE ALIAS IF NOT EXISTS H2GIS_SPATIAL FOR \"org.h2gis.functions.factory.H2GISFunctions.load\";\n"
+    //      + "CALL H2GIS_SPATIAL();")
+    //  .executeUpdate();
     //loadCsv("와인바", Category.WINE_BAR);
     //loadCsv("위스키바", Category.WHISKEY_BAR);
     //loadCsv("칵테일바", Category.COCKTAIL_BAR);
@@ -84,8 +90,8 @@ public class DataLoader implements ApplicationRunner {
           lotAddress,
           longitude,
           latitude,
-          thumbnail,
-          thumbnail,
+          null,
+          null,
           site);
       placeRepository.save(place);
     }

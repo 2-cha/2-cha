@@ -75,12 +75,15 @@ public class Member {
   }
 
   public static Member createMemberWithOIDC(OIDCProvider oidcProvider, String oidcId,
-                                            String email, String name) {
+                                            String email, String name, String profImgUrlPath,
+                                            String profImgThumbPath) {
     Member member = new Member();
     member.oidcProvider = oidcProvider;
     member.oidcId = oidcId;
     member.email = email;
     member.name = name;
+    member.profImgUrlPath = profImgUrlPath;
+    member.profImgThumbPath = profImgThumbPath;
     member.role = Role.MEMBER;
 
     return member;
@@ -103,5 +106,15 @@ public class Member {
     MemberAchievement memberAchievement = MemberAchievement.createMemberAchievement(this,
                                                                                     achievement);
     this.achievements.add(memberAchievement);
+  }
+
+  public void updateProfileImage(String profImgUrlPath, String profImgThumbPath) {
+    this.profImgUrlPath = profImgUrlPath;
+    this.profImgThumbPath = profImgThumbPath;
+  }
+
+  public void updateProfile(String name, String profMsg) {
+    this.name = name;
+    this.profMsg = profMsg;
   }
 }

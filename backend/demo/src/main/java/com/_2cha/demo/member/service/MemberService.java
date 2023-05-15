@@ -1,5 +1,6 @@
 package com._2cha.demo.member.service;
 
+import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Achievement;
 import com._2cha.demo.member.domain.Member;
@@ -11,19 +12,30 @@ import com._2cha.demo.member.dto.MemberInfoResponse;
 import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.dto.RelationshipOperationResponse;
 import com._2cha.demo.member.dto.ToggleAchievementExposureResponse;
+import com._2cha.demo.member.event.ProfileImageUpdateRequiredEvent;
+import com._2cha.demo.member.event.ProfileImageUploadRequiredEvent;
+import com._2cha.demo.member.exception.DuplicatedNameException;
 import com._2cha.demo.member.exception.NoSuchAchievementException;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.repository.AchievementRepository;
 import com._2cha.demo.member.repository.MemberQueryRepository;
 import com._2cha.demo.member.repository.MemberRepository;
 import com._2cha.demo.util.BCryptHashingUtils;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @Service
@@ -35,6 +47,8 @@ public class MemberService {
   private final MemberQueryRepository memberQueryRepository;
   private final AchievementRepository achvRepository;
   private final FileStorageService fileStorageService;
+  private final ImageUploadService imageUploadService;
+  private final ApplicationEventPublisher eventPublisher;
 
 
   public Member findById(Long id) {
@@ -57,12 +71,63 @@ public class MemberService {
     return new MemberInfoResponse(member);
   }
 
+  @Async("imageUploadTaskExecutor")
+  @TransactionalEventListener(value = ProfileImageUploadRequiredEvent.class, phase = TransactionPhase.AFTER_COMMIT)
+  public void uploadProfileImage(ProfileImageUploadRequiredEvent event)
+      throws InterruptedException, ExecutionException {
+    String srcImgUrl = event.getSourceImageUrl();
+
+    if (srcImgUrl != null) {
+      try (var in = new URL(srcImgUrl).openStream()) {
+        byte[] imageBytes = in.readAllBytes();
+        String savedUrl = imageUploadService.save(imageBytes).get().getUrl();
+        String savedImageUrlPath = fileStorageService.extractPath(savedUrl);
+        String savedThumbUrlPath = imageUploadService.getThumbnailPath(savedImageUrlPath);
+        eventPublisher.publishEvent(new ProfileImageUpdateRequiredEvent(this,
+                                                                        event.getMemberId(),
+                                                                        savedImageUrlPath,
+                                                                        savedThumbUrlPath));
+      } catch (IOException e) {
+        //TODO: handle in SimpleAsyncUncaughtExceptionHandler (Not in request lifecycle)
+        return;
+      }
+    }
+  }
+
+  @Async("imageUploadTaskExecutor")
+  @Transactional
+  @EventListener(value = ProfileImageUpdateRequiredEvent.class)
+  public void updateProfileImage(ProfileImageUpdateRequiredEvent event) {
+    Member member = memberRepository.findById(event.getMemberId());
+    member.updateProfileImage(event.getImageUrlPath(), event.getThumbUrlPath());
+    memberRepository.save(member);
+  }
+
+  @Transactional
+  public MemberProfileResponse updateProfileImage(Long memberId, String url) {
+    Member member = memberRepository.findById(memberId);
+    String imageUrlPath = fileStorageService.extractPath(url);
+    String thumbUrlPath = imageUploadService.getThumbnailPath(imageUrlPath);
+
+    member.updateProfileImage(imageUrlPath, thumbUrlPath);
+    memberRepository.save(member);
+
+    return new MemberProfileResponse(member.getId(),
+                                     member.getName(),
+                                     member.getProfImgThumbPath(),
+                                     member.getProfMsg(),
+                                     fileStorageService.getBaseUrl());
+  }
+
   @Transactional
   public MemberInfoResponse signUpWithOIDC(OIDCProvider oidcProvider, String oidcId,
-                                           String name,
-                                           String email) {
-    Member member = Member.createMemberWithOIDC(oidcProvider, oidcId, email, name);
+                                           String name, String email,
+                                           String srcImgUrl
+                                          ) {
+    Member member = Member.createMemberWithOIDC(oidcProvider, oidcId, email, name, null, null);
     memberRepository.save(member);
+    eventPublisher.publishEvent(
+        new ProfileImageUploadRequiredEvent(this, member.getId(), srcImgUrl));
 
     return new MemberInfoResponse(member);
   }
@@ -80,6 +145,20 @@ public class MemberService {
     }
 
     return new RelationshipOperationResponse(followerId, followingId);
+  }
+
+  @Transactional
+  public MemberProfileResponse updateProfile(Long memberId, String name, String profMsg) {
+    Member member = memberRepository.findById(memberId);
+    if (member == null) throw new NoSuchMemberException();
+    if (memberRepository.findByName(name) != null) throw new DuplicatedNameException();
+
+    member.updateProfile(name, profMsg);
+    return new MemberProfileResponse(member.getId(),
+                                     member.getName(),
+                                     member.getProfImgThumbPath(),
+                                     member.getProfMsg(),
+                                     fileStorageService.getBaseUrl());
   }
 
   @Transactional
