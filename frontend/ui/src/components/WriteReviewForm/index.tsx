@@ -49,7 +49,7 @@ export default function WriteReviewForm() {
           <PlaceLabel placeId={placeId} />
           <input
             {...register('placeId', { required: true })}
-            value={placeId}
+            value={placeId ?? ''}
             hidden
           />
 
