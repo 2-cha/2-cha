@@ -20,4 +20,10 @@ public class SocialController {
 	public List<ReviewResponse> getSocialReviews() {
 		return reviewService.getSocialReviewsOrderByNewest();
 	}
+
+//	@GetMapping("/social/nearby")
+//	public List<ReviewResponse> getSocialReviewsNearby(
+//			@RequestParam(name = "filter_by", required = false, defaultValue = "default") String filterBy) {
+//		return reviewService.getSocialReviewsOrderByNearby();
+//	}
 }

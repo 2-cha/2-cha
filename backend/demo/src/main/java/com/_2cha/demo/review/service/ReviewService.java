@@ -311,4 +311,9 @@ public class ReviewService {
             fileStorageService.getBaseUrl()
     )).toList();
   }
+
+  //근처 가게 리뷰 조회
+//  public List<ReviewResponse> getSocialReviewsOrderByNearby() {
+//
+//  }
 }
