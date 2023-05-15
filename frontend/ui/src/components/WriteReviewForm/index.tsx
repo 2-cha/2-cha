@@ -63,10 +63,10 @@ export default function WriteReviewForm() {
               <ImagesIcon />
               <span>사진</span>
             </div>
-            <ImagePicker name="images" />
             {errors.images && (
               <div className={s.errorMessage}>사진을 선택해주세요</div>
             )}
+            <ImagePicker name="images" />
           </div>
         </form>
 
@@ -75,10 +75,10 @@ export default function WriteReviewForm() {
             <HashIcon />
             <span>태그</span>
           </div>
-          <TagPicker name="tags" />
           {errors.tags && (
             <div className={s.errorMessage}>태그를 선택해주세요</div>
           )}
+          <TagPicker name="tags" />
         </div>
 
         <button type="submit" form="write" className={s.submit}>
