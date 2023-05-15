@@ -112,4 +112,9 @@ public class Member {
     this.profImgUrlPath = profImgUrlPath;
     this.profImgThumbPath = profImgThumbPath;
   }
+
+  public void updateProfile(String name, String profMsg) {
+    this.name = name;
+    this.profMsg = profMsg;
+  }
 }

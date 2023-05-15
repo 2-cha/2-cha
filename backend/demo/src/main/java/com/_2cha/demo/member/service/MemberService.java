@@ -14,6 +14,7 @@ import com._2cha.demo.member.dto.RelationshipOperationResponse;
 import com._2cha.demo.member.dto.ToggleAchievementExposureResponse;
 import com._2cha.demo.member.event.ProfileImageUpdateRequiredEvent;
 import com._2cha.demo.member.event.ProfileImageUploadRequiredEvent;
+import com._2cha.demo.member.exception.DuplicatedNameException;
 import com._2cha.demo.member.exception.NoSuchAchievementException;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.repository.AchievementRepository;
@@ -103,6 +104,22 @@ public class MemberService {
   }
 
   @Transactional
+  public MemberProfileResponse updateProfileImage(Long memberId, String url) {
+    Member member = memberRepository.findById(memberId);
+    String imageUrlPath = fileStorageService.extractPath(url);
+    String thumbUrlPath = imageUploadService.getThumbnailPath(imageUrlPath);
+
+    member.updateProfileImage(imageUrlPath, thumbUrlPath);
+    memberRepository.save(member);
+
+    return new MemberProfileResponse(member.getId(),
+                                     member.getName(),
+                                     member.getProfImgThumbPath(),
+                                     member.getProfMsg(),
+                                     fileStorageService.getBaseUrl());
+  }
+
+  @Transactional
   public MemberInfoResponse signUpWithOIDC(OIDCProvider oidcProvider, String oidcId,
                                            String name, String email,
                                            String srcImgUrl
@@ -128,6 +145,20 @@ public class MemberService {
     }
 
     return new RelationshipOperationResponse(followerId, followingId);
+  }
+
+  @Transactional
+  public MemberProfileResponse updateProfile(Long memberId, String name, String profMsg) {
+    Member member = memberRepository.findById(memberId);
+    if (member == null) throw new NoSuchMemberException();
+    if (memberRepository.findByName(name) != null) throw new DuplicatedNameException();
+
+    member.updateProfile(name, profMsg);
+    return new MemberProfileResponse(member.getId(),
+                                     member.getName(),
+                                     member.getProfImgThumbPath(),
+                                     member.getProfMsg(),
+                                     fileStorageService.getBaseUrl());
   }
 
   @Transactional
