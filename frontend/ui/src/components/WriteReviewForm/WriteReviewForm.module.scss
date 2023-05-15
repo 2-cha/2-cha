@@ -42,4 +42,12 @@
 
   @include mixins.flex(row, flex-start, center);
   @include mixins.padding(y, md);
+
+  &__head {
+    @include mixins.text-md;
+  }
+
+  &__body {
+    @include mixins.text-sm;
+  }
 }

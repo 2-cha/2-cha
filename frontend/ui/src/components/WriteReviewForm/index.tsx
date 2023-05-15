@@ -100,8 +100,8 @@ function PlaceLabel({ placeId }: { placeId?: string | string[] }) {
         <span>...</span>
       ) : (
         <div>
-          <p>{data.name}</p>
-          <p>{data.address}</p>
+          <p className={s.label__head}>{data.name}</p>
+          <p className={s.label__body}>{data.address}</p>
         </div>
       )}
     </>
