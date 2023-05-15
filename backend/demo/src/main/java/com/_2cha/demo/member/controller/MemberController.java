@@ -2,17 +2,24 @@ package com._2cha.demo.member.controller;
 
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
+import com._2cha.demo.global.infra.imageupload.dto.ImageSavedResponse;
+import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
+import com._2cha.demo.global.validator.imagemime.ImageMime;
 import com._2cha.demo.member.dto.AchievementResponse;
+import com._2cha.demo.member.dto.MemberImageUpdateRequest;
 import com._2cha.demo.member.dto.MemberInfoResponse;
 import com._2cha.demo.member.dto.MemberProfileResponse;
+import com._2cha.demo.member.dto.MemberProfileUpdateRequest;
 import com._2cha.demo.member.dto.RelationshipOperationResponse;
 import com._2cha.demo.member.dto.SignUpRequest;
 import com._2cha.demo.member.dto.ToggleAchievementExposureRequest;
 import com._2cha.demo.member.dto.ToggleAchievementExposureResponse;
 import com._2cha.demo.member.service.MemberService;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +30,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/members")
@@ -30,11 +38,34 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
   private final MemberService memberService;
+  private final ImageUploadService imageUploadService;
 
   @Auth
   @GetMapping("/{memberId}")
   public MemberProfileResponse getMemberProfile(@PathVariable Long memberId) {
     return memberService.getMemberProfileById(memberId);
+  }
+
+  @Auth
+  @PutMapping("")
+  public MemberProfileResponse updateMemberProfile(@Authed Long memberId,
+                                                   @Valid @RequestBody MemberProfileUpdateRequest dto) {
+    return memberService.updateProfile(memberId, dto.getName(), dto.getProfMsg());
+  }
+
+  @Auth
+  @PostMapping("/image")
+  public CompletableFuture<ImageSavedResponse> uploadMemberImage(@Authed Long memberId,
+                                                                 @ImageMime MultipartFile file)
+      throws IOException {
+    return imageUploadService.save(file.getBytes());
+  }
+
+  @Auth
+  @PutMapping("/image")
+  public MemberProfileResponse updateMemberImageUrl(@Authed Long memberId,
+                                                    @Valid @RequestBody MemberImageUpdateRequest dto) {
+    return memberService.updateProfileImage(memberId, dto.getUrl());
   }
 
   @Auth

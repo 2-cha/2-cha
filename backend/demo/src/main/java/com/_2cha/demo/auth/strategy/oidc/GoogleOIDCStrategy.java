@@ -90,6 +90,7 @@ public class GoogleOIDCStrategy implements OIDCStrategy {
     profile.setId(idTokenPayload.getSub());
     profile.setName(idTokenPayload.getName());
     profile.setEmail(idTokenPayload.getEmail());
+    profile.setImageUrl(idTokenPayload.getPicture());
     return profile;
   }
 }
