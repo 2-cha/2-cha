@@ -31,3 +31,15 @@
     height: 40px;
   }
 }
+
+.full {
+  width: 100%;
+}
+
+.label {
+  width: 100%;
+  gap: 16px;
+
+  @include mixins.flex(row, flex-start, center);
+  @include mixins.padding(y, md);
+}

@@ -5,6 +5,8 @@ import { FormProvider, useForm } from 'react-hook-form';
 import ImagePicker from '@/components/WriteReviewForm/ImagePicker';
 import TagPicker from '@/components/WriteReviewForm/TagPicker';
 import PlaceIcon from '@/components/Icons/PlaceIcon';
+import ImagesIcon from '@/components/Icons/ImagesIcon';
+import HashIcon from '../Icons/HashIcon';
 import type { Tag } from '@/types';
 import { useReviewMutation } from '@/hooks/mutation/useReview';
 import s from './WriteReviewForm.module.scss';
@@ -46,22 +48,33 @@ export default function WriteReviewForm() {
     <FormProvider {...method}>
       <div className={s.root}>
         <form onSubmit={onSubmit} id="write" className={s.form}>
-          <PlaceLabel placeId={placeId} />
+          <div className={s.label}>
+            <PlaceIcon />
+            <PlaceLabel placeId={placeId} />
+          </div>
           <input
             {...register('placeId', { required: true })}
             value={placeId ?? ''}
             hidden
           />
 
-          <div>
+          <div className={s.full}>
+            <div className={s.label}>
+              <ImagesIcon />
+              <span>사진</span>
+            </div>
             <ImagePicker name="images" />
             {errors.images && (
-              <div className={s.errorMessage}>이미지를 선택해주세요</div>
+              <div className={s.errorMessage}>사진을 선택해주세요</div>
             )}
           </div>
         </form>
 
-        <div>
+        <div className={s.full}>
+          <div className={s.label}>
+            <HashIcon />
+            <span>태그</span>
+          </div>
           <TagPicker name="tags" />
           {errors.tags && (
             <div className={s.errorMessage}>태그를 선택해주세요</div>
@@ -80,15 +93,17 @@ function PlaceLabel({ placeId }: { placeId?: string | string[] }) {
   const { data, isLoading, isError } = usePlaceQuery(placeId);
 
   return (
-    <div>
-      <PlaceIcon />
+    <>
       {isError || !placeId ? (
-        <div>가게를 찾을 수 없어요</div>
+        <span>가게를 찾을 수 없어요</span>
       ) : isLoading ? (
-        <div>...</div>
+        <span>...</span>
       ) : (
-        <span>{data.name}</span>
+        <div>
+          <p>{data.name}</p>
+          <p>{data.address}</p>
+        </div>
       )}
-    </div>
+    </>
   );
 }

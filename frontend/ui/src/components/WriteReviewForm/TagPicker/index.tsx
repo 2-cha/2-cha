@@ -72,36 +72,36 @@ function TagSearchForm({ selected, toggleSelect }: TagSearchFormProps) {
   });
 
   return (
-    <>
+    <div className={s.formContainer}>
       <form onSubmit={onSubmit} className={s.form}>
-        <div>
-          <label htmlFor="name">태그 추가</label>
-          <input
-            {...register('name')}
-            type="text"
-            placeholder="초성으로 태그를 검색하세요"
-            onChange={handleChange}
-            onClick={() => resetField('name')}
-          />
-        </div>
+        <input
+          {...register('name')}
+          className={s.form__input}
+          type="text"
+          placeholder="초성으로 태그를 검색하세요"
+          onChange={handleChange}
+          onClick={() => resetField('name')}
+        />
       </form>
+
       <ul className={s.searchResults}>
         {tags && !isError
           ? tags.map((tag) => (
-              <li key={tag.id}>
+              <li key={tag.id} className={s.searchResults__item}>
                 <button
                   type="button"
-                  className={cn({
+                  className={cn(s.tag, {
                     [s.selected]: selected.find((t) => t.id === tag.id),
                   })}
                   onClick={() => toggleSelect(tag)}
                 >
-                  {tag.emoji} {tag.message}
+                  <span className={s.tag__imoji}>{tag.emoji}</span>
+                  <span>{tag.message}</span>
                 </button>
               </li>
             ))
           : null}
       </ul>
-    </>
+    </div>
   );
 }

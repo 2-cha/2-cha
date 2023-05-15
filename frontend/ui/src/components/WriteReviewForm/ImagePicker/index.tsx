@@ -1,6 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 import { useImagePicker, type Image } from '@/hooks/useImagePicker';
 import { type ReviewFormData } from '@/components/WriteReviewForm';
+import PlusSquareIcon from '@/components/Icons/PlusSquareIcon';
 import s from './ImagePicker.module.scss';
 
 interface ImagePickerProps {
@@ -53,7 +54,7 @@ export default function ImagePicker({ name }: ImagePickerProps) {
           type="button"
           onClick={() => ref.current?.click()}
         >
-          <span>이미지 추가</span>
+          <PlusSquareIcon width={42} height={42} />
         </button>
       </div>
     </div>
