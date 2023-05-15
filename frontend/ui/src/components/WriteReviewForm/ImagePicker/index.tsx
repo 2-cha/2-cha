@@ -50,6 +50,7 @@ export default function ImagePicker({ name }: ImagePickerProps) {
           )}
           <button
             className={s.image__remove}
+            type="button"
             onClick={() => {
               setImages((prev) =>
                 prev.filter((img) => !isSameFile(img.file, image.file))
@@ -109,6 +110,7 @@ export default function ImagePicker({ name }: ImagePickerProps) {
         />
         <button
           className={s.addButton}
+          type="button"
           onClick={() => imageRef.current?.click()}
         >
           <span>이미지 추가</span>

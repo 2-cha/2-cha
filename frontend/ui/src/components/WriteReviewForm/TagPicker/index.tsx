@@ -34,6 +34,7 @@ export default function TagPicker({ name }: TagPickerProps) {
         {selected.map((tag) => (
           <button
             key={tag.id}
+            type="button"
             className={s.tag}
             onClick={() => toggleSelect(tag)}
           >
@@ -89,6 +90,7 @@ function TagSearchForm({ selected, toggleSelect }: TagSearchFormProps) {
           ? tags.map((tag) => (
               <li key={tag.id}>
                 <button
+                  type="button"
                   className={cn({
                     [s.selected]: selected.find((t) => t.id === tag.id),
                   })}

@@ -27,18 +27,20 @@ export default function WriteReviewForm() {
   } = method;
 
   const reviewMutation = useReviewMutation();
-  const onSubmit = handleSubmit(async (data) => {
-    reviewMutation.mutate(
-      { placeId, urls: data.images, tags: data.tags },
-      {
-        onSuccess: () => router.push(`/places/${placeId}`),
-        onError: () => {
-          /* TODO: error handling*/
-          alert('리뷰 작성에 실패했습니다.');
-        },
-      }
-    );
-  });
+  const onSubmit = handleSubmit(
+    (data) =>
+      reviewMutation.mutate(
+        { placeId, urls: data.images, tags: data.tags },
+        {
+          onSuccess: () => router.push(`/places/${placeId}`),
+          onError: () => {
+            /* TODO: error handling*/
+            alert('리뷰 작성에 실패했습니다.');
+          },
+        }
+      ),
+    (errors) => console.log(errors)
+  );
 
   return (
     <FormProvider {...method}>
