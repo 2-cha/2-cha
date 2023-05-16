@@ -5,10 +5,15 @@
   width: 100%;
   min-height: var.$place-info-menu-min-height;
 
-  @include mixins.flex();
+  @include mixins.flex(column);
 
   .hasNoReview {
     @include mixins.text-lg;
+
+    &__writeButton {
+      height: 40px;
+      margin-top: 16px;
+    }
   }
 }
 
@@ -24,6 +29,12 @@
     border-bottom: 0.5px solid var(--border-color);
 
     @include mixins.flex(column);
+  }
+
+  &__writeButton {
+    height: 40px;
+
+    @include mixins.padding(y, 32);
   }
 
   &__image {

@@ -1,0 +1,70 @@
+@use 'mixins';
+
+.tagContainer {
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  @include mixins.flex(row, flex-start);
+
+  .tag {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border: 0.5px solid var(--border-color);
+    border-radius: 500px;
+
+    @include mixins.padding(x, md);
+    @include mixins.padding(y, sm);
+    @include mixins.text-sm;
+  }
+}
+
+.formContainer {
+  width: 100%;
+  margin-bottom: 16px;
+
+  .form {
+    width: 100%;
+
+    &__input {
+      width: 100%;
+      padding: 8px 16px;
+    }
+  }
+
+  .searchResults {
+    width: 100%;
+    margin-top: 8px;
+
+    @include mixins.flex(column, flex-start, flex-start);
+
+    &__item {
+      width: 100%;
+
+      @include mixins.flex(row, flex-start, center);
+      @include mixins.padding(y, 8);
+    }
+
+    .tag {
+      width: 100%;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      border: 0.5px solid var(--border-color);
+      border-radius: 8px;
+      gap: 8px;
+
+      @include mixins.flex(row, flex-start, center);
+      @include mixins.padding(x, 16);
+      @include mixins.padding(y, 8);
+
+      &__imoji {
+        min-width: 36px;
+        text-align: left;
+      }
+    }
+
+    .selected {
+      background-color: var(--background-inactive-color);
+    }
+  }
+}

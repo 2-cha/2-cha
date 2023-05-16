@@ -1,6 +1,7 @@
 import { usePlaceReviewsQuery } from '@/hooks/query/usePlaceReviews';
-import s from './PlaceReviewsMenu.module.scss';
 import Link from 'next/link';
+import cn from 'classnames';
+import s from './PlaceReviewsMenu.module.scss';
 
 export default function PlaceReviews({ placeId }: { placeId: number }) {
   const { data: reviews, isLoading, isError } = usePlaceReviewsQuery(placeId);
@@ -10,6 +11,12 @@ export default function PlaceReviews({ placeId }: { placeId: number }) {
     <div className={s.root}>
       {reviews?.length ? (
         <ul className={s.review__list}>
+          <Link
+            href={`/write?placeId=${placeId}`}
+            className={cn(s.review__item, s.review__writeButton)}
+          >
+            후기 남기기
+          </Link>
           {reviews.map((review) => (
             <li key={review.id} className={s.review__item}>
               <div className={s.header}>
@@ -39,7 +46,15 @@ export default function PlaceReviews({ placeId }: { placeId: number }) {
           ))}
         </ul>
       ) : (
-        <p className={s.hasNoReview}>아직 리뷰가 없습니다</p>
+        <>
+          <p className={s.hasNoReview}>아직 리뷰가 없습니다</p>
+          <Link
+            href={`/write?placeId=${placeId}`}
+            className={s.hasNoReview__writeButton}
+          >
+            후기 남기기
+          </Link>
+        </>
       )}
     </div>
   );
