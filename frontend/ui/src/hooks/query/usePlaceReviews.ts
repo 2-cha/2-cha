@@ -1,10 +1,17 @@
 import { fetchClient } from '@/lib/fetchClient';
 import type { QueryResponse, Review } from '@/types';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-async function fetchPlaceReviews(placeId: number) {
+async function fetchPlaceReviews({
+  placeId,
+  pageParam,
+}: {
+  placeId: number;
+  pageParam: number;
+}) {
   const { data } = await fetchClient<QueryResponse<Review[]>>(
-    `/places/${placeId}/reviews`
+    `/places/${placeId}/reviews`,
+    { params: { page_number: pageParam } }
   );
   if (!data.success) {
     throw new Error(data.message);
@@ -13,9 +20,12 @@ async function fetchPlaceReviews(placeId: number) {
 }
 
 export function usePlaceReviewsQuery(placeId: number) {
-  const result = useQuery({
+  const result = useInfiniteQuery({
     queryKey: ['places', placeId, 'reviews'],
-    queryFn: () => fetchPlaceReviews(placeId),
+    queryFn: ({ pageParam = 0 }) => fetchPlaceReviews({ placeId, pageParam }),
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.length ? pages.length : undefined,
+    enabled: placeId != null,
   });
 
   return result;
