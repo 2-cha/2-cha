@@ -5,6 +5,7 @@ import com._2cha.demo.place.dto.FilterBy;
 import com._2cha.demo.place.dto.NearbyPlaceSearchParams;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
+import com._2cha.demo.place.dto.PlaceSearchResponse;
 import com._2cha.demo.place.dto.SortBy;
 import com._2cha.demo.place.service.PlaceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +28,12 @@ public class PlaceController {
   @GetMapping("/places/{placeId}")
   public PlaceDetailResponse getPlaceDetailById(@PathVariable Long placeId) {
     return placeService.getPlaceDetailById(placeId);
+  }
+
+  @GetMapping("/places")
+  public List<PlaceSearchResponse> searchPlaceByName(@RequestParam String query,
+                                                     Pageable pageParam) {
+    return placeService.fuzzySearch(query, pageParam);
   }
 
   @GetMapping("/places/nearby")

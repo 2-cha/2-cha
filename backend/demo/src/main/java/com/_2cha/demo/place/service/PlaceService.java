@@ -9,12 +9,14 @@ import com._2cha.demo.place.dto.NearbyPlaceSearchParams;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
+import com._2cha.demo.place.dto.PlaceSearchResponse;
 import com._2cha.demo.place.dto.SortBy;
 import com._2cha.demo.place.repository.PlaceQueryRepository;
 import com._2cha.demo.place.repository.PlaceRepository;
 import com._2cha.demo.review.dto.TagCountResponse;
 import com._2cha.demo.review.service.ReviewService;
 import com._2cha.demo.util.GeomUtils;
+import com._2cha.demo.util.HangulUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -132,5 +135,44 @@ public class PlaceService {
       brief.setTagSummary(placesTagCounts.get(place.getId()));
       return brief;
     }).toList();
+  }
+
+  public List<PlaceSearchResponse> fuzzySearch(String queryText, Pageable pageParam) {
+    String queryRegex = this.makeQueryRegex(queryText);
+    String baseUrl = fileStorageService.getBaseUrl();
+    List<Place> places = placeRepository.findPlacesByNameMatchesRegex(queryRegex, pageParam);
+    return places.stream().map(place -> new PlaceSearchResponse(place, baseUrl)).toList();
+  }
+
+  private String makeQueryRegex(String queryText) {
+
+    int i = -1;
+    boolean prevSpace = false;
+    String queryRegex = "";
+
+    while (++i < queryText.length()) {
+      char c = queryText.charAt(i);
+      if (HangulUtils.isPartialChar(c)) {
+        queryRegex += makeCompleteRange(c);
+      } else if (Character.isLetterOrDigit(c)) {
+        queryRegex += c;
+      } else if (Character.isSpaceChar(c)) {
+        prevSpace = true;
+      } else {
+        continue;
+      }
+      if (!prevSpace) {
+        queryRegex += ".*"; // Fuzzy Matching, to ignore only spaces, use "\\s*".
+      }
+      prevSpace = false;
+    }
+    return queryRegex;
+  }
+
+  private String makeCompleteRange(char 초성) {
+    char start = HangulUtils.makeCompleteChar(초성, 'ㅏ', '\0');
+    char end = HangulUtils.makeCompleteChar(초성, 'ㅣ', 'ㅎ');
+
+    return "[" + start + "-" + end + "]";
   }
 }
