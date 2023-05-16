@@ -13,6 +13,7 @@ import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceCreatedResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
 import com._2cha.demo.place.dto.PlaceSearchResponse;
+import com._2cha.demo.place.dto.PlaceSuggestionResponse;
 import com._2cha.demo.place.dto.SortBy;
 import com._2cha.demo.place.exception.NoSuchPlaceException;
 import com._2cha.demo.place.repository.PlaceQueryRepository;
@@ -42,7 +43,9 @@ public class PlaceService {
   private final PlaceQueryRepository placeQueryRepository;
   private final FileStorageService fileStorageService;
   private final ImageUploadService imageUploadService;
-  private final Integer REVIEW_SUMMARY_SIZE = 3;
+  private static final Integer REVIEW_SUMMARY_SIZE = 3;
+  private static final Integer SUGGESTION_SIZE = 10;
+  private static final Double SUGGESTION_MAX_DIST = 1000.0;
 
 
   private ReviewService reviewService;
@@ -143,6 +146,21 @@ public class PlaceService {
     detail.setTags(reviewService.getReviewTagCountByPlaceId(id, null));
 
     return detail;
+  }
+
+  public List<PlaceSuggestionResponse> suggestNearbyPlaces(Double lat, Double lon) {
+
+    List<Object[]> placesWithDist =
+        placeQueryRepository.findAround(new NearbyPlaceSearchParams(lat, lon,
+                                                                    SUGGESTION_MAX_DIST,
+                                                                    FilterBy.DEFAULT, null,
+                                                                    SortBy.DISTANCE,
+                                                                    0L, SUGGESTION_SIZE));
+
+    return placesWithDist.stream()
+                         .map(pd -> new PlaceSuggestionResponse(
+                             (Place) pd[0], (Double) pd[1]))
+                         .toList();
   }
 
   public List<PlaceBriefWithDistanceResponse>
