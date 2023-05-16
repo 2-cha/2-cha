@@ -760,7 +760,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ImageSavedResponse'
+                $ref: '#/components/schemas/ImageUrlWithSuggestionResponse'
       requestBody:
         content:
           multipart/form-data:
@@ -1517,11 +1517,9 @@ components:
             type: string
             nullable: true
           lon:
-            type:
-              - number
+            type: number
           lat:
-            type:
-              - number
+            type: number
     PlaceEnrollRequest:
       type: object
       x-examples: { }
@@ -1576,5 +1574,86 @@ components:
           type: number
         lat:
           type: number
+    PlaceSuggestionResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+          address:
+            type: string
+          lot_address:
+            type: string
+          distance:
+            type: number
+      x-examples:
+        Example 1:
+          - id: 504
+            name: 랑데부서울
+            address: 서울 마포구 동교로36길 7 2층
+            lot_address: (지번) 연남동 260-24
+            distance: 32.87934157
+          - id: 1572
+            name: 연남일기
+            address: 서울 마포구 동교로34길 9 1층
+            lot_address: (지번) 연남동 260-38
+            distance: 42.04382732
+          - id: 277
+            name: 다락방이층
+            address: 서울 마포구 동교로34길 9 2층
+            lot_address: (지번) 연남동 260-38
+            distance: 42.04382732
+          - id: 1796
+            name: 와이니하이
+            address: 서울 마포구 동교로34길 3 4층
+            lot_address: (지번) 연남동 260-31
+            distance: 57.60504563
+          - id: 389
+            name: 동남방앗간
+            address: 서울 마포구 동교로 244-1
+            lot_address: (지번) 연남동 228-59
+            distance: 62.60940492
+          - id: 1485
+            name: 어반루프
+            address: 서울 마포구 동교로38길 13 3층
+            lot_address: (지번) 연남동 390-71
+            distance: 72.07416523
+          - id: 868
+            name: 바야흐로
+            address: 서울 마포구 동교로32길 7
+            lot_address: (지번) 연남동 260-46
+            distance: 72.99423688
+          - id: 1953
+            name: 요즘
+            address: 서울 마포구 동교로32길 5 3층
+            lot_address: (지번) 연남동 260-47
+            distance: 74.81124273
+          - id: 1567
+            name: 연남37
+            address: 서울 마포구 동교로34길 21
+            lot_address: (지번) 연남동 381-5
+            distance: 77.11820519
+          - id: 572
+            name: 루나씨엘로
+            address: '서울 마포구 동교로34길 21 2,3층'
+            lot_address: (지번) 연남동 381-5
+            distance: 77.11820519
+    ImageUrlWithSuggestionResponse:
+      title: ImageUrlWithSuggestionResponse
+      x-stoplight:
+        id: dzhxo6trfa0xd
+      type: object
+      properties:
+        id:
+          type: string
+        suggestions:
+          x-stoplight:
+            id: cohv9ugq4gv08
+          type: array
+          items:
+            $ref: '#/components/schemas/PlaceSuggestionResponse'
   requestBodies: { }
   responses: { }
