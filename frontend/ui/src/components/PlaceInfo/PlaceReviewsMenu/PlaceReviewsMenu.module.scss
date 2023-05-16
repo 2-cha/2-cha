@@ -32,12 +32,14 @@
   }
 
   &__writeButton {
-    height: 40px;
-
-    @include mixins.padding(y, 32);
+    height: 62px;
   }
+}
 
-  &__image {
+.reviewItem {
+  width: 100%;
+
+  .image {
     width: 100%;
 
     @include mixins.flex;
@@ -47,46 +49,50 @@
       object-fit: cover;
     }
   }
-}
 
-.header {
-  width: 100%;
-  height: 52px;
+  .header {
+    width: 100%;
+    height: 52px;
 
-  @include mixins.flex(row, flex-start, center);
-  @include mixins.padding(x, md);
+    @include mixins.flex(row, flex-start, center);
+    @include mixins.padding(x, md);
 
-  &__profile {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin-right: 8px;
-    background-color: var(--background-inactive-color);
+    &__profile {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 12px;
+      background-color: var(--background-inactive-color);
 
-    @include mixins.flex;
+      @include mixins.flex;
 
-    img {
-      width: 100%;
-      object-fit: cover;
+      img {
+        width: 100%;
+        object-fit: cover;
+      }
+    }
+
+    &__title {
+      @include mixins.text-md;
     }
   }
-}
 
-.tags {
-  width: 100%;
-  flex-wrap: wrap;
-  gap: 8px;
+  .tags {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
 
-  @include mixins.flex(row, flex-start);
-  @include mixins.padding(all, md);
+    @include mixins.flex(row, flex-start);
+    @include mixins.padding(all, md);
 
-  .tag {
-    border: 0.5px solid var(--border-color);
-    border-radius: 500px;
+    .tag {
+      border: 0.5px solid var(--border-color);
+      border-radius: 500px;
 
-    @include mixins.padding(x, md);
-    @include mixins.padding(y, sm);
-    @include mixins.text-sm;
+      @include mixins.padding(x, md);
+      @include mixins.padding(y, sm);
+      @include mixins.text-sm;
+    }
   }
 }
