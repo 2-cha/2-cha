@@ -7,7 +7,7 @@ export default memo(function ImagesIcon({
   height = 20,
   className,
   ...props
-}: React.ComponentProps<'svg'> & { isActive?: boolean }) {
+}: React.ComponentProps<'svg'>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

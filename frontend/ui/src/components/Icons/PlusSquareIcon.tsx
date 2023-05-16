@@ -2,13 +2,12 @@ import { memo } from 'react';
 import cn from 'classnames';
 import s from './Icon.module.scss';
 
-export default memo(function CopyIcon({
+export default memo(function PlusSquareIcon({
   width = 20,
   height = 20,
   className,
-  isActive,
   ...props
-}: React.ComponentProps<'svg'> & { isActive?: boolean }) {
+}: React.ComponentProps<'svg'>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
