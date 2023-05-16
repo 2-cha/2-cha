@@ -1,5 +1,7 @@
 package com._2cha.demo.place.service;
 
+import static java.util.concurrent.CompletableFuture.completedFuture;
+
 import com._2cha.demo.global.exception.BadRequestException;
 import com._2cha.demo.global.exception.NotFoundException;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
@@ -13,6 +15,7 @@ import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceCreatedResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
 import com._2cha.demo.place.dto.PlaceSearchResponse;
+import com._2cha.demo.place.dto.PlaceSuggestionResponse;
 import com._2cha.demo.place.dto.SortBy;
 import com._2cha.demo.place.exception.NoSuchPlaceException;
 import com._2cha.demo.place.repository.PlaceQueryRepository;
@@ -24,11 +27,13 @@ import com._2cha.demo.util.HangulUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +47,9 @@ public class PlaceService {
   private final PlaceQueryRepository placeQueryRepository;
   private final FileStorageService fileStorageService;
   private final ImageUploadService imageUploadService;
-  private final Integer REVIEW_SUMMARY_SIZE = 3;
+  private static final Integer REVIEW_SUMMARY_SIZE = 3;
+  private static final Integer SUGGESTION_SIZE = 10;
+  private static final Double SUGGESTION_MAX_DIST = 1000.0;
 
 
   private ReviewService reviewService;
@@ -143,6 +150,23 @@ public class PlaceService {
     detail.setTags(reviewService.getReviewTagCountByPlaceId(id, null));
 
     return detail;
+  }
+
+  @Async("placeQueryTaskExecutor")
+  public CompletableFuture<List<PlaceSuggestionResponse>> suggestNearbyPlacesAsync(Double lat,
+                                                                                   Double lon) {
+
+    List<Object[]> placesWithDist =
+        placeQueryRepository.findAround(new NearbyPlaceSearchParams(lat, lon,
+                                                                    SUGGESTION_MAX_DIST,
+                                                                    FilterBy.DEFAULT, null,
+                                                                    SortBy.DISTANCE,
+                                                                    0L, SUGGESTION_SIZE));
+
+    return completedFuture(placesWithDist.stream()
+                                         .map(pd -> new PlaceSuggestionResponse(
+                                             (Place) pd[0], (Double) pd[1]))
+                                         .toList());
   }
 
   public List<PlaceBriefWithDistanceResponse>
