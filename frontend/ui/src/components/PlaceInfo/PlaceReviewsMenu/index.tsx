@@ -65,7 +65,7 @@ function PlaceReviewList({ pages }: { pages: Review[][] }) {
 
 function PlaceReviewItem({ review }: { review: Review }) {
   return (
-    <>
+    <div className={s.reviewItem}>
       <div className={s.header}>
         <div className={s.header__profile}>
           <img src={review.member.prof_img} alt={review.member.name} />
@@ -74,7 +74,7 @@ function PlaceReviewItem({ review }: { review: Review }) {
           <p className={s.review__title}>{review.member.name}</p>
         </Link>
       </div>
-      <div className={s.review__image}>
+      <div className={s.image}>
         <img src={review.images[0]} alt={`${review.place.name}-${review.id}`} />
       </div>
       <div className={s.tags}>
@@ -86,6 +86,6 @@ function PlaceReviewItem({ review }: { review: Review }) {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }
