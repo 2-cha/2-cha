@@ -21,7 +21,8 @@ public class PlaceSearchResponse {
     this.name = place.getName();
     this.category = place.getCategory();
     this.address = place.getAddress();
-    this.thumbnail = place.getThumbnailUrlPath() != null ? baseUrl + place.getImageUrlPath() : null;
+    this.thumbnail =
+        place.getThumbnailUrlPath() != null ? baseUrl + place.getThumbnailUrlPath() : null;
     this.lon = place.getLocation().getX();
     this.lat = place.getLocation().getY();
   }
