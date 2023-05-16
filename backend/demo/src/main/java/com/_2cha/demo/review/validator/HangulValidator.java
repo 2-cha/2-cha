@@ -1,6 +1,6 @@
 package com._2cha.demo.review.validator;
 
-import com._2cha.demo.review.util.HangulUtils;
+import com._2cha.demo.util.HangulUtils;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ public class HangulValidator implements
 
   @Override
   public void initialize(Hangul constraintAnnotation) {
-    
+
   }
 
   @Override

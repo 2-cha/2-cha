@@ -16,7 +16,7 @@ public class MemberProfileResponse {
                                String baseUrl) {
     this.id = id;
     this.name = name;
-    this.profImg = baseUrl + profImgUrlPath;
+    this.profImg = profImgUrlPath != null ? baseUrl + profImgUrlPath : null;
     this.profMsg = profMsg;
   }
 }

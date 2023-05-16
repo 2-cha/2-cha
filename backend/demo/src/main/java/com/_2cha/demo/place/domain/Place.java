@@ -75,4 +75,9 @@ public class Place {
     place.site = site;
     return place;
   }
+
+  public void updateImage(String imageUrlPath, String thumbnailUrlPath) {
+    this.imageUrlPath = imageUrlPath;
+    this.thumbnailUrlPath = thumbnailUrlPath;
+  }
 }

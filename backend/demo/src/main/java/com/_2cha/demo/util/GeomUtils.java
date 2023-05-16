@@ -17,6 +17,10 @@ public class GeomUtils {
     return geometryFactory.createPoint(new Coordinate(longitude, latitude));
   }
 
+  public static Double lat(Point point) {return point.getY();}
+
+  public static Double lon(Point point) {return point.getX();}
+
   public static Double calcDistance(Double lat1, Double lon1, Double lat2, Double lon2, char unit) {
     Double theta = lon1 - lon2;
     Double dist =
