@@ -751,11 +751,6 @@ paths:
         description: Submit profile image file
       description: ''
   /reviews/images:
-    get:
-      summary: Your GET endpoint
-      tags: [ ]
-      responses: { }
-      operationId: get-reviews-images
     post:
       summary: ''
       operationId: post-reviews-images
@@ -774,6 +769,74 @@ paths:
               format: binary
       tags:
         - review
+  /places:
+    get:
+      summary: ''
+      tags:
+        - place
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceSearchResponse'
+      operationId: get-places
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: query
+          description: 'fuzzy-matching with query(allow 초성) '
+          required: true
+        - schema:
+            type: integer
+          in: query
+          name: page_number
+          description: defaut = 0
+        - schema:
+            type: integer
+          in: query
+          name: page_size
+          description: default = 20
+      requestBody:
+        content: { }
+    post:
+      summary: ''
+      operationId: post-places
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceCreatedResponse'
+      tags:
+        - place
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaceEnrollRequest'
+  /places/images:
+    post:
+      summary: ''
+      operationId: post-places-images
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageSavedResponse'
+      tags:
+        - place
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+              format: binary
 components:
   schemas:
     ToggleAchievementExposureRequest:
@@ -1421,5 +1484,97 @@ components:
           type: string
           x-stoplight:
             id: a56a60ugbtjsp
+    PlaceSearchResponse:
+      type: array
+      x-examples:
+        Example 1:
+          - id: 1660
+            name: 오늘와인한잔 오목교가든점
+            category: WINE_BAR
+            address: 서울 양천구 오목로 337 1층
+            thumbnail: null
+            lon: 126.874937898
+            lat: 37.524802932
+          - id: 2702
+            name: 내가만든가게다
+            category: WINE_BAR
+            address: 서울 양천구 오목로 123
+            thumbnail: 'https://2chaproj.s3.ap-northeast-2.amazonaws.com/images/thumb_753c9ba4-cc45-4f90-8034-f0571d560967.jpg'
+            lon: 126.874937898
+            lat: 37.524802932
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+          category:
+            type: string
+          address:
+            type: string
+          thumbnail:
+            type: string
+            nullable: true
+          lon:
+            type:
+              - number
+          lat:
+            type:
+              - number
+    PlaceEnrollRequest:
+      type: object
+      x-examples: { }
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        lat:
+          type: number
+        lon:
+          type: number
+        address:
+          type: string
+        lot_address:
+          type: string
+          x-stoplight:
+            id: 8glnz4u3e3jh4
+        images:
+          type: array
+          items:
+            type: string
+        site:
+          type: string
+    PlaceCreatedResponse:
+      type: object
+      x-examples:
+        Example 1:
+          id: 2752
+          name: 내가만든가게2다
+          category: WINE_BAR
+          address: null
+          lot_address: null
+          image: 'https://2chaproj.s3.ap-northeast-2.amazonaws.com/images/753c9ba4-cc45-4f90-8034-f0571d560967.jpg'
+          lon: 126.874937898
+          lat: 37.524802932
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        address:
+          type: string
+        lot_address:
+          type: string
+          nullable: true
+        image:
+          type: string
+        lon:
+          type: number
+        lat:
+          type: number
   requestBodies: { }
   responses: { }
