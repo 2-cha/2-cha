@@ -1,5 +1,7 @@
 package com._2cha.demo.place.service;
 
+import static java.util.concurrent.CompletableFuture.completedFuture;
+
 import com._2cha.demo.global.exception.BadRequestException;
 import com._2cha.demo.global.exception.NotFoundException;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
@@ -25,11 +27,13 @@ import com._2cha.demo.util.HangulUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -148,7 +152,9 @@ public class PlaceService {
     return detail;
   }
 
-  public List<PlaceSuggestionResponse> suggestNearbyPlaces(Double lat, Double lon) {
+  @Async("placeQueryTaskExecutor")
+  public CompletableFuture<List<PlaceSuggestionResponse>> suggestNearbyPlacesAsync(Double lat,
+                                                                                   Double lon) {
 
     List<Object[]> placesWithDist =
         placeQueryRepository.findAround(new NearbyPlaceSearchParams(lat, lon,
@@ -157,10 +163,10 @@ public class PlaceService {
                                                                     SortBy.DISTANCE,
                                                                     0L, SUGGESTION_SIZE));
 
-    return placesWithDist.stream()
-                         .map(pd -> new PlaceSuggestionResponse(
-                             (Place) pd[0], (Double) pd[1]))
-                         .toList();
+    return completedFuture(placesWithDist.stream()
+                                         .map(pd -> new PlaceSuggestionResponse(
+                                             (Place) pd[0], (Double) pd[1]))
+                                         .toList());
   }
 
   public List<PlaceBriefWithDistanceResponse>
