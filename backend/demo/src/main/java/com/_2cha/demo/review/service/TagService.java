@@ -3,7 +3,7 @@ package com._2cha.demo.review.service;
 import com._2cha.demo.review.domain.Tag;
 import com._2cha.demo.review.dto.TagWithIdResponse;
 import com._2cha.demo.review.repository.TagRepository;
-import com._2cha.demo.review.util.HangulUtils;
+import com._2cha.demo.util.HangulUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
