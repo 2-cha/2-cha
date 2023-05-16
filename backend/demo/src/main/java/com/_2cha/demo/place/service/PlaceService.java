@@ -2,19 +2,25 @@ package com._2cha.demo.place.service;
 
 import com._2cha.demo.global.exception.BadRequestException;
 import com._2cha.demo.global.exception.NotFoundException;
+import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
+import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.dto.FilterBy;
 import com._2cha.demo.place.dto.NearbyPlaceSearchParams;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
+import com._2cha.demo.place.dto.PlaceCreatedResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
+import com._2cha.demo.place.dto.PlaceSearchResponse;
 import com._2cha.demo.place.dto.SortBy;
+import com._2cha.demo.place.exception.NoSuchPlaceException;
 import com._2cha.demo.place.repository.PlaceQueryRepository;
 import com._2cha.demo.place.repository.PlaceRepository;
 import com._2cha.demo.review.dto.TagCountResponse;
 import com._2cha.demo.review.service.ReviewService;
 import com._2cha.demo.util.GeomUtils;
+import com._2cha.demo.util.HangulUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +41,7 @@ public class PlaceService {
   private final PlaceRepository placeRepository;
   private final PlaceQueryRepository placeQueryRepository;
   private final FileStorageService fileStorageService;
+  private final ImageUploadService imageUploadService;
   private final Integer REVIEW_SUMMARY_SIZE = 3;
 
 
@@ -44,6 +52,44 @@ public class PlaceService {
     this.reviewService = reviewService;
   }
 
+
+  /*-----------
+   @ Commands
+   ----------*/
+  @Transactional
+  public PlaceCreatedResponse createPlace(String name, Category category, String address,
+                                          String lotAddress,
+                                          Double lon, Double lat, List<String> images,
+                                          String site) {
+    String imgUrlPath = null;
+    String thumbUrlPath = null;
+    if (!images.isEmpty()) {
+      String imgUrl = images.get(0);
+      imgUrlPath = fileStorageService.extractPath(imgUrl);
+      thumbUrlPath = imageUploadService.getThumbnailPath(imgUrlPath);
+    }
+    Place place = Place.createPlace(name, category, address, lotAddress, lon, lat,
+                                    imgUrlPath, thumbUrlPath, site);
+    placeRepository.save(place);
+    return new PlaceCreatedResponse(place, fileStorageService.getBaseUrl());
+  }
+
+  @Transactional
+  public void addPlaceImageUrls(Long placeId, List<String> imageUrls) {
+    if (imageUrls.isEmpty()) return;
+    Place place = placeRepository.findById(placeId);
+    if (place == null) throw new NoSuchPlaceException();
+
+    String url = imageUrls.get(0);  //TODO: Image List
+    String imgUrlPath = fileStorageService.extractPath(url);
+    String thumbUrlPath = imageUploadService.getThumbnailPath(imgUrlPath);
+
+    place.updateImage(imgUrlPath, thumbUrlPath);  // TODO: add to image list, not replace
+  }
+
+  /*-----------
+   @ Queries
+   ----------*/
   public Place findPlaceById(Long id) {
     Place place = placeRepository.findById(id);
     if (place == null) {
@@ -51,13 +97,7 @@ public class PlaceService {
     }
     return place;
   }
-  /*-----------
-   @ Commands
-   ----------*/
 
-  /*-----------
-   @ Queries
-   ----------*/
   public PlaceBriefWithDistanceResponse getPlaceBriefWithDistance(Long placeId, Double lat,
                                                                   Double lon, Integer summarySize) {
     Point cur = GeomUtils.createPoint(lat, lon);
@@ -132,5 +172,44 @@ public class PlaceService {
       brief.setTagSummary(placesTagCounts.get(place.getId()));
       return brief;
     }).toList();
+  }
+
+  public List<PlaceSearchResponse> fuzzySearch(String queryText, Pageable pageParam) {
+    String queryRegex = this.makeQueryRegex(queryText);
+    String baseUrl = fileStorageService.getBaseUrl();
+    List<Place> places = placeRepository.findPlacesByNameMatchesRegex(queryRegex, pageParam);
+    return places.stream().map(place -> new PlaceSearchResponse(place, baseUrl)).toList();
+  }
+
+  private String makeQueryRegex(String queryText) {
+
+    int i = -1;
+    boolean prevSpace = false;
+    String queryRegex = "";
+
+    while (++i < queryText.length()) {
+      char c = queryText.charAt(i);
+      if (HangulUtils.isPartialChar(c)) {
+        queryRegex += makeCompleteRange(c);
+      } else if (Character.isLetterOrDigit(c)) {
+        queryRegex += c;
+      } else if (Character.isSpaceChar(c)) {
+        prevSpace = true;
+      } else {
+        continue;
+      }
+      if (!prevSpace) {
+        queryRegex += ".*"; // Fuzzy Matching, to ignore only spaces, use "\\s*".
+      }
+      prevSpace = false;
+    }
+    return queryRegex;
+  }
+
+  private String makeCompleteRange(char 초성) {
+    char start = HangulUtils.makeCompleteChar(초성, 'ㅏ', '\0');
+    char end = HangulUtils.makeCompleteChar(초성, 'ㅣ', 'ㅎ');
+
+    return "[" + start + "-" + end + "]";
   }
 }
