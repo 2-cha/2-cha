@@ -17,18 +17,22 @@ export default function PlaceDetail({ placeInfo }: { placeInfo: Place }) {
               <CopyIcon className={s.icon__secondary} />
             </CopyToClipboardButton>
           </div>
-          <p className={s.address__2}>{placeInfo.lot_address}</p>
+          {placeInfo.lot_address ? (
+            <p className={s.address__2}>{placeInfo.lot_address}</p>
+          ) : null}
         </div>
       </DetailItem>
 
-      <DetailItem Icon={GlobeIcon}>
-        <a className={s.site} href={placeInfo.site} target="_blank">
-          <div className={s.item__group}>
-            {placeInfo.site}
-            <ExternalLinkIcon className={s.icon__secondary} />
-          </div>
-        </a>
-      </DetailItem>
+      {placeInfo.site ? (
+        <DetailItem Icon={GlobeIcon}>
+          <a className={s.site} href={placeInfo.site} target="_blank">
+            <div className={s.item__group}>
+              {placeInfo.site}
+              <ExternalLinkIcon className={s.icon__secondary} />
+            </div>
+          </a>
+        </DetailItem>
+      ) : null}
     </div>
   );
 }
