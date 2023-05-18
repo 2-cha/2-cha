@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -92,7 +93,7 @@ public class ReviewService {
   @Transactional
   public void deleteReview(Long memberId, Long reviewId) {
     Review review = reviewRepository.findReviewById(reviewId);
-    if (review.getMember().getId() != memberId) throw new CannotRemoveException();
+    if (!Objects.equals(review.getMember().getId(), memberId)) throw new CannotRemoveException();
 
     reviewRepository.deleteReviewById(reviewId);
   }
