@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ReviewService {
 
-  private final Integer SUMMARY_SIZE = 3;
+  private static final Integer SUMMARY_SIZE = 3;
   private final ReviewRepository reviewRepository;
   private final TagService tagService;
   private final FileStorageService fileStorageService;
