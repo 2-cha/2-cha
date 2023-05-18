@@ -58,22 +58,6 @@ public class ReviewService {
     this.placeService = placeService;
   }
 
-  public List<Review> findReviewsByIdInPreservingOrder(List<Long> ids) {
-    List<Review> reviews = reviewRepository.findReviewsByIdIn(ids);
-    // keep same order as requested
-    return getOrderedReviews(ids, reviews);
-  }
-
-  private List<Review> getOrderedReviews(List<Long> reviewIds, List<Review> reviews) {
-    Map<Long, Review> reviewMap = reviews.stream().collect(Collectors.toMap(Review::getId, r -> r));
-    List<Review> orderedReviews = new ArrayList<>(reviews.size());
-    for (Long id : reviewIds) {
-      Review review = reviewMap.get(id);
-      if (review != null) {orderedReviews.add(review);}
-    }
-    return orderedReviews;
-  }
-
   /*-----------
    @ Commands
    ----------*/
@@ -111,6 +95,23 @@ public class ReviewService {
   /*-----------
    @ Queries
    ----------*/
+
+  public List<Review> findReviewsByIdInPreservingOrder(List<Long> ids) {
+    List<Review> reviews = reviewRepository.findReviewsByIdIn(ids);
+    // keep same order as requested
+    return getOrderedReviews(ids, reviews);
+  }
+
+  private List<Review> getOrderedReviews(List<Long> reviewIds, List<Review> reviews) {
+    Map<Long, Review> reviewMap = reviews.stream().collect(Collectors.toMap(Review::getId, r -> r));
+    List<Review> orderedReviews = new ArrayList<>(reviews.size());
+    for (Long id : reviewIds) {
+      Review review = reviewMap.get(id);
+      if (review != null) {orderedReviews.add(review);}
+    }
+    return orderedReviews;
+  }
+
   public List<ReviewResponse> getReviewsByIdInPreservingOrder(List<Long> reviewIds) {
     List<Review> reviews = this.findReviewsByIdInPreservingOrder(reviewIds);
     if (reviews.isEmpty()) {
