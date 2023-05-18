@@ -169,8 +169,7 @@ public class ReviewService {
                                                          .stream()
                                                          .collect(
                                                              toMap(PlaceBriefResponse::getId,
-                                                                   p -> p
-                                                                  ));
+                                                                   pb -> pb));
     return reviews.stream().map(review -> new ReviewResponse(review,
                                                              // set null to ignore in api response
                                                              member,
@@ -199,7 +198,7 @@ public class ReviewService {
                                                               .collect(
                                                                   toMap(
                                                                       MemberProfileResponse::getId,
-                                                                      c -> c));
+                                                                      mp -> mp));
 
     return reviews.stream()
                   .map(review -> new ReviewResponse(review,
@@ -221,16 +220,16 @@ public class ReviewService {
                                   tag -> tagCountMap.put(tag, tagCountMap.getOrDefault(tag, 0) + 1))
                    );
 
-    Stream<Entry<Tag, Integer>> entryStream = tagCountMap.entrySet()
-                                                         .stream();
+    Stream<Entry<Tag, Integer>> tagCountStream = tagCountMap.entrySet()
+                                                            .stream();
 
     if (size != null) {
-      entryStream = entryStream.limit(size);
+      tagCountStream = tagCountStream.limit(size);
     }
 
-    return entryStream.sorted(Entry.comparingByValue())
-                      .map(entry -> new TagCountResponse(entry.getKey(), entry.getValue()))
-                      .toList();
+    return tagCountStream.sorted(Entry.comparingByValue())
+                         .map(entry -> new TagCountResponse(entry.getKey(), entry.getValue()))
+                         .toList();
   }
 
   public Map<Long, List<TagCountResponse>> getReviewTagCountsByPlaceIdIn(List<Long> placeIds,
@@ -255,17 +254,19 @@ public class ReviewService {
 
     placesTagCountMap.forEach(
         (placeId, tagCountMap) -> {
-          Stream<Entry<Tag, Integer>> tagCounts = tagCountMap.entrySet()
-                                                             .stream();
+          Stream<Entry<Tag, Integer>> tagCountStream = tagCountMap.entrySet()
+                                                                  .stream();
           if (tagSizeLimit != null) {
-            tagCounts = tagCounts.limit(tagSizeLimit);
+            tagCountStream = tagCountStream.limit(tagSizeLimit);
           }
 
-          List<TagCountResponse> tagCountResponses = tagCounts.sorted(Entry.comparingByValue())
-                                                              .map(entry -> new TagCountResponse(
-                                                                  entry.getKey(), entry.getValue()
-                                                              ))
-                                                              .toList();
+          List<TagCountResponse> tagCountResponses = tagCountStream.sorted(Entry.comparingByValue())
+                                                                   .map(
+                                                                       entry -> new TagCountResponse(
+                                                                           entry.getKey(),
+                                                                           entry.getValue()
+                                                                       ))
+                                                                   .toList();
           placesTagCountResponseMap.put(placeId, tagCountResponses);
         });
     return placesTagCountResponseMap;
