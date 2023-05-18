@@ -23,7 +23,6 @@ import com._2cha.demo.review.dto.TagCountResponse;
 import com._2cha.demo.review.service.ReviewService;
 import com._2cha.demo.util.GeomUtils;
 import com._2cha.demo.util.HangulUtils;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -156,7 +156,7 @@ public class PlaceService {
   public CompletableFuture<List<PlaceSuggestionResponse>> suggestNearbyPlacesAsync(Double lat,
                                                                                    Double lon) {
 
-    List<Object[]> placesWithDist =
+    List<Pair<Place, Double>> placesWithDist =
         placeQueryRepository.findAround(new NearbyPlaceSearchParams(lat, lon,
                                                                     SUGGESTION_MAX_DIST,
                                                                     FilterBy.DEFAULT, null,
@@ -164,8 +164,8 @@ public class PlaceService {
                                                                     0L, SUGGESTION_SIZE));
 
     return completedFuture(placesWithDist.stream()
-                                         .map(pd -> new PlaceSuggestionResponse(
-                                             (Place) pd[0], (Double) pd[1]))
+                                         .map(pair -> new PlaceSuggestionResponse(
+                                             pair.getFirst(), pair.getSecond()))
                                          .toList());
   }
 
@@ -174,23 +174,15 @@ public class PlaceService {
     if (searchParams.getSortBy() == SortBy.TAG_COUNT
         && searchParams.getFilterBy() != FilterBy.TAG) {throw new InvalidTagCountSortException();}
 
-    List<Object[]> placesWithDist = placeQueryRepository.findAround(searchParams);
+    List<Pair<Place, Double>> placesWithDist = placeQueryRepository.findAround(searchParams);
     if (placesWithDist.isEmpty()) return Collections.emptyList();
-    
-    List<Place> places = new ArrayList<>();
-    List<Double> distances = new ArrayList<>();
-
-    placesWithDist.stream().forEach(placeWithDist -> {
-      places.add((Place) placeWithDist[0]);
-      distances.add((Double) placeWithDist[1]);
-    });
 
     Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
-        places.stream().map(place -> place.getId()).toList(), REVIEW_SUMMARY_SIZE);
+        placesWithDist.stream().map(pair -> pair.getFirst().getId()).toList(), REVIEW_SUMMARY_SIZE);
 
-    return placesWithDist.stream().map((placeWithDist) -> {
-      Place place = (Place) placeWithDist[0];
-      Double distGap = (Double) placeWithDist[1];
+    return placesWithDist.stream().map(pair -> {
+      Place place = pair.getFirst();
+      Double distGap = pair.getSecond();
       PlaceBriefWithDistanceResponse brief = new PlaceBriefWithDistanceResponse(place, distGap,
                                                                                 fileStorageService.getBaseUrl());
       brief.setTagSummary(placesTagCounts.get(place.getId()));
