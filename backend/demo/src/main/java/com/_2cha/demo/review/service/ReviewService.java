@@ -8,14 +8,17 @@ import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.dto.MemberProfileResponse;
+import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
+import com._2cha.demo.place.exception.NoSuchPlaceException;
 import com._2cha.demo.place.service.PlaceService;
 import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.domain.Tag;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.dto.TagCountResponse;
+import com._2cha.demo.review.exception.InvalidTagsException;
 import com._2cha.demo.review.repository.ReviewRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,8 +70,13 @@ public class ReviewService {
                           List<Long> tagIdList, List<String> imageUrlList) {
 
     List<Tag> tagList = tagService.findTagsByIdIn(tagIdList);
+    if (tagList.isEmpty()) throw new InvalidTagsException();
+
     Member member = memberService.findById(memberId);
+    if (member == null) throw new NoSuchMemberException();
+
     Place place = placeService.findPlaceById(placeId);
+    if (place == null) throw new NoSuchPlaceException();
 
     List<String> imageUrlPaths = imageUrlList.stream()
                                              .map(fileStorageService::extractPath)
@@ -112,6 +120,7 @@ public class ReviewService {
     return orderedReviews;
   }
 
+  //NOTE
   public List<ReviewResponse> getReviewsByIdInPreservingOrder(List<Long> reviewIds) {
     List<Review> reviews = this.findReviewsByIdInPreservingOrder(reviewIds);
     if (reviews.isEmpty()) {
@@ -176,6 +185,10 @@ public class ReviewService {
 
   public List<ReviewResponse> getReviewsByPlaceId(Long placeId, Pageable pageParam) {
     List<Review> reviews = reviewRepository.findReviewsByPlaceId(placeId, pageParam);
+    if (reviews.isEmpty()) {
+      return new ArrayList<>();
+    }
+
     PlaceBriefResponse place = placeService.getPlaceBriefById(placeId, SUMMARY_SIZE);
 
     Set<Long> memberIds = reviews.stream()
@@ -200,8 +213,9 @@ public class ReviewService {
 
   public List<TagCountResponse> getReviewTagCountByPlaceId(Long placeId, Integer size) {
     List<Review> reviews = reviewRepository.findReviewsByPlaceId(placeId);
-    Map<Tag, Integer> tagCountMap = new HashMap<>();
+    if (reviews.isEmpty()) return new ArrayList<>();
 
+    Map<Tag, Integer> tagCountMap = new HashMap<>();
     reviews.forEach(review ->
                         review.getTags()
                               .forEach(
@@ -223,6 +237,7 @@ public class ReviewService {
   public Map<Long, List<TagCountResponse>> getReviewTagCountsByPlaceIdIn(List<Long> placeIds,
                                                                          Integer tagSizeLimit) {
     List<Review> reviews = reviewRepository.findReviewsByPlaceIdIn(placeIds);
+    if (reviews.isEmpty()) return new HashMap<>();
 
     Map<Long, Map<Tag, Integer>> placesTagCountMap = new HashMap<>();
     Map<Long, List<TagCountResponse>> placesTagCountResponseMap = new HashMap<>();
