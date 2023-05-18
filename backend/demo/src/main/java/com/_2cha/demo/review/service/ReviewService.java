@@ -3,7 +3,6 @@ package com._2cha.demo.review.service;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-import com._2cha.demo.global.exception.ForbiddenException;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Member;
@@ -18,6 +17,7 @@ import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.domain.Tag;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.dto.TagCountResponse;
+import com._2cha.demo.review.exception.CannotRemoveException;
 import com._2cha.demo.review.exception.InvalidTagsException;
 import com._2cha.demo.review.repository.ReviewRepository;
 import java.util.ArrayList;
@@ -92,9 +92,7 @@ public class ReviewService {
   @Transactional
   public void deleteReview(Long memberId, Long reviewId) {
     Review review = reviewRepository.findReviewById(reviewId);
-    if (review.getMember().getId() != memberId) {
-      throw new ForbiddenException("Cannot delete other member's review");
-    }
+    if (review.getMember().getId() != memberId) throw new CannotRemoveException();
 
     reviewRepository.deleteReviewById(reviewId);
   }
