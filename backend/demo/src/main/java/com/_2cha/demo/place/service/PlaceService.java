@@ -66,32 +66,12 @@ public class PlaceService {
   @Transactional
   public PlaceCreatedResponse createPlace(String name, Category category, String address,
                                           String lotAddress,
-                                          Double lon, Double lat, List<String> images,
-                                          String site) {
-    String imgUrlPath = null;
-    String thumbUrlPath = null;
-    if (!images.isEmpty()) {
-      String imgUrl = images.get(0);
-      imgUrlPath = fileStorageService.extractPath(imgUrl);
-      thumbUrlPath = imageUploadService.getThumbnailPath(imgUrlPath);
-    }
+                                          Double lon, Double lat, String site) {
+
     Place place = Place.createPlace(name, category, address, lotAddress, lon, lat,
-                                    imgUrlPath, thumbUrlPath, site);
+                                    null, null, site);
     placeRepository.save(place);
     return new PlaceCreatedResponse(place, fileStorageService.getBaseUrl());
-  }
-
-  @Transactional
-  public void addPlaceImageUrls(Long placeId, List<String> imageUrls) {
-    if (imageUrls.isEmpty()) return;
-    Place place = placeRepository.findById(placeId);
-    if (place == null) throw new NoSuchPlaceException();
-
-    String url = imageUrls.get(0);  //TODO: Image List
-    String imgUrlPath = fileStorageService.extractPath(url);
-    String thumbUrlPath = imageUploadService.getThumbnailPath(imgUrlPath);
-
-    place.updateImage(imgUrlPath, thumbUrlPath);  // TODO: add to image list, not replace
   }
 
   /*-----------
