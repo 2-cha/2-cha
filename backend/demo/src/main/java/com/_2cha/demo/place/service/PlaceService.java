@@ -24,6 +24,7 @@ import com._2cha.demo.review.service.ReviewService;
 import com._2cha.demo.util.GeomUtils;
 import com._2cha.demo.util.HangulUtils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -131,6 +132,7 @@ public class PlaceService {
   public List<PlaceBriefResponse> getPlacesBriefByIdIn(List<Long> placeIds, Integer summarySize) {
     List<PlaceBriefResponse> briefs = placeQueryRepository.getPlacesBriefsByIdIn(placeIds,
                                                                                  fileStorageService.getBaseUrl());
+    if (briefs.isEmpty()) return briefs;
 
     Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
         briefs.stream().map(place -> place.getId()).toList(), summarySize);
@@ -173,6 +175,8 @@ public class PlaceService {
         && searchParams.getFilterBy() != FilterBy.TAG) {throw new InvalidTagCountSortException();}
 
     List<Object[]> placesWithDist = placeQueryRepository.findAround(searchParams);
+    if (placesWithDist.isEmpty()) return Collections.emptyList();
+    
     List<Place> places = new ArrayList<>();
     List<Double> distances = new ArrayList<>();
 
