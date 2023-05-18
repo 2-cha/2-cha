@@ -263,4 +263,15 @@ public class ReviewService {
                          .map(entry -> new TagCountResponse(entry.getKey(), entry.getValue()))
                          .toList();
   }
+
+  public ReviewResponse getReviewById(Long reviewId) {
+    Review review = reviewRepository.findReviewById(reviewId);
+    if (review == null) throw new NoSuchReviewException(reviewId);
+
+    MemberProfileResponse member = memberService.getMemberProfileById(review.getMember().getId());
+    PlaceBriefResponse place = placeService.getPlaceBriefById(review.getPlace().getId(),
+                                                              SUMMARY_SIZE);
+
+    return new ReviewResponse(review, member, place, fileStorageService.getBaseUrl());
+  }
 }
