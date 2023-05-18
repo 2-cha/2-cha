@@ -3,10 +3,8 @@ package com._2cha.demo.place.dto;
 import com._2cha.demo.place.domain.Category;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
-import org.hibernate.validator.constraints.URL;
 
 @Data
 public class PlaceEnrollRequest {
@@ -26,8 +24,6 @@ public class PlaceEnrollRequest {
   private String address;
 
   private String lotAddress;
-
-  private List<@URL String> images;
 
   private String site;
 }
