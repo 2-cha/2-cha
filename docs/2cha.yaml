@@ -364,6 +364,18 @@ paths:
           description: OK
       tags:
         - review
+    get:
+      summary: ''
+      operationId: get-reviews-reviewId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewResponse'
+      tags:
+        - review
   /tags:
     get:
       summary: ''
@@ -818,25 +830,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PlaceEnrollRequest'
-  /places/images:
-    post:
-      summary: ''
-      operationId: post-places-images
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ImageSavedResponse'
-      tags:
-        - place
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: string
-              format: binary
 components:
   schemas:
     ToggleAchievementExposureRequest:
@@ -1538,10 +1531,6 @@ components:
           type: string
           x-stoplight:
             id: 8glnz4u3e3jh4
-        images:
-          type: array
-          items:
-            type: string
         site:
           type: string
     PlaceCreatedResponse:
