@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
+import com._2cha.demo.global.event.FirstReviewCreatedEvent;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Member;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -49,6 +51,7 @@ public class ReviewService {
   private final TagService tagService;
   private final FileStorageService fileStorageService;
   private final ImageUploadService imageUploadService;
+  private final ApplicationEventPublisher eventPublisher;
 
   private MemberService memberService;
   private PlaceService placeService;
@@ -89,6 +92,11 @@ public class ReviewService {
     List<String> thumbnailUrlPaths = imageUrlPaths.stream()
                                                   .map(imageUploadService::getThumbnailPath)
                                                   .toList();
+    if (reviewRepository.findReviewsByPlaceId(placeId).isEmpty() && !imageUrlPaths.isEmpty()) {
+      eventPublisher.publishEvent(new FirstReviewCreatedEvent(this, placeId,
+                                                              imageUrlPaths.get(0),
+                                                              thumbnailUrlPaths.get(0)));
+    }
     Review review = Review.createReview(place, member, tagList, imageUrlPaths, thumbnailUrlPaths);
     reviewRepository.save(review);
   }

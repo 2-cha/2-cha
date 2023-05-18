@@ -20,4 +20,15 @@ public class PlaceAsyncConfig {
 
     return executor;
   }
+
+  @Bean
+  Executor placeCommandTaskExecutor() {
+    ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    executor.setCorePoolSize(3);
+    executor.setMaxPoolSize(3);
+    executor.setQueueCapacity(10);
+    executor.setThreadNamePrefix("place-command");
+
+    return executor;
+  }
 }

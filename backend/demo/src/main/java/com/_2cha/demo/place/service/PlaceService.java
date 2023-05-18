@@ -2,6 +2,7 @@ package com._2cha.demo.place.service;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
+import com._2cha.demo.global.event.FirstReviewCreatedEvent;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.place.domain.Category;
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Async;
@@ -72,6 +74,18 @@ public class PlaceService {
                                     null, null, site);
     placeRepository.save(place);
     return new PlaceCreatedResponse(place, fileStorageService.getBaseUrl());
+  }
+
+  @Transactional
+  @Async("placeCommandTaskExecutor")
+  @EventListener(FirstReviewCreatedEvent.class)
+  public void updateImageAsync(FirstReviewCreatedEvent event) {
+    Place place = placeRepository.findById(event.getPlaceId());
+    if (place == null) return; //TODO: handle it
+    if (place.getImageUrlPath() != null) return;
+
+    place.updateImage(event.getImageUrlPath(), event.getThumbUrlPath());
+    placeRepository.save(place);
   }
 
   /*-----------
