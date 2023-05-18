@@ -2,8 +2,6 @@ package com._2cha.demo.place.service;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
-import com._2cha.demo.global.exception.BadRequestException;
-import com._2cha.demo.global.exception.NotFoundException;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.place.domain.Category;
@@ -17,6 +15,7 @@ import com._2cha.demo.place.dto.PlaceDetailResponse;
 import com._2cha.demo.place.dto.PlaceSearchResponse;
 import com._2cha.demo.place.dto.PlaceSuggestionResponse;
 import com._2cha.demo.place.dto.SortBy;
+import com._2cha.demo.place.exception.InvalidTagCountSortException;
 import com._2cha.demo.place.exception.NoSuchPlaceException;
 import com._2cha.demo.place.repository.PlaceQueryRepository;
 import com._2cha.demo.place.repository.PlaceRepository;
@@ -99,9 +98,8 @@ public class PlaceService {
    ----------*/
   public Place findPlaceById(Long id) {
     Place place = placeRepository.findById(id);
-    if (place == null) {
-      throw new NotFoundException("No place with id " + id, "noSuchPlace");
-    }
+    if (place == null) throw new NoSuchPlaceException();
+
     return place;
   }
 
@@ -111,7 +109,7 @@ public class PlaceService {
     PlaceBriefWithDistanceResponse brief = placeQueryRepository.getPlaceBriefWithDistance(placeId,
                                                                                           cur,
                                                                                           fileStorageService.getBaseUrl());
-    if (brief == null) throw new NotFoundException("No place with id " + placeId, "noSuchPlace");
+    if (brief == null) throw new NoSuchPlaceException();
 
     brief.setTagSummary(reviewService.getReviewTagCountByPlaceId(placeId, summarySize));
 
@@ -123,7 +121,7 @@ public class PlaceService {
 
     PlaceBriefResponse brief = placeQueryRepository.getPlaceBriefById(placeId,
                                                                       fileStorageService.getBaseUrl());
-    if (brief == null) throw new NotFoundException("No place with id " + placeId, "noSuchPlace");
+    if (brief == null) throw new NoSuchPlaceException();
 
     brief.setTagSummary(reviewService.getReviewTagCountByPlaceId(placeId, summarySize));
 
@@ -145,7 +143,7 @@ public class PlaceService {
   public PlaceDetailResponse getPlaceDetailById(Long id) {
     PlaceDetailResponse detail = placeQueryRepository.getPlaceDetailById(id,
                                                                          fileStorageService.getBaseUrl());
-    if (detail == null) throw new NotFoundException("No place with id " + id, "noSuchPlace");
+    if (detail == null) throw new NoSuchPlaceException();
 
     detail.setTags(reviewService.getReviewTagCountByPlaceId(id, null));
 
@@ -171,11 +169,9 @@ public class PlaceService {
 
   public List<PlaceBriefWithDistanceResponse>
   searchPlacesWithFilterAndSorting(NearbyPlaceSearchParams searchParams) {
-    if (searchParams.getSortBy() == SortBy.TAG_COUNT &&
-        searchParams.getFilterBy() != FilterBy.TAG) {
-      throw new BadRequestException("Sorting by tag count is only allowed with tag filter",
-                                    "badSortStrategy");
-    }
+    if (searchParams.getSortBy() == SortBy.TAG_COUNT
+        && searchParams.getFilterBy() != FilterBy.TAG) {throw new InvalidTagCountSortException();}
+
     List<Object[]> placesWithDist = placeQueryRepository.findAround(searchParams);
     List<Place> places = new ArrayList<>();
     List<Double> distances = new ArrayList<>();
