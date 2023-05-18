@@ -23,6 +23,7 @@ import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.dto.TagCountResponse;
 import com._2cha.demo.review.exception.CannotRemoveException;
 import com._2cha.demo.review.exception.InvalidTagsException;
+import com._2cha.demo.review.exception.NoSuchReviewException;
 import com._2cha.demo.review.repository.ReviewRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,6 +105,7 @@ public class ReviewService {
   @Transactional
   public void deleteReview(Long memberId, Long reviewId) {
     Review review = reviewRepository.findReviewById(reviewId);
+    if (review == null) throw new NoSuchReviewException(reviewId);
     if (!Objects.equals(review.getMember().getId(), memberId)) throw new CannotRemoveException();
 
     reviewRepository.deleteReviewById(reviewId);
