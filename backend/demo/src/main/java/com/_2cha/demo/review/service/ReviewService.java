@@ -1,5 +1,7 @@
 package com._2cha.demo.review.service;
 
+import static java.util.Map.Entry.comparingByValue;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
@@ -116,7 +118,6 @@ public class ReviewService {
     return orderedReviews;
   }
 
-  //NOTE
   public List<ReviewResponse> getReviewsByIdInPreservingOrder(List<Long> reviewIds) {
     List<Review> reviews = this.findReviewsByIdInPreservingOrder(reviewIds);
     if (reviews.isEmpty()) {
@@ -209,13 +210,33 @@ public class ReviewService {
   public List<TagCountResponse> getReviewTagCountByPlaceId(Long placeId, Integer size) {
     List<Review> reviews = reviewRepository.findReviewsByPlaceId(placeId);
     if (reviews.isEmpty()) return new ArrayList<>();
+    return calcAndSortTagCount(reviews, size);
+  }
 
+  public Map<Long, List<TagCountResponse>> getReviewTagCountsByPlaceIdIn(List<Long> placeIds,
+                                                                         Integer tagSizeLimit) {
+    List<Review> allReviews = reviewRepository.findReviewsByPlaceIdIn(placeIds);
+    if (allReviews.isEmpty()) return new HashMap<>();
+
+    Map<Long, List<Review>> placeReviews = allReviews.stream()
+                                                     .collect(groupingBy(review -> review.getPlace()
+                                                                                         .getId()));
+    Map<Long, List<TagCountResponse>> placesTagCountMap = new HashMap<>();
+    placeReviews.forEach((placeId, reviews) -> {
+      List<TagCountResponse> placeTagCount = calcAndSortTagCount(reviews, tagSizeLimit);
+      placesTagCountMap.put(placeId, placeTagCount);
+    });
+
+    return placesTagCountMap;
+  }
+
+  private List<TagCountResponse> calcAndSortTagCount(List<Review> reviews, Integer size) {
     Map<Tag, Integer> tagCountMap = new HashMap<>();
-    reviews.forEach(review ->
-                        review.getTags()
-                              .forEach(
-                                  tag -> tagCountMap.put(tag, tagCountMap.getOrDefault(tag, 0) + 1))
-                   );
+    reviews.forEach(review -> review.getTags()
+                                    .forEach(tag ->
+                                                 tagCountMap.put(tag,
+                                                                 tagCountMap
+                                                                     .getOrDefault(tag, 0) + 1)));
 
     Stream<Entry<Tag, Integer>> tagCountStream = tagCountMap.entrySet()
                                                             .stream();
@@ -224,48 +245,8 @@ public class ReviewService {
       tagCountStream = tagCountStream.limit(size);
     }
 
-    return tagCountStream.sorted(Entry.comparingByValue())
+    return tagCountStream.sorted(comparingByValue())
                          .map(entry -> new TagCountResponse(entry.getKey(), entry.getValue()))
                          .toList();
-  }
-
-  public Map<Long, List<TagCountResponse>> getReviewTagCountsByPlaceIdIn(List<Long> placeIds,
-                                                                         Integer tagSizeLimit) {
-    List<Review> reviews = reviewRepository.findReviewsByPlaceIdIn(placeIds);
-    if (reviews.isEmpty()) return new HashMap<>();
-
-    Map<Long, Map<Tag, Integer>> placesTagCountMap = new HashMap<>();
-    Map<Long, List<TagCountResponse>> placesTagCountResponseMap = new HashMap<>();
-
-    for (Long placeId : placeIds) {
-      placesTagCountMap.put(placeId, new HashMap<>());
-    }
-
-    reviews.forEach(review -> {
-                      Map<Tag, Integer> tagCountMap = placesTagCountMap.get(review.getPlace()
-                                                                                  .getId());
-                      review.getTags()
-                            .forEach(tag -> tagCountMap.put(tag, tagCountMap.getOrDefault(tag, 0) + 1));
-                    }
-                   );
-
-    placesTagCountMap.forEach(
-        (placeId, tagCountMap) -> {
-          Stream<Entry<Tag, Integer>> tagCountStream = tagCountMap.entrySet()
-                                                                  .stream();
-          if (tagSizeLimit != null) {
-            tagCountStream = tagCountStream.limit(tagSizeLimit);
-          }
-
-          List<TagCountResponse> tagCountResponses = tagCountStream.sorted(Entry.comparingByValue())
-                                                                   .map(
-                                                                       entry -> new TagCountResponse(
-                                                                           entry.getKey(),
-                                                                           entry.getValue()
-                                                                       ))
-                                                                   .toList();
-          placesTagCountResponseMap.put(placeId, tagCountResponses);
-        });
-    return placesTagCountResponseMap;
   }
 }
