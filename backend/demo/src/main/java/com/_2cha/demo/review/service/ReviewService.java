@@ -112,10 +112,7 @@ public class ReviewService {
   private List<Review> getOrderedReviews(List<Long> reviewIds, List<Review> reviews) {
     Map<Long, Review> reviewMap = reviews.stream().collect(Collectors.toMap(Review::getId, r -> r));
     List<Review> orderedReviews = new ArrayList<>(reviews.size());
-    for (Long id : reviewIds) {
-      Review review = reviewMap.get(id);
-      if (review != null) {orderedReviews.add(review);}
-    }
+    reviewIds.forEach(id -> orderedReviews.add(reviewMap.get(id)));
     return orderedReviews;
   }
 
