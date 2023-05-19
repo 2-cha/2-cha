@@ -3,6 +3,8 @@ package com._2cha.demo.review.domain;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
@@ -29,10 +31,15 @@ public class Tag {
   @Column(nullable = false)
   private String emoji;
 
-  public static Tag createTag(String msg, String emoji) {
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private Category category;
+
+  public static Tag createTag(String msg, String emoji, Category category) {
     Tag tag = new Tag();
     tag.msg = msg;
     tag.emoji = emoji;
+    tag.category = category;
 
     return tag;
   }
