@@ -1,5 +1,7 @@
 package com._2cha.demo.place;
 
+import static com._2cha.demo.review.domain.Category.ACTIVITY;
+
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
@@ -101,7 +103,7 @@ class PlaceTests {
 
     em.persist(Member.createMember("member1@2cha.com", "1234", "member1"));
     em.persist(Member.createMember("member2@2cha.com", "1234", "member2"));
-    em.persist(Tag.createTag("이야기 나누기 좋아요", "🗣️"));
+    em.persist(Tag.createTag("이야기 나누기 좋아요", "🗣️", ACTIVITY));
 
     Long[] tagIds = {1L};
     String[] imgs = {baseUrl + "images/abc.png", baseUrl + "images/def.png"};

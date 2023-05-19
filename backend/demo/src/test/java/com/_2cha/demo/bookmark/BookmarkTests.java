@@ -1,5 +1,6 @@
 package com._2cha.demo.bookmark;
 
+import static com._2cha.demo.review.domain.Category.ACTIVITY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -111,7 +112,7 @@ public class BookmarkTests {
 
     em.persist(Member.createMember("member1@2cha.com", "1234", "member1"));
     em.persist(Member.createMember("member2@2cha.com", "1234", "member2"));
-    em.persist(Tag.createTag("이야기 나누기 좋아요", "🗣️"));
+    em.persist(Tag.createTag("이야기 나누기 좋아요", "🗣️", ACTIVITY));
 
     Long[] tagIds = {1L};
     String[] imgs = {baseUrl + "images/abc.png", baseUrl + "images/def.png"};
