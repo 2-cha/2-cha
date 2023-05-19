@@ -1,6 +1,7 @@
 package com._2cha.demo.review;
 
 
+import static com._2cha.demo.review.domain.Category.ACTIVITY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
@@ -47,8 +48,8 @@ class ReviewTests {
           + "CALL H2GIS_SPATIAL();")
       .executeUpdate();
 
-    em.persist(Tag.createTag("이야기 나누기 좋아요", "🗣️"));
-    em.persist(Tag.createTag("책 읽기 좋아요", "📖️"));
+    em.persist(Tag.createTag("이야기 나누기 좋아요", "🗣️", ACTIVITY));
+    em.persist(Tag.createTag("책 읽기 좋아요", "📖️", ACTIVITY));
     em.persist(Member.createMember("member1@2cha.com", "1234", "member1"));
     em.persist(Member.createMember("member2@2cha.com", "1234", "member2"));
     em.persist(Place.createPlace("히든아워", Category.WINE_BAR,

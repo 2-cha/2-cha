@@ -1,5 +1,7 @@
 package com._2cha.demo.review;
 
+import static com._2cha.demo.review.domain.Category.ACTIVITY;
+
 import com._2cha.demo.review.controller.TagController;
 import com._2cha.demo.review.domain.Tag;
 import com._2cha.demo.review.dto.TagWithIdResponse;
@@ -29,8 +31,8 @@ class TagTests {
 
   @BeforeEach
   void mockUp() {
-    em.persist(Tag.createTag("이야기 나누기 좋아요", "🗣️"));
-    em.persist(Tag.createTag("책 읽기 좋아요", "📖️"));
+    em.persist(Tag.createTag("이야기 나누기 좋아요", "🗣️", ACTIVITY));
+    em.persist(Tag.createTag("책 읽기 좋아요", "📖️", ACTIVITY));
   }
 
 
