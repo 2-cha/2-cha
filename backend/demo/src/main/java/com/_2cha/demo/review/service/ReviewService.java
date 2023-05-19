@@ -1,32 +1,42 @@
 package com._2cha.demo.review.service;
 
+import static java.util.Comparator.reverseOrder;
+import static java.util.Map.Entry.comparingByValue;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-import com._2cha.demo.global.exception.ForbiddenException;
+import com._2cha.demo.global.event.FirstReviewCreatedEvent;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.dto.MemberProfileResponse;
+import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
+import com._2cha.demo.place.exception.NoSuchPlaceException;
 import com._2cha.demo.place.service.PlaceService;
 import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.domain.Tag;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.dto.TagCountResponse;
+import com._2cha.demo.review.exception.CannotRemoveException;
+import com._2cha.demo.review.exception.InvalidTagsException;
+import com._2cha.demo.review.exception.NoSuchReviewException;
 import com._2cha.demo.review.repository.ReviewRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,11 +47,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ReviewService {
 
-  private final Integer SUMMARY_SIZE = 3;
+  private static final Integer SUMMARY_SIZE = 3;
   private final ReviewRepository reviewRepository;
   private final TagService tagService;
   private final FileStorageService fileStorageService;
   private final ImageUploadService imageUploadService;
+  private final ApplicationEventPublisher eventPublisher;
 
   private MemberService memberService;
   private PlaceService placeService;
@@ -57,6 +68,53 @@ public class ReviewService {
   public void setPlaceService(PlaceService placeService) {
     this.placeService = placeService;
   }
+
+  /*-----------
+   @ Commands
+   ----------*/
+
+  @Transactional
+  public void writeReview(Long memberId, Long placeId,
+                          List<Long> tagIdList, List<String> imageUrlList) {
+
+    List<Tag> tagList = tagService.findTagsByIdIn(tagIdList);
+    if (tagList.isEmpty()) throw new InvalidTagsException();
+
+    Member member = memberService.findById(memberId);
+    if (member == null) throw new NoSuchMemberException();
+
+    Place place = placeService.findPlaceById(placeId);
+    if (place == null) throw new NoSuchPlaceException();
+
+    List<String> imageUrlPaths = imageUrlList.stream()
+                                             .map(fileStorageService::extractPath)
+                                             .toList();
+
+    List<String> thumbnailUrlPaths = imageUrlPaths.stream()
+                                                  .map(imageUploadService::getThumbnailPath)
+                                                  .toList();
+    if (reviewRepository.findReviewsByPlaceId(placeId).isEmpty() && !imageUrlPaths.isEmpty()) {
+      eventPublisher.publishEvent(new FirstReviewCreatedEvent(this, placeId,
+                                                              imageUrlPaths.get(0),
+                                                              thumbnailUrlPaths.get(0)));
+    }
+    Review review = Review.createReview(place, member, tagList, imageUrlPaths, thumbnailUrlPaths);
+    reviewRepository.save(review);
+  }
+
+  @Transactional
+  public void deleteReview(Long memberId, Long reviewId) {
+    Review review = reviewRepository.findReviewById(reviewId);
+    if (review == null) throw new NoSuchReviewException(reviewId);
+    if (!Objects.equals(review.getMember().getId(), memberId)) throw new CannotRemoveException();
+
+    reviewRepository.deleteReviewById(reviewId);
+  }
+
+
+  /*-----------
+   @ Queries
+   ----------*/
 
   public List<Review> findReviewsByIdInPreservingOrder(List<Long> ids) {
     List<Review> reviews = reviewRepository.findReviewsByIdIn(ids);
@@ -74,43 +132,6 @@ public class ReviewService {
     return orderedReviews;
   }
 
-  /*-----------
-   @ Commands
-   ----------*/
-
-  @Transactional
-  public void writeReview(Long memberId, Long placeId,
-                          List<Long> tagIdList, List<String> imageUrlList) {
-
-    List<Tag> tagList = tagService.findTagsByIdIn(tagIdList);
-    Member member = memberService.findById(memberId);
-    Place place = placeService.findPlaceById(placeId);
-
-    List<String> imageUrlPaths = imageUrlList.stream()
-                                             .map(fileStorageService::extractPath)
-                                             .toList();
-
-    List<String> thumbnailUrlPaths = imageUrlPaths.stream()
-                                                  .map(imageUploadService::getThumbnailPath)
-                                                  .toList();
-    Review review = Review.createReview(place, member, tagList, imageUrlPaths, thumbnailUrlPaths);
-    reviewRepository.save(review);
-  }
-
-  @Transactional
-  public void deleteReview(Long memberId, Long reviewId) {
-    Review review = reviewRepository.findReviewById(reviewId);
-    if (review.getMember().getId() != memberId) {
-      throw new ForbiddenException("Cannot delete other member's review");
-    }
-
-    reviewRepository.deleteReviewById(reviewId);
-  }
-
-
-  /*-----------
-   @ Queries
-   ----------*/
   public List<ReviewResponse> getReviewsByIdInPreservingOrder(List<Long> reviewIds) {
     List<Review> reviews = this.findReviewsByIdInPreservingOrder(reviewIds);
     if (reviews.isEmpty()) {
@@ -160,8 +181,7 @@ public class ReviewService {
                                                          .stream()
                                                          .collect(
                                                              toMap(PlaceBriefResponse::getId,
-                                                                   p -> p
-                                                                  ));
+                                                                   pb -> pb));
     return reviews.stream().map(review -> new ReviewResponse(review,
                                                              // set null to ignore in api response
                                                              member,
@@ -175,6 +195,10 @@ public class ReviewService {
 
   public List<ReviewResponse> getReviewsByPlaceId(Long placeId, Pageable pageParam) {
     List<Review> reviews = reviewRepository.findReviewsByPlaceId(placeId, pageParam);
+    if (reviews.isEmpty()) {
+      return new ArrayList<>();
+    }
+
     PlaceBriefResponse place = placeService.getPlaceBriefById(placeId, SUMMARY_SIZE);
 
     Set<Long> memberIds = reviews.stream()
@@ -186,7 +210,7 @@ public class ReviewService {
                                                               .collect(
                                                                   toMap(
                                                                       MemberProfileResponse::getId,
-                                                                      c -> c));
+                                                                      mp -> mp));
 
     return reviews.stream()
                   .map(review -> new ReviewResponse(review,
@@ -199,60 +223,55 @@ public class ReviewService {
 
   public List<TagCountResponse> getReviewTagCountByPlaceId(Long placeId, Integer size) {
     List<Review> reviews = reviewRepository.findReviewsByPlaceId(placeId);
-    Map<Tag, Integer> tagCountMap = new HashMap<>();
-
-    reviews.forEach(review ->
-                        review.getTags()
-                              .forEach(
-                                  tag -> tagCountMap.put(tag, tagCountMap.getOrDefault(tag, 0) + 1))
-                   );
-
-    Stream<Entry<Tag, Integer>> entryStream = tagCountMap.entrySet()
-                                                         .stream();
-
-    if (size != null) {
-      entryStream = entryStream.limit(size);
-    }
-
-    return entryStream.sorted(Entry.comparingByValue())
-                      .map(entry -> new TagCountResponse(entry.getKey(), entry.getValue()))
-                      .toList();
+    if (reviews.isEmpty()) return new ArrayList<>();
+    return calcAndSortTagCount(reviews, size);
   }
 
   public Map<Long, List<TagCountResponse>> getReviewTagCountsByPlaceIdIn(List<Long> placeIds,
                                                                          Integer tagSizeLimit) {
-    List<Review> reviews = reviewRepository.findReviewsByPlaceIdIn(placeIds);
+    List<Review> allReviews = reviewRepository.findReviewsByPlaceIdIn(placeIds);
+    if (allReviews.isEmpty()) return new HashMap<>();
 
-    Map<Long, Map<Tag, Integer>> placesTagCountMap = new HashMap<>();
-    Map<Long, List<TagCountResponse>> placesTagCountResponseMap = new HashMap<>();
+    Map<Long, List<Review>> placeReviews = allReviews.stream()
+                                                     .collect(groupingBy(review -> review.getPlace()
+                                                                                         .getId()));
+    Map<Long, List<TagCountResponse>> placesTagCountMap = new HashMap<>();
+    placeReviews.forEach((placeId, reviews) -> {
+      List<TagCountResponse> placeTagCount = calcAndSortTagCount(reviews, tagSizeLimit);
+      placesTagCountMap.put(placeId, placeTagCount);
+    });
 
-    for (Long placeId : placeIds) {
-      placesTagCountMap.put(placeId, new HashMap<>());
+    return placesTagCountMap;
+  }
+
+  private List<TagCountResponse> calcAndSortTagCount(List<Review> reviews, Integer size) {
+    Map<Tag, Integer> tagCountMap = new HashMap<>();
+    reviews.forEach(review -> review.getTags()
+                                    .forEach(tag ->
+                                                 tagCountMap.put(tag,
+                                                                 tagCountMap
+                                                                     .getOrDefault(tag, 0) + 1)));
+
+    Stream<Entry<Tag, Integer>> tagCountStream = tagCountMap.entrySet()
+                                                            .stream();
+
+    if (size != null) {
+      tagCountStream = tagCountStream.limit(size);
     }
 
-    reviews.forEach(review -> {
-                      Map<Tag, Integer> tagCountMap = placesTagCountMap.get(review.getPlace()
-                                                                                  .getId());
-                      review.getTags()
-                            .forEach(tag -> tagCountMap.put(tag, tagCountMap.getOrDefault(tag, 0) + 1));
-                    }
-                   );
+    return tagCountStream.sorted(comparingByValue(reverseOrder()))
+                         .map(entry -> new TagCountResponse(entry.getKey(), entry.getValue()))
+                         .toList();
+  }
 
-    placesTagCountMap.forEach(
-        (placeId, tagCountMap) -> {
-          Stream<Entry<Tag, Integer>> tagCounts = tagCountMap.entrySet()
-                                                             .stream();
-          if (tagSizeLimit != null) {
-            tagCounts = tagCounts.limit(tagSizeLimit);
-          }
+  public ReviewResponse getReviewById(Long reviewId) {
+    Review review = reviewRepository.findReviewById(reviewId);
+    if (review == null) throw new NoSuchReviewException(reviewId);
 
-          List<TagCountResponse> tagCountResponses = tagCounts.sorted(Entry.comparingByValue())
-                                                              .map(entry -> new TagCountResponse(
-                                                                  entry.getKey(), entry.getValue()
-                                                              ))
-                                                              .toList();
-          placesTagCountResponseMap.put(placeId, tagCountResponses);
-        });
-    return placesTagCountResponseMap;
+    MemberProfileResponse member = memberService.getMemberProfileById(review.getMember().getId());
+    PlaceBriefResponse place = placeService.getPlaceBriefById(review.getPlace().getId(),
+                                                              SUMMARY_SIZE);
+
+    return new ReviewResponse(review, member, place, fileStorageService.getBaseUrl());
   }
 }

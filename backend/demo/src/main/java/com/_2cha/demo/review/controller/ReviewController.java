@@ -54,6 +54,11 @@ public class ReviewController {
     return reviewService.getReviewsByMemberId(memberId, pageParam);
   }
 
+  @GetMapping("/reviews/{reviewId}")
+  public ReviewResponse getReview(@PathVariable Long reviewId) {
+    return reviewService.getReviewById(reviewId);
+  }
+
   @PostMapping("/places/{placeId}/reviews")
   public void writePlaceReview(@Authed Long memberId, @PathVariable Long placeId,
                                @Valid @RequestBody WriteReviewRequest dto) {

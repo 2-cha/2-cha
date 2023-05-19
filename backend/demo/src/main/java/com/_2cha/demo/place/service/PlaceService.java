@@ -2,8 +2,7 @@ package com._2cha.demo.place.service;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
-import com._2cha.demo.global.exception.BadRequestException;
-import com._2cha.demo.global.exception.NotFoundException;
+import com._2cha.demo.global.event.FirstReviewCreatedEvent;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.place.domain.Category;
@@ -17,6 +16,7 @@ import com._2cha.demo.place.dto.PlaceDetailResponse;
 import com._2cha.demo.place.dto.PlaceSearchResponse;
 import com._2cha.demo.place.dto.PlaceSuggestionResponse;
 import com._2cha.demo.place.dto.SortBy;
+import com._2cha.demo.place.exception.InvalidTagCountSortException;
 import com._2cha.demo.place.exception.NoSuchPlaceException;
 import com._2cha.demo.place.repository.PlaceQueryRepository;
 import com._2cha.demo.place.repository.PlaceRepository;
@@ -24,7 +24,7 @@ import com._2cha.demo.review.dto.TagCountResponse;
 import com._2cha.demo.review.service.ReviewService;
 import com._2cha.demo.util.GeomUtils;
 import com._2cha.demo.util.HangulUtils;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -32,7 +32,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,32 +68,24 @@ public class PlaceService {
   @Transactional
   public PlaceCreatedResponse createPlace(String name, Category category, String address,
                                           String lotAddress,
-                                          Double lon, Double lat, List<String> images,
-                                          String site) {
-    String imgUrlPath = null;
-    String thumbUrlPath = null;
-    if (!images.isEmpty()) {
-      String imgUrl = images.get(0);
-      imgUrlPath = fileStorageService.extractPath(imgUrl);
-      thumbUrlPath = imageUploadService.getThumbnailPath(imgUrlPath);
-    }
+                                          Double lon, Double lat, String site) {
+
     Place place = Place.createPlace(name, category, address, lotAddress, lon, lat,
-                                    imgUrlPath, thumbUrlPath, site);
+                                    null, null, site);
     placeRepository.save(place);
     return new PlaceCreatedResponse(place, fileStorageService.getBaseUrl());
   }
 
   @Transactional
-  public void addPlaceImageUrls(Long placeId, List<String> imageUrls) {
-    if (imageUrls.isEmpty()) return;
-    Place place = placeRepository.findById(placeId);
-    if (place == null) throw new NoSuchPlaceException();
+  @Async("placeCommandTaskExecutor")
+  @EventListener(FirstReviewCreatedEvent.class)
+  public void updateImageAsync(FirstReviewCreatedEvent event) {
+    Place place = placeRepository.findById(event.getPlaceId());
+    if (place == null) return; //TODO: handle it
+    if (place.getImageUrlPath() != null) return;
 
-    String url = imageUrls.get(0);  //TODO: Image List
-    String imgUrlPath = fileStorageService.extractPath(url);
-    String thumbUrlPath = imageUploadService.getThumbnailPath(imgUrlPath);
-
-    place.updateImage(imgUrlPath, thumbUrlPath);  // TODO: add to image list, not replace
+    place.updateImage(event.getImageUrlPath(), event.getThumbUrlPath());
+    placeRepository.save(place);
   }
 
   /*-----------
@@ -99,9 +93,8 @@ public class PlaceService {
    ----------*/
   public Place findPlaceById(Long id) {
     Place place = placeRepository.findById(id);
-    if (place == null) {
-      throw new NotFoundException("No place with id " + id, "noSuchPlace");
-    }
+    if (place == null) throw new NoSuchPlaceException();
+
     return place;
   }
 
@@ -111,7 +104,7 @@ public class PlaceService {
     PlaceBriefWithDistanceResponse brief = placeQueryRepository.getPlaceBriefWithDistance(placeId,
                                                                                           cur,
                                                                                           fileStorageService.getBaseUrl());
-    if (brief == null) throw new NotFoundException("No place with id " + placeId, "noSuchPlace");
+    if (brief == null) throw new NoSuchPlaceException();
 
     brief.setTagSummary(reviewService.getReviewTagCountByPlaceId(placeId, summarySize));
 
@@ -123,7 +116,7 @@ public class PlaceService {
 
     PlaceBriefResponse brief = placeQueryRepository.getPlaceBriefById(placeId,
                                                                       fileStorageService.getBaseUrl());
-    if (brief == null) throw new NotFoundException("No place with id " + placeId, "noSuchPlace");
+    if (brief == null) throw new NoSuchPlaceException();
 
     brief.setTagSummary(reviewService.getReviewTagCountByPlaceId(placeId, summarySize));
 
@@ -133,6 +126,7 @@ public class PlaceService {
   public List<PlaceBriefResponse> getPlacesBriefByIdIn(List<Long> placeIds, Integer summarySize) {
     List<PlaceBriefResponse> briefs = placeQueryRepository.getPlacesBriefsByIdIn(placeIds,
                                                                                  fileStorageService.getBaseUrl());
+    if (briefs.isEmpty()) return briefs;
 
     Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
         briefs.stream().map(place -> place.getId()).toList(), summarySize);
@@ -145,7 +139,7 @@ public class PlaceService {
   public PlaceDetailResponse getPlaceDetailById(Long id) {
     PlaceDetailResponse detail = placeQueryRepository.getPlaceDetailById(id,
                                                                          fileStorageService.getBaseUrl());
-    if (detail == null) throw new NotFoundException("No place with id " + id, "noSuchPlace");
+    if (detail == null) throw new NoSuchPlaceException();
 
     detail.setTags(reviewService.getReviewTagCountByPlaceId(id, null));
 
@@ -156,7 +150,7 @@ public class PlaceService {
   public CompletableFuture<List<PlaceSuggestionResponse>> suggestNearbyPlacesAsync(Double lat,
                                                                                    Double lon) {
 
-    List<Object[]> placesWithDist =
+    List<Pair<Place, Double>> placesWithDist =
         placeQueryRepository.findAround(new NearbyPlaceSearchParams(lat, lon,
                                                                     SUGGESTION_MAX_DIST,
                                                                     FilterBy.DEFAULT, null,
@@ -164,33 +158,25 @@ public class PlaceService {
                                                                     0L, SUGGESTION_SIZE));
 
     return completedFuture(placesWithDist.stream()
-                                         .map(pd -> new PlaceSuggestionResponse(
-                                             (Place) pd[0], (Double) pd[1]))
+                                         .map(pair -> new PlaceSuggestionResponse(
+                                             pair.getFirst(), pair.getSecond()))
                                          .toList());
   }
 
   public List<PlaceBriefWithDistanceResponse>
   searchPlacesWithFilterAndSorting(NearbyPlaceSearchParams searchParams) {
-    if (searchParams.getSortBy() == SortBy.TAG_COUNT &&
-        searchParams.getFilterBy() != FilterBy.TAG) {
-      throw new BadRequestException("Sorting by tag count is only allowed with tag filter",
-                                    "badSortStrategy");
-    }
-    List<Object[]> placesWithDist = placeQueryRepository.findAround(searchParams);
-    List<Place> places = new ArrayList<>();
-    List<Double> distances = new ArrayList<>();
+    if (searchParams.getSortBy() == SortBy.TAG_COUNT
+        && searchParams.getFilterBy() != FilterBy.TAG) {throw new InvalidTagCountSortException();}
 
-    placesWithDist.stream().forEach(placeWithDist -> {
-      places.add((Place) placeWithDist[0]);
-      distances.add((Double) placeWithDist[1]);
-    });
+    List<Pair<Place, Double>> placesWithDist = placeQueryRepository.findAround(searchParams);
+    if (placesWithDist.isEmpty()) return Collections.emptyList();
 
     Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
-        places.stream().map(place -> place.getId()).toList(), REVIEW_SUMMARY_SIZE);
+        placesWithDist.stream().map(pair -> pair.getFirst().getId()).toList(), REVIEW_SUMMARY_SIZE);
 
-    return placesWithDist.stream().map((placeWithDist) -> {
-      Place place = (Place) placeWithDist[0];
-      Double distGap = (Double) placeWithDist[1];
+    return placesWithDist.stream().map(pair -> {
+      Place place = pair.getFirst();
+      Double distGap = pair.getSecond();
       PlaceBriefWithDistanceResponse brief = new PlaceBriefWithDistanceResponse(place, distGap,
                                                                                 fileStorageService.getBaseUrl());
       brief.setTagSummary(placesTagCounts.get(place.getId()));

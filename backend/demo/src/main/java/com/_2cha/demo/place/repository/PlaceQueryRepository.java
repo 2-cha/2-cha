@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.locationtech.jts.geom.Point;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
 
 
@@ -59,18 +60,18 @@ public class PlaceQueryRepository {
   /**
    * Note: return empty list if filter is applied but filterValues is empty
    */
-  public List<Object[]> findAround(NearbyPlaceSearchParams params) {
+  public List<Pair<Place, Double>> findAround(NearbyPlaceSearchParams params) {
 
     Point location = GeomUtils.createPoint(params.getLat(), params.getLon());
     FilterSortContext context = new FilterSortContext(queryFactory,
                                                       filterStrategyMap.get(params.getFilterBy()),
                                                       sortStrategyMap.get(params.getSortBy()));
 
-    List<Object[]> results = new ArrayList<>();
+    List<Pair<Place, Double>> results = new ArrayList<>();
     List<Tuple> tuples = context.execute(location, params.getMaxDist(), params.getOffset(),
                                          params.getPageSize(), params.getFilterValues());
     tuples.forEach(tuple -> {
-      results.add(new Object[]{tuple.get(0, Place.class), tuple.get(1, Double.class)});
+      results.add(Pair.of(tuple.get(0, Place.class), tuple.get(1, Double.class)));
     });
     return results;
   }
