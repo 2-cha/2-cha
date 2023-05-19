@@ -389,28 +389,14 @@ paths:
               schema:
                 type: array
                 items:
-                  x-stoplight:
-                    id: nx7dtilrnmmtt
-                  type: object
-                  properties:
-                    id:
-                      type: number
-                      x-stoplight:
-                        id: wy8qnwi581prz
-                    emoji:
-                      type: string
-                      x-stoplight:
-                        id: h1488jaantyes
-                    message:
-                      type: string
-                      x-stoplight:
-                        id: uegawjxds1il6
+                  $ref: '#/components/schemas/TagWithIdResponse'
               examples:
                 Example 1:
                   value:
                     - id: 1
                       emoji: "\U0001F469\U0001F3FB‍❤️‍\U0001F468\U0001F3FB"
                       message: 데이트 하기 좋아요
+                      category: ACTIVITY
       operationId: get-tags
       parameters:
         - schema:
@@ -830,6 +816,39 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PlaceEnrollRequest'
+  /tags/categorized:
+    get:
+      summary: ''
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  CATEGORY_NAME_1:
+                    type: array
+                    x-stoplight:
+                      id: 4ehce0bjpmfhi
+                    items:
+                      $ref: '#/components/schemas/TagWithoutCategoryResponse'
+                  CATEGORY_NAME_2:
+                    type: array
+                    x-stoplight:
+                      id: 3ttexy4nvvpua
+                    items:
+                      $ref: '#/components/schemas/TagWithoutCategoryResponse'
+      operationId: get-tags-categorized
+      tags:
+        - tag
+      parameters:
+        - schema:
+            type: string
+          in: query
+          description: 한글 초성 검색 지원
+          name: query
+    parameters: [ ]
 components:
   schemas:
     ToggleAchievementExposureRequest:
@@ -975,17 +994,31 @@ components:
         id: b65r1u3g82yiw
     TagResponse:
       type: object
-      properties:
-        emoji:
-          type: string
-        message:
-          type: string
       x-examples:
         Example 1:
           emoji: "\U0001F4D6"
           message: 책 읽기 좋아요
       x-stoplight:
         id: mmmb59pg9k6m1
+      properties:
+        emoji:
+          type: string
+        message:
+          type: string
+        category:
+          type: string
+          x-stoplight:
+            id: 2t4ruhsspam9a
+          enum:
+            - ATMOSPHERE
+            - FACILITY
+            - MENU
+            - SPECIALITY
+            - GROUP_SIZE
+            - PAYMENT
+            - EMOTION
+            - ACTIVITY
+      title: ''
     TagCountResponse:
       type: object
       properties:
@@ -1644,5 +1677,54 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PlaceSuggestionResponse'
+    TagWithIdResponse:
+      title: TagWithIdResponse
+      x-stoplight:
+        id: 7aqgt3jd68xm4
+      type: object
+      properties:
+        id:
+          type: integer
+          x-stoplight:
+            id: 1oyovq0bn84ls
+        message:
+          type: string
+          x-stoplight:
+            id: kp4dh4jq377n2
+        emoji:
+          type: string
+          x-stoplight:
+            id: ebjwp9zs8lzhx
+        category:
+          type: string
+          x-stoplight:
+            id: gfn8jcxqfzceo
+          enum:
+            - ATMOSPHERE
+            - FACILITY
+            - MENU
+            - SPECIALITY
+            - GROUP_SIZE
+            - PAYMENT
+            - EMOTION
+            - ACTIVITY
+    TagWithoutCategoryResponse:
+      title: TagWithoutCategoryResponse
+      x-stoplight:
+        id: cnwefcwg4veli
+      type: object
+      properties:
+        id:
+          type: integer
+          x-stoplight:
+            id: khdclxhoo0lhq
+        message:
+          type: string
+          x-stoplight:
+            id: 6r1b5t7832yhs
+        emoji:
+          type: string
+          x-stoplight:
+            id: t30gjz098z8i7
   requestBodies: { }
   responses: { }
