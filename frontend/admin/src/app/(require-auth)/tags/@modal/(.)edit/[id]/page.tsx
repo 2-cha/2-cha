@@ -1,6 +1,6 @@
 'use client';
 
-import Form from '@/app/tags/Form';
+import Form from '@/app/(require-auth)/tags/Form';
 import Modal from '@/components/modal';
 
 export default function EditTagModal({

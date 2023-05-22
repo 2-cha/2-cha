@@ -1,4 +1,4 @@
-import Form from '@/app/tags/Form';
+import Form from '@/app/(require-auth)/tags/Form';
 
 export default function EditTagPage({
   params: { id },

@@ -1,5 +1,5 @@
 import Modal from "@/components/modal";
-import Form from "@/app/tags/Form";
+import Form from "@/app/(require-auth)/tags/Form";
 
 export default function CreateTagModal() {
   return (
