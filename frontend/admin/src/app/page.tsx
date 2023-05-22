@@ -1,12 +1,6 @@
 'use client';
-import { Button } from '@chakra-ui/react'
+import { Heading } from '@chakra-ui/react';
 
 export default function Home() {
-  return (
-    <main>
-      <Button>
-        hello world
-      </Button>
-    </main>
-  )
+  return <Heading>dashboard</Heading>;
 }
