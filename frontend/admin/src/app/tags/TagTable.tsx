@@ -10,7 +10,10 @@ import {
   Th,
   Thead,
   Tr,
+  HStack,
+  Button,
 } from "@chakra-ui/react";
+import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import { type Tag } from "./page";
 
 export default function TagTable({ tags }: { tags: Array<Tag> }) {
@@ -33,9 +36,20 @@ export default function TagTable({ tags }: { tags: Array<Tag> }) {
               <Td>{tag.message}</Td>
               <Td>{tag.category}</Td>
               <Td>
-                <Link as={NextLink} href={`/tags/edit/${tag.id}`} color='teal'>
-                  edit
-                </Link>
+                <HStack gap={3}>
+                  <Link
+                    as={NextLink}
+                    href={`/tags/edit/${tag.id}`}
+                    color="teal"
+                  >
+                    <Button colorScheme="teal" size="sm">
+                      <EditIcon />
+                    </Button>
+                  </Link>
+                  <Button colorScheme="red" size="sm">
+                    <DeleteIcon />
+                  </Button>
+                </HStack>
               </Td>
             </Tr>
           ))}
