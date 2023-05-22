@@ -1,14 +1,29 @@
-'use client';
+"use client";
 
-import NextLink from 'next/link';
-import { Grid, GridItem, HStack, Link, Button } from '@chakra-ui/react';
-import NavBar from './NavBar';
+import NextLink from "next/link";
+import {
+  Grid,
+  GridItem,
+  HStack,
+  Link,
+  Button,
+  useDisclosure,
+  Drawer,
+  DrawerContent,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerOverlay,
+} from "@chakra-ui/react";
+import { HamburgerIcon } from "@chakra-ui/icons";
+import NavBar from "./NavBar";
 
 export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { onOpen, isOpen, onClose } = useDisclosure({ id: "navbar" });
+
   return (
     <Grid
       templateAreas={{
@@ -22,17 +37,24 @@ export default function MainLayout({
       minH="100vh"
     >
       <GridItem gridArea="header" borderBottom="1px" borderColor="gray.300">
-        <HStack h="100%" mx={5} gap={5} justify="end">
-          <Link as={NextLink} href="/" colorScheme="teal">
-            Home
-          </Link>
-          <Button colorScheme="red">Logout</Button>
+        <HStack h="100%" mx={5} justify={{ base: "space-between", md: "end" }}>
+          <Button display={{ base: "block", md: "none" }} onClick={onOpen}>
+            <HamburgerIcon />
+          </Button>
+          <NavBarDrawer isOpen={isOpen} onClose={onClose} />
+          <HStack gap={4}>
+            <Link as={NextLink} href="/" colorScheme="teal">
+              Home
+            </Link>
+            <Button colorScheme="red">Logout</Button>
+          </HStack>
         </HStack>
       </GridItem>
       <GridItem
         gridArea="nav"
         borderRight="1px"
         borderColor="gray.300"
+        display={{ base: "none", md: "block" }}
       >
         <NavBar />
       </GridItem>
@@ -40,5 +62,25 @@ export default function MainLayout({
         {children}
       </GridItem>
     </Grid>
+  );
+}
+
+function NavBarDrawer({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  return (
+    <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerCloseButton />
+        <DrawerBody>
+          <NavBar />
+        </DrawerBody>
+      </DrawerContent>
+    </Drawer>
   );
 }
