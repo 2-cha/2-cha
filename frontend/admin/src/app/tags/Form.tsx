@@ -9,7 +9,7 @@ import {
   FormLabel,
   Input,
 } from '@chakra-ui/react';
-import { type Tag } from '../../page';
+import { type Tag } from './page';
 
 export default function EditTagForm({
   id,

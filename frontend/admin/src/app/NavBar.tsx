@@ -13,14 +13,13 @@ const links = [
 
 export default function NavBar() {
   const pathname = usePathname();
-  console.log(pathname);
 
   return (
     <VStack align="start" p={6}>
       {links.map((link) => (
         <Link key={link.url} as={NextLink} href={link.url} w='100%'>
           <Button
-            color={pathname === link.url ? 'gray.600' : 'teal.500'}
+            color={pathname.startsWith(link.url) ? 'teal.500' : 'gray.600'}
             bg="transparent"
             w="100%"
             justifyContent="start"
