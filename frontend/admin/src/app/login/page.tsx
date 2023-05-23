@@ -1,6 +1,5 @@
 "use client";
 
-import { login } from "@/lib/api/auth";
 import {
   Button,
   FormControl,
@@ -28,8 +27,15 @@ export default function Login() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await login(data);
-      router.push('/');
+      const res = await fetch("/login/api", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        throw new Error();
+      }
+
+      router.push("/");
     } catch {
       setError("root", { message: "Invalid email or password" });
     }

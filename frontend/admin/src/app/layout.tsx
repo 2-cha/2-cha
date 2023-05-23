@@ -1,23 +1,34 @@
-import MainLayout from './MainLayout';
-import Providers from './providers';
-import { Inter } from 'next/font/google';
-
-const inter = Inter({ subsets: ['latin'] });
+import MainLayout from "./MainLayout";
+import Providers from "./providers";
 
 export const metadata = {
-  title: '2cha admin',
+  title: "이차어드민",
 };
 
-export default function RootLayout({
+async function isLogin() {
+  try {
+    const res = await fetch("/login/api");
+
+    if (res.ok) {
+      return true;
+    }
+  } catch {
+    return false;
+  }
+}
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const isLoggedIn = await isLogin();
+
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <Providers>
-          <MainLayout>{children}</MainLayout>
+          <MainLayout isLoggedIn={isLoggedIn}>{children}</MainLayout>
         </Providers>
       </body>
     </html>

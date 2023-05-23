@@ -16,21 +16,21 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import NavBar from "./NavBar";
-import { isLoggedIn } from "@/lib/api";
 
-export default async function MainLayout({
+export default function MainLayout({
   children,
+  isLoggedIn,
 }: {
   children: React.ReactNode;
+  isLoggedIn?: boolean;
 }) {
   const { onOpen, isOpen, onClose } = useDisclosure({ id: "navbar" });
-  const isLogged = await isLoggedIn();
 
   return (
     <Grid
       templateAreas={{
         base: `"header header"
-               "main  main"`,
+               "main   main"`,
         md: `"header header"
              "nav    main"`,
       }}
@@ -48,7 +48,7 @@ export default async function MainLayout({
             <Link as={NextLink} href="/" colorScheme="teal">
               Home
             </Link>
-            {isLogged ? (
+            {isLoggedIn ? (
               <Button colorScheme="red">Logout</Button>
             ) : (
               <Link as={NextLink} href="/login" colorScheme="teal">

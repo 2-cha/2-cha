@@ -29,11 +29,11 @@ export default function EditTagForm({
   const onSubmit = handleSubmit(
     async (data) => {
       try {
-        const res = await fetch(`/tags/${type}/api`, {
+        const url = type === 'create' ? '/tags/create/api' : `/tags/edit/${id}`;
+        const res = await fetch(url, {
           method: 'POST',
           body: JSON.stringify(data),
         });
-
         if (!res.ok) {
           throw new Error(`Failed to ${type} tag`);
         }
