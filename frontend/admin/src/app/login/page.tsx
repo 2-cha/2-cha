@@ -1,5 +1,6 @@
 "use client";
 
+import { login } from "@/lib/api/auth";
 import {
   Button,
   FormControl,
@@ -8,37 +9,44 @@ import {
   Input,
   VStack,
 } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 interface LoginFormData {
-  username: string;
+  email: string;
   password: string;
 }
 
 export default function Login() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setError,
   } = useForm<LoginFormData>();
 
-  const onSubmit = handleSubmit((data) => {
-    // TODO: login
-    console.log(data.username);
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await login(data);
+      router.push('/');
+    } catch {
+      setError("root", { message: "Invalid email or password" });
+    }
   });
 
   return (
     <form onSubmit={onSubmit}>
       <VStack gap={4} align="start">
-        <FormControl isInvalid={errors.username != null}>
-          <FormLabel htmlFor="username">Username</FormLabel>
+        <FormControl isInvalid={errors.email != null}>
+          <FormLabel htmlFor="email">Email</FormLabel>
           <Input
             type="text"
-            id="username"
-            {...register("username", { required: true })}
+            id="email"
+            {...register("email", { required: true })}
           />
           <FormErrorMessage>
-            {errors.username && errors.username.message}
+            {errors.email && errors.email.message}
           </FormErrorMessage>
         </FormControl>
 

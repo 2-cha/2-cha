@@ -14,7 +14,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { type Tag } from "./page";
+import { type Tag } from "@/lib/api";
 
 export default function TagTable({ tags }: { tags: Array<Tag> }) {
   return (
