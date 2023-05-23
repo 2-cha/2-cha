@@ -1,15 +1,22 @@
 package com._2cha.demo.util;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.lang.GeoLocation;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.GpsDirectory;
 import jakarta.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.tasks.UnsupportedFormatException;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
+import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -43,6 +50,18 @@ public class ImageUtils {
       actualExt = null;
     }
     return actualExt;
+  }
+
+  public static Point getGeoPoint(byte[] imageBytes) {
+    try (InputStream inputStream = new ByteArrayInputStream(imageBytes)) {
+      Metadata metadata = ImageMetadataReader.readMetadata(inputStream);
+      GeoLocation geoLocation;
+      GpsDirectory gps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+      if (gps != null && (geoLocation = gps.getGeoLocation()) != null) {
+        return GeomUtils.createPoint(geoLocation.getLatitude(), geoLocation.getLongitude());
+      }
+    } catch (ImageProcessingException | IOException ignored) {;}
+    return null;
   }
 
   @PostConstruct

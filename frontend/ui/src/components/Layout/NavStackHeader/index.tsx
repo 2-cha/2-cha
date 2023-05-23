@@ -15,7 +15,7 @@ export default function NavStackHeader({
   const router = useRouter();
 
   return (
-    <div className={s.root}>
+    <div className={cn(s.root, { [s.transparent]: hideTitle })}>
       <button className={s.root__backButton} onClick={router.back}>
         <ArrowIcon />
       </button>

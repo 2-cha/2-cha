@@ -1,17 +1,28 @@
 package com._2cha.demo.review.controller;
 
+import static com._2cha.demo.util.GeomUtils.lat;
+import static com._2cha.demo.util.GeomUtils.lon;
+import static java.util.concurrent.CompletableFuture.completedFuture;
+
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
 import com._2cha.demo.global.infra.imageupload.dto.ImageSavedResponse;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.validator.imagemime.ImageMime;
+import com._2cha.demo.place.dto.PlaceSuggestionResponse;
+import com._2cha.demo.place.service.PlaceService;
+import com._2cha.demo.review.dto.ImageUrlWithSuggestionResponse;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.dto.WriteReviewRequest;
 import com._2cha.demo.review.service.ReviewService;
+import com._2cha.demo.util.ImageUtils;
 import jakarta.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +41,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ReviewController {
 
   private final ReviewService reviewService;
+  private final PlaceService placeService;
   private final ImageUploadService imageUploadService;
 
   @GetMapping("/places/{placeId}/reviews")
@@ -40,6 +52,11 @@ public class ReviewController {
   @GetMapping("/members/{memberId}/reviews")
   public List<ReviewResponse> getMemberReviews(@PathVariable Long memberId, Pageable pageParam) {
     return reviewService.getReviewsByMemberId(memberId, pageParam);
+  }
+
+  @GetMapping("/reviews/{reviewId}")
+  public ReviewResponse getReview(@PathVariable Long reviewId) {
+    return reviewService.getReviewById(reviewId);
   }
 
   @PostMapping("/places/{placeId}/reviews")
@@ -54,8 +71,20 @@ public class ReviewController {
   }
 
   @PostMapping(value = "/reviews/images")
-  public ImageSavedResponse saveReviewImage(@RequestParam @ImageMime MultipartFile file)
+  public CompletableFuture<ImageUrlWithSuggestionResponse> saveReviewImage(
+      @RequestParam @ImageMime MultipartFile file)
       throws IOException {
-    return imageUploadService.save(file.getBytes());
+    Point point;
+    byte[] imageBytes = file.getBytes();
+    CompletableFuture<ImageSavedResponse> save = imageUploadService.save(imageBytes);
+    CompletableFuture<List<PlaceSuggestionResponse>> suggestion = completedFuture(
+        new ArrayList<>());
+    if ((point = ImageUtils.getGeoPoint(imageBytes)) != null) {
+      suggestion = placeService.suggestNearbyPlacesAsync(lat(point), lon(point));
+    }
+
+    return save.thenCombine(suggestion,
+                            (res1, res2) -> new ImageUrlWithSuggestionResponse(res1.getUrl(), res2)
+                           );
   }
 }

@@ -35,7 +35,7 @@ public class Review {
   private Member member;
 
   @BatchSize(size = 100)
-  @ManyToMany(cascade = CascadeType.ALL)
+  @ManyToMany
   @JoinTable(
       name = "TAG_IN_REVIEW",
       joinColumns = @JoinColumn(name = "REV_ID"),
