@@ -68,7 +68,7 @@ public class FcmHttpV1PushService implements PushService {
     List<PushSubject> pushSubjects = pushSubjectRepository.findAllByMemberId(memberId);
     if (pushSubjects.isEmpty()) return;
 
-    pushSubjectRepository.deleteAll(pushSubjects);
+    pushSubjectRepository.deleteAllInBatch(pushSubjects);
   }
 
   @Override
