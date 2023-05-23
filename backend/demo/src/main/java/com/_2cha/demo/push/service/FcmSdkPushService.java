@@ -117,7 +117,7 @@ public class FcmSdkPushService implements PushService {
   private boolean validateFcmToken(String sub) {
     try {
       FirebaseMessaging.getInstance()
-                       .send(buildMessage(new Payload(sub, null, "title", "body", null)),
+                       .send(buildMessage(new Payload(sub, null, null, "title", "body", null)),
                              true); // dry-run
     } catch (FirebaseMessagingException e) {
       return false;
@@ -129,6 +129,7 @@ public class FcmSdkPushService implements PushService {
     return Message.builder()
                   .setToken(payload.getSub())
                   .setTopic(payload.getTopic())
+                  .setCondition(payload.getCondition())
                   .setNotification(
                       Notification.builder()
                                   .setTitle(payload.getTitle())
