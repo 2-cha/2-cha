@@ -23,7 +23,7 @@ public class PushController {
 
   @Auth(Role.ADMIN)
   @PostMapping("/send")
-  public void send(@RequestBody Payload payload) {
+  public void send(@RequestBody @Valid Payload payload) {
     this.pushService.send(payload);
   }
 
