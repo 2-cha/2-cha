@@ -274,4 +274,51 @@ public class ReviewService {
 
     return new ReviewResponse(review, member, place, fileStorageService.getBaseUrl());
   }
+
+  // 생성순 으로 정렬된 리뷰 목록 조회
+  public List<ReviewResponse> getSocialReviewsOrderByNewest() {
+
+    List<Review> reviews = reviewRepository.findAllByOrderByCreatedDesc();
+
+    if (reviews.isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    Set<Long> placeIds = reviews.stream().map(review -> review.getPlace().getId()).collect(toSet());
+    Set<Long> memberIds = reviews.stream().map(review -> review.getMember().getId()).collect(toSet());
+
+    Map<Long, PlaceBriefResponse> placeMap = placeService.getPlacesBriefByIdIn(
+                    placeIds.stream().toList(),
+                    SUMMARY_SIZE)
+            .stream()
+            .collect(
+                    toMap(PlaceBriefResponse::getId,
+                            p -> p
+                    ));
+    Map<Long, MemberProfileResponse> memberMap = memberService.getMemberProfileByIdIn(
+                    memberIds.stream().toList())
+            .stream()
+            .collect(
+                    toMap(
+                            MemberProfileResponse::getId,
+                            m -> m));
+
+    return reviews.stream().map(review -> new ReviewResponse(review,
+            memberMap.get(
+                    review.getMember().getId()),
+            placeMap.get(
+                    review.getPlace().getId()),
+            fileStorageService.getBaseUrl()
+    )).toList();
+  }
+
+//  근처 가게 리뷰 조회
+//  public List<ReviewResponse> getSocialReviewsOrderByNearby() {
+//
+//  }
+
+  //특정 태그들을 가진 리뷰 조회
+//  public List<ReviewResponse> getSocialReviewsWithTag() {
+//
+//  }
 }
