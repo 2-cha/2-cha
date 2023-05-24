@@ -1,5 +1,6 @@
 package com._2cha.demo.push.dto;
 
+import com._2cha.demo.push.validator.TopicName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import jakarta.validation.constraints.AssertTrue;
@@ -11,6 +12,7 @@ import lombok.Data;
 public class Payload {
 
   private String sub;
+  @TopicName
   private String topic;
   private String condition;
   @NotEmpty
@@ -38,8 +40,10 @@ public class Payload {
     return count == 1;
   }
 
-  @AssertTrue(message = "Invalid topic name")
-  private boolean isTopicValid() {
-    return topic == null || topic.matches("[a-zA-Z0-9-_.~%]+");
+  public String getTarget() {
+    if (sub != null) return sub;
+    if (topic != null) return topic;
+    if (condition != null) return condition;
+    return null;
   }
 }

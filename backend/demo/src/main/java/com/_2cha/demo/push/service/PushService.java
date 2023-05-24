@@ -10,9 +10,11 @@ public interface PushService {
 
   void unregisterAll(Long memberId);
 
-  void subscribeToTopic(Long memberId, String topic);
+  PushResponse subscribeToTopic(Long memberId, String topic);
 
-  void unsubscribeFromTopic(Long memberId, String topic);
+  PushResponse unsubscribeFromTopic(Long memberId, String topic);
 
-  void send(Payload payload);
+  PushResponse send(Payload payload);
+
+  PushResponse sendToMembers(List<Long> memberIds, PayloadWithoutTarget payload);
 }

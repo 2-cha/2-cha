@@ -6,6 +6,8 @@ import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.push.config.FcmOAuth2Config;
 import com._2cha.demo.push.domain.PushSubject;
 import com._2cha.demo.push.dto.Payload;
+import com._2cha.demo.push.dto.PayloadWithoutTarget;
+import com._2cha.demo.push.dto.PushResponse;
 import com._2cha.demo.push.repository.PushSubjectRepository;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import java.io.IOException;
@@ -29,9 +31,11 @@ public class FcmHttpV1PushService implements PushService {
 
   /**
    * FCM HTTP v1 API ver
+   *
+   * @return
    */
   @Override
-  public void send(Payload payload) {
+  public PushResponse send(Payload payload) {
     final String FCM_SEND_ENDPOINT = "/v1/projects/" + config.getProjectId() + "/messages:send";
     WebClient.create(BASE_URL + FCM_SEND_ENDPOINT)
              .post()
@@ -41,6 +45,7 @@ public class FcmHttpV1PushService implements PushService {
              .retrieve()
              .bodyToMono(String.class)
              .block();
+    return null;
   }
 
   @Override
@@ -72,13 +77,21 @@ public class FcmHttpV1PushService implements PushService {
   }
 
   @Override
-  public void subscribeToTopic(Long memberId, String topic) {
+  public PushResponse subscribeToTopic(Long memberId, String topic) {
 
+    return null;
   }
 
   @Override
-  public void unsubscribeFromTopic(Long memberId, String topic) {
+  public PushResponse unsubscribeFromTopic(Long memberId, String topic) {
 
+    return null;
+  }
+
+  @Override
+  public PushResponse sendToMembers(List<Long> memberIds, PayloadWithoutTarget payload) {
+
+    return null;
   }
 
   private String getAccessToken() {

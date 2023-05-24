@@ -5,9 +5,12 @@ import com._2cha.demo.global.annotation.Authed;
 import com._2cha.demo.member.domain.Role;
 import com._2cha.demo.push.dto.Payload;
 import com._2cha.demo.push.dto.PushRegistrationRequest;
+import com._2cha.demo.push.dto.PushResponse;
 import com._2cha.demo.push.service.PushService;
+import com._2cha.demo.push.validator.TopicName;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,14 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 public class PushController {
 
   private final PushService pushService;
 
   @Auth(Role.ADMIN)
   @PostMapping("/send")
-  public void send(@RequestBody @Valid Payload payload) {
-    this.pushService.send(payload);
+  public PushResponse send(@RequestBody @Valid Payload payload) {
+    return this.pushService.send(payload);
   }
 
   @Auth
@@ -47,15 +51,15 @@ public class PushController {
 
   @Auth
   @PostMapping("/push/subscription")
-  public void subscribeToTopic(@Authed Long memberId,
-                               @RequestParam String topic) {
-    this.pushService.subscribeToTopic(memberId, topic);
+  public PushResponse subscribeToTopic(@Authed Long memberId,
+                                       @RequestParam @TopicName String topic) {
+    return this.pushService.subscribeToTopic(memberId, topic);
   }
 
   @Auth
   @DeleteMapping("/push/subscription")
-  public void unsubscribeFromTopic(@Authed Long memberId,
-                                   @RequestParam String topic) {
-    this.pushService.unsubscribeFromTopic(memberId, topic);
+  public PushResponse unsubscribeFromTopic(@Authed Long memberId,
+                                           @RequestParam @TopicName String topic) {
+    return this.pushService.unsubscribeFromTopic(memberId, topic);
   }
 }
