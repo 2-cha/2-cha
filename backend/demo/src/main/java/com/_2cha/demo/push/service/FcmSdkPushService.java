@@ -1,6 +1,5 @@
 package com._2cha.demo.push.service;
 
-import com._2cha.demo.global.exception.BadRequestException;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
@@ -135,11 +134,21 @@ public class FcmSdkPushService implements PushService {
                             result.getFailures());
   }
 
-    try {
-      FirebaseMessaging.getInstance().send(message);
-    } catch (FirebaseMessagingException e) {
-      throw new IllegalStateException("FCM Error: " + e.getMessagingErrorCode());
-    }
+
+  @Override
+  public PushResponse sendToMembers(List<Long> memberIds, PayloadWithoutTarget payload) {
+    List<PushSubject> allSubjects = pushSubjectRepository.findAllByMemberIdIn(memberIds);
+    if (allSubjects.isEmpty()) return new PushResponse(0, 0, 0, Collections.emptyList());
+
+    FcmOpResult result = executeMulticastOp(fcm::sendMulticast,
+                                            allSubjects.stream()
+                                                       .map(PushSubject::getValue)
+                                                       .toList(),
+                                            payload);
+    return new PushResponse(allSubjects.size(),
+                            result.getSuccessCount(),
+                            result.getFailureCount(),
+                            result.getFailures());
   }
 
 

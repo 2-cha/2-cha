@@ -6,6 +6,7 @@ import com._2cha.demo.member.domain.Role;
 import com._2cha.demo.push.dto.Payload;
 import com._2cha.demo.push.dto.PushRegistrationRequest;
 import com._2cha.demo.push.dto.PushResponse;
+import com._2cha.demo.push.dto.SendToMembersRequest;
 import com._2cha.demo.push.service.PushService;
 import com._2cha.demo.push.validator.TopicName;
 import jakarta.validation.Valid;
@@ -29,6 +30,12 @@ public class PushController {
   @PostMapping("/send")
   public PushResponse send(@RequestBody @Valid Payload payload) {
     return this.pushService.send(payload);
+  }
+
+  @Auth(Role.ADMIN)
+  @PostMapping("/sendto")
+  public PushResponse sendToMembers(@RequestBody @Valid SendToMembersRequest dto) {
+    return this.pushService.sendToMembers(dto.getMemberIds(), dto.getPayload());
   }
 
   @Auth

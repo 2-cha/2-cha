@@ -9,5 +9,7 @@ public interface PushSubjectRepository extends JpaRepository<PushSubject, Long> 
 
   List<PushSubject> findAllByMemberId(Long memberId);
 
+  List<PushSubject> findAllByMemberIdIn(List<Long> memberId);
+
   PushSubject findByValue(String value);
 }
