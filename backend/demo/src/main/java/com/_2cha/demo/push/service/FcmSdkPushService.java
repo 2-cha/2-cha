@@ -7,6 +7,7 @@ import com._2cha.demo.push.domain.PushSubject;
 import com._2cha.demo.push.dto.Payload;
 import com._2cha.demo.push.dto.PayloadWithoutTarget;
 import com._2cha.demo.push.dto.PushResponse;
+import com._2cha.demo.push.exception.CannotUnregisterException;
 import com._2cha.demo.push.exception.InvalidSubjectException;
 import com._2cha.demo.push.exception.NoRegisteredSubjectException;
 import com._2cha.demo.push.repository.PushSubjectRepository;
@@ -76,7 +77,7 @@ public class FcmSdkPushService implements PushService {
     PushSubject pushSubject = pushSubjectRepository.findByValue(sub);
     if (pushSubject == null) throw new NoRegisteredSubjectException();
     if (!Objects.equals(pushSubject.getMember().getId(), memberId)) {
-      throw new RuntimeException("Forbidden: Not an owner");
+      throw new CannotUnregisterException();
     }
 
     pushSubjectRepository.delete(pushSubject);
