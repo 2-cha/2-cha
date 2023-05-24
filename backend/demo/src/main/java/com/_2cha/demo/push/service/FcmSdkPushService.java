@@ -217,7 +217,7 @@ public class FcmSdkPushService implements PushService {
     int success = 0;
     int failure = 0;
     try {
-      fcm.send(message);
+      executor.run(message);
       success += 1;
     } catch (FirebaseMessagingException e) {
       if (needsRemoval(e)) {
