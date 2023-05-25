@@ -1,18 +1,25 @@
 package com._2cha.demo.place.controller;
 
 import com._2cha.demo.global.annotation.Auth;
+import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.place.dto.FilterBy;
-import com._2cha.demo.place.dto.NearbyPlaceRequest;
+import com._2cha.demo.place.dto.NearbyPlaceSearchParams;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
+import com._2cha.demo.place.dto.PlaceCreatedResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
+import com._2cha.demo.place.dto.PlaceEnrollRequest;
+import com._2cha.demo.place.dto.PlaceSearchResponse;
 import com._2cha.demo.place.dto.SortBy;
 import com._2cha.demo.place.service.PlaceService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,12 +29,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class PlaceController {
 
   private final PlaceService placeService;
-  private final ObjectMapper objectMapper;
-  private static final String DEFAULT_PAGE_SIZE = "10";
+  private final ImageUploadService imageUploadService;
 
   @GetMapping("/places/{placeId}")
   public PlaceDetailResponse getPlaceDetailById(@PathVariable Long placeId) {
     return placeService.getPlaceDetailById(placeId);
+  }
+
+  @GetMapping("/places")
+  public List<PlaceSearchResponse> searchPlaceByName(@RequestParam String query,
+                                                     Pageable pageParam) {
+    return placeService.fuzzySearch(query, pageParam);
   }
 
   @GetMapping("/places/nearby")
@@ -35,24 +47,26 @@ public class PlaceController {
       @RequestParam(name = "filter_by", required = false, defaultValue = "default") FilterBy filterBy,
       @RequestParam(name = "filter_values", required = false) List<String> filterValues,
       @RequestParam(name = "sort_by", required = false, defaultValue = "distance") SortBy sortBy,
-      @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize,
-      @RequestParam(name = "min_dist") Double minDist,
       @RequestParam(name = "max_dist") Double maxDist,
       @RequestParam(name = "lat") Double lat,
       @RequestParam(name = "lon") Double lon,
-      @RequestParam Map<String, Object> params) {
+      Pageable pageParam) {
+    NearbyPlaceSearchParams searchParams = new NearbyPlaceSearchParams(lat, lon, maxDist, filterBy,
+                                                                       filterValues, sortBy,
+                                                                       pageParam.getOffset(),
+                                                                       pageParam.getPageSize()
+    );
+    return placeService.searchPlacesWithFilterAndSorting(searchParams);
+  }
 
-    params.put("filter_by", filterBy);
-    params.put("sort_by", sortBy);
-    params.put("page_size", pageSize);
-    params.put("filter_values", filterValues);
-    NearbyPlaceRequest dto = objectMapper.convertValue(params, NearbyPlaceRequest.class);
+  @PostMapping("/places")
+  public PlaceCreatedResponse createPlace(@RequestBody @Valid PlaceEnrollRequest dto) {
+    return placeService.createPlace(dto.getName(), dto.getCategory(), dto.getAddress(),
+                                    dto.getLotAddress(), dto.getLon(), dto.getLat(), dto.getSite());
+  }
 
-    return placeService.searchPlacesWithFilterAndSorting(dto.getLat(), dto.getLon(),
-                                                         dto.getMinDist(), dto.getMaxDist(),
-                                                         dto.getPageSize(),
-                                                         dto.getSortBy(), dto.getFilterBy(),
-                                                         dto.getFilterValues()
-                                                        );
+  @PutMapping("/places/{placeId}")
+  public void updatePlace(@RequestBody @Valid PlaceEnrollRequest dto) {
+    //TODO
   }
 }

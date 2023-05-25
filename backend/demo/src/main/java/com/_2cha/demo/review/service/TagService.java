@@ -1,10 +1,17 @@
 package com._2cha.demo.review.service;
 
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
+
+import com._2cha.demo.review.domain.Category;
 import com._2cha.demo.review.domain.Tag;
 import com._2cha.demo.review.dto.TagWithIdResponse;
+import com._2cha.demo.review.dto.TagWithoutCategoryResponse;
 import com._2cha.demo.review.repository.TagRepository;
-import com._2cha.demo.review.util.HangulUtils;
+import com._2cha.demo.util.HangulUtils;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +41,16 @@ public class TagService {
     List<Tag> tags = tagRepository.findTagsByMsgMatchesRegex(queryRegex);
 
     return tags.stream().map(TagWithIdResponse::new).toList();
+  }
+
+  public Map<Category, List<TagWithoutCategoryResponse>> fuzzySearchCategorizedTagsByHangul(
+      String queryText) {
+    String queryRegex = this.makeQueryRegex(queryText);
+    List<Tag> tags = tagRepository.findTagsByMsgMatchesRegex(queryRegex);
+
+    return tags.stream().collect(Collectors.groupingBy(Tag::getCategory,
+                                                       mapping(TagWithoutCategoryResponse::new,
+                                                               toList())));
   }
 
 

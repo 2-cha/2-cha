@@ -1,4 +1,4 @@
-package com._2cha.demo.review.util;
+package com._2cha.demo.util;
 
 public class HangulUtils {
 
@@ -9,7 +9,7 @@ public class HangulUtils {
   /*------------------------
    @ (초성 * 21 * 28) + (중성 * 28) + 종성 + 0xAC00(가)
    ------------------------*/
-  
+
   public static boolean isCho(char c) {
     if (초성.contains(String.valueOf(c))) {
       return true;

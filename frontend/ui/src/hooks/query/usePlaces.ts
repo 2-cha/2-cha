@@ -5,17 +5,16 @@ import type { PlaceSearchResult, QueryResponse } from '@/types';
 import { useCurrentLocation } from '@/hooks/useCurrentLocation';
 
 async function fetchPlaces({
-  min_dist,
+  pageParam,
   location,
 }: {
-  min_dist: number;
+  pageParam: number;
   location: Coordinate | null;
 }) {
   const params = {
     ...location,
-    min_dist: min_dist,
-    max_dist: min_dist + 1000,
-    page_size: 10,
+    page_number: pageParam,
+    max_dist: 2000,
   };
   const { data } = await fetchClient.get<QueryResponse<PlaceSearchResult[]>>(
     '/places/nearby',
@@ -31,10 +30,10 @@ export function usePlacesQuery() {
   const { location } = useCurrentLocation();
   const result = useInfiniteQuery({
     queryKey: ['places', 'nearby', location],
-    queryFn: ({ pageParam = 0 }) =>
-      fetchPlaces({ min_dist: pageParam, location }),
+    queryFn: ({ pageParam = 0 }) => fetchPlaces({ pageParam, location }),
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.length ? pages.length : undefined,
     enabled: !!location,
-    getNextPageParam: (lastPage) => lastPage.at(-1)?.distance,
     retry: false,
   });
   return result;

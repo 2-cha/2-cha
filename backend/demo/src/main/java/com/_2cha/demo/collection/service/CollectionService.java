@@ -16,6 +16,7 @@ import com._2cha.demo.collection.exception.NoSuchCollectionException;
 import com._2cha.demo.collection.repository.CollectionQueryRepository;
 import com._2cha.demo.collection.repository.CollectionRepository;
 import com._2cha.demo.collection.repository.ReviewInCollectionRepository;
+import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.review.domain.Review;
@@ -35,6 +36,7 @@ public class CollectionService {
   private final CollectionRepository collectionRepository;
   private final ReviewInCollectionRepository revInCollRepository;
   private final CollectionQueryRepository collectionQueryRepository;
+  private final FileStorageService fileStorageService;
   private final MemberService memberService;
   private final ReviewService reviewService;
 
@@ -43,7 +45,8 @@ public class CollectionService {
    ----------*/
   @Transactional(readOnly = true)
   public List<CollectionViewResponse> getMemberCollections(Long memberId, boolean exposedOnly) {
-    return collectionQueryRepository.getMemberCollections(memberId, exposedOnly);
+    return collectionQueryRepository.getMemberCollections(memberId, exposedOnly,
+                                                          fileStorageService.getBaseUrl());
   }
 
   @Transactional(readOnly = true)
@@ -56,7 +59,7 @@ public class CollectionService {
                                      .map(revInColl -> revInColl.getReview().getId())
                                      .toList();
     List<ReviewResponse> reviews = reviewService.getReviewsByIdInPreservingOrder(reviewIds);
-    return new CollectionReviewsResponse(collection, reviews);
+    return new CollectionReviewsResponse(collection, reviews, fileStorageService.getBaseUrl());
   }
 
 
@@ -64,7 +67,7 @@ public class CollectionService {
    @ Commands
    ----------*/
   public CollectionCreatedResponse createCollection(Long memberId, String title,
-                                                    String description, String thumbnail,
+                                                    String description, String thumbnailUrl,
                                                     List<Long> reviewIds) {
     Member member = memberService.findById(memberId);
     List<Review> reviews = reviewService.findReviewsByIdInPreservingOrder(reviewIds);
@@ -73,7 +76,11 @@ public class CollectionService {
       if (!Objects.equals(review.getMember().getId(), memberId)) throw new CannotCreateException();
     }
 
-    Collection collection = Collection.createCollection(member, title, description, thumbnail,
+    Collection collection = Collection.createCollection(member,
+                                                        title,
+                                                        description,
+                                                        fileStorageService.extractPath(
+                                                            thumbnailUrl),
                                                         reviews);
     collectionRepository.save(collection);
 
@@ -92,7 +99,7 @@ public class CollectionService {
   }
 
   public CollectionUpdatedResponse updateCollection(Long memberId, Long collId, String title,
-                                                    String description, String thumbnail,
+                                                    String description, String thumbnailUrl,
                                                     Boolean exposure) {
     Collection collection = collectionRepository.findCollectionById(collId);
     if (collection == null) throw new NoSuchCollectionException();
@@ -103,10 +110,12 @@ public class CollectionService {
     // for PATCH method
     if (title != null) collection.updateTitle(title);
     if (description != null) collection.updateDescription(description);
-    if (thumbnail != null) collection.updateThumbnail(thumbnail);
+    if (thumbnailUrl != null) {
+      collection.updateThumbnailUrlPath(fileStorageService.extractPath(thumbnailUrl));
+    }
     if (exposure != null) collection.toggleExposure(exposure);
 
-    return new CollectionUpdatedResponse(collection);
+    return new CollectionUpdatedResponse(collection, fileStorageService.getBaseUrl());
   }
 
   public CollectionReviewsUpdatedResponse updateReviews(Long memberId, Long collId,

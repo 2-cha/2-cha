@@ -6,8 +6,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+  data:
+    redis:
+      host: localhost
+      port: 6379
 cors.origins:
   - /**
 jwt.access-key: test
 jwt.refresh-key: test
 jwt.issuer: http://2cha.test
+storage:
+  s3:
+    bucket-name: test
+    bucket-base-url: https://test.amazonaws.com/

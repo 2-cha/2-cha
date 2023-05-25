@@ -31,6 +31,7 @@
   top: var.$header-height;
   width: 100%;
   height: var.$header-height;
+  background-color: var(--background-color);
 
   @include mixins.flex(row, space-around, flex-start);
   @include mixins.margin(top, var.$size-lg * 2);

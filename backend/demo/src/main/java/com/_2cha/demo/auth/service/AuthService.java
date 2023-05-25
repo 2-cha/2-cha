@@ -138,7 +138,8 @@ public class AuthService {
       memberInfo = memberService.signUpWithOIDC(provider,
                                                 oidcProfile.getId(),
                                                 oidcProfile.getName(),
-                                                oidcProfile.getEmail());
+                                                oidcProfile.getEmail(),
+                                                oidcProfile.getImageUrl());
     }
 
     return issueAccessTokenAndRefreshToken(info2AccessTokenPayload(memberInfo));

@@ -1,0 +1,49 @@
+@use 'mixins';
+
+.root {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+
+  .image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+
+    @include mixins.flex;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &__remove {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      // TODO: change to svg
+      background-color: var(--background-color);
+      color: var(--text-color);
+      cursor: pointer;
+
+      @include mixins.flex;
+      @include mixins.margin(all, sm);
+    }
+  }
+
+  .imageInput {
+    width: 100%;
+    aspect-ratio: 1;
+
+    .addButton {
+      width: 100%;
+      height: 100%;
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+  }
+}

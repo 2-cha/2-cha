@@ -5,6 +5,7 @@ import static com.querydsl.core.types.Projections.constructor;
 
 import com._2cha.demo.place.domain.Place;
 import com._2cha.demo.place.dto.FilterBy;
+import com._2cha.demo.place.dto.NearbyPlaceSearchParams;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.locationtech.jts.geom.Point;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
 
 
@@ -55,21 +57,21 @@ public class PlaceQueryRepository {
   }
 
 
-  public List<Object[]> findAround(Double latitude, Double longitude,
-                                   Double minDist, Double maxDist,
-                                   Integer pageSize,
-                                   SortBy sortBy, FilterBy filterBy,
-                                   List<?> filterValues) {
+  /**
+   * Note: return empty list if filter is applied but filterValues is empty
+   */
+  public List<Pair<Place, Double>> findAround(NearbyPlaceSearchParams params) {
 
-    Point location = GeomUtils.createPoint(latitude, longitude);
+    Point location = GeomUtils.createPoint(params.getLat(), params.getLon());
     FilterSortContext context = new FilterSortContext(queryFactory,
-                                                      filterStrategyMap.get(filterBy),
-                                                      sortStrategyMap.get(sortBy));
+                                                      filterStrategyMap.get(params.getFilterBy()),
+                                                      sortStrategyMap.get(params.getSortBy()));
 
-    List<Object[]> results = new ArrayList<>();
-    List<Tuple> tuples = context.execute(location, minDist, maxDist, pageSize, filterValues);
+    List<Pair<Place, Double>> results = new ArrayList<>();
+    List<Tuple> tuples = context.execute(location, params.getMaxDist(), params.getOffset(),
+                                         params.getPageSize(), params.getFilterValues());
     tuples.forEach(tuple -> {
-      results.add(new Object[]{tuple.get(0, Place.class), tuple.get(1, Double.class)});
+      results.add(Pair.of(tuple.get(0, Place.class), tuple.get(1, Double.class)));
     });
     return results;
   }
@@ -79,13 +81,13 @@ public class PlaceQueryRepository {
    * @param id
    * @return PlaceBriefResponse, without tagSummary
    */
-  public PlaceBriefResponse getPlaceBriefById(Long id) {
+  public PlaceBriefResponse getPlaceBriefById(Long id, String imgBaseUrl) {
     return queryFactory.select(constructor(PlaceBriefResponse.class,
                                            place.id,
                                            place.name,
                                            place.category,
                                            place.address,
-                                           place.thumbnail
+                                           place.imageUrlPath.prepend(imgBaseUrl)
                                           ))
                        .from(place)
                        .where(place.id.eq(id))
@@ -96,13 +98,13 @@ public class PlaceQueryRepository {
    * @param ids
    * @return PlaceBriefResponse, without tagSummary
    */
-  public List<PlaceBriefResponse> getPlacesBriefsByIdIn(List<Long> ids) {
+  public List<PlaceBriefResponse> getPlacesBriefsByIdIn(List<Long> ids, String imgBaseUrl) {
     return queryFactory.select(constructor(PlaceBriefResponse.class,
                                            place.id,
                                            place.name,
                                            place.category,
                                            place.address,
-                                           place.thumbnail
+                                           place.imageUrlPath.prepend(imgBaseUrl)
                                           ))
                        .from(place)
                        .where(place.id.in(ids))
@@ -113,7 +115,8 @@ public class PlaceQueryRepository {
    * @param id
    * @return PlaceBriefWithDistanceResponse, without tagSummary
    */
-  public PlaceBriefWithDistanceResponse getPlaceBriefWithDistance(Long id, Point location) {
+  public PlaceBriefWithDistanceResponse getPlaceBriefWithDistance(Long id, Point location,
+                                                                  String imgBaseUrl) {
     NumberTemplate<Double> distance = Expressions.numberTemplate(Double.class,
                                                                  "function('ST_DistanceSphere', {0}, {1})",
                                                                  place.location,
@@ -123,7 +126,7 @@ public class PlaceQueryRepository {
                                            place.name,
                                            place.category,
                                            place.address,
-                                           place.thumbnail,
+                                           place.imageUrlPath.prepend(imgBaseUrl),
                                            distance.as("distance")
                                           ))
                        .from(place)
@@ -135,14 +138,14 @@ public class PlaceQueryRepository {
    * @param id
    * @return PlaceDetailResponse, without tags
    */
-  public PlaceDetailResponse getPlaceDetailById(Long id) {
+  public PlaceDetailResponse getPlaceDetailById(Long id, String imgBaseUrl) {
     return queryFactory.select(constructor(PlaceDetailResponse.class,
                                            place.id,
                                            place.name,
                                            place.category,
                                            place.address,
                                            place.lotAddress,
-                                           place.thumbnail,
+                                           place.imageUrlPath.prepend(imgBaseUrl),
                                            place.site,
                                            place.location
                                           ))

@@ -12,11 +12,12 @@ public class CollectionUpdatedResponse {
   private String thumbnail;
   private boolean exposure;
 
-  public CollectionUpdatedResponse(Collection collection) {
+  public CollectionUpdatedResponse(Collection collection, String baseUrl) {
     this.id = collection.getId();
     this.title = collection.getTitle();
     this.description = collection.getDescription();
-    this.thumbnail = collection.getThumbnail();
+    String path = collection.getThumbnailUrlPath();
+    this.thumbnail = path != null ? baseUrl + path : null;
     this.exposure = collection.isExposed();
   }
 }

@@ -32,11 +32,12 @@ public class MemberQueryRepository {
     this.queryFactory = new JPAQueryFactory(this.em);
   }
 
-  public MemberProfileResponse getMemberProfileById(Long id) {
+
+  public MemberProfileResponse getMemberProfileById(Long id, String profBaseUrl) {
     return queryFactory.select(constructor(MemberProfileResponse.class,
                                            member.id,
                                            member.name,
-                                           member.profImg,
+                                           member.profImgThumbPath.prepend(profBaseUrl),
                                            member.profMsg
                                           ))
                        .from(member)
@@ -44,11 +45,11 @@ public class MemberQueryRepository {
                        .fetchOne();
   }
 
-  public List<MemberProfileResponse> getMemberProfileByIdIn(List<Long> ids) {
+  public List<MemberProfileResponse> getMemberProfileByIdIn(List<Long> ids, String profBaseUrl) {
     return queryFactory.select(constructor(MemberProfileResponse.class,
                                            member.id,
                                            member.name,
-                                           member.profImg,
+                                           member.profImgThumbPath.prepend(profBaseUrl),
                                            member.profMsg
                                           ))
                        .from(member)
@@ -56,11 +57,12 @@ public class MemberQueryRepository {
                        .fetch();
   }
 
-  public MemberInfoResponse getMemberInfoById(Long id) {
+
+  public MemberInfoResponse getMemberInfoById(Long id, String profBaseUrl) {
     return queryFactory.select(constructor(MemberInfoResponse.class,
                                            member.id,
                                            member.email,
-                                           member.name,
+                                           member.profImgThumbPath.prepend(profBaseUrl),
                                            member.role
                                           ))
                        .from(member)
@@ -68,11 +70,13 @@ public class MemberQueryRepository {
                        .fetchOne();
   }
 
-  public MemberInfoResponse getMemberInfoByOidcId(OIDCProvider provider, String id) {
+
+  public MemberInfoResponse getMemberInfoByOidcId(OIDCProvider provider, String id,
+                                                  String profBaseUrl) {
     return queryFactory.select(constructor(MemberInfoResponse.class,
                                            member.id,
                                            member.email,
-                                           member.name,
+                                           member.profImgThumbPath.prepend(profBaseUrl),
                                            member.role
                                           ))
                        .from(member)
@@ -80,6 +84,7 @@ public class MemberQueryRepository {
                               member.oidcId.eq(id))
                        .fetchOne();
   }
+
 
   public MemberCredResponse getMemberCredByEmail(String email) {
     return queryFactory.select(constructor(MemberCredResponse.class,
@@ -94,11 +99,11 @@ public class MemberQueryRepository {
                        .fetchOne();
   }
 
-  public List<MemberProfileResponse> getFollowersProfiles(Long memberId) {
+  public List<MemberProfileResponse> getFollowersProfiles(Long memberId, String profBaseUrl) {
     return queryFactory.selectDistinct(constructor(MemberProfileResponse.class,
                                                    member.id,
                                                    member.name,
-                                                   member.profImg,
+                                                   member.profImgThumbPath.prepend(profBaseUrl),
                                                    member.profMsg
                                                   ))
                        .from(relationship)
@@ -107,11 +112,11 @@ public class MemberQueryRepository {
                        .fetch();
   }
 
-  public List<MemberProfileResponse> getFollowingsProfiles(Long memberId) {
+  public List<MemberProfileResponse> getFollowingsProfiles(Long memberId, String profBaseUrl) {
     return queryFactory.selectDistinct(constructor(MemberProfileResponse.class,
                                                    member.id,
                                                    member.name,
-                                                   member.profImg,
+                                                   member.profImgThumbPath.prepend(profBaseUrl),
                                                    member.profMsg
                                                   ))
                        .from(relationship)

@@ -14,7 +14,7 @@ public class PlaceDetailResponse {
   private Category category;
   private String address;
   private String lotAddress;
-  private String thumbnail;
+  private String image;
   private String site;
   private Double lat;
   private Double lon;
@@ -22,13 +22,13 @@ public class PlaceDetailResponse {
 
   public PlaceDetailResponse(Long id, String name, Category category, String address,
                              String lotAddress,
-                             String thumbnail, String site, Point location) {
+                             String imageUrl, String site, Point location) {
     this.id = id;
     this.name = name;
     this.category = category;
     this.lotAddress = lotAddress;
     this.address = address;
-    this.thumbnail = thumbnail;
+    this.image = imageUrl;
     this.site = site;
     this.lat = location.getY();
     this.lon = location.getX();

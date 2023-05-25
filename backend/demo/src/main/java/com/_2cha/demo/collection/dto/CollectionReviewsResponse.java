@@ -14,11 +14,13 @@ public class CollectionReviewsResponse {
   private String thumbnail;
   private List<ReviewResponse> reviews;
 
-  public CollectionReviewsResponse(Collection collection, List<ReviewResponse> reviews) {
+  public CollectionReviewsResponse(Collection collection, List<ReviewResponse> reviews,
+                                   String baseUrl) {
     this.id = collection.getId();
     this.title = collection.getTitle();
     this.description = collection.getDescription();
-    this.thumbnail = collection.getThumbnail();
+    String path = collection.getThumbnailUrlPath();
+    this.thumbnail = path != null ? baseUrl + path : null;
     this.reviews = reviews;
   }
 }
