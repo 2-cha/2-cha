@@ -43,4 +43,8 @@ public class Tag {
 
     return tag;
   }
+
+  public static Tag createTag(TagCreationRequest tagReq) {
+    return createTag(tagReq.getAcceptedMessage(), tagReq.getAcceptedEmoji(), tagReq.getCategory());
+  }
 }
