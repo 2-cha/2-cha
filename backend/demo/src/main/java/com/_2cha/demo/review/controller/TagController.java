@@ -2,6 +2,7 @@ package com._2cha.demo.review.controller;
 
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
+import com._2cha.demo.member.domain.Role;
 import com._2cha.demo.review.domain.Category;
 import com._2cha.demo.review.dto.MakeTagReqRequest;
 import com._2cha.demo.review.dto.MakeTagReqResponse;
@@ -54,26 +55,31 @@ public class TagController {
     return tagService.makeTagCreationRequest(memberId, dto.getEmoji(), dto.getMessage());
   }
 
+  @Auth(Role.ADMIN)
   @GetMapping("/tags/requests")
   public List<TagCreationReqBriefResponse> getAllTagCreationRequests(Pageable pageParam) {
     return tagService.getAllTagCreationRequests(pageParam);
   }
 
+  @Auth(Role.ADMIN)
   @GetMapping("/tags/requests/{tagReqId}")
   public TagCreationReqDetailResponse getTagCreationRequest(@PathVariable Long tagReqId) {
     return tagService.getTagCreationRequest(tagReqId);
   }
 
+  @Auth(Role.ADMIN)
   @PostMapping("/tags/requests/{tagReqId}/accept")
   public TagReqAcceptedResponse acceptTagCreationRequest(@PathVariable Long tagReqId) {
     return tagService.acceptTagCreationRequest(tagReqId);
   }
 
+  @Auth(Role.ADMIN)
   @DeleteMapping("/tags/requests/{tagReqId}")
   public void rejectTagCreationRequest(@PathVariable Long tagReqId) {
     tagService.rejectTagCreationRequest(tagReqId);
   }
 
+  @Auth(Role.ADMIN)
   @PutMapping("/tags/requests/{tagReqId}")
   public TagReqUpdatedResponse updateTagCreationRequest(@PathVariable Long tagReqId,
                                                         @RequestBody @Valid TagReqUpdateRequest dto) {
