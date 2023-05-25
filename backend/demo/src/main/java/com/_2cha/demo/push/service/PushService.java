@@ -1,9 +1,14 @@
 package com._2cha.demo.push.service;
 
+import com._2cha.demo.global.event.PushEvent;
+import com._2cha.demo.global.event.PushToMembersEvent;
 import com._2cha.demo.push.dto.Payload;
 import com._2cha.demo.push.dto.PayloadWithoutTarget;
 import com._2cha.demo.push.dto.PushResponse;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+//TODO: separate transaction and api call
 
 public interface PushService {
 
@@ -20,4 +25,20 @@ public interface PushService {
   PushResponse send(Payload payload);
 
   PushResponse sendToMembers(List<Long> memberIds, PayloadWithoutTarget payload);
+
+  CompletableFuture<PushResponse> subscribeToTopicAsync(Long memberId, String topic);
+
+  CompletableFuture<PushResponse> unsubscribeFromTopicAsync(Long memberId, String topic);
+
+  CompletableFuture<PushResponse> handlePushEvent(PushEvent event);
+
+  CompletableFuture<PushResponse> handlePushToMemberEvent(PushToMembersEvent event);
+
+  CompletableFuture<PushResponse> sendAsync(Payload payload);
+
+  CompletableFuture<PushResponse> sendToMembersAsync(List<Long> memberIds,
+                                                     PayloadWithoutTarget payload);
+
+  CompletableFuture<PushResponse> sendToMembersAsync(List<Long> memberIds,
+                                                     String title, String body, Object data);
 }

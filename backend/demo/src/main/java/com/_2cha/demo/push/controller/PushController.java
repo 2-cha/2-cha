@@ -2,7 +2,6 @@ package com._2cha.demo.push.controller;
 
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
-import com._2cha.demo.member.domain.Role;
 import com._2cha.demo.push.dto.Payload;
 import com._2cha.demo.push.dto.PushRegistrationRequest;
 import com._2cha.demo.push.dto.PushResponse;
@@ -26,13 +25,13 @@ public class PushController {
 
   private final PushService pushService;
 
-  @Auth(Role.ADMIN)
+  //  @Auth(Role.ADMIN)
   @PostMapping("/send")
   public PushResponse send(@RequestBody @Valid Payload payload) {
     return this.pushService.send(payload);
   }
 
-  @Auth(Role.ADMIN)
+  //  @Auth(Role.ADMIN)
   @PostMapping("/sendto")
   public PushResponse sendToMembers(@RequestBody @Valid SendToMembersRequest dto) {
     return this.pushService.sendToMembers(dto.getMemberIds(), dto.getPayload());

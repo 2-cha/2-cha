@@ -46,4 +46,12 @@ public class Payload {
     if (condition != null) return condition;
     return null;
   }
+
+  public static Payload withTopic(String topic, String title, String body, String data) {
+    return new Payload(null, topic, null, title, body, data);
+  }
+
+  public static Payload withCondition(String condition, String title, String body, String data) {
+    return new Payload(null, null, condition, title, body, data);
+  }
 }

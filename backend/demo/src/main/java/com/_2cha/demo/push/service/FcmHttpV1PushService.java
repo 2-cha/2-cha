@@ -1,5 +1,7 @@
 package com._2cha.demo.push.service;
 
+import com._2cha.demo.global.event.PushEvent;
+import com._2cha.demo.global.event.PushToMembersEvent;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
@@ -13,6 +15,7 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -91,6 +94,43 @@ public class FcmHttpV1PushService implements PushService {
   @Override
   public PushResponse sendToMembers(List<Long> memberIds, PayloadWithoutTarget payload) {
 
+    return null;
+  }
+
+  @Override
+  public CompletableFuture<PushResponse> subscribeToTopicAsync(Long memberId, String topic) {
+    return null;
+  }
+
+  @Override
+  public CompletableFuture<PushResponse> sendToMembersAsync(List<Long> memberIds, String title,
+                                                            String body, Object data) {
+    return null;
+  }
+
+  @Override
+  public CompletableFuture<PushResponse> unsubscribeFromTopicAsync(Long memberId, String topic) {
+    return null;
+  }
+
+  @Override
+  public CompletableFuture<PushResponse> handlePushEvent(PushEvent event) {
+    return null;
+  }
+
+  @Override
+  public CompletableFuture<PushResponse> handlePushToMemberEvent(PushToMembersEvent event) {
+    return null;
+  }
+
+  @Override
+  public CompletableFuture<PushResponse> sendAsync(Payload payload) {
+    return null;
+  }
+
+  @Override
+  public CompletableFuture<PushResponse> sendToMembersAsync(List<Long> memberIds,
+                                                            PayloadWithoutTarget payload) {
     return null;
   }
 

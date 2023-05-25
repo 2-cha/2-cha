@@ -1,8 +1,12 @@
 package com._2cha.demo.push.service;
 
+import static java.util.concurrent.CompletableFuture.completedFuture;
+
+import com._2cha.demo.global.event.PushEvent;
+import com._2cha.demo.global.event.PushToMembersEvent;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.exception.NoSuchMemberException;
-import com._2cha.demo.member.service.MemberService;
+import com._2cha.demo.member.repository.MemberRepository;
 import com._2cha.demo.push.domain.PushSubject;
 import com._2cha.demo.push.dto.Payload;
 import com._2cha.demo.push.dto.PayloadWithoutTarget;
@@ -28,9 +32,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
  * Firebase Admin SDK ver
@@ -42,16 +50,16 @@ public class FcmSdkPushService implements PushService {
 
   private final ServiceAccountCredentials cred;
   private final PushSubjectRepository pushSubjectRepository;
-  private final MemberService memberService;
+  private final MemberRepository memberRepository;
 
   private final FirebaseMessaging fcm;
 
   public FcmSdkPushService(ServiceAccountCredentials cred,
                            PushSubjectRepository pushSubjectRepository,
-                           MemberService memberService) {
+                           MemberRepository memberRepository) {
     this.cred = cred;
     this.pushSubjectRepository = pushSubjectRepository;
-    this.memberService = memberService;
+    this.memberRepository = memberRepository;
 
     FirebaseOptions options = FirebaseOptions.builder()
                                              .setCredentials(this.cred)
@@ -65,7 +73,7 @@ public class FcmSdkPushService implements PushService {
    ----------*/
   @Override
   public void register(Long memberId, String sub) {
-    Member member = this.memberService.findById(memberId);
+    Member member = this.memberRepository.findById(memberId);
     if (member == null) throw new NoSuchMemberException();
     if (!validateFcmToken(sub)) throw new InvalidSubjectException();
 
@@ -108,6 +116,12 @@ public class FcmSdkPushService implements PushService {
   }
 
   @Override
+  @Async("pushTaskExecutor")
+  public CompletableFuture<PushResponse> subscribeToTopicAsync(Long memberId, String topic) {
+    return completedFuture(subscribeToTopic(memberId, topic));
+  }
+
+  @Override
   public PushResponse unsubscribeFromTopic(Long memberId, String topic) {
     List<PushSubject> pushSubjects = pushSubjectRepository.findAllByMemberId(memberId);
     if (pushSubjects.isEmpty()) throw new NoRegisteredSubjectException();
@@ -123,6 +137,12 @@ public class FcmSdkPushService implements PushService {
                             result.getFailures());
   }
 
+  @Override
+  @Async("pushTaskExecutor")
+  public CompletableFuture<PushResponse> unsubscribeFromTopicAsync(Long memberId, String topic) {
+    return completedFuture(unsubscribeFromTopic(memberId, topic));
+  }
+
   /*-----------
    @ Queries
    ----------*/
@@ -133,6 +153,19 @@ public class FcmSdkPushService implements PushService {
                             result.getSuccessCount(),
                             result.getFailureCount(),
                             result.getFailures());
+  }
+
+  @Override
+  @Async("pushTaskExecutor")
+  public CompletableFuture<PushResponse> sendAsync(Payload payload) {
+    return completedFuture(send(payload));
+  }
+
+  @Override
+  @Async("pushTaskExecutor")
+  @TransactionalEventListener(value = PushEvent.class, phase = TransactionPhase.AFTER_COMMIT)
+  public CompletableFuture<PushResponse> handlePushEvent(PushEvent event) {
+    return completedFuture(send(event.getPayload()));
   }
 
 
@@ -150,6 +183,28 @@ public class FcmSdkPushService implements PushService {
                             result.getSuccessCount(),
                             result.getFailureCount(),
                             result.getFailures());
+  }
+
+  @Override
+  @Async("pushTaskExecutor")
+  public CompletableFuture<PushResponse> sendToMembersAsync(List<Long> memberIds,
+                                                            PayloadWithoutTarget payload) {
+    return completedFuture(sendToMembers(memberIds, payload));
+  }
+
+  @Override
+  @Async("pushTaskExecutor")
+  public CompletableFuture<PushResponse> sendToMembersAsync(List<Long> memberIds,
+                                                            String title, String body,
+                                                            Object data) {
+    return completedFuture(sendToMembers(memberIds, new PayloadWithoutTarget(title, body, data)));
+  }
+
+  @Override
+  @Async("pushTaskExecutor")
+  @TransactionalEventListener(value = PushToMembersEvent.class, phase = TransactionPhase.AFTER_COMMIT)
+  public CompletableFuture<PushResponse> handlePushToMemberEvent(PushToMembersEvent event) {
+    return completedFuture(sendToMembers(event.getReceivers(), event.getPayload()));
   }
 
 
