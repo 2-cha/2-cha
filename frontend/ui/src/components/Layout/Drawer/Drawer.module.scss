@@ -1,0 +1,56 @@
+@use 'mixins';
+@use 'var';
+
+.modal {
+  width: 100%;
+  height: 100%;
+  margin-top: 80px;
+  z-index: 900;
+  background-color: var(--background-color);
+  opacity: 0;
+  // TODO: animation
+
+  &--afterOpen {
+    opacity: 1;
+  }
+
+  &--beforeClose {
+  }
+
+  &__content {
+    width: 100%;
+    padding: var.$size-md var.$size-lg;
+
+    @include mixins.media('>small') {
+      max-width: map-get(mixins.$breakpoints, small);
+      margin: 0 auto;
+    }
+  }
+
+  &__header {
+    padding-bottom: var.$size-md;
+  }
+
+  &__closeButton {
+    padding: 6px;
+    background-color: var(--background-color);
+  }
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 800;
+    background-color: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+
+    @include mixins.flex;
+
+    &--afterOpen {
+      opacity: 1;
+    }
+
+    &--beforClose {
+      opacity: 1;
+    }
+  }
+}
