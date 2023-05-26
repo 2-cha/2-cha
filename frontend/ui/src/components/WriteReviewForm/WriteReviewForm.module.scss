@@ -39,6 +39,7 @@
 .label {
   width: 100%;
   gap: 16px;
+  background-color: var(--background-color);
 
   @include mixins.flex(row, flex-start, center);
   @include mixins.padding(y, md);

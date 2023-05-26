@@ -1,7 +1,9 @@
-import * as React from 'react';
-import { usePlaceQuery } from '@/hooks/query/usePlace';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useModal } from '@/hooks/useModal';
+import { usePlaceQuery } from '@/hooks/query/usePlace';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import SearchPlaceModal from './SearchPlaceModal';
 import ImagePicker from '@/components/WriteReviewForm/ImagePicker';
 import TagPicker from '@/components/WriteReviewForm/TagPicker';
 import PlaceIcon from '@/components/Icons/PlaceIcon';
@@ -19,11 +21,15 @@ export interface ReviewFormData {
 
 export default function WriteReviewForm() {
   const router = useRouter();
-  const { placeId } = router.query;
+  const { placeId: initialPlaceId } = router.query;
+
+  const [placeId, setPlaceId] = useState<string>(
+    (initialPlaceId as string) || ''
+  );
+  const { isOpen, onOpen, onClose } = useModal({ id: 'placePicker' });
 
   const method = useForm<ReviewFormData>();
   const {
-    register,
     handleSubmit,
     formState: { errors },
   } = method;
@@ -48,15 +54,19 @@ export default function WriteReviewForm() {
     <FormProvider {...method}>
       <div className={s.root}>
         <form onSubmit={onSubmit} id="write" className={s.form}>
-          <div className={s.label}>
-            <PlaceIcon />
-            <PlaceLabel placeId={placeId} />
+          <div className={s.full}>
+            <button className={s.label} onClick={onOpen}>
+              {/* TODO: add styles when hover, active */}
+              <PlaceIcon />
+              <PlaceLabel placeId={placeId} />
+            </button>
+            <PlaceInput name="placeId" placeId={placeId} />
+            <SearchPlaceModal
+              isOpen={isOpen}
+              onClose={onClose}
+              onSelect={setPlaceId}
+            />
           </div>
-          <input
-            {...register('placeId', { required: true })}
-            value={placeId ?? ''}
-            hidden
-          />
 
           <div className={s.full}>
             <div className={s.label}>
@@ -89,21 +99,35 @@ export default function WriteReviewForm() {
   );
 }
 
-function PlaceLabel({ placeId }: { placeId?: string | string[] }) {
+function PlaceLabel({ placeId }: { placeId: string }) {
   const { data, isLoading, isError } = usePlaceQuery(placeId);
 
   return (
-    <>
-      {isError || !placeId ? (
+    <div>
+      {isError || placeId === '' ? (
         <span>가게를 찾을 수 없어요</span>
       ) : isLoading ? (
         <span>...</span>
       ) : (
-        <div>
+        <>
           <p className={s.label__head}>{data.name}</p>
           <p className={s.label__body}>{data.address}</p>
-        </div>
+        </>
       )}
-    </>
+    </div>
+  );
+}
+
+function PlaceInput({
+  name,
+  placeId,
+}: {
+  name: keyof ReviewFormData;
+  placeId: string;
+}) {
+  const { register } = useFormContext<ReviewFormData>();
+
+  return (
+    <input {...register(name, { required: true })} value={placeId} hidden />
   );
 }
