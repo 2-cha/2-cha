@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 //TODO: separate transaction and api call
-
+// - manage tokens
 public interface PushService {
 
   void register(Long memberId, String sub);
@@ -18,17 +18,26 @@ public interface PushService {
 
   void unregisterAll(Long memberId);
 
-  PushResponse subscribeToTopic(Long memberId, String topic);
+  PushResponse subscribeToTopic(String sub, String topic);
 
-  PushResponse unsubscribeFromTopic(Long memberId, String topic);
+  PushResponse subscribeToTopicForMember(Long memberId, String topic);
+
+  PushResponse unsubscribeFromTopic(String sub, String topic);
+
+  PushResponse unsubscribeFromTopicForMember(Long memberId, String topic);
+
 
   PushResponse send(Payload payload);
 
   PushResponse sendToMembers(List<Long> memberIds, PayloadWithoutTarget payload);
 
-  CompletableFuture<PushResponse> subscribeToTopicAsync(Long memberId, String topic);
+  CompletableFuture<PushResponse> subscribeToTopicAsync(String sub, String topic);
 
-  CompletableFuture<PushResponse> unsubscribeFromTopicAsync(Long memberId, String topic);
+  CompletableFuture<PushResponse> subscribeToTopicForMemberAsync(Long memberId, String topic);
+
+  CompletableFuture<PushResponse> unsubscribeFromTopicAsync(String sub, String topic);
+
+  CompletableFuture<PushResponse> unsubscribeFromTopicForMemberAsync(Long memberId, String topic);
 
   CompletableFuture<PushResponse> handlePushEvent(PushEvent event);
 

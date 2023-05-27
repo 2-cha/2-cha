@@ -7,7 +7,6 @@ import com._2cha.demo.push.dto.PushRegistrationRequest;
 import com._2cha.demo.push.dto.PushResponse;
 import com._2cha.demo.push.dto.SendToMembersRequest;
 import com._2cha.demo.push.service.PushService;
-import com._2cha.demo.push.validator.TopicName;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -53,19 +51,5 @@ public class PushController {
   @DeleteMapping("/push/registration/all")
   public void unregisterAll(@Authed Long memberId) {
     this.pushService.unregisterAll(memberId);
-  }
-
-  @Auth
-  @PostMapping("/push/subscription")
-  public PushResponse subscribeToTopic(@Authed Long memberId,
-                                       @RequestParam @TopicName String topic) {
-    return this.pushService.subscribeToTopic(memberId, topic);
-  }
-
-  @Auth
-  @DeleteMapping("/push/subscription")
-  public PushResponse unsubscribeFromTopic(@Authed Long memberId,
-                                           @RequestParam @TopicName String topic) {
-    return this.pushService.unsubscribeFromTopic(memberId, topic);
   }
 }

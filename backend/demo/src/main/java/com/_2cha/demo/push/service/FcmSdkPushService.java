@@ -99,8 +99,37 @@ public class FcmSdkPushService implements PushService {
     pushSubjectRepository.deleteAllInBatch(pushSubjects);
   }
 
+  /**
+   * make subscription to topic for each registration token.
+   */
   @Override
-  public PushResponse subscribeToTopic(Long memberId, String topic) {
+  public PushResponse subscribeToTopic(String sub, String topic) {
+    PushSubject pushSubject = pushSubjectRepository.findByValue(sub);
+    if (pushSubject == null) throw new NoRegisteredSubjectException();
+
+    List<String> tokens = new ArrayList<>();
+    tokens.add(sub);
+    FcmOpResult result = executeTopicOp(fcm::subscribeToTopic, tokens, topic);
+
+    return new PushResponse(tokens.size(),
+                            result.getSuccessCount(),
+                            result.getFailureCount(),
+                            result.getFailures());
+  }
+
+  @Override
+  @Async("pushTaskExecutor")
+  public CompletableFuture<PushResponse> subscribeToTopicAsync(String sub,
+                                                               String topic) {
+    return completedFuture(subscribeToTopic(sub, topic));
+  }
+
+
+  /**
+   * make subscription to topic for all tokens that are related to member.
+   */
+  @Override
+  public PushResponse subscribeToTopicForMember(Long memberId, String topic) {
     List<PushSubject> pushSubjects = pushSubjectRepository.findAllByMemberId(memberId);
     if (pushSubjects.isEmpty()) throw new NoRegisteredSubjectException();
 
@@ -117,12 +146,39 @@ public class FcmSdkPushService implements PushService {
 
   @Override
   @Async("pushTaskExecutor")
-  public CompletableFuture<PushResponse> subscribeToTopicAsync(Long memberId, String topic) {
-    return completedFuture(subscribeToTopic(memberId, topic));
+  public CompletableFuture<PushResponse> subscribeToTopicForMemberAsync(Long memberId,
+                                                                        String topic) {
+    return completedFuture(subscribeToTopicForMember(memberId, topic));
+  }
+
+  /**
+   * cancel subscription to topic for each registration token.
+   */
+  @Override
+  public PushResponse unsubscribeFromTopic(String sub, String topic) {
+    PushSubject pushSubject = pushSubjectRepository.findByValue(sub);
+    if (pushSubject == null) throw new NoRegisteredSubjectException();
+
+    List<String> tokens = new ArrayList<>();
+    tokens.add(sub);
+    FcmOpResult result = executeTopicOp(fcm::unsubscribeFromTopic, tokens, topic);
+
+    return new PushResponse(tokens.size(),
+                            result.getSuccessCount(),
+                            result.getFailureCount(),
+                            result.getFailures());
   }
 
   @Override
-  public PushResponse unsubscribeFromTopic(Long memberId, String topic) {
+  public CompletableFuture<PushResponse> unsubscribeFromTopicAsync(String sub, String topic) {
+    return completedFuture(unsubscribeFromTopic(sub, topic));
+  }
+
+  /**
+   * cancel subscription to topic for all tokens that are related to member.
+   */
+  @Override
+  public PushResponse unsubscribeFromTopicForMember(Long memberId, String topic) {
     List<PushSubject> pushSubjects = pushSubjectRepository.findAllByMemberId(memberId);
     if (pushSubjects.isEmpty()) throw new NoRegisteredSubjectException();
 
@@ -139,8 +195,9 @@ public class FcmSdkPushService implements PushService {
 
   @Override
   @Async("pushTaskExecutor")
-  public CompletableFuture<PushResponse> unsubscribeFromTopicAsync(Long memberId, String topic) {
-    return completedFuture(unsubscribeFromTopic(memberId, topic));
+  public CompletableFuture<PushResponse> unsubscribeFromTopicForMemberAsync(Long memberId,
+                                                                            String topic) {
+    return completedFuture(unsubscribeFromTopicForMember(memberId, topic));
   }
 
   /*-----------
