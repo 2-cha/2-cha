@@ -56,13 +56,15 @@ export default function SearchPlaceModal({
           </button>
         </form>
         {errors.query && <span>검색어를 입력해주세요</span>}
-        <SearchPlaceResult
-          pages={data?.pages}
-          suggest={suggest}
-          onSelect={onSelect}
-        />
-        <div ref={ref} aria-hidden style={{ height: 1 }} />
-        {isFetching && data?.pages.length && <div>Loading...</div>}
+        <div className={s.result__container}>
+          <SearchPlaceResult
+            pages={data?.pages}
+            suggest={suggest}
+            onSelect={onSelect}
+          />
+          <div ref={ref} aria-hidden style={{ height: 1 }} />
+          {isFetching && data?.pages.length && <div>Loading...</div>}
+        </div>
       </div>
     </Drawer>
   );

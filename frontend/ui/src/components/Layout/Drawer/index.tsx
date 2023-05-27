@@ -17,13 +17,13 @@ export default function Drawer(props: DrawerProps) {
     <Modal
       className={{
         base: s.modal,
-        afterOpen: s['modal--afterOpen'],
-        beforeClose: s['modal--beforeClose'],
+        afterOpen: s.modal__afterOpen,
+        beforeClose: s.modal__beforeClose,
       }}
       overlayClassName={{
         base: s.modal__overlay,
-        afterOpen: s['modal__overlay--afterOpen'],
-        beforeClose: s['modal__overlay--beforeClose'],
+        afterOpen: s.modal__overlay__afterOpen,
+        beforeClose: s.modal__overlay__beforeClose,
       }}
       closeTimeoutMS={300}
       onRequestClose={onClose}
@@ -35,7 +35,7 @@ export default function Drawer(props: DrawerProps) {
             <CloseIcon />
           </button>
         </div>
-        {children}
+        <div className={s.modal__body}>{children}</div>
       </div>
     </Modal>
   );

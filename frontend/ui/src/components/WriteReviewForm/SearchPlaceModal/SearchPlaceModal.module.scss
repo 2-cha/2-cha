@@ -3,7 +3,8 @@
 
 .container {
   width: 100%;
-  margin-top: 20px;
+  height: 100%;
+  min-height: 0;
 
   @include mixins.flex(column, flex-start, flex-start);
 }
@@ -22,18 +23,27 @@
     padding: var.$size-sm var.$size-md;
     margin-right: 16px;
     border: 0;
+    background-color: inherit;
+    color: inherit;
   }
 
   .submit {
     background-color: inherit;
+    color: inherit;
   }
 }
 
 .result {
   width: 100%;
-  margin-top: 20px;
 
   @include mixins.flex(column, flex-start, center);
+
+  &__container {
+    width: 100%;
+    height: calc(100% - 20px);
+    margin-top: 20px;
+    overflow-y: auto;
+  }
 
   &__item {
     width: 100%;

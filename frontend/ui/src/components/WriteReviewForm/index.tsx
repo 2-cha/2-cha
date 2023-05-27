@@ -110,15 +110,15 @@ function PlaceLabel({ placeId }: { placeId: string }) {
   const { data, isLoading, isError } = usePlaceQuery(placeId);
 
   return (
-    <div>
+    <div className={s.group}>
       {isError || placeId === '' ? (
         <span>가게를 찾을 수 없어요</span>
       ) : isLoading ? (
         <span>...</span>
       ) : (
         <>
-          <p className={s.label__head}>{data.name}</p>
-          <p className={s.label__body}>{data.address}</p>
+          <span>{data.name}</span>
+          <span className={s.description}>{data.address}</span>
         </>
       )}
     </div>
