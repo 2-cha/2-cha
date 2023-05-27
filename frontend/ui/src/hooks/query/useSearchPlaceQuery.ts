@@ -30,7 +30,7 @@ export function useSearchPlaceQuery(query: string) {
     queryFn: ({ pageParam = 0 }) => searchPlace({ query, pageParam }),
     getNextPageParam: (lastPage, pages) =>
       lastPage.length ? pages.length : undefined,
-    enabled: !!query,
+    enabled: query !== '',
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
     retry: false,
