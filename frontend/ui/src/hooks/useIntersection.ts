@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRefCallback } from './useRefCallback';
 
 interface IntersectionObserverOptions extends IntersectionObserverInit {
   onChange?: (isIntersecting: boolean) => void;
@@ -13,7 +14,7 @@ export function useIntersection({
   threshold,
 }: IntersectionObserverOptions = {}) {
   const [ref, setRef] = useState<Element | null>(null);
-  const callback = useRef(onChange);
+  const callback = useRefCallback(onChange);
   const [isIntersecting, setIntersecting] = useState(!!initialState);
 
   useEffect(() => {
@@ -24,8 +25,8 @@ export function useIntersection({
         entries.forEach((entry) => {
           if (entry.target === ref) {
             setIntersecting(entry.isIntersecting);
-            if (callback.current) {
-              callback.current(entry.isIntersecting);
+            if (callback) {
+              callback(entry.isIntersecting);
             }
           }
         });

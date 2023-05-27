@@ -1,4 +1,5 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
+import { useRefCallback } from './useRefCallback';
 
 interface ModalProps {
   id?: string;
@@ -27,11 +28,4 @@ export function useModal(props: ModalProps = {}) {
     onOpen,
     onClose,
   };
-}
-
-function useRefCallback(callback: (() => void) | undefined) {
-  const ref = useRef(callback);
-  ref.current = callback;
-
-  return ref.current;
 }
