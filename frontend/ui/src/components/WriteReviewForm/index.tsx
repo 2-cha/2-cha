@@ -62,17 +62,12 @@ export default function WriteReviewForm() {
       <div className={s.root}>
         <form onSubmit={onSubmit} id="write" className={s.form}>
           <div className={s.full}>
-            <button className={s.label} onClick={onOpen}>
+            <button type="button" className={s.label} onClick={onOpen}>
               {/* TODO: add styles when hover, active */}
               <PlaceIcon />
               <PlaceLabel placeId={placeId} />
             </button>
             <PlaceInput name="placeId" placeId={placeId} />
-            <SearchPlaceModal
-              isOpen={isOpen}
-              onClose={onClose}
-              onSelect={setPlaceId}
-            />
           </div>
 
           <div className={s.full}>
@@ -102,6 +97,11 @@ export default function WriteReviewForm() {
           작성
         </button>
       </div>
+      <SearchPlaceModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onSelect={setPlaceId}
+      />
     </FormProvider>
   );
 }
