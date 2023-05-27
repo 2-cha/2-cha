@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useModal } from '@/hooks/useModal';
 import { usePlaceQuery } from '@/hooks/query/usePlace';
@@ -21,11 +21,18 @@ export interface ReviewFormData {
 
 export default function WriteReviewForm() {
   const router = useRouter();
-  const { placeId: initialPlaceId } = router.query;
+  const { placeId: placeIdQuery } = router.query;
+  const initialPlaceId = Array.isArray(placeIdQuery)
+    ? placeIdQuery[0]
+    : placeIdQuery;
 
-  const [placeId, setPlaceId] = useState<string>(
-    (initialPlaceId as string) || ''
-  );
+  const [placeId, setPlaceId] = useState<string>(initialPlaceId || '');
+  useEffect(() => {
+    if (initialPlaceId) {
+      setPlaceId(initialPlaceId);
+    }
+  }, [initialPlaceId]);
+
   const { isOpen, onOpen, onClose } = useModal({ id: 'placePicker' });
 
   const method = useForm<ReviewFormData>();
