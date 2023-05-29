@@ -1,0 +1,48 @@
+@use 'mixins';
+@use 'var';
+
+.topDiv {
+  width: 100%;
+  margin-bottom: 30px;
+  @include mixins.flex(row);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 100px;
+  margin-right: 45px;
+  overflow: hidden;
+}
+
+.image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 100px;
+  background-color: var(--background-inactive-color);
+  @include mixins.flex();
+}
+
+.profileData {
+  @include mixins.flex(column, center, flex-start);
+
+  h1 {
+    font-size: 20px;
+    max-width: 150px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  button {
+    padding: 5px 10px;
+  }
+}
