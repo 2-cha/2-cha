@@ -1,5 +1,6 @@
 package com._2cha.demo.push.service;
 
+import static java.util.Collections.singletonList;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
 import com._2cha.demo.global.event.PushEvent;
@@ -42,6 +43,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Firebase Admin SDK ver
@@ -54,17 +56,20 @@ public class FcmSdkPushService implements PushService {
   private final PushSubjectRepository pushSubjectRepository;
   private final PushTopicSubscriptionRepository topicSubscriptionRepository;
   private final MemberRepository memberRepository;
+  private final TransactionTemplate tx;
 
   private final FirebaseMessaging fcm;
 
   public FcmSdkPushService(ServiceAccountCredentials cred,
                            PushSubjectRepository pushSubjectRepository,
                            PushTopicSubscriptionRepository topicSubscriptionRepository,
-                           MemberRepository memberRepository) {
+                           MemberRepository memberRepository,
+                           TransactionTemplate tx) {
     this.cred = cred;
     this.pushSubjectRepository = pushSubjectRepository;
     this.topicSubscriptionRepository = topicSubscriptionRepository;
     this.memberRepository = memberRepository;
+    this.tx = tx;
 
     FirebaseOptions options = FirebaseOptions.builder()
                                              .setCredentials(this.cred)
@@ -83,20 +88,20 @@ public class FcmSdkPushService implements PushService {
    * If member has subscriptions on some topics, registered token will be attached to them.
    */
   @Override
-  @Transactional
   public void register(Long memberId, String sub) {
-    Member member = this.memberRepository.findById(memberId);
-    if (member == null) throw new NoSuchMemberException();
     if (!validateFcmToken(sub)) throw new InvalidSubjectException();
 
-    // restore topic subscriptions
-    List<String> tokens = new ArrayList<>();
-    tokens.add(sub);
-    List<PushTopicSubscription> subscriptions =
-        topicSubscriptionRepository.findAllByMemberId(memberId);
-    subscriptions.forEach(subscription -> attachTokensToTopic(tokens, subscription.getTopic()));
+    List<PushTopicSubscription> subscriptions = new ArrayList<>();
+    tx.executeWithoutResult(status -> {
+      Member member = this.memberRepository.findById(memberId);
+      if (member == null) throw new NoSuchMemberException();
+      pushSubjectRepository.save(PushSubject.register(member, sub));
+      subscriptions.addAll(topicSubscriptionRepository.findAllByMemberId(memberId));
+    });
 
-    pushSubjectRepository.save(PushSubject.register(member, sub));
+    // restore topic subscriptions
+    subscriptions.forEach(subscription -> attachTokensToTopic(singletonList(sub),
+                                                              subscription.getTopic()));
   }
 
   /**
@@ -105,22 +110,21 @@ public class FcmSdkPushService implements PushService {
    * If member has subscriptions on some topics, unmapped token will be detached from them.
    */
   @Override
-  @Transactional
   public void unregister(Long memberId, String sub) {
-    PushSubject pushSubject = pushSubjectRepository.findByValue(sub);
-    if (pushSubject == null) throw new NoRegisteredSubjectException();
-    if (!Objects.equals(pushSubject.getMember().getId(), memberId)) {
-      throw new CannotUnregisterException();
-    }
+    List<PushTopicSubscription> subscriptions = new ArrayList<>();
+    tx.executeWithoutResult(status -> {
+      PushSubject pushSubject = pushSubjectRepository.findByValue(sub);
+      if (pushSubject == null) throw new NoRegisteredSubjectException();
+      if (!Objects.equals(pushSubject.getMember().getId(), memberId)) {
+        throw new CannotUnregisterException();
+      }
+      subscriptions.addAll(topicSubscriptionRepository.findAllByMemberId(memberId));
+      pushSubjectRepository.delete(pushSubject);
+    });
 
     // detach topic subscriptions
-    List<String> tokens = new ArrayList<>();
-    tokens.add(sub);
-    List<PushTopicSubscription> subscriptions =
-        topicSubscriptionRepository.findAllByMemberId(memberId);
-    subscriptions.forEach(subscription -> detachTokensFromTopic(tokens, subscription.getTopic()));
-
-    pushSubjectRepository.delete(pushSubject);
+    subscriptions.forEach(
+        subscription -> detachTokensFromTopic(singletonList(sub), subscription.getTopic()));
   }
 
   /**
@@ -150,25 +154,26 @@ public class FcmSdkPushService implements PushService {
    * exists.
    */
   @Override
-  @Transactional
   public PushResponse subscribe(Long memberId, String topic) {
-    Member member = memberRepository.findById(memberId);
-    if (member == null) throw new NoSuchMemberException();
+    List<PushSubject> pushSubjects = new ArrayList<>();
+    tx.executeWithoutResult(status -> {
+      Member member = memberRepository.findById(memberId);
+      if (member == null) throw new NoSuchMemberException();
 
-    List<PushSubject> pushSubjects = pushSubjectRepository.findAllByMemberId(memberId);
-    if (pushSubjects.isEmpty()) throw new NoRegisteredSubjectException();
+      pushSubjects.addAll(pushSubjectRepository.findAllByMemberId(memberId));
+      if (pushSubjects.isEmpty()) throw new NoRegisteredSubjectException();
 
-    // save subscription info to restore on registration of new token for member
-    PushTopicSubscription subscription = topicSubscriptionRepository.findByMemberIdAndTopic(
-        memberId, topic);
-    if (subscription == null) {
-      topicSubscriptionRepository.save(PushTopicSubscription.makeSubscription(member, topic));
-    }
+      // save subscription info to restore on registration of new token for member
+      PushTopicSubscription subscription = topicSubscriptionRepository.findByMemberIdAndTopic(
+          memberId, topic);
+      if (subscription == null) {
+        topicSubscriptionRepository.save(PushTopicSubscription.makeSubscription(member, topic));
+      }
+    });
 
     List<String> tokens = pushSubjects.stream()
                                       .map(PushSubject::getValue)
                                       .toList();
-    //TODO: detach API call from transaction
     return attachTokensToTopic(tokens, topic);
   }
 
@@ -180,7 +185,6 @@ public class FcmSdkPushService implements PushService {
    */
   @Override
   @Async("pushTaskExecutor")
-  @Transactional
   public CompletableFuture<PushResponse> subscribeAsync(Long memberId, String topic) {
     return completedFuture(subscribe(memberId, topic));
   }
@@ -192,21 +196,22 @@ public class FcmSdkPushService implements PushService {
    * It removes {@link com._2cha.demo.push.domain.PushTopicSubscription} per member.
    */
   @Override
-  @Transactional
   public PushResponse unsubscribe(Long memberId, String topic) {
-    Member member = memberRepository.findById(memberId);
-    if (member == null) throw new NoSuchMemberException();
+    List<PushSubject> pushSubjects = new ArrayList<>();
+    tx.executeWithoutResult(status -> {
+      Member member = memberRepository.findById(memberId);
+      if (member == null) throw new NoSuchMemberException();
 
-    List<PushSubject> pushSubjects = pushSubjectRepository.findAllByMemberId(memberId);
-    if (pushSubjects.isEmpty()) throw new NoRegisteredSubjectException();
+      pushSubjects.addAll(pushSubjectRepository.findAllByMemberId(memberId));
+      if (pushSubjects.isEmpty()) throw new NoRegisteredSubjectException();
 
-    // remove all stored subscription info
-    topicSubscriptionRepository.deleteAllByMemberIdAndTopic(memberId, topic);
+      // remove all stored subscription info
+      topicSubscriptionRepository.deleteAllByMemberIdAndTopic(memberId, topic);
+    });
 
     List<String> tokens = pushSubjects.stream()
                                       .map(PushSubject::getValue)
                                       .toList();
-    //TODO: detach API call from transaction
     return detachTokensFromTopic(tokens, topic);
   }
 
@@ -217,7 +222,6 @@ public class FcmSdkPushService implements PushService {
    */
   @Override
   @Async("pushTaskExecutor")
-  @Transactional
   public CompletableFuture<PushResponse> unsubscribeAsync(Long memberId, String topic) {
     return completedFuture(unsubscribe(memberId, topic));
   }
@@ -249,15 +253,9 @@ public class FcmSdkPushService implements PushService {
     List<PushSubject> allSubjects = pushSubjectRepository.findAllByMemberIdIn(memberIds);
     if (allSubjects.isEmpty()) return new PushResponse(0, 0, 0, Collections.emptyList());
 
-    FcmOpResult result = executeMulticastOp(fcm::sendMulticast,
-                                            allSubjects.stream()
-                                                       .map(PushSubject::getValue)
-                                                       .toList(),
-                                            payload);
-    return new PushResponse(allSubjects.size(),
-                            result.getSuccessCount(),
-                            result.getFailureCount(),
-                            result.getFailures());
+    return sendMulticast(payload, allSubjects.stream()
+                                             .map(PushSubject::getValue)
+                                             .toList());
   }
 
   @Override
@@ -287,7 +285,7 @@ public class FcmSdkPushService implements PushService {
 
 
   /*-----------
-   @ Others
+   @ External API
    ----------*/
 
   /**
@@ -331,6 +329,15 @@ public class FcmSdkPushService implements PushService {
                             result.getFailures());
   }
 
+  private PushResponse sendMulticast(PayloadWithoutTarget payload,
+                                     List<String> tokens) {
+    FcmOpResult result = executeMulticastOp(fcm::sendMulticast, tokens, payload);
+    return new PushResponse(tokens.size(),
+                            result.getSuccessCount(),
+                            result.getFailureCount(),
+                            result.getFailures());
+  }
+
   @Override
   @Async("pushTaskExecutor")
   public CompletableFuture<PushResponse> sendAsync(Payload payload) {
@@ -353,6 +360,9 @@ public class FcmSdkPushService implements PushService {
     return true;
   }
 
+  /*-----------
+   @ Others
+   ----------*/
   private Message buildMessage(Payload payload) {
     return Message.builder()
                   .setToken(payload.getSub())

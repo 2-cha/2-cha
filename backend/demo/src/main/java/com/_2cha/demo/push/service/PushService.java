@@ -8,9 +8,6 @@ import com._2cha.demo.push.dto.PushResponse;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-//TODO: separate transaction and api call
-// - manage tokens with timestamp (last active time)
-// - detach API call from transaction
 public interface PushService {
 
   void register(Long memberId, String sub);
