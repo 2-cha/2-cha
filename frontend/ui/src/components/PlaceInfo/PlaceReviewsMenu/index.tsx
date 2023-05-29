@@ -78,7 +78,7 @@ function PlaceReviewItem({ review }: { review: Review }) {
       <div className={s.image}>
         <img src={review.images[0]} alt={`${review.place.name}-${review.id}`} />
       </div>
-      <Tags keyID={review.id.toString()} tagList={review.tags} />
+      <Tags limit={3} keyID={review.id.toString()} tagList={review.tags} />
     </div>
   );
 }

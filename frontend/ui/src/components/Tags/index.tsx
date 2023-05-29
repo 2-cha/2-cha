@@ -9,7 +9,7 @@ import styles from './Tags.module.scss';
 interface Props {
   tagList: Tag[];
   keyID: string;
-  limit: number;
+  limit?: number;
   className?: string;
   isNumberShown?: boolean;
 }
@@ -54,6 +54,7 @@ export default function Tags({
         [styles.tags]: true,
         className,
         [styles.gradient]: !isOpen && tagProperty.hasLimit,
+        [styles.padding]: tagProperty.hasLimit,
       })}
     >
       <button
