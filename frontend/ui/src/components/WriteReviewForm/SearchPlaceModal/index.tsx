@@ -33,7 +33,7 @@ export default function SearchPlaceModal({
 
   useEffect(() => {
     setValue('query', '');
-  }, [isOpen]);
+  }, [isOpen, setValue]);
 
   const [query, setQuery] = useState('');
   const { data, fetchNextPage, isFetching } = useSearchPlaceQuery(query);
