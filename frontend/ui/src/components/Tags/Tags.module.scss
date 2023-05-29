@@ -18,3 +18,15 @@
     @include mixins.text-sm;
   }
 }
+
+.button {
+  background: none;
+
+  &:not(.flipped) {
+    transform: rotate(180deg);
+  }
+}
+
+.hidden {
+  display: none;
+}
