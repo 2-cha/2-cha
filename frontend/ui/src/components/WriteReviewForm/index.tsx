@@ -1,7 +1,9 @@
-import * as React from 'react';
-import { usePlaceQuery } from '@/hooks/query/usePlace';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useModal } from '@/hooks/useModal';
+import { usePlaceQuery } from '@/hooks/query/usePlace';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import SearchPlaceModal from './SearchPlaceModal';
 import ImagePicker from '@/components/WriteReviewForm/ImagePicker';
 import TagPicker from '@/components/WriteReviewForm/TagPicker';
 import PlaceIcon from '@/components/Icons/PlaceIcon';
@@ -19,11 +21,22 @@ export interface ReviewFormData {
 
 export default function WriteReviewForm() {
   const router = useRouter();
-  const { placeId } = router.query;
+  const { placeId: placeIdQuery } = router.query;
+  const initialPlaceId = Array.isArray(placeIdQuery)
+    ? placeIdQuery[0]
+    : placeIdQuery;
+
+  const [placeId, setPlaceId] = useState<string>(initialPlaceId || '');
+  useEffect(() => {
+    if (initialPlaceId) {
+      setPlaceId(initialPlaceId);
+    }
+  }, [initialPlaceId]);
+
+  const { isOpen, onOpen, onClose } = useModal({ id: 'placePicker' });
 
   const method = useForm<ReviewFormData>();
   const {
-    register,
     handleSubmit,
     formState: { errors },
   } = method;
@@ -48,15 +61,14 @@ export default function WriteReviewForm() {
     <FormProvider {...method}>
       <div className={s.root}>
         <form onSubmit={onSubmit} id="write" className={s.form}>
-          <div className={s.label}>
-            <PlaceIcon />
-            <PlaceLabel placeId={placeId} />
+          <div className={s.full}>
+            <button type="button" className={s.label} onClick={onOpen}>
+              {/* TODO: add styles when hover, active */}
+              <PlaceIcon />
+              <PlaceLabel placeId={placeId} />
+            </button>
+            <PlaceInput name="placeId" placeId={placeId} />
           </div>
-          <input
-            {...register('placeId', { required: true })}
-            value={placeId ?? ''}
-            hidden
-          />
 
           <div className={s.full}>
             <div className={s.label}>
@@ -85,25 +97,44 @@ export default function WriteReviewForm() {
           작성
         </button>
       </div>
+      <SearchPlaceModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onSelect={setPlaceId}
+      />
     </FormProvider>
   );
 }
 
-function PlaceLabel({ placeId }: { placeId?: string | string[] }) {
+function PlaceLabel({ placeId }: { placeId: string }) {
   const { data, isLoading, isError } = usePlaceQuery(placeId);
 
   return (
-    <>
-      {isError || !placeId ? (
+    <div className={s.group}>
+      {isError || placeId === '' ? (
         <span>가게를 찾을 수 없어요</span>
       ) : isLoading ? (
         <span>...</span>
       ) : (
-        <div>
-          <p className={s.label__head}>{data.name}</p>
-          <p className={s.label__body}>{data.address}</p>
-        </div>
+        <>
+          <span>{data.name}</span>
+          <span className={s.description}>{data.address}</span>
+        </>
       )}
-    </>
+    </div>
+  );
+}
+
+function PlaceInput({
+  name,
+  placeId,
+}: {
+  name: keyof ReviewFormData;
+  placeId: string;
+}) {
+  const { register } = useFormContext<ReviewFormData>();
+
+  return (
+    <input {...register(name, { required: true })} value={placeId} hidden />
   );
 }
