@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import Image from 'next/image';
 
-import styles from './ProfileHeader.module.scss';
+import styles from './ViewModeHeader.module.scss';
 import { Member } from '@/types';
 
 interface Props {

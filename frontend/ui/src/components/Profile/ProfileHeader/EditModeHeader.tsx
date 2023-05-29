@@ -4,10 +4,11 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { useProfileMutation } from '@/hooks/mutation/useProfile';
+import { useProfileImageMutation } from '@/hooks/mutation/useProfileImage';
 import { useAuth } from '@/hooks/useAuth';
 import { Member } from '@/types';
 
-import styles from './ProfileHeader.module.scss';
+import styles from './EditModeHeader.module.scss';
 
 interface ProfileFormData {
   name: string;
@@ -30,6 +31,8 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
   const { invalidateQueries } = useQueryClient();
 
   const profileMutation = useProfileMutation();
+  const imageMutation = useProfileImageMutation();
+
   const handleSubmitProfile = handleSubmit(
     (data) =>
       profileMutation.mutate(
@@ -67,28 +70,28 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
               accept="image/jpeg, image/jpg, image/png"
             />
           </div>
-          <div className={styles.profileData}>
-            <input
-              type="text"
-              {...register('name', { required: true })}
-              defaultValue={member.name}
-              className={styles.name}
-            />
-            <input
-              type="text"
-              {...register('prof_msg', { required: true })}
-              defaultValue={member.prof_msg}
-              className={styles.profMsg}
-            />
-            <button
-              type="submit"
-              form="write"
-              onClick={handleSubmitProfile}
-              className={styles.submit}
-            >
-              <span>저장</span>
-            </button>
-          </div>
+        </div>
+        <div className={styles.profileData}>
+          <input
+            type="text"
+            {...register('name', { required: true })}
+            defaultValue={member.name}
+            className={styles.name}
+          />
+          <input
+            type="text"
+            {...register('prof_msg', { required: true })}
+            defaultValue={member.prof_msg}
+            className={styles.profMsg}
+          />
+          <button
+            type="submit"
+            form="write"
+            onClick={handleSubmitProfile}
+            className={styles.submit}
+          >
+            <span>저장</span>
+          </button>
         </div>
       </div>
     </FormProvider>
