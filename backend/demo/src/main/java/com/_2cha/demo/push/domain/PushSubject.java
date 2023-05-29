@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,10 +28,17 @@ public class PushSubject {
   @Column(nullable = false, unique = true, name = "VAL")
   private String value;
 
+  @Column(nullable = false)
+  private LocalDateTime lastActiveTime = LocalDateTime.now();
+
   public static PushSubject register(Member member, String value) {
     PushSubject pushSubject = new PushSubject();
     pushSubject.member = member;
     pushSubject.value = value;
     return pushSubject;
+  }
+
+  public void updateActivity() {
+    this.lastActiveTime = LocalDateTime.now();
   }
 }

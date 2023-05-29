@@ -13,6 +13,7 @@ import com._2cha.demo.push.dto.Payload;
 import com._2cha.demo.push.dto.PayloadWithoutTarget;
 import com._2cha.demo.push.dto.PushResponse;
 import com._2cha.demo.push.exception.CannotUnregisterException;
+import com._2cha.demo.push.exception.CannotUpdateException;
 import com._2cha.demo.push.exception.InvalidSubjectException;
 import com._2cha.demo.push.exception.NoRegisteredSubjectException;
 import com._2cha.demo.push.repository.PushSubjectRepository;
@@ -213,6 +214,22 @@ public class FcmSdkPushService implements PushService {
   @Async("pushTaskExecutor")
   public CompletableFuture<PushResponse> unsubscribeAsync(Long memberId, String topic) {
     return completedFuture(unsubscribe(memberId, topic));
+  }
+
+
+  /**
+   * Update {@link com._2cha.demo.push.domain.PushSubject#lastActiveTime}.
+   */
+  @Override
+  public void updateActivity(Long memberId, String token) {
+    Member member = memberRepository.findById(memberId);
+    if (member == null) throw new NoSuchMemberException();
+
+    PushSubject subject = pushSubjectRepository.findByValue(token);
+    if (subject == null) throw new NoRegisteredSubjectException();
+    if (!Objects.equals(subject.getMember().getId(), memberId)) throw new CannotUpdateException();
+
+    subject.updateActivity();
   }
 
 

@@ -31,6 +31,8 @@ public interface PushService {
 
   PushResponse sendToMembers(List<Long> memberIds, PayloadWithoutTarget payload);
 
+  void updateActivity(Long memberId, String subject);
+
   CompletableFuture<PushResponse> handlePushEvent(PushEvent event);
 
   CompletableFuture<PushResponse> handlePushToMemberEvent(PushToMembersEvent event);

@@ -13,6 +13,4 @@ public interface PushTopicSubscriptionRepository extends
   PushTopicSubscription findByMemberIdAndTopic(Long memberId, String topic);
 
   void deleteAllByMemberIdAndTopic(Long memberId, String topic);
-
-  void deleteAllInBatch(List<PushTopicSubscription> subscriptions);
 }
