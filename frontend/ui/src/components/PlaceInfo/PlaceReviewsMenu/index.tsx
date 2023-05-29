@@ -6,6 +6,7 @@ import Link from 'next/link';
 import type { Review } from '@/types';
 import cn from 'classnames';
 import s from './PlaceReviewsMenu.module.scss';
+import Tags from '@/components/Tags';
 
 export default function PlaceReviews({ placeId }: { placeId: number }) {
   const { data, fetchNextPage, isFetching, isLoading, isError } =
@@ -77,15 +78,7 @@ function PlaceReviewItem({ review }: { review: Review }) {
       <div className={s.image}>
         <img src={review.images[0]} alt={`${review.place.name}-${review.id}`} />
       </div>
-      <div className={s.tags}>
-        {review.tags.map((tag) => (
-          <div key={tag.id} className={s.tag}>
-            <span>
-              {tag.emoji} {tag.message}
-            </span>
-          </div>
-        ))}
-      </div>
+      <Tags keyID={review.id.toString()} tagList={review.tags} />
     </div>
   );
 }
