@@ -1,10 +1,23 @@
 import { useAuth } from '@/hooks/useAuth';
 import { useMemberQuery } from '@/hooks/query/useMember';
+import {
+  ProfileCollection,
+  ProfileHeader,
+  ProfileReviewTab,
+} from '@/components/Profile';
 
-export default function Profile() {
+export default function ProfilePage() {
   const { user } = useAuth();
   const memberId = user?.sub;
   const { data: member } = useMemberQuery(memberId);
 
-  return <div>{member ? <p>hello {member.name}</p> : null}</div>;
+  return member ? (
+    <>
+      <ProfileHeader member={member} isMe />
+      <ProfileCollection />
+      <ProfileReviewTab />
+    </>
+  ) : (
+    <div>member not found</div>
+  );
 }

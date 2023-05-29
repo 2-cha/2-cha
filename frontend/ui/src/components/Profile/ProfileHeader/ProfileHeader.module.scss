@@ -1,0 +1,40 @@
+@use 'mixins';
+@use 'var';
+
+.root {
+  width: 100%;
+  height: 300px;
+  padding-top: 50px;
+  @include mixins.flex(column);
+  padding-bottom: 20px;
+}
+
+.tagData {
+  width: 100%;
+  padding: 0 50px;
+  @include mixins.flex(column, center, flex-start);
+
+  h3 {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+}
+
+.tagList {
+  width: 100%;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  @include mixins.flex(row, flex-start, center);
+
+  li {
+    padding: 5px 10px;
+    border-radius: 20px;
+    background-color: var(--text-secondary-color);
+    color: var(--background-color);
+    margin-right: 15px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
