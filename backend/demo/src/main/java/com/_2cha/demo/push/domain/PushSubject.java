@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -21,8 +23,9 @@ public class PushSubject {
   @GeneratedValue
   private Long id;
 
-  @ManyToOne  //TODO: bidirectional for cascading | add OnDelete Cascading
+  @ManyToOne
   @JoinColumn(name = "MEMBER_ID")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Member member;
 
   @Column(nullable = false, unique = true, name = "VAL")
