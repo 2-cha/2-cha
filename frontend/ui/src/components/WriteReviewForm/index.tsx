@@ -62,15 +62,6 @@ export default function WriteReviewForm() {
       <div className={s.root}>
         <form onSubmit={onSubmit} id="write" className={s.form}>
           <div className={s.full}>
-            <button type="button" className={s.label} onClick={onOpen}>
-              {/* TODO: add styles when hover, active */}
-              <PlaceIcon />
-              <PlaceLabel placeId={placeId} />
-            </button>
-            <PlaceInput name="placeId" placeId={placeId} />
-          </div>
-
-          <div className={s.full}>
             <div className={s.label}>
               <ImagesIcon />
               <span>사진</span>
@@ -79,6 +70,15 @@ export default function WriteReviewForm() {
               <div className={s.errorMessage}>사진을 선택해주세요</div>
             )}
             <ImagePicker name="images" />
+          </div>
+
+          <div className={s.full}>
+            <button type="button" className={s.label} onClick={onOpen}>
+              {/* TODO: add styles when hover, active */}
+              <PlaceIcon />
+              <PlaceLabel placeId={placeId} />
+            </button>
+            <PlaceInput name="placeId" placeId={placeId} />
           </div>
         </form>
 
