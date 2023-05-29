@@ -1,0 +1,67 @@
+@use 'mixins';
+@use 'var';
+
+.tags {
+  position: relative;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  @include mixins.flex(row, center, flex-start);
+  @include mixins.padding(all, md);
+
+  .tag {
+    border: 0.5px solid var(--border-color);
+    border-radius: 500px;
+
+    @include mixins.padding(x, md);
+    @include mixins.padding(y, sm);
+    @include mixins.text-sm;
+
+    & span:last-child {
+      margin-left: 5px;
+    }
+  }
+}
+
+.button {
+  position: absolute;
+  z-index: 4;
+  background: none;
+  bottom: 0;
+
+  &:not(.flipped) {
+    transform: rotate(180deg);
+  }
+}
+
+.tagWrapper {
+  flex: 1;
+  gap: 8px;
+  @include mixins.flex(row, flex-start);
+  flex-wrap: wrap;
+}
+
+.gradient::after {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(
+    to bottom,
+    #00000000 20%,
+    var(--background-color) 70%,
+    var(--background-color) 100%
+  );
+}
+
+.padding {
+  padding-bottom: 25px;
+}
+
+.hidden {
+  display: none;
+}
