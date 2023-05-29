@@ -68,6 +68,14 @@
   margin-bottom: 10px;
 }
 
-.submit {
-  padding: 5px 10px;
+.buttonWrapper {
+  @include mixins.flex(row, center, flex-start);
+
+  button {
+    padding: 5px 10px;
+  }
+
+  button:first-child {
+    margin-right: 10px;
+  }
 }

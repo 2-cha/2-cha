@@ -1,5 +1,11 @@
 import Image from 'next/image';
-import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useState,
+} from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -74,6 +80,13 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
     });
   }
 
+  const handleCancelEdit = useCallback(
+    function () {
+      setIsEditing(false);
+    },
+    [setIsEditing]
+  );
+
   return (
     <FormProvider {...method}>
       <div className={styles.topDiv}>
@@ -108,14 +121,14 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
             defaultValue={member.prof_msg}
             className={styles.profMsg}
           />
-          <button
-            type="submit"
-            form="write"
-            onClick={handleSubmitProfile}
-            className={styles.submit}
-          >
-            <span>저장</span>
-          </button>
+          <div className={styles.buttonWrapper}>
+            <button type="submit" form="write" onClick={handleSubmitProfile}>
+              <span>저장</span>
+            </button>
+            <button type="button" onClick={handleCancelEdit}>
+              <span>취소</span>
+            </button>
+          </div>
         </div>
       </div>
     </FormProvider>
