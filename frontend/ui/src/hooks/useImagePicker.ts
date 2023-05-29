@@ -43,11 +43,11 @@ export function useImagePicker({ onChange }: ImagePickerOptions) {
       .filter((file) => !images.find((image) => isSameFile(image.file, file)))
       .map((file) => {
         imageMutation.mutate(file, {
-          onSuccess: (url) => {
+          onSuccess: (data) => {
             setImages((prev) => {
               const target = prev.find((image) => isSameFile(image.file, file));
               if (target) {
-                target.url = url;
+                target.url = data.url;
               }
               return [...prev];
             });

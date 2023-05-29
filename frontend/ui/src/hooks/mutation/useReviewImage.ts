@@ -1,8 +1,9 @@
 import { fetchClient } from '@/lib/fetchClient';
 import { useMutation } from '@tanstack/react-query';
-import type { QueryResponse } from '@/types';
+import type { Place, QueryResponse } from '@/types';
 
-interface PostImageResponse {
+export interface PostImageResponse {
+  suggestions: Pick<Place, 'id' | 'name' | 'address' | 'category'>[];
   url: string;
 }
 
@@ -18,7 +19,7 @@ async function postImage(image: File) {
     throw new Error(data.message);
   }
 
-  return data.data.url;
+  return data.data;
 }
 
 export function useReviewImageMutation() {
