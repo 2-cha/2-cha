@@ -21,8 +21,8 @@ interface PlacePickerProps {
 export default function SearchPlaceModal({
   isOpen,
   onClose,
-  suggest,
   onSelect,
+  suggest,
 }: PlacePickerProps) {
   const {
     register,
@@ -52,6 +52,14 @@ export default function SearchPlaceModal({
     setQuery(data.query);
   });
 
+  const handleSelect = useCallback(
+    (...args: Parameters<NonNullable<typeof onSelect>>) => {
+      onClose?.();
+      onSelect?.(...args);
+    },
+    [onClose, onSelect]
+  );
+
   return (
     <Drawer isOpen={isOpen} onClose={onClose}>
       <div className={s.container}>
@@ -71,7 +79,7 @@ export default function SearchPlaceModal({
           <SearchPlaceResult
             pages={data?.pages}
             suggest={suggest}
-            onSelect={onSelect}
+            onSelect={handleSelect}
           />
           {data?.pages.length && data.pages.at(-1)?.length ? (
             <>
