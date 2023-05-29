@@ -49,7 +49,13 @@ export default function Tags({
   );
 
   return (
-    <div className={cx(styles.tags, className)}>
+    <div
+      className={cx({
+        [styles.tags]: true,
+        className,
+        [styles.gradient]: !isOpen && tagProperty.hasLimit,
+      })}
+    >
       <button
         type="button"
         className={cx({
@@ -62,38 +68,29 @@ export default function Tags({
         <SimpleArrowIcon />
       </button>
       <div className={styles.tagWrapper}>
-        <div
-          className={cx({
-            [styles.tagInner]: true,
-            [styles.gradient]: !isOpen && tagProperty.hasLimit,
-          })}
-        >
-          {tagProperty.topTags.map((tag, index) => (
-            <div key={`tag-list-${keyID}-${index}`} className={styles.tag}>
-              <span>
-                {tag.emoji} {tag.message}
-              </span>
-              <span className={cx({ [styles.hidden]: !isNumberShown })}>
-                {tag.count}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div className={styles.tagInner}>
-          {tagProperty.bottomTags.map((tag, index) => (
-            <div
-              key={`tag-list-${keyID}-${index + limit}`}
-              className={cx({ [styles.tag]: true, [styles.hidden]: !isOpen })}
-            >
-              <span>
-                {tag.emoji} {tag.message}
-              </span>{' '}
-              <span className={cx({ [styles.hidden]: !isNumberShown })}>
-                {tag.count}
-              </span>
-            </div>
-          ))}
-        </div>
+        {tagProperty.topTags.map((tag, index) => (
+          <div key={`tag-list-${keyID}-${index}`} className={styles.tag}>
+            <span>
+              {tag.emoji} {tag.message}
+            </span>
+            <span className={cx({ [styles.hidden]: !isNumberShown })}>
+              {tag.count}
+            </span>
+          </div>
+        ))}
+        {tagProperty.bottomTags.map((tag, index) => (
+          <div
+            key={`tag-list-${keyID}-${index + limit}`}
+            className={cx({ [styles.tag]: true, [styles.hidden]: !isOpen })}
+          >
+            <span>
+              {tag.emoji} {tag.message}
+            </span>{' '}
+            <span className={cx({ [styles.hidden]: !isNumberShown })}>
+              {tag.count}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
