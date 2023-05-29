@@ -84,7 +84,12 @@ export default function SearchPlaceModal({
           />
           {data?.pages.length && data.pages.at(-1)?.length ? (
             <>
-              <button onClick={() => fetchNextPage()}>더보기</button>
+              <button
+                className={s.result__footer}
+                onClick={() => fetchNextPage()}
+              >
+                더보기
+              </button>
               <div
                 ref={ref}
                 key={data.pages.length}
@@ -93,7 +98,9 @@ export default function SearchPlaceModal({
               />
             </>
           ) : null}
-          {isFetching && data?.pages.length && <div>Loading...</div>}
+          {isFetching && data?.pages.length && (
+            <div className={s.result__footer}>Loading...</div>
+          )}
         </div>
       </div>
     </Drawer>

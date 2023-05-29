@@ -54,6 +54,14 @@
     margin-top: 40px;
   }
 
+  &__footer {
+    background-color: inherit;
+    color: inherit;
+    text-align: center;
+    width: 100%;
+    padding: var.$size-md 0;
+  }
+
   .divider {
     height: 1px;
     width: 100%;
