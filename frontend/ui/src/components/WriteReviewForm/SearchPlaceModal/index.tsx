@@ -31,11 +31,16 @@ export default function SearchPlaceModal({
   } = useForm<SearchPlaceFormData>();
   const [query, setQuery] = useState('');
   const { data, fetchNextPage, isFetching } = useSearchPlaceQuery(query);
-  const handleNextPage = useCallback(
-    (isIntersecting: boolean) => isIntersecting && fetchNextPage(),
-    [fetchNextPage]
-  );
-  const { ref } = useIntersection({ onChange: handleNextPage });
+
+  const handleNextPage = (isIntersecting: boolean) => {
+    if (isIntersecting && !isFetching && query !== '') {
+      fetchNextPage();
+    }
+  };
+  const { ref } = useIntersection({
+    initialState: false,
+    onChange: handleNextPage,
+  });
 
   const onSubmit = handleSubmit((data) => {
     setQuery(data.query);
@@ -62,7 +67,17 @@ export default function SearchPlaceModal({
             suggest={suggest}
             onSelect={onSelect}
           />
-          <div ref={ref} aria-hidden style={{ height: 1 }} />
+          {data?.pages.length && data.pages.at(-1)?.length ? (
+            <>
+              <button onClick={() => fetchNextPage()}>더보기</button>
+              <div
+                ref={ref}
+                key={data.pages.length}
+                aria-hidden
+                style={{ height: 1 }}
+              />
+            </>
+          ) : null}
           {isFetching && data?.pages.length && <div>Loading...</div>}
         </div>
       </div>
