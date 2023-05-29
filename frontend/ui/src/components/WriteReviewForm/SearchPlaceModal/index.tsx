@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchPlaceQuery } from '@/hooks/query/useSearchPlaceQuery';
 import { useIntersection } from '@/hooks/useIntersection';
@@ -27,8 +27,14 @@ export default function SearchPlaceModal({
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<SearchPlaceFormData>();
+
+  useEffect(() => {
+    setValue('query', '');
+  }, [isOpen]);
+
   const [query, setQuery] = useState('');
   const { data, fetchNextPage, isFetching } = useSearchPlaceQuery(query);
 
