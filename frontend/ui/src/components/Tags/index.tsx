@@ -20,8 +20,15 @@ interface TagProperty {
   bottomTags: Tag[];
 }
 
-export default function Tags({ tagList, keyID, limit = 0, className }: Props) {
+export default function Tags({
+  tagList,
+  keyID,
+  limit = 0,
+  className,
+  isNumberShown,
+}: Props) {
   const [isOpen, setIsOpen] = useState(false);
+
   const tagProperty: TagProperty = {
     hasLimit: false,
     topTags: tagList,
@@ -59,6 +66,9 @@ export default function Tags({ tagList, keyID, limit = 0, className }: Props) {
           <span>
             {tag.emoji} {tag.message}
           </span>
+          <span className={cx({ [styles.hidden]: !isNumberShown })}>
+            {tag.count}
+          </span>
         </div>
       ))}
       {tagProperty.bottomTags.map((tag, index) => (
@@ -68,6 +78,9 @@ export default function Tags({ tagList, keyID, limit = 0, className }: Props) {
         >
           <span>
             {tag.emoji} {tag.message}
+          </span>{' '}
+          <span className={cx({ [styles.hidden]: !isNumberShown })}>
+            {tag.count}
           </span>
         </div>
       ))}

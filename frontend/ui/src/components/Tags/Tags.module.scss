@@ -16,6 +16,10 @@
     @include mixins.padding(x, md);
     @include mixins.padding(y, sm);
     @include mixins.text-sm;
+
+    & span:last-child {
+      margin-left: 5px;
+    }
   }
 }
 
