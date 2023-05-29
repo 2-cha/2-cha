@@ -1,12 +1,14 @@
-import * as React from 'react';
-import { useCallback } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useCallback, Fragment } from 'react';
+import cn from 'classnames';
+
 import { useIntersection } from '@/hooks/useIntersection';
 import { usePlaceReviewsQuery } from '@/hooks/query/usePlaceReviews';
-import Link from 'next/link';
 import type { Review } from '@/types';
-import cn from 'classnames';
-import s from './PlaceReviewsMenu.module.scss';
 import Tags from '@/components/Tags';
+
+import s from './PlaceReviewsMenu.module.scss';
 
 export default function PlaceReviews({ placeId }: { placeId: number }) {
   const { data, fetchNextPage, isFetching, isLoading, isError } =
@@ -52,13 +54,13 @@ function PlaceReviewList({ pages }: { pages: Review[][] }) {
   return (
     <ul className={s.review__list}>
       {pages.map((page, idx) => (
-        <React.Fragment key={idx}>
+        <Fragment key={idx}>
           {page.map((review) => (
             <li key={review.id} className={s.review__item}>
               <PlaceReviewItem review={review} />
             </li>
           ))}
-        </React.Fragment>
+        </Fragment>
       ))}
     </ul>
   );
@@ -69,14 +71,24 @@ function PlaceReviewItem({ review }: { review: Review }) {
     <div className={s.reviewItem}>
       <div className={s.header}>
         <div className={s.header__profile}>
-          <img src={review.member.prof_img} alt={review.member.name} />
+          <Image
+            width={50}
+            height={50}
+            src={review.member.prof_img}
+            alt={review.member.name}
+          />
         </div>
         <Link href={`/member/${review.member.id}`}>
           <p className={s.review__title}>{review.member.name}</p>
         </Link>
       </div>
       <div className={s.image}>
-        <img src={review.images[0]} alt={`${review.place.name}-${review.id}`} />
+        <Image
+          width={480}
+          height={480}
+          src={review.images[0]}
+          alt={`${review.place.name}-${review.id}`}
+        />
       </div>
       <Tags limit={3} keyID={review.id.toString()} tagList={review.tags} />
     </div>

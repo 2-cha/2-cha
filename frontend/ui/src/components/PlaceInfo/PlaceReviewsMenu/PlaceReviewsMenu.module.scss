@@ -41,7 +41,6 @@
 
   .image {
     width: 100%;
-
     @include mixins.flex;
 
     img {
