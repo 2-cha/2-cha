@@ -1,5 +1,4 @@
-import { useState, useCallback } from 'react';
-import { useRefCallback } from './useRefCallback';
+import { useState, useCallback, useRef } from 'react';
 
 interface ModalProps {
   id?: string;
@@ -10,18 +9,20 @@ interface ModalProps {
 export function useModal(props: ModalProps = {}) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleOpen = useRefCallback(props.onOpen);
-  const handleClose = useRefCallback(props.onClose);
+  const handleOpen = useRef(props.onOpen);
+  const handleClose = useRef(props.onClose);
+  handleOpen.current = props.onOpen;
+  handleClose.current = props.onClose;
 
   const onOpen = useCallback(() => {
     setIsOpen(true);
-    handleOpen?.();
-  }, [handleOpen]);
+    handleOpen.current?.();
+  }, []);
 
   const onClose = useCallback(() => {
     setIsOpen(false);
-    handleClose?.();
-  }, [handleClose]);
+    handleClose.current?.();
+  }, []);
 
   return {
     isOpen,
