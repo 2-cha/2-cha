@@ -391,6 +391,7 @@ public class FcmSdkPushService implements PushService {
   }
 
   private boolean needsRemoval(FirebaseMessagingException ex) {
+    if (ex.getMessagingErrorCode() == null) {return false;}
     return switch (ex.getMessagingErrorCode()) {
       case INVALID_ARGUMENT ->
           ex.getMessage().equals("The registration token is not a valid FCM registration token");
@@ -421,7 +422,7 @@ public class FcmSdkPushService implements PushService {
       if (needsRemoval(e)) {
         code = "NEEDS_REMOVAL";
       } else {
-        code = e.getMessagingErrorCode().toString();
+        code = e.getErrorCode().toString();
       }
       failure += 1;
       failedOps.add(new FailedOp(payload.getTarget(), code));
@@ -483,7 +484,7 @@ public class FcmSdkPushService implements PushService {
       if (needsRemoval(res.getException())) {
         failedOps.add(new FailedOp(token, "NEEDS_REMOVAL"));
       } else {
-        failedOps.add(new FailedOp(token, res.getException().getMessagingErrorCode().toString()));
+        failedOps.add(new FailedOp(token, res.getException().getErrorCode().toString()));
       }
     }
     return new FcmOpResult(successCount, failureCount, failedOps);
