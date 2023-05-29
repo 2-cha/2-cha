@@ -59,6 +59,8 @@ dependencies {
     implementation 'net.coobird:thumbnailator:0.4.19'
     implementation 'org.apache.tika:tika-core:2.7.0' // detect file ext
     implementation 'com.drewnoakes:metadata-extractor:2.18.0'
+
+    implementation 'com.google.firebase:firebase-admin:9.1.1'
 }
 
 ext {

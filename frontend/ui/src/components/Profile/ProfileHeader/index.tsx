@@ -1,38 +1,32 @@
-import Image from 'next/image';
-
-import { Member } from '@/types';
+import { useCallback, useState } from 'react';
 
 import styles from './ProfileHeader.module.scss';
+import EditModeHeader from './EditModeHeader';
+import ViewModeHeader from './ViewModeHeader';
+import { Member } from '@/types';
 
 interface Props {
   member: Member;
+  isMe?: boolean;
 }
 
-export default function ProfileHeader({ member }: Props) {
-  console.log(member);
+export default function ProfileHeader({ member, isMe }: Props) {
+  const [isEditing, setIsEditing] = useState(false);
+
   return (
     <header className={styles.root}>
-      <div className={styles.topdiv}>
-        {/* <Image
-          src={member.prof_img}
-          width={120}
-          height={120}
-          alt="member profile pic"
+      {isEditing && isMe ? (
+        <EditModeHeader member={member} setIsEditing={setIsEditing} />
+      ) : (
+        <ViewModeHeader
+          member={member}
+          setIsEditing={setIsEditing}
+          isMe={isMe}
         />
-		// TODO: profile pic
-		*/}
-        <div className={styles.image}>프로필 이미지</div>
-        <div className={styles.profiledata}>
-          <h1>{member.name}</h1>
-          <h2>업적</h2>
-          <button type="button">
-            <span>팔로우</span>
-          </button>
-        </div>
-      </div>
-      <div className={styles.tagdata}>
+      )}
+      <div className={styles.tagData}>
         <h3>Top 5</h3>
-        <ul className={styles.taglist}>
+        <ul className={styles.tagList}>
           <li>태그</li>
           <li>태그</li>
           <li>태그</li>

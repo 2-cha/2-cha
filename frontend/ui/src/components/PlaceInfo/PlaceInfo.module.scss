@@ -7,11 +7,18 @@
   @include mixins.flex(column, flex-start, flex-start);
 
   .thumbnail {
+    width: 100%;
+    height: 200px;
     position: relative;
     top: calc(-1 * var.$header-height);
+    object-fit: cover;
+    background-color: var(--background-inactive-color);
   }
 
   .summary {
+    margin-top: -30px;
+    margin-bottom: 10px;
+
     @include mixins.padding(x, xl);
 
     &__title {
@@ -32,6 +39,7 @@
   width: 100%;
   height: var.$header-height;
   background-color: var(--background-color);
+  z-index: 2;
 
   @include mixins.flex(row, space-around, flex-start);
   @include mixins.margin(top, var.$size-lg * 2);
