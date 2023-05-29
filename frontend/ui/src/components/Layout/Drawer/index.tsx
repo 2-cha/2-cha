@@ -12,6 +12,8 @@ export interface DrawerProps extends ModalProps {
 export default function Drawer(props: DrawerProps) {
   const { children, onClose, className } = props;
 
+  Modal.setAppElement('#__next');
+
   // modal-overlay > modal > modal-content 순서로 구성됨
   return (
     <Modal
