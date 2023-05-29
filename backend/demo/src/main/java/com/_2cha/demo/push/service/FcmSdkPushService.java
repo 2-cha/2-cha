@@ -48,7 +48,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
  */
 @Slf4j
 @Service
-@Transactional
 public class FcmSdkPushService implements PushService {
 
   private final ServiceAccountCredentials cred;
@@ -84,6 +83,7 @@ public class FcmSdkPushService implements PushService {
    * If member has subscriptions on some topics, registered token will be attached to them.
    */
   @Override
+  @Transactional
   public void register(Long memberId, String sub) {
     Member member = this.memberRepository.findById(memberId);
     if (member == null) throw new NoSuchMemberException();
@@ -105,6 +105,7 @@ public class FcmSdkPushService implements PushService {
    * If member has subscriptions on some topics, unmapped token will be detached from them.
    */
   @Override
+  @Transactional
   public void unregister(Long memberId, String sub) {
     PushSubject pushSubject = pushSubjectRepository.findByValue(sub);
     if (pushSubject == null) throw new NoRegisteredSubjectException();
@@ -126,6 +127,7 @@ public class FcmSdkPushService implements PushService {
    * NOTE: is it needed?
    */
   @Override
+  @Transactional
   public void unregisterAll(Long memberId) {
     List<PushSubject> pushSubjects = pushSubjectRepository.findAllByMemberId(memberId);
     if (pushSubjects.isEmpty()) return;
@@ -148,6 +150,7 @@ public class FcmSdkPushService implements PushService {
    * exists.
    */
   @Override
+  @Transactional
   public PushResponse subscribe(Long memberId, String topic) {
     Member member = memberRepository.findById(memberId);
     if (member == null) throw new NoSuchMemberException();
@@ -177,6 +180,7 @@ public class FcmSdkPushService implements PushService {
    */
   @Override
   @Async("pushTaskExecutor")
+  @Transactional
   public CompletableFuture<PushResponse> subscribeAsync(Long memberId, String topic) {
     return completedFuture(subscribe(memberId, topic));
   }
@@ -188,6 +192,7 @@ public class FcmSdkPushService implements PushService {
    * It removes {@link com._2cha.demo.push.domain.PushTopicSubscription} per member.
    */
   @Override
+  @Transactional
   public PushResponse unsubscribe(Long memberId, String topic) {
     Member member = memberRepository.findById(memberId);
     if (member == null) throw new NoSuchMemberException();
@@ -212,6 +217,7 @@ public class FcmSdkPushService implements PushService {
    */
   @Override
   @Async("pushTaskExecutor")
+  @Transactional
   public CompletableFuture<PushResponse> unsubscribeAsync(Long memberId, String topic) {
     return completedFuture(unsubscribe(memberId, topic));
   }
@@ -221,6 +227,7 @@ public class FcmSdkPushService implements PushService {
    * Update {@link com._2cha.demo.push.domain.PushSubject#lastActiveTime}.
    */
   @Override
+  @Transactional
   public void updateActivity(Long memberId, String token) {
     Member member = memberRepository.findById(memberId);
     if (member == null) throw new NoSuchMemberException();
@@ -232,6 +239,56 @@ public class FcmSdkPushService implements PushService {
     subject.updateActivity();
   }
 
+
+  /*-----------
+   @ Queries
+   ----------*/
+  @Override
+  @Transactional(readOnly = true)
+  public PushResponse sendToMembers(List<Long> memberIds, PayloadWithoutTarget payload) {
+    List<PushSubject> allSubjects = pushSubjectRepository.findAllByMemberIdIn(memberIds);
+    if (allSubjects.isEmpty()) return new PushResponse(0, 0, 0, Collections.emptyList());
+
+    FcmOpResult result = executeMulticastOp(fcm::sendMulticast,
+                                            allSubjects.stream()
+                                                       .map(PushSubject::getValue)
+                                                       .toList(),
+                                            payload);
+    return new PushResponse(allSubjects.size(),
+                            result.getSuccessCount(),
+                            result.getFailureCount(),
+                            result.getFailures());
+  }
+
+  @Override
+  @Async("pushTaskExecutor")
+  @Transactional(readOnly = true)
+  public CompletableFuture<PushResponse> sendToMembersAsync(List<Long> memberIds,
+                                                            PayloadWithoutTarget payload) {
+    return completedFuture(sendToMembers(memberIds, payload));
+  }
+
+  @Override
+  @Async("pushTaskExecutor")
+  @Transactional(readOnly = true)
+  public CompletableFuture<PushResponse> sendToMembersAsync(List<Long> memberIds,
+                                                            String title, String body,
+                                                            Object data) {
+    return completedFuture(sendToMembers(memberIds, new PayloadWithoutTarget(title, body, data)));
+  }
+
+  @Override
+  @Async("pushTaskExecutor")
+  @TransactionalEventListener(value = PushToMembersEvent.class, phase = TransactionPhase.AFTER_COMMIT)
+  @Transactional(readOnly = true)
+  public CompletableFuture<PushResponse> handlePushToMemberEvent(PushToMembersEvent event) {
+    return completedFuture(sendToMembers(event.getReceivers(), event.getPayload()));
+  }
+
+
+  /*-----------
+   @ Others
+   ----------*/
 
   /**
    * Make subscription for each registration token.
@@ -265,9 +322,6 @@ public class FcmSdkPushService implements PushService {
                             result.getFailures());
   }
 
-  /*-----------
-   @ Queries
-   ----------*/
   @Override
   public PushResponse send(Payload payload) {
     FcmOpResult result = executeUnitOp(fcm::send, payload);
@@ -290,49 +344,6 @@ public class FcmSdkPushService implements PushService {
     return completedFuture(send(event.getPayload()));
   }
 
-
-  @Override
-  public PushResponse sendToMembers(List<Long> memberIds, PayloadWithoutTarget payload) {
-    List<PushSubject> allSubjects = pushSubjectRepository.findAllByMemberIdIn(memberIds);
-    if (allSubjects.isEmpty()) return new PushResponse(0, 0, 0, Collections.emptyList());
-
-    FcmOpResult result = executeMulticastOp(fcm::sendMulticast,
-                                            allSubjects.stream()
-                                                       .map(PushSubject::getValue)
-                                                       .toList(),
-                                            payload);
-    return new PushResponse(allSubjects.size(),
-                            result.getSuccessCount(),
-                            result.getFailureCount(),
-                            result.getFailures());
-  }
-
-  @Override
-  @Async("pushTaskExecutor")
-  public CompletableFuture<PushResponse> sendToMembersAsync(List<Long> memberIds,
-                                                            PayloadWithoutTarget payload) {
-    return completedFuture(sendToMembers(memberIds, payload));
-  }
-
-  @Override
-  @Async("pushTaskExecutor")
-  public CompletableFuture<PushResponse> sendToMembersAsync(List<Long> memberIds,
-                                                            String title, String body,
-                                                            Object data) {
-    return completedFuture(sendToMembers(memberIds, new PayloadWithoutTarget(title, body, data)));
-  }
-
-  @Override
-  @Async("pushTaskExecutor")
-  @TransactionalEventListener(value = PushToMembersEvent.class, phase = TransactionPhase.AFTER_COMMIT)
-  public CompletableFuture<PushResponse> handlePushToMemberEvent(PushToMembersEvent event) {
-    return completedFuture(sendToMembers(event.getReceivers(), event.getPayload()));
-  }
-
-
-  /*-----------
-   @ Others
-   ----------*/
   private boolean validateFcmToken(String sub) {
     try {
       fcm.send(buildMessage(new Payload(sub, null, null, "title", "body", null)), true); // dry-run
@@ -434,7 +445,6 @@ public class FcmSdkPushService implements PushService {
     }
     return new FcmOpResult(successCount, failureCount, failedOps);
   }
-
 
   private FcmOpResult executeMulticastOp(MulticastFunction executor, List<String> tokens,
                                          PayloadWithoutTarget payload) {
