@@ -61,29 +61,40 @@ export default function Tags({
       >
         <SimpleArrowIcon />
       </button>
-      {tagProperty.topTags.map((tag, index) => (
-        <div key={`tag-list-${keyID}-${index}`} className={styles.tag}>
-          <span>
-            {tag.emoji} {tag.message}
-          </span>
-          <span className={cx({ [styles.hidden]: !isNumberShown })}>
-            {tag.count}
-          </span>
-        </div>
-      ))}
-      {tagProperty.bottomTags.map((tag, index) => (
+      <div className={styles.tagWrapper}>
         <div
-          key={`tag-list-${keyID}-${index + limit}`}
-          className={cx({ [styles.tag]: true, [styles.hidden]: !isOpen })}
+          className={cx({
+            [styles.tagInner]: true,
+            [styles.gradient]: !isOpen && tagProperty.hasLimit,
+          })}
         >
-          <span>
-            {tag.emoji} {tag.message}
-          </span>{' '}
-          <span className={cx({ [styles.hidden]: !isNumberShown })}>
-            {tag.count}
-          </span>
+          {tagProperty.topTags.map((tag, index) => (
+            <div key={`tag-list-${keyID}-${index}`} className={styles.tag}>
+              <span>
+                {tag.emoji} {tag.message}
+              </span>
+              <span className={cx({ [styles.hidden]: !isNumberShown })}>
+                {tag.count}
+              </span>
+            </div>
+          ))}
         </div>
-      ))}
+        <div className={styles.tagInner}>
+          {tagProperty.bottomTags.map((tag, index) => (
+            <div
+              key={`tag-list-${keyID}-${index + limit}`}
+              className={cx({ [styles.tag]: true, [styles.hidden]: !isOpen })}
+            >
+              <span>
+                {tag.emoji} {tag.message}
+              </span>{' '}
+              <span className={cx({ [styles.hidden]: !isNumberShown })}>
+                {tag.count}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
