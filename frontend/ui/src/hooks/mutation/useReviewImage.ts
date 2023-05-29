@@ -1,9 +1,9 @@
 import { fetchClient } from '@/lib/fetchClient';
 import { useMutation } from '@tanstack/react-query';
-import type { Place, QueryResponse } from '@/types';
+import type { SuggestionPlace, QueryResponse } from '@/types';
 
 export interface PostImageResponse {
-  suggestions: Pick<Place, 'id' | 'name' | 'address' | 'category'>[];
+  suggestions: SuggestionPlace[];
   url: string;
 }
 

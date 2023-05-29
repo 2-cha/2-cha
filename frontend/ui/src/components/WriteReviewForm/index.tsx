@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useModal } from '@/hooks/useModal';
 import { usePlaceQuery } from '@/hooks/query/usePlace';
+import { useRecoilValue } from 'recoil';
+import { suggestionsState } from '@/atoms/suggestions';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import SearchPlaceModal from './SearchPlaceModal';
 import ImagePicker from '@/components/WriteReviewForm/ImagePicker';
@@ -34,6 +36,7 @@ export default function WriteReviewForm() {
   }, [initialPlaceId]);
 
   const { isOpen, onOpen, onClose } = useModal({ id: 'placePicker' });
+  const suggestions = useRecoilValue(suggestionsState);
 
   const method = useForm<ReviewFormData>();
   const {
@@ -101,6 +104,7 @@ export default function WriteReviewForm() {
         isOpen={isOpen}
         onClose={onClose}
         onSelect={setPlaceId}
+        suggestions={suggestions}
       />
     </FormProvider>
   );
