@@ -22,6 +22,12 @@ async function postImage(image: File) {
   return data.data.url;
 }
 
+async function putImage(imageUrl: string) {
+  return fetchClient.put('/members/image', {
+    url: imageUrl,
+  });
+}
+
 export function useProfileImageMutation() {
   const mutation = useMutation({
     mutationFn: async (image: File) => postImage(image),
@@ -30,4 +36,10 @@ export function useProfileImageMutation() {
   return mutation;
 }
 
-// TODO: useReviewImage 와 합치기 가능해보임
+export function useProfileImageUrlMutation() {
+  const mutation = useMutation({
+    mutationFn: async (imageUrl: string) => putImage(imageUrl),
+  });
+
+  return mutation;
+}

@@ -1,10 +1,13 @@
 import Image from 'next/image';
-import { Dispatch, SetStateAction } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { useProfileMutation } from '@/hooks/mutation/useProfile';
-import { useProfileImageMutation } from '@/hooks/mutation/useProfileImage';
+import {
+  useProfileImageMutation,
+  useProfileImageUrlMutation,
+} from '@/hooks/mutation/useProfileImage';
 import { useAuth } from '@/hooks/useAuth';
 import { Member } from '@/types';
 
@@ -21,6 +24,7 @@ interface Props {
 }
 
 export default function EditModeHeader({ member, setIsEditing }: Props) {
+  const [image, setImage] = useState<string>(member.prof_img);
   const method = useForm<ProfileFormData>();
   const {
     register,
@@ -32,31 +36,50 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
 
   const profileMutation = useProfileMutation();
   const imageMutation = useProfileImageMutation();
+  const imageUrlMutation = useProfileImageUrlMutation();
 
   const handleSubmitProfile = handleSubmit(
-    (data) =>
+    (data) => {
       profileMutation.mutate(
         { name: data.name, prof_msg: data.prof_msg },
         {
           onSuccess: () => {
             invalidateQueries(['members', user?.sub]);
-            setIsEditing(false);
+            imageUrlMutation.mutate(image, {
+              onSuccess: () => {
+                setIsEditing(false);
+              },
+              onError: () => {
+                alert('프로필 변경에 실패하였습니다');
+              },
+            });
           },
           onError: () => {
-            // TODO: error
             alert('프로필 변경에 실패하였습니다');
           },
         }
-      ),
+      );
+    },
     (errors) => console.log(errors)
   );
+
+  function handleChangeImage(e: ChangeEvent<HTMLInputElement>) {
+    const newFile = e.target.files;
+    if (!newFile || !newFile.item(0)) return;
+
+    imageMutation.mutate(newFile.item(0)!, {
+      onSuccess: (url) => {
+        setImage(url);
+      },
+    });
+  }
 
   return (
     <FormProvider {...method}>
       <div className={styles.topDiv}>
         <div className={styles.imageWrapper}>
           <Image
-            src={member.prof_img}
+            src={image}
             width={120}
             height={120}
             alt="member profile pic"
@@ -68,6 +91,7 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
               type="file"
               id="profile-image-upload"
               accept="image/jpeg, image/jpg, image/png"
+              onChange={handleChangeImage}
             />
           </div>
         </div>
