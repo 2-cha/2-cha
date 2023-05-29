@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -151,7 +152,8 @@ public class MemberService {
   public MemberProfileResponse updateProfile(Long memberId, String name, String profMsg) {
     Member member = memberRepository.findById(memberId);
     if (member == null) throw new NoSuchMemberException();
-    if (memberRepository.findByName(name) != null) throw new DuplicatedNameException();
+    if (!Objects.equals(member.getName(), name) &&
+        memberRepository.findByName(name) != null) {throw new DuplicatedNameException();}
 
     member.updateProfile(name, profMsg);
     return new MemberProfileResponse(member.getId(),
