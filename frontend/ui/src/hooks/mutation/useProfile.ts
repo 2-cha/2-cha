@@ -8,7 +8,7 @@ interface ProfileMutationProps {
 }
 
 async function putProfile({ name, prof_msg }: ProfileMutationProps) {
-  return fetchClient.put(`/members`, {
+  return fetchClient.put('/members', {
     name,
     prof_msg,
   });
