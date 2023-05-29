@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchPlaceQuery } from '@/hooks/query/useSearchPlaceQuery';
 import { useIntersection } from '@/hooks/useIntersection';
+import { getCategoryLabel } from '@/lib/placeUtil';
 import SearchIcon from '@/components/Icons/SearchIcon';
 import Drawer from '@/components/Layout/Drawer';
 import type { Place } from '@/types';
@@ -144,5 +145,15 @@ function SearchPlaceResult({
 }
 
 function PlaceItem({ place }: { place: Place }) {
-  return <div className={s.place}>{place.name}</div>;
+  return (
+    <div className={s.place}>
+      <div className={s.place__title}>
+        <span className={s.place__name}>{place.name}</span>
+        <span className={s.place__category}>
+          {getCategoryLabel(place.category)}
+        </span>
+      </div>
+      <span className={s.place__address}>{place.address}</span>
+    </div>
+  );
 }

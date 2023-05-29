@@ -35,6 +35,7 @@
 
 .result {
   width: 100%;
+  gap: 12px;
 
   @include mixins.flex(column, flex-start, center);
 
@@ -57,5 +58,33 @@
     height: 1px;
     width: 100%;
     background-color: var(--border-color);
+  }
+}
+
+.place {
+  width: 100%;
+  gap: 4px;
+  cursor: pointer;
+
+  @include mixins.flex(column, flex-start, flex-start);
+
+  &__title {
+    gap: 8px;
+
+    @include mixins.flex;
+  }
+
+  &__name {
+    @include mixins.text-md;
+  }
+
+  &__category {
+    font-weight: 300;
+
+    @include mixins.text-sm;
+  }
+
+  &__address {
+    @include mixins.text-sm;
   }
 }
