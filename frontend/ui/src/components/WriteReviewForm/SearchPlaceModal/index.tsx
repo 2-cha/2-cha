@@ -6,6 +6,7 @@ import { getCategoryLabel } from '@/lib/placeUtil';
 import SearchIcon from '@/components/Icons/SearchIcon';
 import Drawer from '@/components/Layout/Drawer';
 import type { Place, SuggestionPlace } from '@/types';
+import cn from 'classnames';
 import s from './SearchPlaceModal.module.scss';
 
 interface SearchPlaceFormData {
@@ -125,7 +126,7 @@ function SearchPlaceResult({
       ) : null}
       {suggestions?.length ? (
         <>
-          <li className={s.result__item}>장소 제안</li>
+          <li className={cn(s.result__item, s.description)}>장소 제안</li>
           {suggestions.map((place) => (
             <li
               key={place.id}
