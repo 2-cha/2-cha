@@ -6,6 +6,8 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
+import com._2cha.demo.bookmark.exception.AlreadyBookmarkedException;
+import com._2cha.demo.bookmark.exception.NotBookmarkedException;
 import com._2cha.demo.global.event.FirstReviewCreatedEvent;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
@@ -18,12 +20,14 @@ import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.place.exception.NoSuchPlaceException;
 import com._2cha.demo.place.service.PlaceService;
 import com._2cha.demo.review.domain.Review;
+import com._2cha.demo.review.domain.ReviewBookmark;
 import com._2cha.demo.review.domain.Tag;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.dto.TagCountResponse;
 import com._2cha.demo.review.exception.CannotRemoveException;
 import com._2cha.demo.review.exception.InvalidTagsException;
 import com._2cha.demo.review.exception.NoSuchReviewException;
+import com._2cha.demo.review.repository.ReviewBookmarkRepository;
 import com._2cha.demo.review.repository.ReviewRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +53,7 @@ public class ReviewService {
 
   private static final Integer SUMMARY_SIZE = 3;
   private final ReviewRepository reviewRepository;
+  private final ReviewBookmarkRepository reviewBookmarkRepository;
   private final TagService tagService;
   private final FileStorageService fileStorageService;
   private final ImageUploadService imageUploadService;
@@ -111,6 +116,32 @@ public class ReviewService {
     reviewRepository.deleteReviewById(reviewId);
   }
 
+  @Transactional
+  public void createBookmark(Long memberId, Long reviewId) {
+    Member member = memberService.findById(memberId);
+    if (member == null) throw new NoSuchMemberException();
+
+    Review review = reviewRepository.findReviewById(reviewId);
+    if (review == null) throw new NoSuchReviewException(reviewId);
+
+    if (reviewBookmarkRepository.findByMemberIdAndReviewId(memberId, reviewId) != null) {
+      throw new AlreadyBookmarkedException();
+    }
+
+    ReviewBookmark bookmark = new ReviewBookmark(member, review);
+    reviewBookmarkRepository.save(bookmark);
+  }
+
+  @Transactional
+  public void removeBookmark(Long memberId, Long reviewId) {
+    ReviewBookmark bookmark = reviewBookmarkRepository.findByMemberIdAndReviewId(memberId,
+                                                                                 reviewId);
+    if (bookmark == null) {
+      throw new NotBookmarkedException();
+    }
+
+    reviewBookmarkRepository.delete(bookmark);
+  }
 
   /*-----------
    @ Queries
@@ -275,6 +306,12 @@ public class ReviewService {
     return new ReviewResponse(review, member, place, fileStorageService.getBaseUrl());
   }
 
+  public List<ReviewResponse> getBookmarkedReviews(Long memberId) {
+    List<ReviewBookmark> bookmarks = reviewBookmarkRepository.findAllByMemberId(memberId);
+    List<Long> reviewIds = bookmarks.stream().map(b -> b.getReview().getId()).toList();
+    return getReviewsByIdInPreservingOrder(reviewIds);
+  }
+
   // 생성순 으로 정렬된 리뷰 목록 조회
   public List<ReviewResponse> getSocialReviewsOrderByNewest() {
 
@@ -285,30 +322,31 @@ public class ReviewService {
     }
 
     Set<Long> placeIds = reviews.stream().map(review -> review.getPlace().getId()).collect(toSet());
-    Set<Long> memberIds = reviews.stream().map(review -> review.getMember().getId()).collect(toSet());
+    Set<Long> memberIds = reviews.stream().map(review -> review.getMember().getId())
+                                 .collect(toSet());
 
     Map<Long, PlaceBriefResponse> placeMap = placeService.getPlacesBriefByIdIn(
-                    placeIds.stream().toList(),
-                    SUMMARY_SIZE)
-            .stream()
-            .collect(
-                    toMap(PlaceBriefResponse::getId,
-                            p -> p
-                    ));
+                                                             placeIds.stream().toList(),
+                                                             SUMMARY_SIZE)
+                                                         .stream()
+                                                         .collect(
+                                                             toMap(PlaceBriefResponse::getId,
+                                                                   p -> p
+                                                                  ));
     Map<Long, MemberProfileResponse> memberMap = memberService.getMemberProfileByIdIn(
-                    memberIds.stream().toList())
-            .stream()
-            .collect(
-                    toMap(
-                            MemberProfileResponse::getId,
-                            m -> m));
+                                                                  memberIds.stream().toList())
+                                                              .stream()
+                                                              .collect(
+                                                                  toMap(
+                                                                      MemberProfileResponse::getId,
+                                                                      m -> m));
 
     return reviews.stream().map(review -> new ReviewResponse(review,
-            memberMap.get(
-                    review.getMember().getId()),
-            placeMap.get(
-                    review.getPlace().getId()),
-            fileStorageService.getBaseUrl()
+                                                             memberMap.get(
+                                                                 review.getMember().getId()),
+                                                             placeMap.get(
+                                                                 review.getPlace().getId()),
+                                                             fileStorageService.getBaseUrl()
     )).toList();
   }
 

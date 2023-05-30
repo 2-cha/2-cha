@@ -84,4 +84,22 @@ public class CollectionController {
                                                         @RequestBody @Valid CollectionReviewsUpdateRequest dto) {
     return collectionService.updateReviews(memberId, collId, dto.getReviewIds());
   }
+
+  @Auth
+  @GetMapping("/bookmarks/collections")
+  public List<CollectionViewResponse> getBookmarkedPlaces(@Authed Long memberId) {
+    return collectionService.getBookmarkedCollections(memberId);
+  }
+
+  @Auth
+  @PostMapping("/bookmarks/collections/{collId}")
+  public void createBookmark(@Authed Long memberId, @PathVariable Long collId) {
+    collectionService.createBookmark(memberId, collId);
+  }
+
+  @Auth
+  @DeleteMapping("/bookmarks/collections/{collId}")
+  public void removeBookmark(@Authed Long memberId, @PathVariable Long collId) {
+    collectionService.removeBookmark(memberId, collId);
+  }
 }

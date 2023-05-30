@@ -87,4 +87,19 @@ public class ReviewController {
                             (res1, res2) -> new ImageUrlWithSuggestionResponse(res1.getUrl(), res2)
                            );
   }
+
+  @GetMapping("/bookmarks/reviews")
+  public List<ReviewResponse> getBookmarkedPlaces(@Authed Long memberId) {
+    return reviewService.getBookmarkedReviews(memberId);
+  }
+
+  @PostMapping("/bookmarks/reviews/{reviewId}")
+  public void createBookmark(@Authed Long memberId, @PathVariable Long reviewId) {
+    reviewService.createBookmark(memberId, reviewId);
+  }
+
+  @DeleteMapping("/bookmarks/reviews/{reviewId}")
+  public void removeBookmark(@Authed Long memberId, @PathVariable Long reviewId) {
+    reviewService.removeBookmark(memberId, reviewId);
+  }
 }
