@@ -5,7 +5,8 @@ import { useIntersection } from '@/hooks/useIntersection';
 import { getCategoryLabel } from '@/lib/placeUtil';
 import SearchIcon from '@/components/Icons/SearchIcon';
 import Drawer from '@/components/Layout/Drawer';
-import type { Place } from '@/types';
+import type { Place, SuggestionPlace } from '@/types';
+import cn from 'classnames';
 import s from './SearchPlaceModal.module.scss';
 
 interface SearchPlaceFormData {
@@ -16,14 +17,14 @@ interface PlacePickerProps {
   isOpen: boolean;
   onClose?: () => void;
   onSelect?: (placeId: string) => void;
-  suggest?: Place[];
+  suggestions?: SuggestionPlace[];
 }
 
 export default function SearchPlaceModal({
   isOpen,
   onClose,
   onSelect,
-  suggest,
+  suggestions,
 }: PlacePickerProps) {
   const {
     register,
@@ -79,7 +80,7 @@ export default function SearchPlaceModal({
         <div className={s.result__container}>
           <SearchPlaceResult
             pages={data?.pages}
-            suggest={suggest}
+            suggestions={suggestions}
             onSelect={handleSelect}
           />
           {data?.pages.length && data.pages.at(-1)?.length ? (
@@ -109,24 +110,24 @@ export default function SearchPlaceModal({
 
 function SearchPlaceResult({
   pages,
-  suggest,
+  suggestions,
   onSelect,
 }: {
   pages?: Place[][];
-  suggest?: Place[];
-  onSelect?: (placeId: string) => void;
+  suggestions?: PlacePickerProps['suggestions'];
+  onSelect?: PlacePickerProps['onSelect'];
 }) {
   const result = useMemo(() => pages?.flat(), [pages]);
 
   return (
     <ul className={s.result}>
-      {!suggest?.length && !result?.length ? (
+      {!suggestions?.length && !result?.length ? (
         <li className={s.noResult}>검색 결과가 없습니다</li>
       ) : null}
-      {suggest?.length ? (
+      {suggestions?.length ? (
         <>
-          <li className={s.result__item}>장소 제안</li>
-          {suggest.map((place) => (
+          <li className={cn(s.result__item, s.description)}>장소 제안</li>
+          {suggestions.map((place) => (
             <li
               key={place.id}
               className={s.result__item}
@@ -151,7 +152,11 @@ function SearchPlaceResult({
   );
 }
 
-function PlaceItem({ place }: { place: Place }) {
+function PlaceItem({
+  place,
+}: {
+  place: Pick<Place, 'id' | 'name' | 'address' | 'category'>;
+}) {
   return (
     <div className={s.place}>
       <div className={s.place__title}>

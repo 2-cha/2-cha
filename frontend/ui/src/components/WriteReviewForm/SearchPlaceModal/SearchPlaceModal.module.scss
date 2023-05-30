@@ -50,16 +50,20 @@
     width: 100%;
   }
 
-  .noResult {
-    margin-top: 40px;
-  }
-
   &__footer {
     background-color: inherit;
     color: inherit;
     text-align: center;
     width: 100%;
     padding: var.$size-md 0;
+  }
+
+  .noResult {
+    margin-top: 40px;
+  }
+
+  .description {
+    @include mixins.text-sm;
   }
 
   .divider {

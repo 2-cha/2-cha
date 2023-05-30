@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useModal } from '@/hooks/useModal';
 import { usePlaceQuery } from '@/hooks/query/usePlace';
+import { useRecoilValue } from 'recoil';
+import { suggestionsState } from '@/atoms/suggestions';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import SearchPlaceModal from './SearchPlaceModal';
 import ImagePicker from '@/components/WriteReviewForm/ImagePicker';
@@ -34,6 +36,7 @@ export default function WriteReviewForm() {
   }, [initialPlaceId]);
 
   const { isOpen, onOpen, onClose } = useModal({ id: 'placePicker' });
+  const suggestions = useRecoilValue(suggestionsState);
 
   const method = useForm<ReviewFormData>();
   const {
@@ -62,15 +65,6 @@ export default function WriteReviewForm() {
       <div className={s.root}>
         <form onSubmit={onSubmit} id="write" className={s.form}>
           <div className={s.full}>
-            <button type="button" className={s.label} onClick={onOpen}>
-              {/* TODO: add styles when hover, active */}
-              <PlaceIcon />
-              <PlaceLabel placeId={placeId} />
-            </button>
-            <PlaceInput name="placeId" placeId={placeId} />
-          </div>
-
-          <div className={s.full}>
             <div className={s.label}>
               <ImagesIcon />
               <span>사진</span>
@@ -79,6 +73,15 @@ export default function WriteReviewForm() {
               <div className={s.errorMessage}>사진을 선택해주세요</div>
             )}
             <ImagePicker name="images" />
+          </div>
+
+          <div className={s.full}>
+            <button type="button" className={s.label} onClick={onOpen}>
+              {/* TODO: add styles when hover, active */}
+              <PlaceIcon />
+              <PlaceLabel placeId={placeId} />
+            </button>
+            <PlaceInput name="placeId" placeId={placeId} />
           </div>
         </form>
 
@@ -101,6 +104,7 @@ export default function WriteReviewForm() {
         isOpen={isOpen}
         onClose={onClose}
         onSelect={setPlaceId}
+        suggestions={suggestions}
       />
     </FormProvider>
   );
