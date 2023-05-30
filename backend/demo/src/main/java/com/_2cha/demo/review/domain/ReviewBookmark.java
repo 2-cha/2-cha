@@ -11,6 +11,8 @@ import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -23,10 +25,12 @@ public class ReviewBookmark {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "MEMBER_ID")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Member member;
 
   @OneToOne
   @JoinColumn(name = "REVIEW_ID")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Review review;
 
   public ReviewBookmark(Member member, Review review) {

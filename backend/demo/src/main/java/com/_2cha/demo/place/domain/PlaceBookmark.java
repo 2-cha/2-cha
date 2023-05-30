@@ -11,6 +11,8 @@ import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -23,11 +25,13 @@ public class PlaceBookmark {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "MEMBER_ID")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Member member;
 
 
   @OneToOne
   @JoinColumn(name = "PLACE_ID")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Place place;
 
 
