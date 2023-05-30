@@ -20,14 +20,11 @@ export default function ImagePicker({ name }: ImagePickerProps) {
   useEffect(() => {
     setSuggestions([]);
     return () => setSuggestions([]);
-  }, []);
+  }, [setSuggestions]);
 
   const { ref, images, removeImage, handleChange } = useImagePicker({
     onChange: (images: Image[]) => {
-      setValue(
-        name,
-        images.map((image) => image.url).filter(Boolean) as string[]
-      );
+      setValue(name, images.map((image) => image.url).filter(isNonNullable));
 
       const suggestions = images
         .map((image) => image.suggestions)
