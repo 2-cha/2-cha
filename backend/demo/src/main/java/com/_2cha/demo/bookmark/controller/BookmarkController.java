@@ -2,7 +2,6 @@ package com._2cha.demo.bookmark.controller;
 
 import com._2cha.demo.bookmark.domain.ItemType;
 import com._2cha.demo.bookmark.dto.BookmarkBriefResponse;
-import com._2cha.demo.bookmark.dto.BookmarkCreateRequest;
 import com._2cha.demo.bookmark.dto.BookmarkCreatedResponse;
 import com._2cha.demo.bookmark.dto.BookmarkRemovedResponse;
 import com._2cha.demo.bookmark.dto.PlaceBookmarkResponse;
@@ -10,7 +9,6 @@ import com._2cha.demo.bookmark.dto.ReviewBookmarkResponse;
 import com._2cha.demo.bookmark.service.BookmarkService;
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
-import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequiredArgsConstructor
@@ -64,18 +61,19 @@ public class BookmarkController {
 
 
   @Auth
-  @PostMapping("/bookmarks/{itemType}")
+  @PostMapping("/bookmarks/{itemType}/{itemId}")
   public BookmarkCreatedResponse createBookmark(@Authed Long memberId,
                                                 @PathVariable ItemType itemType,
-                                                @RequestBody @Valid BookmarkCreateRequest dto
+                                                @PathVariable Long itemId
                                                ) {
-    return bookmarkService.createBookmark(memberId, dto.getItemId(), itemType);
+    return bookmarkService.createBookmark(memberId, itemType, itemId);
   }
 
   @Auth
-  @DeleteMapping("/bookmarks/{bookmarkId}")
+  @DeleteMapping("/bookmarks/{itemType}/{itemId}")
   public BookmarkRemovedResponse removeBookmark(@Authed Long memberId,
-                                                @PathVariable Long bookmarkId) {
-    return bookmarkService.removeBookmark(memberId, bookmarkId);
+                                                @PathVariable ItemType itemType,
+                                                @PathVariable Long itemId) {
+    return bookmarkService.removeBookmark(memberId, itemType, itemId);
   }
 }

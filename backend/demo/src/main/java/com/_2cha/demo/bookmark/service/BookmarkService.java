@@ -117,7 +117,7 @@ public class BookmarkService {
    @ Commands
    ----------*/
   @Transactional
-  public BookmarkCreatedResponse createBookmark(Long memberId, Long itemId, ItemType itemType) {
+  public BookmarkCreatedResponse createBookmark(Long memberId, ItemType itemType, Long itemId) {
     Member member = memberService.findById(memberId);
     BookmarkItemFinder itemFinder = itemFinderFactory.getItemFinder(itemType);
     Object item = itemFinder.findItemById(itemId);
@@ -134,8 +134,8 @@ public class BookmarkService {
   }
 
   @Transactional
-  public BookmarkRemovedResponse removeBookmark(Long memberId, Long bookmarkId) {
-    Bookmark bookmark = bookmarkRepository.findById(bookmarkId);
+  public BookmarkRemovedResponse removeBookmark(Long memberId, ItemType itemType, Long itemId) {
+    Bookmark bookmark = bookmarkRepository.findMemberBookmarkItem(itemType, itemId, memberId);
     if (bookmark == null) {
       throw new NoSuchBookmarkException();
     }
