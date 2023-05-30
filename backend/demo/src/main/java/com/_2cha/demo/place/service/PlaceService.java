@@ -57,13 +57,13 @@ public class PlaceService {
   private final PlaceBookmarkRepository placeBookmarkRepository;
   private final FileStorageService fileStorageService;
   private final ImageUploadService imageUploadService;
+  private final MemberService memberService;
   private static final Integer REVIEW_SUMMARY_SIZE = 3;
   private static final Integer SUGGESTION_SIZE = 10;
   private static final Double SUGGESTION_MAX_DIST = 1000.0;
 
 
   private ReviewService reviewService;
-  private MemberService memberService;
 
   @Autowired
   public void setReviewService(ReviewService reviewService) {
@@ -223,6 +223,23 @@ public class PlaceService {
     List<PlaceBookmark> bookmarks = placeBookmarkRepository.findAllByMemberId(memberId);
     List<Long> placeIds = bookmarks.stream().map(b -> b.getPlace().getId()).toList();
     return getPlacesBriefByIdIn(placeIds, REVIEW_SUMMARY_SIZE);
+  }
+
+  public void setResponseBookmarkStatus(Long memberId, List<? extends PlaceBriefResponse> places) {
+    List<Long> placeIds = places.stream().map(PlaceBriefResponse::getId).toList();
+    List<PlaceBookmark> bookmarks = placeBookmarkRepository.findAllByMemberIdAndPlaceIdIn(
+        memberId, placeIds);
+    List<Long> bookmarkedIds = bookmarks.stream().map(b -> b.getPlace().getId()).toList();
+
+    for (var place : places) {
+      place.setBookmarked(bookmarkedIds.contains(place.getId()));
+    }
+  }
+
+  public void setResponseBookmarkStatus(Long memberId, PlaceDetailResponse place) {
+    PlaceBookmark bookmark = placeBookmarkRepository.findByMemberIdAndPlaceId(memberId,
+                                                                              place.getId());
+    place.setBookmarked(bookmark != null);
   }
 
   public List<PlaceSearchResponse> fuzzySearch(String queryText, Pageable pageParam) {

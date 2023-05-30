@@ -11,6 +11,8 @@ public interface PlaceBookmarkRepository extends Repository<PlaceBookmark, Long>
 
   PlaceBookmark findByMemberIdAndPlaceId(Long memberId, Long placeId);
 
+  List<PlaceBookmark> findAllByMemberIdAndPlaceIdIn(Long memberId, List<Long> placeIds);
+
   List<PlaceBookmark> findAllByMemberId(Long memberId);
 
   void delete(PlaceBookmark bookmark);

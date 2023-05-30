@@ -312,6 +312,23 @@ public class ReviewService {
     return getReviewsByIdInPreservingOrder(reviewIds);
   }
 
+  public void setResponseBookmarkStatus(Long memberId, List<ReviewResponse> reviews) {
+    List<Long> reviewIds = reviews.stream().map(ReviewResponse::getId).toList();
+    List<ReviewBookmark> bookmarks = reviewBookmarkRepository.findAllByMemberIdAndReviewIdIn(
+        memberId, reviewIds);
+    List<Long> bookmarkedIds = bookmarks.stream().map(b -> b.getReview().getId()).toList();
+
+    for (var review : reviews) {
+      review.setBookmarked(bookmarkedIds.contains(review.getId()));
+    }
+  }
+
+  public void setResponseBookmarkStatus(Long memberId, ReviewResponse review) {
+    ReviewBookmark bookmark = reviewBookmarkRepository.findByMemberIdAndReviewId(memberId,
+                                                                                 review.getId());
+    review.setBookmarked(bookmark != null);
+  }
+
   // 생성순 으로 정렬된 리뷰 목록 조회
   public List<ReviewResponse> getSocialReviewsOrderByNewest() {
 

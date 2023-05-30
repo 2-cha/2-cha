@@ -75,6 +75,25 @@ public class CollectionService {
     return collectionQueryRepository.getCollectionsByIdIn(collIds, fileStorageService.getBaseUrl());
   }
 
+  @Transactional(readOnly = true)
+  public void setResponseBookmarkStatus(Long memberId, List<CollectionViewResponse> collections) {
+    List<Long> collIds = collections.stream().map(CollectionViewResponse::getId).toList();
+    List<CollectionBookmark> bookmarks = bookmarkRepository.findAllByMemberIdAndCollectionIdIn(
+        memberId, collIds);
+    List<Long> bookmarkedIds = bookmarks.stream().map(b -> b.getCollection().getId()).toList();
+
+    for (var collection : collections) {
+      collection.setBookmarked(bookmarkedIds.contains(collection.getId()));
+    }
+  }
+
+  @Transactional(readOnly = true)
+  public void setResponseBookmarkStatus(Long memberId, CollectionViewResponse collection) {
+    CollectionBookmark bookmark = bookmarkRepository.findByMemberIdAndCollectionId(memberId,
+                                                                                   collection.getId());
+    collection.setBookmarked(bookmark != null);
+  }
+
 
   /*-----------
    @ Commands

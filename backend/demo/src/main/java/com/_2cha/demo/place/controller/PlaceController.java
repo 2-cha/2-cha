@@ -35,8 +35,10 @@ public class PlaceController {
   private final ImageUploadService imageUploadService;
 
   @GetMapping("/places/{placeId}")
-  public PlaceDetailResponse getPlaceDetailById(@PathVariable Long placeId) {
-    return placeService.getPlaceDetailById(placeId);
+  public PlaceDetailResponse getPlaceDetailById(@Authed Long memberId, @PathVariable Long placeId) {
+    PlaceDetailResponse place = placeService.getPlaceDetailById(placeId);
+    placeService.setResponseBookmarkStatus(memberId, place);
+    return place;
   }
 
   @GetMapping("/places")
@@ -47,6 +49,7 @@ public class PlaceController {
 
   @GetMapping("/places/nearby")
   public List<PlaceBriefWithDistanceResponse> getNearbyPlace(
+      @Authed Long memberId,
       @RequestParam(name = "filter_by", required = false, defaultValue = "default") FilterBy filterBy,
       @RequestParam(name = "filter_values", required = false) List<String> filterValues,
       @RequestParam(name = "sort_by", required = false, defaultValue = "distance") SortBy sortBy,
@@ -59,7 +62,10 @@ public class PlaceController {
                                                                        pageParam.getOffset(),
                                                                        pageParam.getPageSize()
     );
-    return placeService.searchPlacesWithFilterAndSorting(searchParams);
+    List<PlaceBriefWithDistanceResponse> places = placeService.searchPlacesWithFilterAndSorting(
+        searchParams);
+    placeService.setResponseBookmarkStatus(memberId, places);
+    return places;
   }
 
   @PostMapping("/places")

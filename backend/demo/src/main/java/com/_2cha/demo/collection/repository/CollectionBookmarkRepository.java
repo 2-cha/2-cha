@@ -11,6 +11,8 @@ public interface CollectionBookmarkRepository extends Repository<CollectionBookm
 
   CollectionBookmark findByMemberIdAndCollectionId(Long memberId, Long collId);
 
+  List<CollectionBookmark> findAllByMemberIdAndCollectionIdIn(Long memberId, List<Long> collIds);
+
   List<CollectionBookmark> findAllByMemberId(Long memberId);
 
   void delete(CollectionBookmark bookmark);

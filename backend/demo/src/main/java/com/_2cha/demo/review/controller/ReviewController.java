@@ -45,18 +45,26 @@ public class ReviewController {
   private final ImageUploadService imageUploadService;
 
   @GetMapping("/places/{placeId}/reviews")
-  public List<ReviewResponse> getPlaceReviews(@PathVariable Long placeId, Pageable pageParam) {
-    return reviewService.getReviewsByPlaceId(placeId, pageParam);
+  public List<ReviewResponse> getPlaceReviews(@Authed Long memberId, @PathVariable Long placeId,
+                                              Pageable pageParam) {
+    List<ReviewResponse> reviews = reviewService.getReviewsByPlaceId(placeId, pageParam);
+    reviewService.setResponseBookmarkStatus(memberId, reviews);
+    return reviews;
   }
 
   @GetMapping("/members/{memberId}/reviews")
-  public List<ReviewResponse> getMemberReviews(@PathVariable Long memberId, Pageable pageParam) {
-    return reviewService.getReviewsByMemberId(memberId, pageParam);
+  public List<ReviewResponse> getMemberReviews(@Authed Long requesterId,
+                                               @PathVariable Long memberId, Pageable pageParam) {
+    List<ReviewResponse> reviews = reviewService.getReviewsByMemberId(memberId, pageParam);
+    reviewService.setResponseBookmarkStatus(requesterId, reviews);
+    return reviews;
   }
 
   @GetMapping("/reviews/{reviewId}")
-  public ReviewResponse getReview(@PathVariable Long reviewId) {
-    return reviewService.getReviewById(reviewId);
+  public ReviewResponse getReview(@Authed Long memberId, @PathVariable Long reviewId) {
+    ReviewResponse review = reviewService.getReviewById(reviewId);
+    reviewService.setResponseBookmarkStatus(memberId, review);
+    return review;
   }
 
   @PostMapping("/places/{placeId}/reviews")

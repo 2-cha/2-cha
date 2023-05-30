@@ -11,6 +11,8 @@ public interface ReviewBookmarkRepository extends Repository<ReviewBookmark, Lon
 
   ReviewBookmark findByMemberIdAndReviewId(Long memberId, Long reviewId);
 
+  List<ReviewBookmark> findAllByMemberIdAndReviewIdIn(Long memberId, List<Long> reviewIds);
+
   List<ReviewBookmark> findAllByMemberId(Long memberId);
 
   void delete(ReviewBookmark bookmark);
