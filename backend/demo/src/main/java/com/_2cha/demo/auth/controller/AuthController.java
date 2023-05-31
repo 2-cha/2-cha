@@ -6,7 +6,6 @@ import com._2cha.demo.auth.dto.OIDCRequest;
 import com._2cha.demo.auth.dto.SignInWithAccountRequest;
 import com._2cha.demo.auth.dto.TokenResponse;
 import com._2cha.demo.auth.service.AuthService;
-import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
 import com._2cha.demo.member.domain.OIDCProvider;
 import jakarta.validation.Valid;
@@ -31,7 +30,6 @@ public class AuthController {
     return authService.signInWithAccount(dto.getEmail(), dto.getPassword());
   }
 
-  @Auth
   @PostMapping("/refresh")
   public TokenResponse refreshJwt(@Authed Long memberId,
                                   @Valid @RequestBody JwtRefreshRequest dto) {
