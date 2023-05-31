@@ -1,6 +1,7 @@
 package com._2cha.demo.review.repository;
 
 import com._2cha.demo.review.domain.Review;
+import com._2cha.demo.review.domain.Tag;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.Repository;
@@ -25,4 +26,10 @@ public interface ReviewRepository extends Repository<Review, Long> {
   void deleteReviewById(Long id);
 
   List<Review> findAllByOrderByCreatedDesc();
+
+  List<Review> findReviewsByTagsInReviewTagIn(List<Tag> tags);
+
+//  List<Review> findReviewByTagsContaining(List<Tag> tags);
+
+//  List<Review> findReviewsBy(List<Long> tagsId);
 }
