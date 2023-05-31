@@ -2,8 +2,16 @@ package com._2cha.demo.review.domain;
 
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.place.domain.Place;
-import jakarta.persistence.*;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,20 +43,15 @@ public class Review {
   private Member member;
 
   @BatchSize(size = 100)
-  @ManyToMany
-  @JoinTable(
-      name = "TAG_IN_REVIEW",
-      joinColumns = @JoinColumn(name = "REV_ID"),
-      inverseJoinColumns = @JoinColumn(name = "TAG_ID")
-  )
-  private List<Tag> tags = new ArrayList<>();
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", orphanRemoval = true, cascade = CascadeType.ALL)
+  private List<TagInReview> tagsInReview = new ArrayList<>();
 
   @BatchSize(size = 100)
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = false)
   private List<ReviewImage> images = new ArrayList<>();
 
   @CreatedDate
-  LocalDateTime created;
+  LocalDateTime created = LocalDateTime.now();
 
   /*-----------
    @ Methods
@@ -75,9 +78,12 @@ public class Review {
     return review;
   }
 
-
   public void addTag(Tag tag) {
-    this.tags.add(tag);
+    this.tagsInReview.add(TagInReview.createTagInReview(this, tag));
+  }
+
+  public List<Tag> getTags() {
+    return tagsInReview.stream().map(TagInReview::getTag).toList();
   }
 
   public void addImage(String urlPath, String thumbUrlPath) {
