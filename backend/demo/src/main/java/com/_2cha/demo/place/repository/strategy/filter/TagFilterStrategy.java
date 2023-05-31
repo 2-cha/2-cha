@@ -2,6 +2,7 @@ package com._2cha.demo.place.repository.strategy.filter;
 
 import static com._2cha.demo.place.domain.QPlace.place;
 import static com._2cha.demo.review.domain.QReview.review;
+import static com._2cha.demo.review.domain.QTagInReview.tagInReview;
 
 import com._2cha.demo.place.domain.Place;
 import com.querydsl.core.Tuple;
@@ -21,13 +22,14 @@ public class TagFilterStrategy implements FilterStrategy {
     JPQLQuery<Place> subQuery = JPAExpressions.select(review.place)
                                               .from(review)
                                               .join(review.place)
-                                              .join(review.tags)
+                                              .join(review.tagsInReview, tagInReview)
+                                              .join(tagInReview.tag)
                                               .where(anyTagsIn((List<Long>) filterValues));
 
     return q.where(place.in(subQuery));
   }
 
   private BooleanExpression anyTagsIn(List<Long> filterValues) {
-    return review.tags.any().id.in(filterValues);
+    return review.tagsInReview.any().tag.id.in(filterValues);
   }
 }
