@@ -53,7 +53,6 @@
     span {
       text-align: start;
       word-break: break-word;
-      font-weight: 600;
 
       @include mixins.text-md;
     }

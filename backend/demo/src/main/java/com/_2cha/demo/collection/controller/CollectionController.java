@@ -32,14 +32,21 @@ public class CollectionController {
 
   @Auth
   @GetMapping("/members/{memberId}/collections")
-  public List<CollectionViewResponse> getMemberCollections(@PathVariable Long memberId) {
-    return collectionService.getMemberCollections(memberId, true);
+  public List<CollectionViewResponse> getMemberCollections(@Authed Long requesterId,
+                                                           @PathVariable Long memberId) {
+    List<CollectionViewResponse> collections = collectionService.getMemberCollections(
+        memberId, true);
+    collectionService.setResponseBookmarkStatus(requesterId, collections);
+    return collections;
   }
 
   @Auth
   @GetMapping("/collections")
   public List<CollectionViewResponse> getCollectionsIncludingPrivate(@Authed Long memberId) {
-    return collectionService.getMemberCollections(memberId, false);
+    List<CollectionViewResponse> collections = collectionService.getMemberCollections(
+        memberId, false);
+    collectionService.setResponseBookmarkStatus(memberId, collections);
+    return collections;
   }
 
   @Auth
@@ -83,5 +90,23 @@ public class CollectionController {
                                                         @PathVariable Long collId,
                                                         @RequestBody @Valid CollectionReviewsUpdateRequest dto) {
     return collectionService.updateReviews(memberId, collId, dto.getReviewIds());
+  }
+
+  @Auth
+  @GetMapping("/bookmarks/collections")
+  public List<CollectionViewResponse> getBookmarkedPlaces(@Authed Long memberId) {
+    return collectionService.getBookmarkedCollections(memberId);
+  }
+
+  @Auth
+  @PostMapping("/bookmarks/collections/{collId}")
+  public void createBookmark(@Authed Long memberId, @PathVariable Long collId) {
+    collectionService.createBookmark(memberId, collId);
+  }
+
+  @Auth
+  @DeleteMapping("/bookmarks/collections/{collId}")
+  public void removeBookmark(@Authed Long memberId, @PathVariable Long collId) {
+    collectionService.removeBookmark(memberId, collId);
   }
 }

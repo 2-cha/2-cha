@@ -16,6 +16,10 @@ export interface Place {
 export interface PlaceSearchResult extends Place {
   distance: number;
 }
+export type SuggestionPlace = Pick<
+  PlaceSearchResult,
+  'id' | 'name' | 'address' | 'category' | 'distance'
+>;
 
 export const placesMockData = [
   {
