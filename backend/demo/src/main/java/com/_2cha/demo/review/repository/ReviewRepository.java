@@ -33,4 +33,10 @@ public interface ReviewRepository extends Repository<Review, Long> {
 
   @Query("select r from Review r join r.tags t where t in :tags")
   List<Review> findByTagsIn(@Param("tags") List<Tag> tags);
+
+  List<Review> findReviewsByTagsIn(List<Tag> tags);
+
+//  List<Review> findReviewByTagsContaining(List<Tag> tags);
+
+//  List<Review> findReviewsBy(List<Long> tagsId);
 }
