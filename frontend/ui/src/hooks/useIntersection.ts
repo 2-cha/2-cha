@@ -13,8 +13,10 @@ export function useIntersection({
   threshold,
 }: IntersectionObserverOptions = {}) {
   const [ref, setRef] = useState<Element | null>(null);
-  const callback = useRef(onChange);
   const [isIntersecting, setIntersecting] = useState(!!initialState);
+
+  const callback = useRef<IntersectionObserverOptions['onChange']>();
+  callback.current = onChange;
 
   useEffect(() => {
     if (!ref) return;

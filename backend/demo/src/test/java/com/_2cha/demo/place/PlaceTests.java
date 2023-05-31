@@ -115,12 +115,12 @@ class PlaceTests {
   @Test
   void getPlaceDetailById() {
 
-    PlaceDetailResponse place = placeController.getPlaceDetailById(3L);
+    PlaceDetailResponse place = placeController.getPlaceDetailById(1L, 3L);
     Assertions.assertThat(place.getName())
               .isEqualTo("standbyme");
     Assertions.assertThat(place.getTags()).isEmpty();
 
-    PlaceDetailResponse placeWithReview = placeController.getPlaceDetailById(2L);
+    PlaceDetailResponse placeWithReview = placeController.getPlaceDetailById(1L, 2L);
     Assertions.assertThat(placeWithReview.getTags())
               .extracting("message")
               .containsExactly("이야기 나누기 좋아요");
@@ -138,7 +138,8 @@ class PlaceTests {
     Double lon = 126.9803;
 
     List<PlaceBriefWithDistanceResponse> places =
-        placeController.getNearbyPlace(FilterBy.DEFAULT, null,
+        placeController.getNearbyPlace(1L,
+                                       FilterBy.DEFAULT, null,
                                        SortBy.DISTANCE,
                                        maxDist,
                                        lat,

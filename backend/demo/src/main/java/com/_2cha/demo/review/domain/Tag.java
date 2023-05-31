@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.util.StringUtils;
 
 @Entity
 @Cacheable
@@ -36,11 +37,19 @@ public class Tag {
   private Category category;
 
   public static Tag createTag(String msg, String emoji, Category category) {
+    if (!StringUtils.hasText(msg) || !StringUtils.hasText(emoji) || category == null) {
+      throw new IllegalArgumentException("Fields of tag cannot be null or empty string.");
+    }
+
     Tag tag = new Tag();
     tag.msg = msg;
     tag.emoji = emoji;
     tag.category = category;
 
     return tag;
+  }
+
+  public static Tag createTag(TagCreationRequest tagReq) {
+    return createTag(tagReq.getAcceptedMessage(), tagReq.getAcceptedEmoji(), tagReq.getCategory());
   }
 }

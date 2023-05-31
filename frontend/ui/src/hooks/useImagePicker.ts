@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { useReviewImageMutation } from '@/hooks/mutation/useReviewImage';
+import {
+  useReviewImageMutation,
+  type PostImageResponse,
+} from '@/hooks/mutation/useReviewImage';
 
 function isSameFile(file1: File, file2: File) {
   return (
@@ -9,11 +12,10 @@ function isSameFile(file1: File, file2: File) {
   );
 }
 
-export interface Image {
+export type Image = {
   file: File;
-  url?: string;
   isError?: boolean;
-}
+} & Partial<PostImageResponse>;
 
 export interface ImagePickerOptions {
   onChange?: (images: Image[]) => void;
@@ -43,11 +45,12 @@ export function useImagePicker({ onChange }: ImagePickerOptions) {
       .filter((file) => !images.find((image) => isSameFile(image.file, file)))
       .map((file) => {
         imageMutation.mutate(file, {
-          onSuccess: (url) => {
+          onSuccess: (data) => {
             setImages((prev) => {
               const target = prev.find((image) => isSameFile(image.file, file));
               if (target) {
-                target.url = url;
+                target.url = data.url;
+                target.suggestions = data.suggestions;
               }
               return [...prev];
             });

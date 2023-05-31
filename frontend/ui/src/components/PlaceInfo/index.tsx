@@ -1,9 +1,13 @@
 import { forwardRef, useState } from 'react';
+import Image from 'next/image';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
+import cn from 'classnames';
+
 import PlaceReviews from './PlaceReviewsMenu';
 import PlaceDetail from './PlaceDetailMenu';
 import type { Place } from '@/types';
-import cn from 'classnames';
+import Tags from '../Tags';
+
 import s from './PlaceInfo.module.scss';
 
 const menuItems = {
@@ -22,13 +26,16 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
 
     return (
       <div className={s.root}>
-        {placeInfo.thumbnail && (
-          <img
-            width="100%"
+        {placeInfo.thumbnail ? (
+          <Image
+            width={480}
+            height={200}
             src={placeInfo.thumbnail.split(',')[0]}
             alt={placeInfo.name}
             className={s.thumbnail}
           />
+        ) : (
+          <div className={s.thumbnail} />
         )}
 
         <div className={s.summary}>
@@ -37,9 +44,12 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
           </p>
           <p className={s.summary__category}>{placeInfo.category}</p>
         </div>
-        {placeInfo.tags.map((tag) => (
-          <span key={tag.id}>{tag.message}</span>
-        ))}
+        <Tags
+          keyID={`place-${placeInfo.id}`}
+          tagList={placeInfo.tags}
+          limit={5}
+          isNumberShown
+        />
 
         {/* TODO: refactor */}
         <div className={s.menu}>
