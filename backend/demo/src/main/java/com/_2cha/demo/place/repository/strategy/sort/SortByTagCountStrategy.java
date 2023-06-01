@@ -15,9 +15,9 @@ public class SortByTagCountStrategy implements
   public JPAQuery<Tuple> apply(JPAQueryFactory q,
                                NumberExpression<Double> distanceSphere) {
 
-    return q.select(place, distanceSphere, review.tags.size().count())
+    return q.select(place, distanceSphere, review.tagsInReview.size().count())
             .from(place).leftJoin(review).on(review.place.id.eq(place.id))
             .groupBy(place)
-            .orderBy(review.tags.size().count().desc(), distanceSphere.asc());
+            .orderBy(review.tagsInReview.size().count().desc(), distanceSphere.asc());
   }
 }

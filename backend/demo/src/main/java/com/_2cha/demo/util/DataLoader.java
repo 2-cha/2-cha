@@ -42,10 +42,10 @@ public class DataLoader implements ApplicationRunner {
     //      "CREATE ALIAS IF NOT EXISTS H2GIS_SPATIAL FOR \"org.h2gis.functions.factory.H2GISFunctions.load\";\n"
     //      + "CALL H2GIS_SPATIAL();")
     //  .executeUpdate();
-    //loadCsv("와인바", Category.WINE_BAR);
+//    loadCsv("와인바", Category.WINE_BAR);
     //loadCsv("위스키바", Category.WHISKEY_BAR);
     //loadCsv("칵테일바", Category.COCKTAIL_BAR);
-    //createMockMember();
+//    createMockMember();
   }
 
   @Transactional

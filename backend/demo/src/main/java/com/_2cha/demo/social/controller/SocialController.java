@@ -5,6 +5,7 @@ import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -21,9 +22,12 @@ public class SocialController {
 		return reviewService.getSocialReviewsOrderByNewest();
 	}
 
-//	@GetMapping("/social/nearby")
-//	public List<ReviewResponse> getSocialReviewsNearby(
-//			@RequestParam(name = "filter_by", required = false, defaultValue = "default") String filterBy) {
-//		return reviewService.getSocialReviewsOrderByNearby();
-//	}
+
+	//특정 태그를 가진 리뷰
+	@GetMapping("/social/filteredbytag")
+	public List<ReviewResponse> getSocialReviewsByTag(
+			@RequestParam(name = "filter_by_tag") List<Long> filterTagsId
+	) {
+		return reviewService.getSocialReviewsWithTag(filterTagsId);
+	}
 }

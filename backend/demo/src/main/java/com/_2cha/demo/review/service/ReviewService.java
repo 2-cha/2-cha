@@ -372,8 +372,41 @@ public class ReviewService {
 //
 //  }
 
-  //특정 태그들을 가진 리뷰 조회
-//  public List<ReviewResponse> getSocialReviewsWithTag() {
-//
-//  }
+  //  특정 태그들을 가진 리뷰 조회
+  public List<ReviewResponse> getSocialReviewsWithTag(List<Long> filterTagsId) {
+
+    List<Tag> filterTags = tagService.findTagsByIdIn(filterTagsId);
+    List<Review> reviews = reviewRepository.findReviewsByTagsInReviewTagIn(filterTags);
+    if (reviews.isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    Set<Long> placeIds = reviews.stream().map(review -> review.getPlace().getId()).collect(toSet());
+    Set<Long> memberIds = reviews.stream().map(review -> review.getMember().getId())
+                                 .collect(toSet());
+
+    Map<Long, PlaceBriefResponse> placeMap = placeService.getPlacesBriefByIdIn(
+                                                             placeIds.stream().toList(),
+                                                             SUMMARY_SIZE)
+                                                         .stream()
+                                                         .collect(
+                                                             toMap(PlaceBriefResponse::getId,
+                                                                   p -> p
+                                                                  ));
+    Map<Long, MemberProfileResponse> memberMap = memberService.getMemberProfileByIdIn(
+                                                                  memberIds.stream().toList())
+                                                              .stream()
+                                                              .collect(
+                                                                  toMap(
+                                                                      MemberProfileResponse::getId,
+                                                                      m -> m));
+
+    return reviews.stream().map(review -> new ReviewResponse(review,
+                                                             memberMap.get(
+                                                                 review.getMember().getId()),
+                                                             placeMap.get(
+                                                                 review.getPlace().getId()),
+                                                             fileStorageService.getBaseUrl()
+    )).toList();
+  }
 }
