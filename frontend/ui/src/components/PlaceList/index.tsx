@@ -40,11 +40,11 @@ export function PlaceItem({ place }: PlaceItemProps) {
           {place.address} / {place.distance}
         </p>
       </div>
-      {place.thumbnail ? (
+      {place.image ? (
         <div className={s.thumbnail__wrapper}>
           {/* TODO: fix to next/image */}
           <img
-            src={place.thumbnail.split(',')[0]}
+            src={place.image}
             width={480}
             loading="lazy"
             alt={place.name}
