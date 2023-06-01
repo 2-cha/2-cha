@@ -19,18 +19,6 @@
   }
 }
 
-.addButton {
-  position: fixed;
-  @include mixins.flex();
-  bottom: 80px;
-  right: calc(50% - 240px + 20px);
-  background-color: var(--background-color);
-  width: 70px;
-  height: 70px;
-  border-radius: 50px;
-  border: 2px solid var(--border-color);
-}
-
 .placeItem {
   width: 100%;
 

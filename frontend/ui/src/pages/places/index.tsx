@@ -5,6 +5,7 @@ import Skeleton from '@/components/Skeleton';
 import { usePlacesQuery } from '@/hooks/query/usePlaces';
 import { useIntersection } from '@/hooks/useIntersection';
 import { useCallback } from 'react';
+import ReviewAddButton from '@/components/ReviewAddButton';
 
 export default function Places() {
   const { data, isLoading, isError, isFetching, fetchNextPage } =
@@ -24,6 +25,7 @@ export default function Places() {
           {Array.from({ length: 3 }).map((_, i) => (
             <Skeleton.Feed key={i} />
           ))}
+          <ReviewAddButton />
         </>
       ) : isError ? (
         <div>error</div>
@@ -32,6 +34,7 @@ export default function Places() {
           <PlaceList pages={data.pages} />
           <div ref={ref} aria-hidden style={{ height: 1 }} />
           {isFetching && <div>Loading...</div>}
+          <ReviewAddButton />
         </>
       )}
     </>

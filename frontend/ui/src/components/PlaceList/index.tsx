@@ -1,21 +1,12 @@
 import { Fragment } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+
 import { PlaceSearchResult } from '@/types';
 import s from './PlaceList.module.scss';
-import PlusSquareIcon from '../Icons/PlusSquareIcon';
 
 interface PlaceListProps {
   pages: PlaceSearchResult[][];
-}
-
-function ReviewAddButton() {
-  return (
-    <div className={s.addButton}>
-      <Link href="/write">
-        <PlusSquareIcon width={50} height={50} withoutBorder />
-      </Link>
-    </div>
-  );
 }
 
 export default function PlaceList({ pages }: PlaceListProps) {
@@ -34,7 +25,6 @@ export default function PlaceList({ pages }: PlaceListProps) {
           ))}
         </ul>
       </div>
-      <ReviewAddButton />
     </>
   );
 }
@@ -57,7 +47,7 @@ export function PlaceItem({ place }: PlaceItemProps) {
       {place.thumbnail ? (
         <div className={s.thumbnail__wrapper}>
           {/* TODO: fix to next/image */}
-          <img
+          <Image
             src={place.thumbnail.split(',')[0]}
             width={480}
             loading="lazy"
