@@ -26,11 +26,11 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
 
     return (
       <div className={s.root}>
-        {placeInfo.thumbnail ? (
+        {placeInfo.image ? (
           <Image
             width={480}
             height={200}
-            src={placeInfo.thumbnail.split(',')[0]}
+            src={placeInfo.image}
             alt={placeInfo.name}
             className={s.thumbnail}
           />
