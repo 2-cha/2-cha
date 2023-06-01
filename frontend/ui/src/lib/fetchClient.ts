@@ -1,21 +1,7 @@
 import axios from 'axios';
-import { RECOIL_PERSIST_KEY } from '@/atoms/persist';
-import { tokenState, type Token } from '@/atoms/token';
-
-function getToken(): Token | undefined {
-  try {
-    if (typeof window !== 'undefined') {
-      const recoilStorage = window.localStorage.getItem(RECOIL_PERSIST_KEY);
-      if (recoilStorage) {
-        const recoilState = JSON.parse(recoilStorage);
-        const token = recoilState[tokenState.key];
-        return token;
-      }
-    }
-  } catch {}
-
-  return undefined;
-}
+import { getToken, refreshToken } from './auth';
+import { getRecoil } from 'recoil-nexus';
+import { jwtPayloadState } from '@/atoms/jwtPayload';
 
 export const fetchClient = axios.create({
   baseURL:
@@ -25,6 +11,7 @@ export const fetchClient = axios.create({
       : process.env.NEXT_PUBLIC_BASE_API_URL,
 });
 
+// 요청 헤더에 토큰을 추가
 fetchClient.interceptors.request.use((config) => {
   const token = getToken();
 
@@ -33,3 +20,43 @@ fetchClient.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// 토큰 만료시 refresh
+fetchClient.interceptors.request.use(
+  async (config) => {
+    const token = getToken();
+
+    if (token) {
+      const jwtPayload = getRecoil(jwtPayloadState);
+      if (jwtPayload?.exp && jwtPayload.exp * 1000 < Date.now()) {
+        const token = await refreshToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token.access_token}`;
+        }
+      }
+    }
+    return config;
+  },
+  null,
+  { runWhen: (config) => config.url !== '/auth/refresh' }
+);
+
+fetchClient.interceptors.response.use(
+  (res) => res,
+  async (error) => {
+    const { config, response } = error;
+    if (
+      !config._retry &&
+      response?.status === 401 &&
+      config.url !== '/auth/refresh'
+    ) {
+      config._retry = true;
+
+      const token = await refreshToken();
+      if (token) {
+        return fetchClient.request(config);
+      }
+    }
+    throw error;
+  }
+);
