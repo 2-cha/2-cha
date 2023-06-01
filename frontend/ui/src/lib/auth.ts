@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { resetRecoil, setRecoil, getRecoil } from 'recoil-nexus';
 import { tokenState, type Token } from '@/atoms/token';
 import type { QueryResponse } from '@/types';
+import { fetchClient } from './fetchClient';
 
 function generateRandomString() {
   return crypto.randomBytes(16).toString('hex');

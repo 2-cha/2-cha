@@ -22,20 +22,24 @@ fetchClient.interceptors.request.use((config) => {
 });
 
 // 토큰 만료시 refresh
-fetchClient.interceptors.request.use(async (config) => {
-  const token = getToken();
+fetchClient.interceptors.request.use(
+  async (config) => {
+    const token = getToken();
 
-  if (token) {
-    const jwtPayload = getRecoil(jwtPayloadState);
-    if (jwtPayload?.exp && jwtPayload.exp * 1000 < Date.now()) {
-      const token = await refreshToken();
-      if (token) {
-        config.headers.Authorization = `Bearer ${token.access_token}`;
+    if (token) {
+      const jwtPayload = getRecoil(jwtPayloadState);
+      if (jwtPayload?.exp && jwtPayload.exp * 1000 < Date.now()) {
+        const token = await refreshToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token.access_token}`;
+        }
       }
     }
-  }
-  return config;
-});
+    return config;
+  },
+  null,
+  { runWhen: (config) => config.url !== '/auth/refresh' }
+);
 
 fetchClient.interceptors.response.use(
   (res) => res,
