@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RecoilRoot } from 'recoil';
+import RecoilNexus from 'recoil-nexus';
 import Layout from '@/components/Layout';
 import type { AppProps } from 'next/app';
 import '@/styles/globals.scss';
@@ -21,6 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <RecoilRoot>
+        <RecoilNexus />
         <Layout>
           <Component {...pageProps} />
         </Layout>
