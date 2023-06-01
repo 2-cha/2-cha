@@ -1,5 +1,7 @@
 import { Fragment } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+
 import { PlaceSearchResult } from '@/types';
 import s from './PlaceList.module.scss';
 
@@ -9,19 +11,21 @@ interface PlaceListProps {
 
 export default function PlaceList({ pages }: PlaceListProps) {
   return (
-    <div className={s.container}>
-      <ul className={s.placeList}>
-        {pages.map((page, idx) => (
-          <Fragment key={idx}>
-            {page.map((place) => (
-              <li key={place.id} className={s.placeList__item}>
-                <PlaceItem place={place} />
-              </li>
-            ))}
-          </Fragment>
-        ))}
-      </ul>
-    </div>
+    <>
+      <div className={s.container}>
+        <ul className={s.placeList}>
+          {pages.map((page, idx) => (
+            <Fragment key={idx}>
+              {page.map((place) => (
+                <li key={place.id} className={s.placeList__item}>
+                  <PlaceItem place={place} />
+                </li>
+              ))}
+            </Fragment>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 }
 
@@ -43,7 +47,7 @@ export function PlaceItem({ place }: PlaceItemProps) {
       {place.thumbnail ? (
         <div className={s.thumbnail__wrapper}>
           {/* TODO: fix to next/image */}
-          <img
+          <Image
             src={place.thumbnail.split(',')[0]}
             width={480}
             loading="lazy"
