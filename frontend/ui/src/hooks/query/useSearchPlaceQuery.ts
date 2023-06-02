@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchClient } from '@/lib/fetchClient';
-import type { Place, QueryResponse } from '@/types';
+import type { Place } from '@/types';
 
 async function searchPlace({
   query,
@@ -9,7 +9,7 @@ async function searchPlace({
   query: string;
   pageParam: number;
 }) {
-  const { data } = await fetchClient.get<QueryResponse<Place[]>>('/places', {
+  const { data } = await fetchClient.get<Place[]>('/places', {
     params: {
       query,
       page_number: pageParam,
@@ -17,11 +17,7 @@ async function searchPlace({
     },
   });
 
-  if (!data.success) {
-    throw new Error(data.message);
-  }
-
-  return data.data;
+  return data;
 }
 
 export function useSearchPlaceQuery(query: string) {
