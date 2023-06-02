@@ -22,6 +22,7 @@ import com._2cha.demo.place.dto.PlaceDetailResponse;
 import com._2cha.demo.place.dto.PlaceSearchResponse;
 import com._2cha.demo.place.dto.PlaceSuggestionResponse;
 import com._2cha.demo.place.dto.SortBy;
+import com._2cha.demo.place.dto.SortOrder;
 import com._2cha.demo.place.exception.InvalidTagCountSortException;
 import com._2cha.demo.place.exception.NoSuchPlaceException;
 import com._2cha.demo.place.repository.PlaceBookmarkRepository;
@@ -189,7 +190,7 @@ public class PlaceService {
         placeQueryRepository.findAround(new NearbyPlaceSearchParams(lat, lon,
                                                                     SUGGESTION_MAX_DIST,
                                                                     FilterBy.DEFAULT, null,
-                                                                    SortBy.DISTANCE,
+                                                                    SortBy.DISTANCE, SortOrder.ASC,
                                                                     0L, SUGGESTION_SIZE));
 
     return completedFuture(placesWithDist.stream()
