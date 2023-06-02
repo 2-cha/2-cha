@@ -32,9 +32,11 @@
 
 .addButton {
   @include mixins.flex();
-  margin-top: -20px;
+  margin-top: 0px;
   background-color: var(--background-color);
   width: 80px;
   height: 80px;
   border-radius: 50px;
+
+  box-shadow: 0 0 10px 1px var(--border-color);
 }
