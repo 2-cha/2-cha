@@ -32,8 +32,8 @@ public class SortByTagCountStrategy implements
   }
 
   private OrderSpecifier<Long> tagCountWithOrder(SortOrder order) {
-    return order == ASC ? tagInReview.count().asc()
-                        : tagInReview.count().desc();
+    return order == ASC ? tagInReview.tag.count().asc()
+                        : tagInReview.tag.count().desc();
   }
 
   private BooleanExpression anyTagsIn(List<Long> filterValues) {
