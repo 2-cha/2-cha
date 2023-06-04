@@ -17,12 +17,14 @@ public class NearbyPlaceSearchParams {
   private FilterBy filterBy;
   private List<Object> filterValues = new ArrayList<>();
   private SortBy sortBy;
+  private SortOrder sortOrder;
   private Long offset;
   private Integer pageSize;
 
 
   public NearbyPlaceSearchParams(Double lat, Double lon, Double maxDist, FilterBy filterBy,
-                                 List<String> rawFilterValues, SortBy sortBy, Long offset,
+                                 List<String> rawFilterValues, SortBy sortBy, SortOrder sortOrder,
+                                 Long offset,
                                  Integer pageSize) {
     this.lat = lat;
     this.lon = lon;
@@ -30,6 +32,7 @@ public class NearbyPlaceSearchParams {
     this.filterBy = filterBy;
     convertFilterValues(rawFilterValues);
     this.sortBy = sortBy;
+    this.sortOrder = sortOrder;
     this.offset = offset;
     this.pageSize = pageSize;
   }
