@@ -7,6 +7,7 @@ import com._2cha.demo.global.interceptor.AuthInterceptor;
 import com._2cha.demo.global.interceptor.RequestLogInterceptor;
 import com._2cha.demo.place.converter.FilterByRequestParamConverter;
 import com._2cha.demo.place.converter.SortByRequestParamConverter;
+import com._2cha.demo.place.converter.SortOrderRequestParamConverter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -40,6 +41,7 @@ public class MvcConfig implements WebMvcConfigurer {
     registry.addConverter(new PathToProviderEnumConverter());
     registry.addConverter(new FilterByRequestParamConverter());
     registry.addConverter(new SortByRequestParamConverter());
+    registry.addConverter(new SortOrderRequestParamConverter());
   }
 
   @Override
