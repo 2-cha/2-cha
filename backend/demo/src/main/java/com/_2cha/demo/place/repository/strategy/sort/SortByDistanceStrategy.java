@@ -9,13 +9,15 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 
 public class SortByDistanceStrategy implements SortStrategy {
 
   @Override
   public JPAQuery<Tuple> apply(JPAQueryFactory q,
                                NumberExpression<Double> distanceSphere,
-                               SortOrder sortOrder) {
+                               SortOrder sortOrder,
+                               List<?> filterValues) {
     return q.select(place, distanceSphere)
             .from(place)
             .groupBy(place)
