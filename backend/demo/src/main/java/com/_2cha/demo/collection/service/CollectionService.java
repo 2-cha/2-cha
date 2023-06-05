@@ -1,6 +1,10 @@
 package com._2cha.demo.collection.service;
 
 
+import static java.util.stream.Collectors.toMap;
+
+import com._2cha.demo.bookmark.dto.BookmarkCountProjection;
+import com._2cha.demo.bookmark.dto.BookmarkStatus;
 import com._2cha.demo.bookmark.exception.AlreadyBookmarkedException;
 import com._2cha.demo.bookmark.exception.NotBookmarkedException;
 import com._2cha.demo.collection.domain.Collection;
@@ -28,6 +32,7 @@ import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.service.ReviewService;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -81,9 +86,14 @@ public class CollectionService {
     List<CollectionBookmark> bookmarks = bookmarkRepository.findAllByMemberIdAndCollectionIdIn(
         memberId, collIds);
     List<Long> bookmarkedIds = bookmarks.stream().map(b -> b.getCollection().getId()).toList();
-
+    Map<Long, Long> totalCountMap = bookmarkRepository.countAllByCollectionIdIn(collIds).stream()
+                                                      .collect(toMap(
+                                                          BookmarkCountProjection::getId,
+                                                          BookmarkCountProjection::getCount));
     for (var collection : collections) {
-      collection.setBookmarked(bookmarkedIds.contains(collection.getId()));
+      collection.setBookmarkStatus(new BookmarkStatus(bookmarkedIds.contains(collection.getId()),
+                                                      totalCountMap.getOrDefault(collection.getId(),
+                                                                                 0L)));
     }
   }
 
@@ -91,7 +101,8 @@ public class CollectionService {
   public void setResponseBookmarkStatus(Long memberId, CollectionViewResponse collection) {
     CollectionBookmark bookmark = bookmarkRepository.findByMemberIdAndCollectionId(memberId,
                                                                                    collection.getId());
-    collection.setBookmarked(bookmark != null);
+    Long count = bookmarkRepository.countAllByCollectionId(collection.getId());
+    collection.setBookmarkStatus(new BookmarkStatus(bookmark != null, count));
   }
 
 
