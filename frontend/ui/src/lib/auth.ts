@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 import { resetRecoil, setRecoil, getRecoil } from 'recoil-nexus';
 import { tokenState, type Token } from '@/atoms/token';
-import type { QueryResponse } from '@/types';
 import { fetchClient } from './fetchClient';
 
 function generateRandomString() {
@@ -32,19 +31,12 @@ export async function refreshToken() {
   }
 
   try {
-    const { data } = await fetchClient.post<QueryResponse<Token>>(
-      '/auth/refresh',
-      {
-        refresh_token: token.refresh_token,
-      }
-    );
+    const { data } = await fetchClient.post<Token>('/auth/refresh', {
+      refresh_token: token.refresh_token,
+    });
 
-    if (data.success) {
-      const token = data.data;
-
-      setRecoil(tokenState, token);
-      return token;
-    }
+    setRecoil(tokenState, data);
+    return token;
   } catch {}
 
   // 토큰 갱신 실패시 로그아웃

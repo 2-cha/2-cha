@@ -2,6 +2,7 @@ import axios from 'axios';
 import { getToken, refreshToken } from './auth';
 import { getRecoil } from 'recoil-nexus';
 import { jwtPayloadState } from '@/atoms/jwtPayload';
+import type { QueryResponse } from '@/types';
 
 export const fetchClient = axios.create({
   baseURL:
@@ -41,6 +42,7 @@ fetchClient.interceptors.request.use(
   { runWhen: (config) => config.url !== '/auth/refresh' }
 );
 
+// 401 응답시 토큰 갱신 후 재요청
 fetchClient.interceptors.response.use(
   (res) => res,
   async (error) => {
@@ -60,3 +62,14 @@ fetchClient.interceptors.response.use(
     throw error;
   }
 );
+
+fetchClient.interceptors.response.use((res) => {
+  const data = res.data as QueryResponse<any>;
+
+  if (!data.success) {
+    throw new Error(data.message);
+  }
+
+  res.data = data.data;
+  return res;
+});

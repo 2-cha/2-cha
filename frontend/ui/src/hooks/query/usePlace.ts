@@ -1,15 +1,11 @@
 import { fetchClient } from '@/lib/fetchClient';
-import type { Place, QueryResponse } from '@/types';
+import type { Place } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 
 async function fetchPlace(placeId: string) {
-  const { data } = await fetchClient<QueryResponse<Place>>(
-    `/places/${placeId}`
-  );
-  if (!data.success) {
-    throw new Error(data.message);
-  }
-  return data.data;
+  const { data } = await fetchClient.get<Place>(`/places/${placeId}`);
+
+  return data;
 }
 
 export function usePlaceQuery(placeId?: string | string[]) {
