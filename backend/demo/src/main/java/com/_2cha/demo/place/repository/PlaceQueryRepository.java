@@ -69,7 +69,8 @@ public class PlaceQueryRepository {
 
     List<Pair<Place, Double>> results = new ArrayList<>();
     List<Tuple> tuples = context.execute(location, params.getMaxDist(), params.getOffset(),
-                                         params.getPageSize(), params.getFilterValues());
+                                         params.getPageSize(), params.getFilterValues(),
+                                         params.getSortOrder());
     tuples.forEach(tuple -> {
       results.add(Pair.of(tuple.get(0, Place.class), tuple.get(1, Double.class)));
     });

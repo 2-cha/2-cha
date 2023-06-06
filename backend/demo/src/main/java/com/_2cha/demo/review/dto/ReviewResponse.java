@@ -1,18 +1,16 @@
 package com._2cha.demo.review.dto;
 
+import com._2cha.demo.bookmark.dto.BookmarkStatus;
 import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.review.domain.Review;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,18 +23,8 @@ public class ReviewResponse {
   private MemberProfileResponse member;
   private PlaceBriefResponse place;
 
-  @Getter(AccessLevel.NONE)
-  @Setter(AccessLevel.NONE)
-  private Boolean isBookmarked;
-
-  @JsonProperty(value = "is_bookmarked")
-  public Boolean isBookmarked() {
-    return isBookmarked;
-  }
-
-  public void setBookmarked(Boolean bookmarked) {
-    isBookmarked = bookmarked;
-  }
+  @JsonInclude(Include.NON_NULL)
+  private BookmarkStatus bookmarkStatus;
 
   public ReviewResponse(Review review, MemberProfileResponse member, PlaceBriefResponse place,
                         String imgBaseUrl) {

@@ -1,16 +1,11 @@
 import { fetchClient } from '@/lib/fetchClient';
 import { useQuery } from '@tanstack/react-query';
-import type { Member, QueryResponse } from '@/types';
+import type { Member } from '@/types';
 
 async function fetchMember(memberId: string) {
-  const { data } = await fetchClient.get<QueryResponse<Member>>(
-    `/members/${memberId}`
-  );
+  const { data } = await fetchClient.get<Member>(`/members/${memberId}`);
 
-  if (!data.success) {
-    throw new Error(data.message);
-  }
-  return data.data;
+  return data;
 }
 
 export function useMemberQuery(memberId?: string) {

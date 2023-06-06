@@ -6,6 +6,8 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
+import com._2cha.demo.bookmark.dto.BookmarkCountProjection;
+import com._2cha.demo.bookmark.dto.BookmarkStatus;
 import com._2cha.demo.bookmark.exception.AlreadyBookmarkedException;
 import com._2cha.demo.bookmark.exception.NotBookmarkedException;
 import com._2cha.demo.global.event.FirstReviewCreatedEvent;
@@ -317,16 +319,23 @@ public class ReviewService {
     List<ReviewBookmark> bookmarks = reviewBookmarkRepository.findAllByMemberIdAndReviewIdIn(
         memberId, reviewIds);
     List<Long> bookmarkedIds = bookmarks.stream().map(b -> b.getReview().getId()).toList();
+    Map<Long, Long> totalCountMap = reviewBookmarkRepository.countAllByReviewIdIn(reviewIds)
+                                                            .stream()
+                                                            .collect(toMap(
+                                                                BookmarkCountProjection::getId,
+                                                                BookmarkCountProjection::getCount));
 
     for (var review : reviews) {
-      review.setBookmarked(bookmarkedIds.contains(review.getId()));
+      review.setBookmarkStatus(new BookmarkStatus(bookmarkedIds.contains(review.getId()),
+                                                  totalCountMap.getOrDefault(review.getId(), 0L)));
     }
   }
 
   public void setResponseBookmarkStatus(Long memberId, ReviewResponse review) {
     ReviewBookmark bookmark = reviewBookmarkRepository.findByMemberIdAndReviewId(memberId,
                                                                                  review.getId());
-    review.setBookmarked(bookmark != null);
+    Long count = reviewBookmarkRepository.countAllByReviewId(review.getId());
+    review.setBookmarkStatus(new BookmarkStatus(bookmark != null, count));
   }
 
   // 생성순 으로 정렬된 리뷰 목록 조회
