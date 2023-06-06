@@ -42,6 +42,11 @@ $img-height: 360px;
     @include mixins.padding(y, md);
   }
 
+  &__headerTop {
+    width: 100%;
+    @include mixins.flex(row, space-between, center);
+  }
+
   &__title {
     @include mixins.text-lg;
     @include mixins.padding(y, sm);
