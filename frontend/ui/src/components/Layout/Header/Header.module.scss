@@ -9,67 +9,24 @@
 }
 
 .header {
-  gap: var.$size-md;
-
   @include mixins.header;
-  @include mixins.flex(row, flex-start, center);
 
   &__title {
     @include mixins.text-lg;
   }
 
   &__button {
+    width: 100%;
+    height: 100%;
     background-color: inherit;
     color: inherit;
+    gap: var.$size-md;
+
+    @include mixins.flex(row, flex-start, center);
 
     &:hover,
     &:active {
       color: var(--text-active-color);
-    }
-  }
-}
-
-.searchForm {
-  width: 100%;
-  gap: var.$size-md;
-
-  @include mixins.flex(row, flex-start, center);
-
-  &__input {
-    width: 100%;
-    background-color: var(--background-inactive-color);
-    color: inherit;
-    border: 0;
-
-    @include mixins.padding(x, lg);
-    @include mixins.padding(y, md);
-  }
-
-  &__button {
-    background-color: inherit;
-    color: inherit;
-    border: 0;
-
-    @include mixins.padding(x, lg);
-    @include mixins.padding(y, md);
-  }
-}
-
-.addressList {
-  width: 100%;
-  border-bottom: 0.5px solid var(--border-color);
-
-  @include mixins.flex(column, flex-start, flex-start);
-
-  & > li {
-    width: 100%;
-
-    @include mixins.padding(x, lg);
-    @include mixins.padding(y, md);
-
-    & > button {
-      background-color: inherit;
-      color: inherit;
     }
   }
 }
