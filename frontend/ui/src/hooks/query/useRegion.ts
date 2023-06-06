@@ -21,3 +21,9 @@ export function useRegionQuery(location: Coordinate | null) {
 
   return result;
 }
+
+export function useRegion(location: Coordinate | null) {
+  const { data } = useRegionQuery(location);
+
+  return data ? `${data.region_2depth_name} ${data.region_3depth_name}` : null;
+}
