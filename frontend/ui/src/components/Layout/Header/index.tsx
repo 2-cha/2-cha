@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useCurrentLocation } from '@/hooks/useCurrentLocation';
-import { useEupMyeonDong } from '@/hooks/query/useRegion';
+import { useRegion } from '@/hooks/query/useRegion';
 import { useModal } from '@/hooks/useModal';
 import LocationIcon from '@/components/Icons/LocationIcon';
 import SearchAddressModal from './SearchAddressModal';
@@ -17,9 +17,9 @@ export default function Header() {
   }, [location, isError]);
 
   // 읍면동
-  let eupMyeonDong = useEupMyeonDong(location);
-  if (!eupMyeonDong && isError) {
-    eupMyeonDong = '위치를 알 수 없어요';
+  let region = useRegion(location);
+  if (!region && isError) {
+    region = '위치를 알 수 없어요';
   }
 
   return (
@@ -27,7 +27,7 @@ export default function Header() {
       <header className={s.header}>
         <button onClick={onOpen} className={s.header__button}>
           <LocationIcon />
-          <p className={s.header__title}>{eupMyeonDong}</p>
+          <p className={s.header__title}>{region}</p>
         </button>
       </header>
       <SearchAddressModal isOpen={isOpen} onClose={onClose} />
