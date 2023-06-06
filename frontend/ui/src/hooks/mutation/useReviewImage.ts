@@ -15,11 +15,8 @@ async function postImage(image: File) {
     '/reviews/images',
     formData
   );
-  if (!data.success) {
-    throw new Error(data.message);
-  }
 
-  return data.data;
+  return data;
 }
 
 export function useReviewImageMutation() {
