@@ -13,7 +13,7 @@
   @include mixins.box-shadow(top);
 
   &__item {
-    width: 100%;
+    flex: 1;
     height: 100%;
     transition: color 0.1s ease-in-out;
 
@@ -28,4 +28,15 @@
   &__link {
     text-transform: capitalize;
   }
+}
+
+.addButton {
+  @include mixins.flex();
+  margin-top: 0px;
+  background-color: var(--background-color);
+  width: 80px;
+  height: 80px;
+  border-radius: 50px;
+
+  box-shadow: 0 0 10px 1px var(--border-color);
 }
