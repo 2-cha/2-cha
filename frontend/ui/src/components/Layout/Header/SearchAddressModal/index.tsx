@@ -1,5 +1,6 @@
 import Drawer from '@/components/Layout/Drawer';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useAddressQuery } from '@/hooks/query/useAddress';
 import { useSetRecoilState } from 'recoil';
 import { locationState } from '@/atoms/location';
@@ -12,6 +13,10 @@ interface SearchAddressModalProps {
   onClose: () => void;
 }
 
+interface SearchAddressForm {
+  address: string;
+}
+
 export default function SearchAddressModal({
   isOpen,
   onClose,
@@ -19,38 +24,35 @@ export default function SearchAddressModal({
   const [query, setQuery] = useState('');
   const { data: addresses } = useAddressQuery(query);
 
+  const {
+    handleSubmit,
+    register,
+    setValue,
+    formState: { errors },
+  } = useForm<SearchAddressForm>();
+  const onSubmit = handleSubmit((data) => {
+    setQuery(data.address);
+  });
+
+  useEffect(() => {
+    setValue('address', '');
+  }, [isOpen, setValue]);
+
   return (
     <Drawer isOpen={isOpen} onClose={onClose}>
       <div className={s.container}>
-        <SearchAddressForm onSubmit={setQuery} />
+        <form className={s.searchForm} onSubmit={onSubmit}>
+          <SearchInput
+            id="address"
+            placeholder="주소를 입력하세요"
+            {...register('address')}
+          />
+        </form>
         {addresses && (
           <AddressList addresses={addresses} onSelected={onClose} />
         )}
       </div>
     </Drawer>
-  );
-}
-
-interface SearchAddressFormProps {
-  onSubmit: (address: string) => void;
-}
-
-function SearchAddressForm({ onSubmit }: SearchAddressFormProps) {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const address = formData.get('address') as string;
-    onSubmit(address);
-  };
-
-  return (
-    <form className={s.searchForm} onSubmit={handleSubmit}>
-      <SearchInput
-        id="address"
-        name="address"
-        placeholder="주소를 입력하세요"
-      />
-    </form>
   );
 }
 
