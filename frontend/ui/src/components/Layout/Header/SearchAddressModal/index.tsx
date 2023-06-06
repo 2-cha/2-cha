@@ -5,6 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { locationState } from '@/atoms/location';
 import { type Address } from '@/pages/api/address';
 import s from './SearchAddressModal.module.scss';
+import SearchInput from '@/components/SearchInput';
 
 interface SearchAddressModalProps {
   isOpen: boolean;
@@ -44,14 +45,11 @@ function SearchAddressForm({ onSubmit }: SearchAddressFormProps) {
 
   return (
     <form className={s.searchForm} onSubmit={handleSubmit}>
-      <input
-        className={s.searchForm__input}
-        type="text"
+      <SearchInput
         id="address"
         name="address"
         placeholder="주소를 입력하세요"
       />
-      <input className={s.searchForm__button} type="submit" value="검색" />
     </form>
   );
 }
