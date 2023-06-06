@@ -10,28 +10,6 @@
 
 .searchForm {
   width: 100%;
-  gap: var.$size-md;
-
-  @include mixins.flex(row, flex-start, center);
-
-  &__input {
-    width: 100%;
-    background-color: var(--background-inactive-color);
-    color: inherit;
-    border: 2px solid var(--border-color);
-    border-radius: 6px;
-
-    @include mixins.padding(x, md);
-    @include mixins.padding(y, 8);
-  }
-
-  &__button {
-    background-color: inherit;
-    color: inherit;
-    border: 0;
-
-    @include mixins.padding(y, md);
-  }
 }
 
 .addressList {
