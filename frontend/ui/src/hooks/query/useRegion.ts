@@ -21,3 +21,9 @@ export function useRegionQuery(location: Coordinate | null) {
 
   return result;
 }
+
+export function useEupMyeonDong(location: Coordinate | null) {
+  const { data } = useRegionQuery(location);
+
+  return data?.region_3depth_name;
+}

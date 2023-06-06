@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useCurrentLocation } from '@/hooks/useCurrentLocation';
-import { useRegionQuery } from '@/hooks/query/useRegion';
+import { useEupMyeonDong } from '@/hooks/query/useRegion';
 import { useAddressQuery } from '@/hooks/query/useAddress';
 import { useSetRecoilState } from 'recoil';
 import { locationState } from '@/atoms/location';
@@ -18,11 +18,10 @@ export default function Header() {
     }
   }, [location, isError]);
 
-  // 지역 이름
-  const { data: region } = useRegionQuery(location);
-  let title = region?.region_3depth_name || '';
-  if (!region && isError) {
-    title = '-';
+  // 읍면동
+  let eupMyeonDong = useEupMyeonDong(location);
+  if (!eupMyeonDong && isError) {
+    eupMyeonDong = '주소를 검색해주세요';
   }
 
   // 주소 검색
@@ -41,7 +40,7 @@ export default function Header() {
         {isFormOpen ? (
           <SearchAddressForm onSubmit={(address) => setQuery(address)} />
         ) : (
-          <p className={s.header__title}>{title}</p>
+          <p className={s.header__title}>{eupMyeonDong}</p>
         )}
       </header>
       {addresses && isFormOpen ? (
