@@ -1,6 +1,6 @@
 import { fetchClient } from '@/lib/fetchClient';
 import { useMutation } from '@tanstack/react-query';
-import type { SuggestionPlace, QueryResponse } from '@/types';
+import type { SuggestionPlace } from '@/types';
 
 export interface PostImageResponse {
   suggestions: SuggestionPlace[];
@@ -11,7 +11,7 @@ async function postImage(image: File) {
   const formData = new FormData();
   formData.append('file', image);
 
-  const { data } = await fetchClient.post<QueryResponse<PostImageResponse>>(
+  const { data } = await fetchClient.post<PostImageResponse>(
     '/reviews/images',
     formData
   );
