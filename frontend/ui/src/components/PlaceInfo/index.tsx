@@ -7,6 +7,7 @@ import PlaceReviews from './PlaceReviewsMenu';
 import PlaceDetail from './PlaceDetailMenu';
 import type { Place } from '@/types';
 import Tags from '../Tags';
+import { getCategoryLabel } from '@/lib/placeUtil';
 
 import s from './PlaceInfo.module.scss';
 
@@ -42,7 +43,9 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
           <p className={s.summary__title} ref={ref}>
             {placeInfo.name}
           </p>
-          <p className={s.summary__category}>{placeInfo.category}</p>
+          <p className={s.summary__category}>
+            {getCategoryLabel(placeInfo.category)}
+          </p>
         </div>
         <Tags
           keyID={`place-${placeInfo.id}`}
