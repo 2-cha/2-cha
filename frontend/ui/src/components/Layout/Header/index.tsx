@@ -14,7 +14,7 @@ export default function Header() {
     if (!location && isError) {
       onOpen();
     }
-  }, [location, isError]);
+  }, [location, isError, onOpen]);
 
   // 읍면동
   let region = useRegion(location);
