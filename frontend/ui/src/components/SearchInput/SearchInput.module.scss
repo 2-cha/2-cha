@@ -11,6 +11,11 @@
   @include mixins.flex;
 }
 
+.error {
+  border-color: #ff4500;
+  border-width: 2px;
+}
+
 .input {
   width: 100%;
   padding: var.$size-sm var.$size-md;

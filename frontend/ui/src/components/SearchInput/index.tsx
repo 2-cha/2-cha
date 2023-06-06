@@ -3,12 +3,14 @@ import SearchIcon from '@/components/Icons/SearchIcon';
 import cn from 'classnames';
 import s from './SearchInput.module.scss';
 
-export default forwardRef<HTMLInputElement, React.ComponentProps<'input'>>(
+type SearchInputProps = React.ComponentProps<'input'> & { isError?: boolean };
+
+export default forwardRef<HTMLInputElement, SearchInputProps>(
   function SearchInput(props, ref) {
-    const { className, ...rest } = props;
+    const { className, isError, ...rest } = props;
 
     return (
-      <div className={s.container}>
+      <div className={cn(s.container, { [s.error]: isError })}>
         <input
           ref={ref}
           type="search"

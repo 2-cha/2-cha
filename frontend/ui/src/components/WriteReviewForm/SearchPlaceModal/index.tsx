@@ -66,9 +66,12 @@ export default function SearchPlaceModal({
     <Drawer isOpen={isOpen} onClose={onClose}>
       <div className={s.container}>
         <form onSubmit={onSubmit} className={s.form}>
-          <SearchInput id="place" {...register('query')} />
+          <SearchInput
+            id="place"
+            isError={!!errors.query}
+            {...register('query', { required: true })}
+          />
         </form>
-        {errors.query && <span>검색어를 입력해주세요</span>}
         <div className={s.result__container}>
           <SearchPlaceResult
             pages={data?.pages}

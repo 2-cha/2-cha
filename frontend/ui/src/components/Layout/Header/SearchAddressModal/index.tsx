@@ -45,7 +45,8 @@ export default function SearchAddressModal({
           <SearchInput
             id="address"
             placeholder="주소를 입력하세요"
-            {...register('address')}
+            isError={!!errors.address}
+            {...register('address', { required: true })}
           />
         </form>
         {addresses && (
