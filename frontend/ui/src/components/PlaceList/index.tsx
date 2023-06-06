@@ -4,6 +4,7 @@ import Image from 'next/image';
 
 import { PlaceSearchResult } from '@/types';
 import s from './PlaceList.module.scss';
+import BookmarkIcon from '../Icons/BookmarkIcon';
 
 interface PlaceListProps {
   pages: PlaceSearchResult[][];
@@ -17,9 +18,7 @@ export default function PlaceList({ pages }: PlaceListProps) {
           {pages.map((page, idx) => (
             <Fragment key={idx}>
               {page.map((place) => (
-                <li key={place.id} className={s.placeList__item}>
-                  <PlaceItem place={place} />
-                </li>
+                <PlaceItem place={place} key={place.id} />
               ))}
             </Fragment>
           ))}
@@ -35,29 +34,30 @@ interface PlaceItemProps {
 
 export function PlaceItem({ place }: PlaceItemProps) {
   return (
-    <div className={s.placeItem}>
+    <li className={s.placeItem}>
       <div className={s.placeItem__header}>
-        <Link href={`/places/${place.id}`}>
-          <p className={s.placeItem__title}>{place.name}</p>
-        </Link>
+        <div className={s.placeItem__headerTop}>
+          <Link href={`/places/${place.id}`}>
+            <p className={s.placeItem__title}>{place.name}</p>
+          </Link>
+          <BookmarkIcon isSingle /> {/* TODO: is bookmarked */}
+        </div>
         <p className={s.placeItem__address}>
           {place.address} / {place.distance}
         </p>
       </div>
       {place.image ? (
-        <div className={s.thumbnail__wrapper}>
-          {/* TODO: fix to next/image */}
-          <img
-            src={place.image}
-            width={480}
-            loading="lazy"
-            alt={place.name}
-            className={s.thumbnail}
-          />
-        </div>
+        <Image
+          src={place.image}
+          width={480}
+          height={480}
+          loading="lazy"
+          alt={place.name}
+          className={s.thumbnail}
+        />
       ) : (
         <div className={s.thumbnail__skeleton} />
       )}
-    </div>
+    </li>
   );
 }
