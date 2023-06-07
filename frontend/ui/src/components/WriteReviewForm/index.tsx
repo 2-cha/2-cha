@@ -136,9 +136,8 @@ function PlaceInput({
   name: keyof ReviewFormData;
   placeId: string;
 }) {
-  const { register } = useFormContext<ReviewFormData>();
+  const { register, setValue } = useFormContext<ReviewFormData>();
+  setValue(name, placeId);
 
-  return (
-    <input {...register(name, { required: true })} value={placeId} hidden />
-  );
+  return <input type="text" hidden {...register(name, { required: true })} />;
 }

@@ -3,8 +3,8 @@ import { useForm } from 'react-hook-form';
 import { useSearchPlaceQuery } from '@/hooks/query/useSearchPlaceQuery';
 import { useIntersection } from '@/hooks/useIntersection';
 import { getCategoryLabel } from '@/lib/placeUtil';
-import SearchIcon from '@/components/Icons/SearchIcon';
 import Drawer from '@/components/Layout/Drawer';
+import SearchInput from '@/components/SearchInput';
 import type { Place, SuggestionPlace } from '@/types';
 import cn from 'classnames';
 import s from './SearchPlaceModal.module.scss';
@@ -66,17 +66,12 @@ export default function SearchPlaceModal({
     <Drawer isOpen={isOpen} onClose={onClose}>
       <div className={s.container}>
         <form onSubmit={onSubmit} className={s.form}>
-          <input
+          <SearchInput
             id="place"
-            type="search"
-            className={s.input}
-            {...register('query')}
+            isError={!!errors.query}
+            {...register('query', { required: true })}
           />
-          <button type="submit" className={s.submit}>
-            <SearchIcon />
-          </button>
         </form>
-        {errors.query && <span>검색어를 입력해주세요</span>}
         <div className={s.result__container}>
           <SearchPlaceResult
             pages={data?.pages}

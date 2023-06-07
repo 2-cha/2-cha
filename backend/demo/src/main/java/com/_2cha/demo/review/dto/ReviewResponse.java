@@ -1,5 +1,6 @@
 package com._2cha.demo.review.dto;
 
+import com._2cha.demo.bookmark.dto.BookmarkStatus;
 import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.review.domain.Review;
@@ -21,6 +22,9 @@ public class ReviewResponse {
   private List<String> images = new ArrayList<>();
   private MemberProfileResponse member;
   private PlaceBriefResponse place;
+
+  @JsonInclude(Include.NON_NULL)
+  private BookmarkStatus bookmarkStatus;
 
   public ReviewResponse(Review review, MemberProfileResponse member, PlaceBriefResponse place,
                         String imgBaseUrl) {

@@ -2,6 +2,7 @@ package com._2cha.demo.place.repository.strategy;
 
 import static com._2cha.demo.place.domain.QPlace.place;
 
+import com._2cha.demo.place.dto.SortOrder;
 import com._2cha.demo.place.repository.strategy.filter.FilterStrategy;
 import com._2cha.demo.place.repository.strategy.sort.SortStrategy;
 import com.querydsl.core.Tuple;
@@ -31,14 +32,14 @@ public class FilterSortContext {
 
   public List<Tuple> execute(Point location, Double maxDist,
                              Long offset, Integer pageSize,
-                             List<?> filterValues) {
+                             List<?> filterValues, SortOrder sortOrder) {
     NumberTemplate<Double> distanceSphere = Expressions.numberTemplate(Double.class,
                                                                        "function('ST_DistanceSphere', {0}, {1})",
                                                                        place.location,
                                                                        location);
     JPAQuery<Tuple> query;
 
-    query = sortStrategy.apply(qf, distanceSphere);
+    query = sortStrategy.apply(qf, distanceSphere, sortOrder, filterValues);
     query = filterStrategy.apply(query, filterValues); // return empty if filterValues is empty
     query.where(distanceSphere.loe(maxDist));
     query.offset(offset);

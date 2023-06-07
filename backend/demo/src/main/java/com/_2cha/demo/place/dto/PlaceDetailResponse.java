@@ -1,7 +1,10 @@
 package com._2cha.demo.place.dto;
 
+import com._2cha.demo.bookmark.dto.BookmarkStatus;
 import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.review.dto.TagCountResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;
 import lombok.Data;
 import org.locationtech.jts.geom.Point;
@@ -19,6 +22,9 @@ public class PlaceDetailResponse {
   private Double lat;
   private Double lon;
   private List<TagCountResponse> tags;
+
+  @JsonInclude(Include.NON_NULL)
+  private BookmarkStatus bookmarkStatus;
 
   public PlaceDetailResponse(Long id, String name, Category category, String address,
                              String lotAddress,

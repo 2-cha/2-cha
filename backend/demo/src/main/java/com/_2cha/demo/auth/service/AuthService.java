@@ -79,8 +79,9 @@ public class AuthService {
     }
   }
 
-  public TokenResponse refreshJwt(Long memberId, String refreshToken) {
+  public TokenResponse refreshJwt(String refreshToken) {
     JwtTokenPayload payload = verifyJwt(refreshToken, JwtRefreshTokenPayload.class);
+    Long memberId = payload.getSub();
     RefreshToken storedToken = tokenRepository.findById(memberId);
     if (storedToken == null) throw new UnauthorizedException("Cannot find such token");
 

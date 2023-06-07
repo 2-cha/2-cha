@@ -38,6 +38,19 @@ public class CollectionQueryRepository {
                        .fetch();
   }
 
+  public List<CollectionViewResponse> getCollectionsByIdIn(List<Long> collIds,
+                                                           String thumbBaseUrl) {
+    return queryFactory.select(constructor(CollectionViewResponse.class,
+                                           collection.id,
+                                           collection.title,
+                                           collection.description,
+                                           collection.thumbnailUrlPath.prepend(thumbBaseUrl)
+                                          ))
+                       .from(collection)
+                       .where(collection.member.id.in(collIds), isExposed(true))
+                       .fetch();
+  }
+
   private BooleanExpression isExposed(boolean cond) {
     return cond ? collection.isExposed.eq(true) : null;
   }

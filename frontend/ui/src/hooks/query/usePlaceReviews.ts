@@ -1,5 +1,5 @@
 import { fetchClient } from '@/lib/fetchClient';
-import type { QueryResponse, Review } from '@/types';
+import type { Review } from '@/types';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 async function fetchPlaceReviews({
@@ -9,14 +9,12 @@ async function fetchPlaceReviews({
   placeId: number;
   pageParam: number;
 }) {
-  const { data } = await fetchClient<QueryResponse<Review[]>>(
+  const { data } = await fetchClient.get<Review[]>(
     `/places/${placeId}/reviews`,
     { params: { page_number: pageParam } }
   );
-  if (!data.success) {
-    throw new Error(data.message);
-  }
-  return data.data;
+
+  return data;
 }
 
 export function usePlaceReviewsQuery(placeId: number) {

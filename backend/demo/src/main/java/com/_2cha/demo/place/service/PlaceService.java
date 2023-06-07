@@ -1,12 +1,21 @@
 package com._2cha.demo.place.service;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.stream.Collectors.toMap;
 
+import com._2cha.demo.bookmark.dto.BookmarkCountProjection;
+import com._2cha.demo.bookmark.dto.BookmarkStatus;
+import com._2cha.demo.bookmark.exception.AlreadyBookmarkedException;
+import com._2cha.demo.bookmark.exception.NotBookmarkedException;
 import com._2cha.demo.global.event.FirstReviewCreatedEvent;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
+import com._2cha.demo.member.domain.Member;
+import com._2cha.demo.member.exception.NoSuchMemberException;
+import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
+import com._2cha.demo.place.domain.PlaceBookmark;
 import com._2cha.demo.place.dto.FilterBy;
 import com._2cha.demo.place.dto.NearbyPlaceSearchParams;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
@@ -16,8 +25,10 @@ import com._2cha.demo.place.dto.PlaceDetailResponse;
 import com._2cha.demo.place.dto.PlaceSearchResponse;
 import com._2cha.demo.place.dto.PlaceSuggestionResponse;
 import com._2cha.demo.place.dto.SortBy;
+import com._2cha.demo.place.dto.SortOrder;
 import com._2cha.demo.place.exception.InvalidTagCountSortException;
 import com._2cha.demo.place.exception.NoSuchPlaceException;
+import com._2cha.demo.place.repository.PlaceBookmarkRepository;
 import com._2cha.demo.place.repository.PlaceQueryRepository;
 import com._2cha.demo.place.repository.PlaceRepository;
 import com._2cha.demo.review.dto.TagCountResponse;
@@ -47,8 +58,10 @@ public class PlaceService {
 
   private final PlaceRepository placeRepository;
   private final PlaceQueryRepository placeQueryRepository;
+  private final PlaceBookmarkRepository placeBookmarkRepository;
   private final FileStorageService fileStorageService;
   private final ImageUploadService imageUploadService;
+  private final MemberService memberService;
   private static final Integer REVIEW_SUMMARY_SIZE = 3;
   private static final Integer SUGGESTION_SIZE = 10;
   private static final Double SUGGESTION_MAX_DIST = 1000.0;
@@ -86,6 +99,32 @@ public class PlaceService {
 
     place.updateImage(event.getImageUrlPath(), event.getThumbUrlPath());
     placeRepository.save(place);
+  }
+
+  @Transactional
+  public void createBookmark(Long memberId, Long placeId) {
+    Member member = memberService.findById(memberId);
+    if (member == null) throw new NoSuchMemberException();
+
+    Place place = placeRepository.findById(placeId);
+    if (place == null) throw new NoSuchPlaceException();
+
+    if (placeBookmarkRepository.findByMemberIdAndPlaceId(memberId, placeId) != null) {
+      throw new AlreadyBookmarkedException();
+    }
+
+    PlaceBookmark bookmark = new PlaceBookmark(member, place);
+    placeBookmarkRepository.save(bookmark);
+  }
+
+  @Transactional
+  public void removeBookmark(Long memberId, Long placeId) {
+    PlaceBookmark bookmark = placeBookmarkRepository.findByMemberIdAndPlaceId(memberId, placeId);
+    if (bookmark == null) {
+      throw new NotBookmarkedException();
+    }
+
+    placeBookmarkRepository.delete(bookmark);
   }
 
   /*-----------
@@ -154,7 +193,7 @@ public class PlaceService {
         placeQueryRepository.findAround(new NearbyPlaceSearchParams(lat, lon,
                                                                     SUGGESTION_MAX_DIST,
                                                                     FilterBy.DEFAULT, null,
-                                                                    SortBy.DISTANCE,
+                                                                    SortBy.DISTANCE, SortOrder.ASC,
                                                                     0L, SUGGESTION_SIZE));
 
     return completedFuture(placesWithDist.stream()
@@ -182,6 +221,38 @@ public class PlaceService {
       brief.setTagSummary(placesTagCounts.get(place.getId()));
       return brief;
     }).toList();
+  }
+
+  public List<PlaceBriefResponse> getBookmarkedPlaces(Long memberId) {
+    List<PlaceBookmark> bookmarks = placeBookmarkRepository.findAllByMemberId(memberId);
+    List<Long> placeIds = bookmarks.stream().map(b -> b.getPlace().getId()).toList();
+    return getPlacesBriefByIdIn(placeIds, REVIEW_SUMMARY_SIZE);
+  }
+
+  public void setResponseBookmarkStatus(Long memberId, List<? extends PlaceBriefResponse> places) {
+    List<Long> placeIds = places.stream().map(PlaceBriefResponse::getId).toList();
+    List<PlaceBookmark> bookmarks = placeBookmarkRepository.findAllByMemberIdAndPlaceIdIn(
+        memberId, placeIds);
+    List<Long> bookmarkedIds = bookmarks.stream().map(b -> b.getPlace().getId()).toList();
+    Map<Long, Long> totalCountMap = placeBookmarkRepository.countAllByPlaceIdIn(placeIds)
+                                                           .stream()
+                                                           .collect(
+                                                               toMap(
+                                                                   BookmarkCountProjection::getId,
+                                                                   BookmarkCountProjection::getCount));
+
+    for (var place : places) {
+      place.setBookmarkStatus(
+          new BookmarkStatus(bookmarkedIds.contains(place.getId()),
+                             totalCountMap.getOrDefault(place.getId(), 0L)));
+    }
+  }
+
+  public void setResponseBookmarkStatus(Long memberId, PlaceDetailResponse place) {
+    PlaceBookmark bookmark = placeBookmarkRepository.findByMemberIdAndPlaceId(memberId,
+                                                                              place.getId());
+    Long count = placeBookmarkRepository.countAllByPlaceId(place.getId());
+    place.setBookmarkStatus(new BookmarkStatus(bookmark != null, count));
   }
 
   public List<PlaceSearchResponse> fuzzySearch(String queryText, Pageable pageParam) {
