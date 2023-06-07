@@ -14,7 +14,9 @@
     "tsc": "tsc --noEmit",
     "ci-check": "npm-run-all --parallel prettier:diff lint tsc",
     "check-all": "npm-run-all --parallel prettier lint:fix tsc",
-    "prepare": "(is-ci || (cd ../.. && husky install frontend/ui/.husky))"
+    "msw:init": "msw init public",
+    "husky:install": "cd ../.. && husky install frontend/ui/.husky",
+    "prepare": "(is-ci || npm-run-all msw:init husky:install)"
   },
   "dependencies": {
     "@tanstack/react-query": "^4.28.0",
