@@ -1,6 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
 import { fetchClient } from '@/lib/fetchClient';
-import type { QueryResponse } from '@/types';
 
 interface RequestBookmarkProps {
   method: 'post' | 'delete';
@@ -9,15 +8,9 @@ interface RequestBookmarkProps {
 }
 
 async function requestBookmark({ method, type, id }: RequestBookmarkProps) {
-  const { data } = await fetchClient[method]<QueryResponse<{}>>(
-    `/bookmarks/${type}/${id}`
-  );
+  const { data } = await fetchClient[method](`/bookmarks/${type}/${id}`);
 
-  if (!data.success) {
-    throw new Error(data.message);
-  }
-
-  return true;
+  return data;
 }
 
 export function useBookmakrMutation() {

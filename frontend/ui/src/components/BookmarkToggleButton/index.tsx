@@ -12,7 +12,7 @@ interface BookmarkButtonProps {
   size?: number;
 }
 
-export function BookmarkToggleButton({
+export default function BookmarkToggleButton({
   isBookmarked: initialIsBookmarked = false,
   itemType,
   itemId,
