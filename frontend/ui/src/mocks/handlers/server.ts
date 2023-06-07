@@ -1,6 +1,5 @@
 import { rest } from 'msw';
 import {
-  placesMockData,
   type PlaceSearchResult,
   type Place,
   type QueryResponse,
@@ -19,13 +18,13 @@ export const serverHandlers = [
       ctx.json<QueryResponse<PlaceSearchResult[]>>({
         success: true,
         status: 'OK',
-        data: placesMockData.map<PlaceSearchResult>((place) => ({
-          ...place,
-          id: id++,
-          distance: Number(min_dist),
-          lat: 37.4879759679358,
-          lon: 127.065527640082,
-        })),
+        data: Array.from({ length: 12 })
+          .map(() => place)
+          .map<PlaceSearchResult>((place) => ({
+            ...place,
+            id: id++,
+            distance: Number(min_dist),
+          })),
       })
     );
   }),
@@ -70,14 +69,18 @@ export const serverHandlers = [
 const place = {
   id: 1,
   name: '이노베이션 아카데미',
+  category: 'COCKTAIL_BAR',
   address: '서울 강남구 개포로 416',
   lot_address: '서울 강남구 개포동 14-1',
   site: 'https://42seoul.kr/',
   lat: 37.4879759679358,
   lon: 127.065527640082,
-  category: '클러스터',
-  thumbnail: 'https://picsum.photos/420/420',
+  image: 'https://picsum.photos/420/420',
   tags: [],
+  bookmark_status: {
+    is_bookmarked: false,
+    count: 0,
+  },
 };
 
 const member = {

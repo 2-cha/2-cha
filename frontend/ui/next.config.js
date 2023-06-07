@@ -7,7 +7,7 @@ const nextConfig = {
     includePaths: [path.join(__dirname, 'src', 'styles')],
   },
   images: {
-    domains: ['static.2chaproj.com'],
+    domains: ['static.2chaproj.com', 'picsum.photos'],
   },
 };
 
