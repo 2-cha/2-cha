@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import cn from 'classnames';
-import s from './BookmarkButton.module.scss';
+import s from './BookmarkToggleButton.module.scss';
 import { useBookmakrMutation } from '@/hooks/mutation/useBookmark';
 
 interface BookmarkButtonProps {
@@ -11,7 +11,7 @@ interface BookmarkButtonProps {
   size?: number;
 }
 
-export function BookmarkButton({
+export function BookmarkToggleButton({
   isBookmarked: initialIsBookmarked = false,
   itemType,
   itemId,
