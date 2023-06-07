@@ -4,3 +4,4 @@ export * from './tag';
 export * from './review';
 export * from './member';
 export * from './jwtPayload';
+export * from './bookmark';
