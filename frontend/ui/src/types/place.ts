@@ -1,3 +1,4 @@
+import { BookmarkStatus } from './bookmark';
 import { TagWithCount } from './tag';
 
 export interface Place {
@@ -11,6 +12,7 @@ export interface Place {
   lon: number;
   site?: string;
   lot_address?: string;
+  bookmark_status: BookmarkStatus;
 }
 
 export interface PlaceSearchResult extends Place {
