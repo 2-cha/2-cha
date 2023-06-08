@@ -1,14 +1,30 @@
 import { rest } from 'msw';
 import {
-  placesMockData,
   type PlaceSearchResult,
   type Place,
-  type QueryResponse,
   type Review,
+  type Member,
 } from '@/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 let id = 0;
+
+function success<T>(data: T) {
+  return {
+    success: true,
+    status: 'OK',
+    data: data,
+  };
+}
+
+function fail(message: string) {
+  return {
+    success: false,
+    code: 400,
+    status: 'Bad Request',
+    message: message,
+  };
+}
 
 export const serverHandlers = [
   rest.get(`${BASE_URL}/places/nearby`, (req, res, ctx) => {
@@ -16,17 +32,17 @@ export const serverHandlers = [
 
     return res(
       ctx.status(200),
-      ctx.json<QueryResponse<PlaceSearchResult[]>>({
-        success: true,
-        status: 'OK',
-        data: placesMockData.map<PlaceSearchResult>((place) => ({
-          ...place,
-          id: id++,
-          distance: Number(min_dist),
-          lat: 37.4879759679358,
-          lon: 127.065527640082,
-        })),
-      })
+      ctx.json(
+        success(
+          Array.from({ length: 12 })
+            .map(() => place)
+            .map<PlaceSearchResult>((place) => ({
+              ...place,
+              id: id++,
+              distance: Number(min_dist),
+            }))
+        )
+      )
     );
   }),
 
@@ -34,75 +50,106 @@ export const serverHandlers = [
     const placeId = req.params.placeId;
 
     if (placeId == null) {
-      return res(
-        ctx.status(400),
-        ctx.json<QueryResponse<Place>>({
-          success: false,
-          code: '400',
-          status: 'Bad Request',
-          message: 'placeId is required',
-        })
-      );
+      return res(ctx.status(400), ctx.json(fail('placeId is required')));
     }
 
     return res(
       ctx.status(200),
-      ctx.json<QueryResponse<Place>>({
-        success: true,
-        status: 'OK',
-        data: { ...place, id: Number(placeId) },
-      })
+      ctx.json(success({ ...place, id: Number(placeId) }))
     );
   }),
 
   rest.get(`${BASE_URL}/places/:placeId/reviews`, (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(success(reviews)));
+  }),
+
+  rest.post(BASE_URL + '/places/:placeId/reviews', async (req, res, ctx) => {
+    const body = await req.json();
+    reviews.push({
+      id: reviews.length,
+      member: member,
+      place: place,
+      tags: body.tag_ids.map((id: number) => ({
+        id: id,
+        emoji: '🍺',
+        message: '맥주',
+      })),
+      images: body.img_urls,
+    });
+
+    return res(ctx.status(200), ctx.json(success(null)));
+  }),
+  rest.post(BASE_URL + '/reviews/images', (_req, res, ctx) => {
     return res(
       ctx.status(200),
-      ctx.json<QueryResponse<Review[]>>({
-        success: true,
-        status: 'OK',
-        data: reviews,
-      })
+      ctx.json(
+        success({
+          url: 'https://picsum.photos/320/480',
+          suggestions: [],
+        })
+      )
     );
+  }),
+
+  rest.post(BASE_URL + '/bookmarks/:itemType/:itemId', (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(success(null)));
+  }),
+  rest.delete(BASE_URL + '/bookmarks/:itemType/:itemId', (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(success(null)));
+  }),
+
+  rest.get(BASE_URL + '/tags', (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(success(tags)));
+  }),
+  rest.get(BASE_URL + '/tags/categorized', (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(success(tags)));
   }),
 ];
 
-const place = {
+const place: Place = {
   id: 1,
   name: '이노베이션 아카데미',
+  category: 'COCKTAIL_BAR',
   address: '서울 강남구 개포로 416',
   lot_address: '서울 강남구 개포동 14-1',
   site: 'https://42seoul.kr/',
   lat: 37.4879759679358,
   lon: 127.065527640082,
-  category: '클러스터',
-  thumbnail: 'https://picsum.photos/420/420',
+  image: 'https://picsum.photos/420/420',
   tags: [],
+  bookmark_status: {
+    is_bookmarked: false,
+    count: 0,
+  },
 };
 
-const member = {
+const member: Member = {
   id: 1,
   name: 'seushin',
   prof_img: 'https://picsum.photos/420/420',
   prof_msg: 'hello world',
 };
 
+const tags = [
+  {
+    id: 1,
+    emoji: '🍺',
+    message: '맥주',
+    category: 'DRINK',
+  },
+  {
+    id: 2,
+    emoji: '👍',
+    message: '좋아요',
+    category: 'REACTION',
+  },
+];
+
 const review: Review = {
   id: 1,
   member: member,
   place: place,
-  tags: [
-    {
-      id: 1,
-      emoji: '🍺',
-      message: '맥주',
-    },
-    {
-      id: 2,
-      emoji: '👍',
-      message: '좋아요',
-    },
-  ],
+  tags: tags,
   images: [
     'https://picsum.photos/320/480',
     'https://picsum.photos/320/480',
