@@ -39,43 +39,45 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
           <div className={s.thumbnail} />
         )}
 
-        <div className={s.summary}>
-          <p className={s.summary__title} ref={ref}>
-            {placeInfo.name}
-          </p>
-          <p className={s.summary__category}>
-            {getCategoryLabel(placeInfo.category)}
-          </p>
-        </div>
-        <Tags
-          keyID={`place-${placeInfo.id}`}
-          tagList={placeInfo.tags}
-          limit={5}
-          isNumberShown
-        />
+        <div className={s.wrapper}>
+          <div className={s.summary}>
+            <p className={s.summary__title} ref={ref}>
+              {placeInfo.name}
+            </p>
+            <p className={s.summary__category}>
+              {getCategoryLabel(placeInfo.category)}
+            </p>
+          </div>
+          <Tags
+            keyID={`place-${placeInfo.id}`}
+            tagList={placeInfo.tags}
+            limit={5}
+            isNumberShown
+          />
 
-        {/* TODO: refactor */}
-        <div className={s.menu}>
-          {Object.entries(menuItems).map(([item, label]) => (
-            <button
-              key={item}
-              className={cn(s.menu__item, {
-                [s.menu__itemActive]: label === currentMenu,
-              })}
-              onClick={() => setCurrentMenu(label)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+          {/* TODO: refactor */}
+          <div className={s.menu}>
+            {Object.entries(menuItems).map(([item, label]) => (
+              <button
+                key={item}
+                className={cn(s.menu__item, {
+                  [s.menu__itemActive]: label === currentMenu,
+                })}
+                onClick={() => setCurrentMenu(label)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
 
-        {currentMenu === menuItems.review ? (
-          <PlaceReviews placeId={placeInfo.id} />
-        ) : currentMenu === menuItems.map ? (
-          <PlaceMap position={{ lat: placeInfo.lat, lng: placeInfo.lon }} />
-        ) : currentMenu === menuItems.info ? (
-          <PlaceDetail placeInfo={placeInfo} />
-        ) : null}
+          {currentMenu === menuItems.review ? (
+            <PlaceReviews placeId={placeInfo.id} />
+          ) : currentMenu === menuItems.map ? (
+            <PlaceMap position={{ lat: placeInfo.lat, lng: placeInfo.lon }} />
+          ) : currentMenu === menuItems.info ? (
+            <PlaceDetail placeInfo={placeInfo} />
+          ) : null}
+        </div>
       </div>
     );
   }
