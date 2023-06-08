@@ -29,6 +29,8 @@ public interface ReviewRepository extends Repository<Review, Long> {
 
   List<Review> findReviewsByTagsInReviewTagIn(List<Tag> tags);
 
+  List<Review> findReviewByPlaceIdInAndTagsInReviewTagIn(List<Long> placeId, List<Tag> tags);
+
 //  List<Review> findReviewByTagsContaining(List<Tag> tags);
 
 //  List<Review> findReviewsBy(List<Long> tagsId);
