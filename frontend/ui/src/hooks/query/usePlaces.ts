@@ -4,10 +4,19 @@ import type { Coordinate } from '@/atoms/location';
 import type { PlaceSearchResult } from '@/types';
 import { useCurrentLocation } from '@/hooks/useCurrentLocation';
 
+export interface PlacesQueryParams {
+  sort_by?: 'distance' | 'tag_count' | 'review_count';
+  filter_by?: 'category' | 'tag';
+  filter_value?: string;
+}
+
 async function fetchPlaces({
   pageParam,
   location,
-}: {
+  sort_by,
+  filter_by,
+  filter_value,
+}: PlacesQueryParams & {
   pageParam: number;
   location: Coordinate | null;
 }) {
@@ -15,6 +24,9 @@ async function fetchPlaces({
     ...location,
     page_number: pageParam,
     max_dist: 2000,
+    sort_by,
+    filter_by,
+    filter_value,
   };
   const { data } = await fetchClient.get<PlaceSearchResult[]>(
     '/places/nearby',
