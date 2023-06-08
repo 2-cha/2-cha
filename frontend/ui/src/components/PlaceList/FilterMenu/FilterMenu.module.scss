@@ -1,0 +1,23 @@
+@use 'mixins';
+@use 'var';
+
+.container {
+  position: sticky;
+  top: calc(var.$header-height);
+  z-index: 10;
+  width: 100%;
+  gap: 8px;
+  padding: 8px;
+
+  @include mixins.flex(row, flex-start);
+}
+
+.hide {
+  top: calc(var.$header-height * -1);
+}
+
+.item {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background-color: var(--background-inactive-color);
+}
