@@ -62,6 +62,48 @@ export const serverHandlers = [
   rest.get(`${BASE_URL}/places/:placeId/reviews`, (_req, res, ctx) => {
     return res(ctx.status(200), ctx.json(success(reviews)));
   }),
+
+  rest.post(BASE_URL + '/places/:placeId/reviews', async (req, res, ctx) => {
+    const body = await req.json();
+    reviews.push({
+      id: reviews.length,
+      member: member,
+      place: place,
+      tags: body.tag_ids.map((id: number) => ({
+        id: id,
+        emoji: '🍺',
+        message: '맥주',
+      })),
+      images: body.img_urls,
+    });
+
+    return res(ctx.status(200), ctx.json(success(null)));
+  }),
+  rest.post(BASE_URL + '/reviews/images', (_req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json(
+        success({
+          url: 'https://picsum.photos/320/480',
+          suggestions: [],
+        })
+      )
+    );
+  }),
+
+  rest.post(BASE_URL + '/bookmarks/:itemType/:itemId', (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(success(null)));
+  }),
+  rest.delete(BASE_URL + '/bookmarks/:itemType/:itemId', (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(success(null)));
+  }),
+
+  rest.get(BASE_URL + '/tags', (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(success(tags)));
+  }),
+  rest.get(BASE_URL + '/tags/categorized', (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(success(tags)));
+  }),
 ];
 
 const place: Place = {
@@ -88,22 +130,26 @@ const member: Member = {
   prof_msg: 'hello world',
 };
 
+const tags = [
+  {
+    id: 1,
+    emoji: '🍺',
+    message: '맥주',
+    category: 'DRINK',
+  },
+  {
+    id: 2,
+    emoji: '👍',
+    message: '좋아요',
+    category: 'REACTION',
+  },
+];
+
 const review: Review = {
   id: 1,
   member: member,
   place: place,
-  tags: [
-    {
-      id: 1,
-      emoji: '🍺',
-      message: '맥주',
-    },
-    {
-      id: 2,
-      emoji: '👍',
-      message: '좋아요',
-    },
-  ],
+  tags: tags,
   images: [
     'https://picsum.photos/320/480',
     'https://picsum.photos/320/480',
