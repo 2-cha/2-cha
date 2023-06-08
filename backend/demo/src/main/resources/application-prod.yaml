@@ -12,8 +12,3 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-logging:
-  level:
-    root: WARN
-    ExecutionTimeLogger: DEBUG
-    io.awspring.cloud: DEBUG
