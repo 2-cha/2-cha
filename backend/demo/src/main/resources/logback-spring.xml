@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="30 seconds">
+  <property name="LOGS_PATH" value="./logs"/>
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+  <include optional="true" file="/logback/config/logback-included.xml"/>
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+    <destination>${LOGSTASH_URL:-localhost:5000}</destination>
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+    </encoder>
+  </appender>
+</configuration>
