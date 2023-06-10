@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -285,16 +284,13 @@ public class ReviewService {
                                                                  tagCountMap
                                                                      .getOrDefault(tag, 0) + 1)));
 
-    Stream<Entry<Tag, Integer>> tagCountStream = tagCountMap.entrySet()
-                                                            .stream();
+    Stream<TagCountResponse> tagCountStream = tagCountMap.entrySet()
+                                                         .stream()
+                                                         .sorted(comparingByValue(reverseOrder()))
+                                                         .map(entry -> new TagCountResponse(
+                                                             entry.getKey(), entry.getValue()));
 
-    if (size != null) {
-      tagCountStream = tagCountStream.limit(size);
-    }
-
-    return tagCountStream.sorted(comparingByValue(reverseOrder()))
-                         .map(entry -> new TagCountResponse(entry.getKey(), entry.getValue()))
-                         .toList();
+    return (size == null) ? tagCountStream.toList() : tagCountStream.limit(size).toList();
   }
 
   public ReviewResponse getReviewById(Long reviewId) {
