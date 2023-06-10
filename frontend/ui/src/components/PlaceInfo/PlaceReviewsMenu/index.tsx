@@ -5,7 +5,7 @@ import { useCallback, Fragment } from 'react';
 import { useIntersection } from '@/hooks/useIntersection';
 import { usePlaceReviewsQuery } from '@/hooks/query/usePlaceReviews';
 import type { Review } from '@/types';
-import Tags from '@/components/Tags';
+import { Tags } from '@/components/Tags';
 
 import s from './PlaceReviewsMenu.module.scss';
 

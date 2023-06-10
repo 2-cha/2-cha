@@ -3,8 +3,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { PlaceSearchResult } from '@/types';
-import s from './PlaceList.module.scss';
+import { ShortTags } from '../Tags';
 import BookmarkToggleButton from '@/components/BookmarkToggleButton';
+
+import s from './PlaceList.module.scss';
 
 interface PlaceListProps {
   pages: PlaceSearchResult[][];
@@ -35,20 +37,29 @@ interface PlaceItemProps {
 export function PlaceItem({ place }: PlaceItemProps) {
   return (
     <li className={s.placeItem}>
-      <div className={s.placeItem__header}>
-        <div className={s.placeItem__headerTop}>
-          <Link href={`/places/${place.id}`}>
-            <p className={s.placeItem__title}>{place.name}</p>
-          </Link>
-          <BookmarkToggleButton
-            itemType="places"
-            itemId={place.id}
-            isBookmarked={place.bookmark_status.is_bookmarked}
+      <div className={s.placeItem__inner}>
+        {place.tag_summary && (
+          <ShortTags
+            className={s.placeItem__tags}
+            tagList={place.tag_summary}
+            keyID={place.id.toString()}
           />
+        )}
+        <div className={s.placeItem__header}>
+          <div className={s.placeItem__headerTop}>
+            <Link href={`/places/${place.id}`}>
+              <p className={s.placeItem__title}>{place.name}</p>
+            </Link>
+            <BookmarkToggleButton
+              itemType="places"
+              itemId={place.id}
+              isBookmarked={place.bookmark_status.is_bookmarked}
+            />
+          </div>
+          <p className={s.placeItem__address}>
+            {place.address} / {place.distance}
+          </p>
         </div>
-        <p className={s.placeItem__address}>
-          {place.address} / {place.distance}
-        </p>
       </div>
       {place.image ? (
         <Image

@@ -1,0 +1,46 @@
+@use 'mixins';
+@use 'var';
+
+.tagWrapper {
+  @include mixins.flex(row, flex-start);
+  flex-wrap: wrap;
+}
+
+.tag {
+  position: relative;
+
+  &:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+
+.tagInner {
+  border: 0.5px solid var(--border-color);
+  border-radius: 500px;
+
+  @include mixins.padding(x, md);
+  @include mixins.padding(y, sm);
+  @include mixins.text-sm;
+
+  background-color: var(--background-color);
+
+  & span {
+    color: var(--text-color);
+  }
+}
+
+.tooltip {
+  position: absolute;
+  border: 0.5px solid var(--border-color);
+  top: -30px;
+  left: 0;
+  width: max-content;
+  padding: 3px 8px;
+  max-width: 480px;
+  border-radius: 3px;
+  background-color: var(--background-color);
+
+  & span {
+    color: var(--text-color);
+  }
+}
