@@ -1,0 +1,26 @@
+@use 'mixins';
+@use 'var';
+
+.tagWrapper {
+  @include mixins.flex(row, flex-start);
+  flex-wrap: wrap;
+}
+
+.tag {
+  border: 0.5px solid var(--border-color);
+  border-radius: 500px;
+
+  @include mixins.padding(x, md);
+  @include mixins.padding(y, sm);
+  @include mixins.text-sm;
+
+  background-color: var(--background-color);
+
+  & span {
+    color: var(--text-color);
+  }
+
+  &:not(:last-child) {
+    margin-right: 5px;
+  }
+}

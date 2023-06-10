@@ -7,7 +7,7 @@ export interface Place {
   category: string;
   address: string;
   image?: string;
-  tags: TagWithCount[];
+  tag_summary: TagWithCount[];
   lat: number;
   lon: number;
   site?: string;
