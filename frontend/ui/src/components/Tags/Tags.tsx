@@ -86,7 +86,7 @@ export default function Tags({
           >
             <span>
               {tag.emoji} {tag.message}
-            </span>{' '}
+            </span>
             <span className={cx({ [styles.hidden]: !isNumberShown })}>
               {tag.count}
             </span>

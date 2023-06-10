@@ -5,8 +5,8 @@ import cn from 'classnames';
 
 import PlaceReviews from './PlaceReviewsMenu';
 import PlaceDetail from './PlaceDetailMenu';
+import { Tags } from '../Tags';
 import type { Place } from '@/types';
-import Tags from '../Tags';
 import { getCategoryLabel } from '@/lib/placeUtil';
 
 import s from './PlaceInfo.module.scss';
