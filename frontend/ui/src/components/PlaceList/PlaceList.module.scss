@@ -27,11 +27,20 @@ $img-height: 360px;
 
   @include mixins.flex(column, flex-start, flex-start);
 
-  &__header {
-    width: 95%;
+  &__inner {
     position: absolute;
-    bottom: 10px;
-    left: 2.5%;
+    z-index: 2;
+    width: 100%;
+    padding: 10px;
+    bottom: 0;
+    left: 0;
+  }
+
+  &__tags {
+    margin-bottom: 5px;
+  }
+
+  &__header {
     border-radius: 5px;
     z-index: 3;
     background-color: var(--background-color);
