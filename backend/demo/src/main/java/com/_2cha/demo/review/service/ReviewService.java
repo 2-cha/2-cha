@@ -380,8 +380,8 @@ public class ReviewService {
     if (nearbyPlaces.isEmpty()) {
       return new ArrayList<>();
     }
-    List<Review> reviews = reviewRepository.findReviewByPlaceIdInAndTagsInReviewTagIn(
-        nearbyPlaces.stream().map(PlaceBriefWithDistanceResponse::getId).toList(), filterTags);
+    List<Review> reviews = reviewRepository.findReviewByPlaceIdInAndTagsInReviewTagIdIn(
+        nearbyPlaces.stream().map(PlaceBriefWithDistanceResponse::getId).toList(), filterTagsId);
     if (reviews.isEmpty()) {
         return new ArrayList<>();
     }

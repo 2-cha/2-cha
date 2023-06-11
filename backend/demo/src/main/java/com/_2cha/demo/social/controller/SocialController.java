@@ -42,7 +42,7 @@ public class SocialController {
 			@RequestParam(name = "lat") Double lat ,
 			@RequestParam(name = "lon") Double lon
 	) {
-		NearbyPlaceSearchParams nearbyPlacesParams = new NearbyPlaceSearchParams(lat, lon, maxDist, FilterBy.DEFAULT, null, SortBy.DISTANCE, 0L, 20);
+		NearbyPlaceSearchParams nearbyPlacesParams = new NearbyPlaceSearchParams(lat, lon, maxDist, FilterBy.DEFAULT, null, SortBy.DISTANCE, 0L, Integer.MAX_VALUE);
 		return reviewService.getReviewsNearbyPlaces(nearbyPlacesParams, filterTagsId);
 		//feat
 		// 1. 근처 가게의 리뷰, 필터를 받을 수도 있다. 원하는 태그의 리뷰만 볼수 있음
