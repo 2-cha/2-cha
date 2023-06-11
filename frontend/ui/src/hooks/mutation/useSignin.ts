@@ -4,18 +4,13 @@ import { useMutation } from '@tanstack/react-query';
 import { useSetRecoilState } from 'recoil';
 import { tokenState, type Token } from '@/atoms/token';
 import { fetchClient } from '@/lib/fetchClient';
-import type { QueryResponse } from '@/types';
 
 async function signin(code: string | string[]) {
-  const { data } = await fetchClient.post<QueryResponse<Token>>(
-    '/auth/openid/google/signin',
-    { code }
-  );
+  const { data } = await fetchClient.post<Token>('/auth/openid/google/signin', {
+    code,
+  });
 
-  if (!data.success) {
-    throw new Error(data.message);
-  }
-  return data.data;
+  return data;
 }
 
 export function useSignInMutation(code?: string | string[]) {

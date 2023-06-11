@@ -1,18 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchClient } from '@/lib/fetchClient';
-import type { QueryResponse, Tag } from '@/types';
+import type { Tag } from '@/types';
 
 async function fetchTags(query: string) {
-  const { data } = await fetchClient.get<QueryResponse<Tag[]>>('/tags', {
+  const { data } = await fetchClient.get<Tag[]>('/tags', {
     params: {
       query,
     },
   });
 
-  if (!data.success) {
-    throw new Error(data.message);
-  }
-  return data.data;
+  return data;
 }
 
 export function useTagsQuery(query: string) {

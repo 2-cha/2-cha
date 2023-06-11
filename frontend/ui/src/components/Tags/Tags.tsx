@@ -50,8 +50,7 @@ export default function Tags({
 
   return (
     <div
-      className={cx({
-        [styles.tags]: true,
+      className={cx(styles.tags, {
         className,
         [styles.gradient]: !isOpen && tagProperty.hasLimit,
         [styles.padding]: tagProperty.hasLimit,
@@ -59,8 +58,7 @@ export default function Tags({
     >
       <button
         type="button"
-        className={cx({
-          [styles.button]: true,
+        className={cx(styles.button, {
           [styles.hidden]: !tagProperty.hasLimit,
           [styles.flipped]: isOpen,
         })}
@@ -86,7 +84,7 @@ export default function Tags({
           >
             <span>
               {tag.emoji} {tag.message}
-            </span>{' '}
+            </span>
             <span className={cx({ [styles.hidden]: !isNumberShown })}>
               {tag.count}
             </span>

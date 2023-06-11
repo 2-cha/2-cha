@@ -17,11 +17,3 @@ spring:
     web.pageable:
       page-parameter: page_number
       size-parameter: page_size
-
-logging:
-  level:
-    com:
-      _2cha:
-        demo:
-          DemoApplication: INFO
-    RequestLogger: INFO

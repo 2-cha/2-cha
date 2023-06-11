@@ -1,7 +1,10 @@
 package com._2cha.demo.place.service;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.stream.Collectors.toMap;
 
+import com._2cha.demo.bookmark.dto.BookmarkCountProjection;
+import com._2cha.demo.bookmark.dto.BookmarkStatus;
 import com._2cha.demo.bookmark.exception.AlreadyBookmarkedException;
 import com._2cha.demo.bookmark.exception.NotBookmarkedException;
 import com._2cha.demo.global.event.FirstReviewCreatedEvent;
@@ -22,6 +25,7 @@ import com._2cha.demo.place.dto.PlaceDetailResponse;
 import com._2cha.demo.place.dto.PlaceSearchResponse;
 import com._2cha.demo.place.dto.PlaceSuggestionResponse;
 import com._2cha.demo.place.dto.SortBy;
+import com._2cha.demo.place.dto.SortOrder;
 import com._2cha.demo.place.exception.InvalidTagCountSortException;
 import com._2cha.demo.place.exception.NoSuchPlaceException;
 import com._2cha.demo.place.repository.PlaceBookmarkRepository;
@@ -190,7 +194,7 @@ public class PlaceService {
         placeQueryRepository.findAround(new NearbyPlaceSearchParams(lat, lon,
                                                                     SUGGESTION_MAX_DIST,
                                                                     FilterBy.DEFAULT, null,
-                                                                    SortBy.DISTANCE,
+                                                                    SortBy.DISTANCE, SortOrder.ASC,
                                                                     0L, SUGGESTION_SIZE));
 
     return completedFuture(placesWithDist.stream()
@@ -231,16 +235,25 @@ public class PlaceService {
     List<PlaceBookmark> bookmarks = placeBookmarkRepository.findAllByMemberIdAndPlaceIdIn(
         memberId, placeIds);
     List<Long> bookmarkedIds = bookmarks.stream().map(b -> b.getPlace().getId()).toList();
+    Map<Long, Long> totalCountMap = placeBookmarkRepository.countAllByPlaceIdIn(placeIds)
+                                                           .stream()
+                                                           .collect(
+                                                               toMap(
+                                                                   BookmarkCountProjection::getId,
+                                                                   BookmarkCountProjection::getCount));
 
     for (var place : places) {
-      place.setBookmarked(bookmarkedIds.contains(place.getId()));
+      place.setBookmarkStatus(
+          new BookmarkStatus(bookmarkedIds.contains(place.getId()),
+                             totalCountMap.getOrDefault(place.getId(), 0L)));
     }
   }
 
   public void setResponseBookmarkStatus(Long memberId, PlaceDetailResponse place) {
     PlaceBookmark bookmark = placeBookmarkRepository.findByMemberIdAndPlaceId(memberId,
                                                                               place.getId());
-    place.setBookmarked(bookmark != null);
+    Long count = placeBookmarkRepository.countAllByPlaceId(place.getId());
+    place.setBookmarkStatus(new BookmarkStatus(bookmark != null, count));
   }
 
   public List<PlaceSearchResponse> fuzzySearch(String queryText, Pageable pageParam) {

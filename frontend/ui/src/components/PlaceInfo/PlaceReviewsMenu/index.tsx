@@ -1,12 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, Fragment } from 'react';
-import cn from 'classnames';
 
 import { useIntersection } from '@/hooks/useIntersection';
 import { usePlaceReviewsQuery } from '@/hooks/query/usePlaceReviews';
 import type { Review } from '@/types';
-import Tags from '@/components/Tags';
+import { Tags } from '@/components/Tags';
 
 import s from './PlaceReviewsMenu.module.scss';
 
@@ -25,26 +24,12 @@ export default function PlaceReviews({ placeId }: { placeId: number }) {
     <div className={s.root}>
       {data?.pages[0]?.length ? (
         <>
-          <Link
-            href={`/write?placeId=${placeId}`}
-            className={cn(s.review__item, s.review__writeButton)}
-          >
-            후기 남기기
-          </Link>
           <PlaceReviewList pages={data.pages} />
           <div ref={ref} aria-hidden style={{ height: 1 }} />
           {isFetching && <div>Loading...</div>}
         </>
       ) : (
-        <>
-          <p className={s.hasNoReview}>아직 리뷰가 없습니다</p>
-          <Link
-            href={`/write?placeId=${placeId}`}
-            className={s.hasNoReview__writeButton}
-          >
-            후기 남기기
-          </Link>
-        </>
+        <p className={s.hasNoReview}>아직 리뷰가 없습니다</p>
       )}
     </div>
   );

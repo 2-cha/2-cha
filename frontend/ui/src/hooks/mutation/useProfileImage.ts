@@ -1,5 +1,4 @@
 import { fetchClient } from '@/lib/fetchClient';
-import { QueryResponse } from '@/types';
 import { useMutation } from '@tanstack/react-query';
 
 interface PostImageResponse {
@@ -10,16 +9,12 @@ async function postImage(image: File) {
   const formData = new FormData();
   formData.append('file', image);
 
-  const { data } = await fetchClient.post<QueryResponse<PostImageResponse>>(
+  const { data } = await fetchClient.post<PostImageResponse>(
     '/members/image',
     formData
   );
 
-  if (!data.success) {
-    throw new Error(data.message);
-  }
-
-  return data.data.url;
+  return data.url;
 }
 
 async function putImage(imageUrl: string) {
