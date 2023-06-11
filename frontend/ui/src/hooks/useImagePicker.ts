@@ -43,31 +43,35 @@ export function useImagePicker({ onChange }: ImagePickerOptions) {
 
     const newImages = Array.from(newFiles)
       .filter((file) => !images.find((image) => isSameFile(image.file, file)))
-      .map((file) => {
-        imageMutation.mutate(file, {
-          onSuccess: (data) => {
-            setImages((prev) => {
-              const target = prev.find((image) => isSameFile(image.file, file));
-              if (target) {
-                target.url = data.url;
-                target.suggestions = data.suggestions;
-              }
-              return [...prev];
-            });
-          },
-          onError: () => {
-            setImages((prev) => {
-              const target = prev.find((image) => isSameFile(image.file, file));
-              if (target) {
-                target.isError = true;
-              }
-              return [...prev];
-            });
-          },
-        });
-        return { file };
-      });
+      .map((file) => ({ file }));
     setImages((prev) => [...prev, ...newImages]);
+
+    newImages.forEach(({ file }) =>
+      imageMutation
+        .mutateAsync(file)
+        .then((data) => {
+          setImages((prev) => {
+            const target = prev.find((image) => isSameFile(image.file, file));
+
+            if (target) {
+              target.url = data.url;
+              target.suggestions = data.suggestions;
+            }
+            return [...prev];
+          });
+        })
+        .catch(() => {
+          setImages((prev) => {
+            const target = prev.find((image) => isSameFile(image.file, file));
+
+            if (target) {
+              target.isError = true;
+            }
+            return [...prev];
+          });
+        })
+    );
+
     e.target.value = '';
   }
 
