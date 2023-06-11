@@ -1,16 +1,17 @@
-import Modal, { Props as ModalProps } from 'react-modal';
+import Modal, { type Props as ModalProps } from 'react-modal';
 import CloseIcon from '@/components/Icons/CloseIcon';
 import cn from 'classnames';
 import s from './Drawer.module.scss';
 
 export interface DrawerProps extends ModalProps {
   children: React.ReactNode;
+  header?: React.ReactNode;
   className?: string;
   onClose?: () => void;
 }
 
 export default function Drawer(props: DrawerProps) {
-  const { children, onClose, className } = props;
+  const { children, header, onClose, className, ...rest } = props;
 
   Modal.setAppElement('#__next');
 
@@ -18,7 +19,7 @@ export default function Drawer(props: DrawerProps) {
   return (
     <Modal
       className={{
-        base: s.modal,
+        base: cn(s.modal, className),
         afterOpen: s.modal__afterOpen,
         beforeClose: s.modal__beforeClose,
       }}
@@ -29,13 +30,14 @@ export default function Drawer(props: DrawerProps) {
       }}
       closeTimeoutMS={300}
       onRequestClose={onClose}
-      {...props}
+      {...rest}
     >
-      <div className={cn(s.modal__content, className)}>
+      <div className={s.modal__content}>
         <div className={s.modal__header}>
           <button onClick={onClose} className={s.modal__closeButton}>
             <CloseIcon />
           </button>
+          {header}
         </div>
         <div className={s.modal__body}>{children}</div>
       </div>
