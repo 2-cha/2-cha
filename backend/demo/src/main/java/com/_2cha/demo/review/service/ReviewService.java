@@ -209,7 +209,8 @@ public class ReviewService {
   }
 
   public List<ReviewResponse> getReviewsByMemberId(Long memberId, Pageable pageParam) {
-    List<Review> reviews = reviewRepository.findReviewsByMemberId(memberId, pageParam);
+    List<Review> reviews = reviewRepository.findReviewsByMemberIdOrderByCreatedDesc(memberId,
+                                                                                    pageParam);
     if (reviews.isEmpty()) {
       return new ArrayList<>();
     }
@@ -236,7 +237,8 @@ public class ReviewService {
 
 
   public List<ReviewResponse> getReviewsByPlaceId(Long placeId, Pageable pageParam) {
-    List<Review> reviews = reviewRepository.findReviewsByPlaceId(placeId, pageParam);
+    List<Review> reviews = reviewRepository.findReviewsByPlaceIdOrderByCreatedDesc(placeId,
+                                                                                   pageParam);
     if (reviews.isEmpty()) {
       return new ArrayList<>();
     }
