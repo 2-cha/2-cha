@@ -55,17 +55,25 @@ public class TagService {
    @ Queries
    ----------*/
   public List<TagWithIdResponse> fuzzySearchTagsByHangul(String queryText) {
-    String queryRegex = this.makeQueryRegex(queryText);
-    List<Tag> tags = tagRepository.findTagsByMsgMatchesRegex(queryRegex);
-
+    List<Tag> tags;
+    if (queryText == null) {
+      tags = tagRepository.findAll();
+    } else {
+      String queryRegex = this.makeQueryRegex(queryText);
+      tags = tagRepository.findTagsByMsgMatchesRegex(queryRegex);
+    }
     return tags.stream().map(TagWithIdResponse::new).toList();
   }
 
   public Map<Category, List<TagWithoutCategoryResponse>> fuzzySearchCategorizedTagsByHangul(
       String queryText) {
-    String queryRegex = this.makeQueryRegex(queryText);
-    List<Tag> tags = tagRepository.findTagsByMsgMatchesRegex(queryRegex);
-
+    List<Tag> tags;
+    if (queryText == null) {
+      tags = tagRepository.findAll();
+    } else {
+      String queryRegex = this.makeQueryRegex(queryText);
+      tags = tagRepository.findTagsByMsgMatchesRegex(queryRegex);
+    }
     return tags.stream().collect(Collectors.groupingBy(Tag::getCategory,
                                                        mapping(TagWithoutCategoryResponse::new,
                                                                toList())));
