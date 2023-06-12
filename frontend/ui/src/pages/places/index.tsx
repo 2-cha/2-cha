@@ -10,6 +10,7 @@ import { useRecoilValue } from 'recoil';
 import { placesQueryParamsState } from '@/atoms/placesQueryParams';
 
 export default function Places() {
+  // TODO: reset state when unmount
   const placesQueryParams = useRecoilValue(placesQueryParamsState);
   const { data, isLoading, isError, isFetching, fetchNextPage } =
     usePlacesQuery(placesQueryParams);

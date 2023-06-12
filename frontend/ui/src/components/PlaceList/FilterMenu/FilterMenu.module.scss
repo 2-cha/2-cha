@@ -17,7 +17,35 @@
 }
 
 .item {
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: 999px;
   background-color: var(--background-inactive-color);
+}
+
+.modal {
+  height: auto;
+
+  &__header {
+    width: calc(100% - 64px);
+    text-align: center;
+  }
+
+  .menuWrapper {
+    width: 100%;
+    margin: 24px 0;
+
+    @include mixins.flex(column, flex-start, flex-start);
+  }
+
+  .menuItem {
+    width: 100%;
+    height: 100%;
+    color: inherit;
+    background-color: inherit;
+
+    &__wrapper {
+      width: 100%;
+      padding: var.$size-md;
+    }
+  }
 }
