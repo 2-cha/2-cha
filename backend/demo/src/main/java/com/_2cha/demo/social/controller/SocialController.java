@@ -4,6 +4,7 @@ import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.place.dto.FilterBy;
 import com._2cha.demo.place.dto.NearbyPlaceSearchParams;
 import com._2cha.demo.place.dto.SortBy;
+import com._2cha.demo.place.dto.SortOrder;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.service.ReviewService;
 import java.util.List;
@@ -43,8 +44,9 @@ public class SocialController {
                                                 ) {
     NearbyPlaceSearchParams nearbyPlacesParams = new NearbyPlaceSearchParams(lat, lon, maxDist,
                                                                              FilterBy.DEFAULT, null,
-                                                                             SortBy.DISTANCE, 0L,
-                                                                             Integer.MAX_VALUE);
+                                                                             SortBy.DISTANCE,
+                                                                             SortOrder.ASC,
+                                                                             0L, Integer.MAX_VALUE);
     return reviewService.getReviewsNearbyPlaces(nearbyPlacesParams, filterTagsId);
     //feat
     // 1. 근처 가게의 리뷰, 필터를 받을 수도 있다. 원하는 태그의 리뷰만 볼수 있음
