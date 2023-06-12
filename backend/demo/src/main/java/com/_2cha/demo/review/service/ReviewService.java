@@ -378,15 +378,15 @@ public class ReviewService {
     return getReviewResponses(reviews);
   }
 
-  public List<ReviewResponse> getReviewsNearbyPlaces(NearbyPlaceSearchParams nearbyPlacesParams,
-                                                     List<Long> filterTagsId) {
+  public List<ReviewResponse> getReviewsOfNearbyPlaces(NearbyPlaceSearchParams nearbyPlacesParams,
+                                                       List<Long> filterTagsId) {
     //1. 주변 가게들 조회
     //2. 가게들의 리뷰들 조회
     //3. 리뷰들을 리뷰응답으로 변환
     //4. 리뷰응답들을 리뷰응답리스트로 변환
     //5. 리뷰응답리스트 반환
     List<Tag> filterTags = tagService.findTagsByIdIn(filterTagsId);
-    List<PlaceBriefWithDistanceResponse> nearbyPlaces = placeService.getPlacesBriefWithDistance(
+    List<PlaceBriefWithDistanceResponse> nearbyPlaces = placeService.getNearbyPlacesBriefWithDistance(
         nearbyPlacesParams);
     if (nearbyPlaces.isEmpty()) {
       return new ArrayList<>();

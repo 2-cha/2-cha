@@ -294,7 +294,7 @@ public class PlaceService {
     return "[" + start + "-" + end + "]";
   }
 
-  public List<PlaceBriefWithDistanceResponse> getPlacesBriefWithDistance(
+  public List<PlaceBriefWithDistanceResponse> getNearbyPlacesBriefWithDistance(
       NearbyPlaceSearchParams nearbyPlacesParams) {
     List<Pair<Place, Double>> placesWithDist = placeQueryRepository.findAround(nearbyPlacesParams);
     if (placesWithDist.isEmpty()) return Collections.emptyList();
