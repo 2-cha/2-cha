@@ -1,49 +1,31 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTagsQuery } from '@/hooks/query/useTags';
-import { useForm, useFormContext } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { debounce } from '@/lib/debounce';
 import type { Tag } from '@/types';
-import type { ReviewFormData } from '@/components/WriteReviewForm';
 import cn from 'classnames';
 import s from './TagPicker.module.scss';
 
 interface TagPickerProps {
-  name: keyof ReviewFormData;
+  selected: Tag[];
+  toggleSelect: (tag: Tag) => void;
 }
 
-export default function TagPicker({ name }: TagPickerProps) {
-  const [selected, setSelected] = useState<Tag[]>([]);
-  const { register, setValue } = useFormContext<ReviewFormData>();
-  register(name, { required: true });
-
-  useEffect(() => {
-    setValue(name, selected);
-  }, [selected, name, setValue]);
-
-  const toggleSelect = (tag: Tag) => {
-    if (selected.find((t) => t.id === tag.id)) {
-      setSelected(selected.filter((t) => t.id !== tag.id));
-    } else {
-      setSelected([...selected, tag]);
-    }
-  };
-
+export default function TagPicker({ selected, toggleSelect }: TagPickerProps) {
   return (
-    <>
-      <div className={s.tagContainer}>
-        {selected.map((tag) => (
-          <button
-            key={tag.id}
-            type="button"
-            className={s.tag}
-            onClick={() => toggleSelect(tag)}
-          >
-            {tag.emoji} {tag.message}
-          </button>
-        ))}
-      </div>
+    <div className={s.tagContainer}>
+      {selected.map((tag) => (
+        <button
+          key={tag.id}
+          type="button"
+          className={s.tag}
+          onClick={() => toggleSelect(tag)}
+        >
+          {tag.emoji} {tag.message}
+        </button>
+      ))}
       <TagSearchForm selected={selected} toggleSelect={toggleSelect} />
-    </>
+    </div>
   );
 }
 

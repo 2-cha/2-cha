@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useModal } from '@/hooks/useModal';
+import { useTagPicker } from '@/hooks/useTagPicker';
 import { usePlaceQuery } from '@/hooks/query/usePlace';
 import { useRecoilValue } from 'recoil';
 import { suggestionsState } from '@/atoms/suggestions';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import SearchPlaceModal from './SearchPlaceModal';
 import ImagePicker from '@/components/WriteReviewForm/ImagePicker';
-import TagPicker from '@/components/WriteReviewForm/TagPicker';
+import TagPicker from '@/components/TagPicker';
 import PlaceIcon from '@/components/Icons/PlaceIcon';
 import ImagesIcon from '@/components/Icons/ImagesIcon';
 import HashIcon from '../Icons/HashIcon';
@@ -93,7 +94,7 @@ export default function WriteReviewForm() {
           {errors.tags && (
             <div className={s.errorMessage}>태그를 선택해주세요</div>
           )}
-          <TagPicker name="tags" />
+          <TagInput name="tags" />
         </div>
 
         <button type="submit" form="write" className={s.submit}>
@@ -140,4 +141,16 @@ function PlaceInput({
   setValue(name, placeId);
 
   return <input type="text" hidden {...register(name, { required: true })} />;
+}
+
+function TagInput({ name }: { name: keyof ReviewFormData }) {
+  const { selected, toggleSelect } = useTagPicker();
+  const { register, setValue } = useFormContext<ReviewFormData>();
+  register(name, { required: true });
+
+  useEffect(() => {
+    setValue(name, selected);
+  }, [selected, name, setValue]);
+
+  return <TagPicker selected={selected} toggleSelect={toggleSelect} />;
 }
