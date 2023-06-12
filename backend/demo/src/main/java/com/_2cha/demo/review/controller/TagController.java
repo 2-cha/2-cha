@@ -39,13 +39,14 @@ public class TagController {
   private final TagService tagService;
 
   @GetMapping("/tags")
-  public List<TagWithIdResponse> fuzzySearchTagsByHangul(@Hangul @RequestParam String query) {
+  public List<TagWithIdResponse> fuzzySearchTagsByHangul(
+      @Hangul @RequestParam(required = false) String query) {
     return tagService.fuzzySearchTagsByHangul(query);
   }
 
   @GetMapping("/tags/categorized")
   public Map<Category, List<TagWithoutCategoryResponse>> fuzzySearchCategorizedTagsByHangul(
-      @Hangul @RequestParam String query) {
+      @Hangul @RequestParam(required = false) String query) {
     return tagService.fuzzySearchCategorizedTagsByHangul(query);
   }
 
