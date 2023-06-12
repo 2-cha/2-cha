@@ -18,6 +18,7 @@ public class HangulValidator implements
 
   @Override
   public boolean isValid(String value, ConstraintValidatorContext context) {
+    if (value == null) return true;
     return value.chars().allMatch(c -> Character.isSpaceChar(c) ||
                                        HangulUtils.isPartialChar((char) c) ||
                                        HangulUtils.isCompleteChar((char) c));
