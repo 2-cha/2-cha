@@ -5,6 +5,7 @@ import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
+import static net.logstash.logback.marker.Markers.append;
 
 import com._2cha.demo.bookmark.dto.BookmarkCountProjection;
 import com._2cha.demo.bookmark.dto.BookmarkStatus;
@@ -44,6 +45,8 @@ import java.util.stream.Stream;
 
 import com._2cha.demo.social.dto.NearbyPlacesParams;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
@@ -57,6 +60,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewService {
 
   private static final Integer SUMMARY_SIZE = 3;
+  private static final Logger reviewTagsLogger = LoggerFactory.getLogger("ReviewTagsLogger");
+
   private final ReviewRepository reviewRepository;
   private final ReviewBookmarkRepository reviewBookmarkRepository;
   private final TagService tagService;
@@ -109,7 +114,12 @@ public class ReviewService {
                                                               thumbnailUrlPaths.get(0)));
     }
     Review review = Review.createReview(place, member, tagList, imageUrlPaths, thumbnailUrlPaths);
+
     reviewRepository.save(review);
+    reviewTagsLogger.info(append("tag_messages", tagList.stream().map(Tag::getMsg).toList())
+                              .and(append("tag_emojis",
+                                          tagList.stream().map(Tag::getEmoji).toList())),
+                          "");
   }
 
   @Transactional
@@ -178,7 +188,8 @@ public class ReviewService {
   }
 
   public List<ReviewResponse> getReviewsByMemberId(Long memberId, Pageable pageParam) {
-    List<Review> reviews = reviewRepository.findReviewsByMemberId(memberId, pageParam);
+    List<Review> reviews = reviewRepository.findReviewsByMemberIdOrderByCreatedDesc(memberId,
+                                                                                    pageParam);
     if (reviews.isEmpty()) {
       return new ArrayList<>();
     }
@@ -205,7 +216,8 @@ public class ReviewService {
 
 
   public List<ReviewResponse> getReviewsByPlaceId(Long placeId, Pageable pageParam) {
-    List<Review> reviews = reviewRepository.findReviewsByPlaceId(placeId, pageParam);
+    List<Review> reviews = reviewRepository.findReviewsByPlaceIdOrderByCreatedDesc(placeId,
+                                                                                   pageParam);
     if (reviews.isEmpty()) {
       return new ArrayList<>();
     }
