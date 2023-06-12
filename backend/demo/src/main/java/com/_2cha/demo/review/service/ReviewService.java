@@ -42,8 +42,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com._2cha.demo.social.dto.NearbyPlacesParams;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -359,11 +357,11 @@ public class ReviewService {
                                                                       m -> m));
 
     return reviews.stream().map(review -> new ReviewResponse(review,
-            memberMap.get(
-                    review.getMember().getId()),
-            placeMap.get(
-                    review.getPlace().getId()),
-            fileStorageService.getBaseUrl()
+                                                             memberMap.get(
+                                                                 review.getMember().getId()),
+                                                             placeMap.get(
+                                                                 review.getPlace().getId()),
+                                                             fileStorageService.getBaseUrl()
     )).toList();
   }
 
@@ -380,7 +378,8 @@ public class ReviewService {
     return getReviewResponses(reviews);
   }
 
-  public List<ReviewResponse> getReviewsNearbyPlaces(NearbyPlaceSearchParams nearbyPlacesParams, List<Long> filterTagsId) {
+  public List<ReviewResponse> getReviewsNearbyPlaces(NearbyPlaceSearchParams nearbyPlacesParams,
+                                                     List<Long> filterTagsId) {
     //1. 주변 가게들 조회
     //2. 가게들의 리뷰들 조회
     //3. 리뷰들을 리뷰응답으로 변환
@@ -395,7 +394,7 @@ public class ReviewService {
     List<Review> reviews = reviewRepository.findReviewByPlaceIdInAndTagsInReviewTagIdIn(
         nearbyPlaces.stream().map(PlaceBriefWithDistanceResponse::getId).toList(), filterTagsId);
     if (reviews.isEmpty()) {
-        return new ArrayList<>();
+      return new ArrayList<>();
     }
     return getReviewResponses(reviews);
   }

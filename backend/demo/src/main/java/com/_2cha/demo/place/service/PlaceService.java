@@ -33,7 +33,6 @@ import com._2cha.demo.place.repository.PlaceQueryRepository;
 import com._2cha.demo.place.repository.PlaceRepository;
 import com._2cha.demo.review.dto.TagCountResponse;
 import com._2cha.demo.review.service.ReviewService;
-import com._2cha.demo.social.dto.NearbyPlacesParams;
 import com._2cha.demo.util.GeomUtils;
 import com._2cha.demo.util.HangulUtils;
 import java.util.Collections;
@@ -295,7 +294,8 @@ public class PlaceService {
     return "[" + start + "-" + end + "]";
   }
 
-  public List<PlaceBriefWithDistanceResponse> getPlacesBriefWithDistance(NearbyPlaceSearchParams nearbyPlacesParams) {
+  public List<PlaceBriefWithDistanceResponse> getPlacesBriefWithDistance(
+      NearbyPlaceSearchParams nearbyPlacesParams) {
     List<Pair<Place, Double>> placesWithDist = placeQueryRepository.findAround(nearbyPlacesParams);
     if (placesWithDist.isEmpty()) return Collections.emptyList();
 
