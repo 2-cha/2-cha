@@ -1,7 +1,7 @@
 import Drawer from '@/components/Layout/Drawer';
 import TagPicker from '@/components/TagPicker';
 import { useEffect, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useModal } from '@/hooks/useModal';
 import { useTagPicker } from '@/hooks/useTagPicker';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
@@ -58,9 +58,17 @@ function SortMenu() {
 
 function TagFilterMenu() {
   const { isOpen, onOpen, onClose } = useModal();
-  const { selected, toggleSelect } = useTagPicker();
+  const { selected, setSelected, toggleSelect } = useTagPicker();
 
-  const setPlaceFilterBy = useSetRecoilState(placeFilterByState);
+  const [placeFilterBy, setPlaceFilterBy] = useRecoilState(placeFilterByState);
+
+  // 태그가 아닌 다른 필터가 선택되면 TagPicker를 초기화
+  useEffect(() => {
+    if (placeFilterBy && placeFilterBy.filter_by !== 'tag') {
+      setSelected([]);
+    }
+  }, [placeFilterBy, setSelected]);
+
   const handleSubmit = () => {
     setPlaceFilterBy({
       filter_by: 'tag',

@@ -12,5 +12,5 @@ export function useTagPicker() {
     }
   };
 
-  return { selected, toggleSelect };
+  return { selected, setSelected, toggleSelect };
 }
