@@ -12,9 +12,9 @@ import {
   placeSortByState,
 } from '@/atoms/placesQueryParams';
 import cn from 'classnames';
-import s from './FilterMenu.module.scss';
+import s from './PlaceListQueryParamsMenu.module.scss';
 
-export default function SortFilterMenu() {
+export default function PlaceListQueryParamsMenu() {
   const scrollDirection = useScrollDirection({ offset: 3 });
 
   return (

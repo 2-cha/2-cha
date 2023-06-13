@@ -1,7 +1,7 @@
 import PlaceList from '@/components/PlaceList';
 import MetaData from '@/components/MetaData';
 import Header from '@/components/Layout/Header';
-import FilterMenu from '@/components/PlaceList/FilterMenu';
+import PlaceListQueryParamsMenu from '@/components/PlaceList/PlaceListQueryParamsMenu';
 import Skeleton from '@/components/Skeleton';
 import { usePlacesQuery } from '@/hooks/query/usePlaces';
 import { useIntersection } from '@/hooks/useIntersection';
@@ -24,7 +24,7 @@ export default function Places() {
     <>
       <MetaData title="Places" />
       <Header />
-      <FilterMenu />
+      <PlaceListQueryParamsMenu />
       {isLoading ? (
         <>
           {Array.from({ length: 3 }).map((_, i) => (
