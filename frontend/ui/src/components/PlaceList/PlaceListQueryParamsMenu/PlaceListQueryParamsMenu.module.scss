@@ -18,8 +18,10 @@
 
 .item {
   padding: 6px 16px;
+  border: 1px solid var(--border-color);
   border-radius: 999px;
-  background-color: var(--background-inactive-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 .scrollable {
