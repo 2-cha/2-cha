@@ -1,7 +1,7 @@
 import Drawer from '@/components/Layout/Drawer';
 import TagPicker from '@/components/TagPicker';
 import { useEffect, useState } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useModal } from '@/hooks/useModal';
 import { useTagPicker } from '@/hooks/useTagPicker';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
@@ -36,9 +36,20 @@ function SortMenu() {
   const { isOpen, onClose, onOpen } = useModal();
   const [sort, setSort] = useState(0);
   const setPlaceSortBy = useSetRecoilState(placeSortByState);
+  const placeFilterBy = useRecoilValue(placeFilterByState);
+
   useEffect(() => {
-    setPlaceSortBy(sortOption[Object.keys(sortOption)[sort]]);
-  }, [sort, setPlaceSortBy]);
+    const sortBy = sortOption[Object.keys(sortOption)[sort]];
+
+    // 태그가 많은 순 정렬은 태그 필터가 있을 때만 가능
+    // TODO: 태그 필터가 없을 때 메뉴 비활성화
+    if (placeFilterBy?.filter_by !== 'tag' && sortBy.sort_by === 'tag_count') {
+      setSort(0);
+      return;
+    }
+
+    setPlaceSortBy(sortBy);
+  }, [sort, setPlaceSortBy, placeFilterBy]);
 
   return (
     <>
