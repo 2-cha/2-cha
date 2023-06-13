@@ -1,35 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTagsQuery } from '@/hooks/query/useTags';
-import { useForm, useFormContext } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { debounce } from '@/lib/debounce';
 import type { Tag } from '@/types';
-import type { ReviewFormData } from '@/components/WriteReviewForm';
 import cn from 'classnames';
 import s from './TagPicker.module.scss';
 
 interface TagPickerProps {
-  name: keyof ReviewFormData;
+  selected: Tag[];
+  toggleSelect: (tag: Tag) => void;
 }
 
-export default function TagPicker({ name }: TagPickerProps) {
-  const [selected, setSelected] = useState<Tag[]>([]);
-  const { register, setValue } = useFormContext<ReviewFormData>();
-  register(name, { required: true });
-
-  useEffect(() => {
-    setValue(name, selected);
-  }, [selected, name, setValue]);
-
-  const toggleSelect = (tag: Tag) => {
-    if (selected.find((t) => t.id === tag.id)) {
-      setSelected(selected.filter((t) => t.id !== tag.id));
-    } else {
-      setSelected([...selected, tag]);
-    }
-  };
-
+export default function TagPicker({ selected, toggleSelect }: TagPickerProps) {
   return (
-    <>
+    <div className={cn(s.container, s.nonScrollable)}>
       <div className={s.tagContainer}>
         {selected.map((tag) => (
           <button
@@ -43,7 +27,7 @@ export default function TagPicker({ name }: TagPickerProps) {
         ))}
       </div>
       <TagSearchForm selected={selected} toggleSelect={toggleSelect} />
-    </>
+    </div>
   );
 }
 
@@ -72,7 +56,7 @@ function TagSearchForm({ selected, toggleSelect }: TagSearchFormProps) {
   });
 
   return (
-    <div className={s.formContainer}>
+    <div className={cn(s.formContainer, s.nonScrollable)}>
       <form onSubmit={onSubmit} className={s.form}>
         <input
           {...register('name')}
@@ -83,24 +67,26 @@ function TagSearchForm({ selected, toggleSelect }: TagSearchFormProps) {
         />
       </form>
 
-      <ul className={s.searchResults}>
-        {tags && !isError
-          ? tags.map((tag) => (
-              <li key={tag.id} className={s.searchResults__item}>
-                <button
-                  type="button"
-                  className={cn(s.tag, {
-                    [s.selected]: selected.find((t) => t.id === tag.id),
-                  })}
-                  onClick={() => toggleSelect(tag)}
-                >
-                  <span className={s.tag__imoji}>{tag.emoji}</span>
-                  <span>{tag.message}</span>
-                </button>
-              </li>
-            ))
-          : null}
-      </ul>
+      <div className={s.scrollable}>
+        <ul className={s.searchResults}>
+          {tags && !isError
+            ? tags.map((tag) => (
+                <li key={tag.id} className={s.searchResults__item}>
+                  <button
+                    type="button"
+                    className={cn(s.tag, {
+                      [s.selected]: selected.find((t) => t.id === tag.id),
+                    })}
+                    onClick={() => toggleSelect(tag)}
+                  >
+                    <span className={s.tag__imoji}>{tag.emoji}</span>
+                    <span>{tag.message}</span>
+                  </button>
+                </li>
+              ))
+            : null}
+        </ul>
+      </div>
     </div>
   );
 }

@@ -3,8 +3,7 @@
 
 .modal {
   width: 100%;
-  height: calc(100% - 40px);
-  margin-top: 40px;
+  height: calc(100% - 56px);
   z-index: 900;
   background-color: var(--background-color);
   opacity: 0;
@@ -31,8 +30,11 @@
   }
 
   &__header {
+    width: 100%;
     height: 32px;
     margin-bottom: var.$size-md;
+
+    @include mixins.flex(row, flex-start, center);
   }
 
   &__body {
@@ -51,13 +53,13 @@
     position: fixed;
     left: 0;
     top: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     z-index: 800;
     background-color: rgba(0, 0, 0, 0.7);
     opacity: 0;
 
-    @include mixins.flex;
+    @include mixins.flex(column, flex-end, center);
 
     &__afterOpen {
       opacity: 1;

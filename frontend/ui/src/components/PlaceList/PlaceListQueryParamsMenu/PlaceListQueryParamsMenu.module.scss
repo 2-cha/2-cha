@@ -1,0 +1,73 @@
+@use 'mixins';
+@use 'var';
+
+.container {
+  position: sticky;
+  top: calc(var.$header-height);
+  z-index: 10;
+  width: 100%;
+  gap: 8px;
+  padding: 8px;
+
+  @include mixins.flex(row, flex-start);
+}
+
+.hide {
+  top: calc(var.$header-height * -1);
+}
+
+.item {
+  padding: 6px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.scrollable {
+  width: 100%;
+  height: 100%;
+
+  @include mixins.flex(column, flex-start, flex-start);
+}
+
+.submit {
+  width: 100%;
+  height: 42px;
+  background-color: var(--background-active-color);
+  color: var(--text-color);
+  border-radius: 14px;
+
+  &:disabled {
+    background-color: var(--background-inactive-color);
+    color: var(--text-secondary-color);
+  }
+}
+
+.modal {
+  height: auto;
+
+  &__header {
+    width: calc(100% - 64px);
+    text-align: center;
+  }
+
+  .menuWrapper {
+    width: 100%;
+    margin: 24px 0;
+
+    @include mixins.flex(column, flex-start, flex-start);
+  }
+
+  .menuItem {
+    width: 100%;
+    height: 100%;
+    color: inherit;
+    background-color: inherit;
+
+    &__wrapper {
+      width: 100%;
+      padding: var.$size-md;
+    }
+  }
+}

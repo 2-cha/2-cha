@@ -18,7 +18,7 @@ export function useTagsQuery(query: string) {
     queryFn: () => fetchTags(query),
     retry: false,
     refetchOnWindowFocus: false,
-    enabled: !!query,
+    staleTime: 1000 * 60 * 60 * 24 * 7, // 7 days
   });
 
   return result;

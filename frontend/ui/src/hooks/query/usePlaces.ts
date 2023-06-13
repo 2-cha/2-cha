@@ -3,11 +3,16 @@ import { fetchClient } from '@/lib/fetchClient';
 import type { Coordinate } from '@/atoms/location';
 import type { PlaceSearchResult } from '@/types';
 import { useCurrentLocation } from '@/hooks/useCurrentLocation';
+import { type PlacesQueryParams } from '@/atoms/placesQueryParams';
 
 async function fetchPlaces({
   pageParam,
   location,
-}: {
+  sort_by,
+  sort_order,
+  filter_by,
+  filter_values,
+}: PlacesQueryParams & {
   pageParam: number;
   location: Coordinate | null;
 }) {
@@ -15,6 +20,10 @@ async function fetchPlaces({
     ...location,
     page_number: pageParam,
     max_dist: 2000,
+    sort_by,
+    sort_order,
+    filter_by,
+    filter_values: filter_values?.join(','),
   };
   const { data } = await fetchClient.get<PlaceSearchResult[]>(
     '/places/nearby',
@@ -24,11 +33,12 @@ async function fetchPlaces({
   return data;
 }
 
-export function usePlacesQuery() {
+export function usePlacesQuery(params: PlacesQueryParams = {}) {
   const { location } = useCurrentLocation();
   const result = useInfiniteQuery({
-    queryKey: ['places', 'nearby', location],
-    queryFn: ({ pageParam = 0 }) => fetchPlaces({ pageParam, location }),
+    queryKey: ['places', 'nearby', location, params],
+    queryFn: ({ pageParam = 0 }) =>
+      fetchPlaces({ pageParam, location, ...params }),
     getNextPageParam: (lastPage, pages) =>
       lastPage?.length ? pages.length : undefined,
     enabled: !!location,

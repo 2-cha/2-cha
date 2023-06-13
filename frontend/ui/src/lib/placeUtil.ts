@@ -1,5 +1,5 @@
 export function getCategoryLabel(category: string) {
-  let label = '';
+  let label = category;
 
   switch (category) {
     case 'WINE_BAR':
@@ -8,7 +8,7 @@ export function getCategoryLabel(category: string) {
     case 'COCKTAIL_BAR':
       label = '칵테일바';
       break;
-    case 'WHISKY_BAR':
+    case 'WHISKEY_BAR':
       label = '위스키바';
       break;
     default:
