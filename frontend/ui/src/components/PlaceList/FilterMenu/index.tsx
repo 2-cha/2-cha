@@ -1,7 +1,9 @@
 import Drawer from '@/components/Layout/Drawer';
+import TagPicker from '@/components/TagPicker';
 import { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useModal } from '@/hooks/useModal';
+import { useTagPicker } from '@/hooks/useTagPicker';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { getCategoryLabel } from '@/lib/placeUtil';
 import {
@@ -19,6 +21,7 @@ export default function SortFilterMenu() {
     <div className={cn(s.container, { [s.hide]: scrollDirection === 'down' })}>
       <SortMenu />
       <CategoryFilterMenu />
+      <TagFilterMenu />
     </div>
   );
 }
@@ -49,6 +52,45 @@ function SortMenu() {
         onSelect={(idx) => setSort(idx)}
         menu={Object.keys(sortOption)}
       />
+    </>
+  );
+}
+
+function TagFilterMenu() {
+  const { isOpen, onOpen, onClose } = useModal();
+  const { selected, toggleSelect } = useTagPicker();
+
+  const setPlaceFilterBy = useSetRecoilState(placeFilterByState);
+  const handleSubmit = () => {
+    setPlaceFilterBy({
+      filter_by: 'tag',
+      filter_values: selected.map((tag) => tag.id).map(String),
+    });
+    onClose();
+  };
+
+  return (
+    <>
+      <button className={s.item} onClick={onOpen}>
+        <span>#태그</span>
+        {selected.length > 0 ? <span> {selected.length}</span> : null}
+      </button>
+      <Drawer
+        isOpen={isOpen}
+        onClose={onClose}
+        header={<p className={s.modal__header}>태그</p>}
+      >
+        <div className={s.scrollable}>
+          <TagPicker selected={selected} toggleSelect={toggleSelect} />
+          <button
+            className={s.submit}
+            onClick={handleSubmit}
+            disabled={selected.length === 0}
+          >
+            선택
+          </button>
+        </div>
+      </Drawer>
     </>
   );
 }
