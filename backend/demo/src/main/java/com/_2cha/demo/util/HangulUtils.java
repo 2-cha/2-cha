@@ -30,8 +30,8 @@ public class HangulUtils {
   }
 
   public static boolean isInitialMatches(char 글자, char 초성) {
-    if (isCompleteChar(초성)) throw new IllegalArgumentException("No 초성");
-    if (isCompleteChar(글자)) return false;
+    if (!isCho(초성)) throw new IllegalArgumentException("No 초성");
+    if (!isCompleteChar(글자)) return false;
 
     char start = makeCompleteChar(초성, 'ㅏ', '\0');
     char end = makeCompleteChar(초성, 'ㅣ', 'ㅎ');
