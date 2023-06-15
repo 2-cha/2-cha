@@ -35,6 +35,7 @@ import com._2cha.demo.review.dto.TagCountResponse;
 import com._2cha.demo.review.service.ReviewService;
 import com._2cha.demo.util.GeomUtils;
 import com._2cha.demo.util.HangulUtils;
+import jakarta.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -231,8 +232,10 @@ public class PlaceService {
 
   public void setResponseBookmarkStatus(Long memberId, List<? extends PlaceBriefResponse> places) {
     List<Long> placeIds = places.stream().map(PlaceBriefResponse::getId).toList();
-    List<PlaceBookmark> bookmarks = placeBookmarkRepository.findAllByMemberIdAndPlaceIdIn(
-        memberId, placeIds);
+    List<PlaceBookmark> bookmarks =
+        (memberId != null) ? placeBookmarkRepository.findAllByMemberIdAndPlaceIdIn(memberId,
+                                                                                   placeIds)
+                           : Collections.emptyList();
     List<Long> bookmarkedIds = bookmarks.stream().map(b -> b.getPlace().getId()).toList();
     Map<Long, Long> totalCountMap = placeBookmarkRepository.countAllByPlaceIdIn(placeIds)
                                                            .stream()
@@ -248,9 +251,12 @@ public class PlaceService {
     }
   }
 
-  public void setResponseBookmarkStatus(Long memberId, PlaceDetailResponse place) {
-    PlaceBookmark bookmark = placeBookmarkRepository.findByMemberIdAndPlaceId(memberId,
-                                                                              place.getId());
+  public void setResponseBookmarkStatus(@Nullable Long memberId, PlaceDetailResponse place) {
+    PlaceBookmark bookmark =
+        (memberId != null) ? placeBookmarkRepository.findByMemberIdAndPlaceId(memberId,
+                                                                              place.getId())
+                           : null;
+
     Long count = placeBookmarkRepository.countAllByPlaceId(place.getId());
     place.setBookmarkStatus(new BookmarkStatus(bookmark != null, count));
   }

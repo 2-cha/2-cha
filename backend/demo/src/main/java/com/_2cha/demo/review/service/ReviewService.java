@@ -34,7 +34,9 @@ import com._2cha.demo.review.exception.InvalidTagsException;
 import com._2cha.demo.review.exception.NoSuchReviewException;
 import com._2cha.demo.review.repository.ReviewBookmarkRepository;
 import com._2cha.demo.review.repository.ReviewRepository;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -299,10 +301,11 @@ public class ReviewService {
     return getReviewsByIdInPreservingOrder(reviewIds);
   }
 
-  public void setResponseBookmarkStatus(Long memberId, List<ReviewResponse> reviews) {
+  public void setResponseBookmarkStatus(@Nullable Long memberId, List<ReviewResponse> reviews) {
     List<Long> reviewIds = reviews.stream().map(ReviewResponse::getId).toList();
-    List<ReviewBookmark> bookmarks = reviewBookmarkRepository.findAllByMemberIdAndReviewIdIn(
-        memberId, reviewIds);
+    List<ReviewBookmark> bookmarks = (memberId != null) ?
+                                     reviewBookmarkRepository.findAllByMemberIdAndReviewIdIn(
+                                         memberId, reviewIds) : Collections.emptyList();
     List<Long> bookmarkedIds = bookmarks.stream().map(b -> b.getReview().getId()).toList();
     Map<Long, Long> totalCountMap = reviewBookmarkRepository.countAllByReviewIdIn(reviewIds)
                                                             .stream()
@@ -316,9 +319,11 @@ public class ReviewService {
     }
   }
 
-  public void setResponseBookmarkStatus(Long memberId, ReviewResponse review) {
-    ReviewBookmark bookmark = reviewBookmarkRepository.findByMemberIdAndReviewId(memberId,
-                                                                                 review.getId());
+  public void setResponseBookmarkStatus(@Nullable Long memberId, ReviewResponse review) {
+    ReviewBookmark bookmark =
+        (memberId != null) ? reviewBookmarkRepository.findByMemberIdAndReviewId(memberId,
+                                                                                review.getId())
+                           : null;
     Long count = reviewBookmarkRepository.countAllByReviewId(review.getId());
     review.setBookmarkStatus(new BookmarkStatus(bookmark != null, count));
   }
