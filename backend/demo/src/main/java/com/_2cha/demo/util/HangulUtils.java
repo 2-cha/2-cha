@@ -28,4 +28,13 @@ public class HangulUtils {
   public static char makeCompleteChar(char 초, char 중, char 종) {
     return (char) ('가' + (초성.indexOf(초) * 21 * 28) + (중성.indexOf(중) * 28) + 종성.indexOf(종));
   }
+
+  public static boolean isInitialMatches(char 글자, char 초성) {
+    if (isCompleteChar(초성)) throw new IllegalArgumentException("No 초성");
+    if (isCompleteChar(글자)) return false;
+
+    char start = makeCompleteChar(초성, 'ㅏ', '\0');
+    char end = makeCompleteChar(초성, 'ㅣ', 'ㅎ');
+    return (start <= 글자 && 글자 <= end);
+  }
 }
