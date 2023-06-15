@@ -19,7 +19,9 @@ import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.place.domain.Place;
+import com._2cha.demo.place.dto.NearbyPlaceSearchParams;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
+import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.exception.NoSuchPlaceException;
 import com._2cha.demo.place.service.PlaceService;
 import com._2cha.demo.review.domain.Review;
@@ -180,32 +182,7 @@ public class ReviewService {
       return new ArrayList<>();
     }
 
-    Set<Long> placeIds = reviews.stream().map(review -> review.getPlace().getId()).collect(toSet());
-    Set<Long> memberIds = reviews.stream().map(review -> review.getMember().getId())
-                                 .collect(toSet());
-    Map<Long, PlaceBriefResponse> placeMap = placeService.getPlacesBriefByIdIn(
-                                                             placeIds.stream().toList(),
-                                                             SUMMARY_SIZE)
-                                                         .stream()
-                                                         .collect(
-                                                             toMap(PlaceBriefResponse::getId,
-                                                                   p -> p
-                                                                  ));
-    Map<Long, MemberProfileResponse> memberMap = memberService.getMemberProfileByIdIn(
-                                                                  memberIds.stream().toList())
-                                                              .stream()
-                                                              .collect(
-                                                                  toMap(
-                                                                      MemberProfileResponse::getId,
-                                                                      m -> m));
-    return reviews.stream().map(review -> new ReviewResponse(review,
-                                                             memberMap.get(
-                                                                 review.getMember().getId()),
-                                                             placeMap.get(
-                                                                 review.getPlace().getId()),
-                                                             fileStorageService.getBaseUrl()
-
-    )).toList();
+    return getReviewResponses(reviews);
   }
 
   public List<ReviewResponse> getReviewsByMemberId(Long memberId, Pageable pageParam) {
@@ -347,7 +324,7 @@ public class ReviewService {
   }
 
   // 생성순 으로 정렬된 리뷰 목록 조회
-  public List<ReviewResponse> getSocialReviewsOrderByNewest() {
+  public List<ReviewResponse> getReviewsOrderByNewest() {
 
     List<Review> reviews = reviewRepository.findAllByOrderByCreatedDesc();
 
@@ -355,6 +332,10 @@ public class ReviewService {
       return new ArrayList<>();
     }
 
+    return getReviewResponses(reviews);
+  }
+
+  private List<ReviewResponse> getReviewResponses(List<Review> reviews) {
     Set<Long> placeIds = reviews.stream().map(review -> review.getPlace().getId()).collect(toSet());
     Set<Long> memberIds = reviews.stream().map(review -> review.getMember().getId())
                                  .collect(toSet());
@@ -384,13 +365,9 @@ public class ReviewService {
     )).toList();
   }
 
-//  근처 가게 리뷰 조회
-//  public List<ReviewResponse> getSocialReviewsOrderByNearby() {
-//
-//  }
 
   //  특정 태그들을 가진 리뷰 조회
-  public List<ReviewResponse> getSocialReviewsWithTag(List<Long> filterTagsId) {
+  public List<ReviewResponse> getReviewsWithTag(List<Long> filterTagsId) {
 
     List<Tag> filterTags = tagService.findTagsByIdIn(filterTagsId);
     List<Review> reviews = reviewRepository.findReviewsByTagsInReviewTagIn(filterTags);
@@ -398,32 +375,27 @@ public class ReviewService {
       return new ArrayList<>();
     }
 
-    Set<Long> placeIds = reviews.stream().map(review -> review.getPlace().getId()).collect(toSet());
-    Set<Long> memberIds = reviews.stream().map(review -> review.getMember().getId())
-                                 .collect(toSet());
+    return getReviewResponses(reviews);
+  }
 
-    Map<Long, PlaceBriefResponse> placeMap = placeService.getPlacesBriefByIdIn(
-                                                             placeIds.stream().toList(),
-                                                             SUMMARY_SIZE)
-                                                         .stream()
-                                                         .collect(
-                                                             toMap(PlaceBriefResponse::getId,
-                                                                   p -> p
-                                                                  ));
-    Map<Long, MemberProfileResponse> memberMap = memberService.getMemberProfileByIdIn(
-                                                                  memberIds.stream().toList())
-                                                              .stream()
-                                                              .collect(
-                                                                  toMap(
-                                                                      MemberProfileResponse::getId,
-                                                                      m -> m));
-
-    return reviews.stream().map(review -> new ReviewResponse(review,
-                                                             memberMap.get(
-                                                                 review.getMember().getId()),
-                                                             placeMap.get(
-                                                                 review.getPlace().getId()),
-                                                             fileStorageService.getBaseUrl()
-    )).toList();
+  public List<ReviewResponse> getReviewsOfNearbyPlaces(NearbyPlaceSearchParams nearbyPlacesParams,
+                                                       List<Long> filterTagsId) {
+    //1. 주변 가게들 조회
+    //2. 가게들의 리뷰들 조회
+    //3. 리뷰들을 리뷰응답으로 변환
+    //4. 리뷰응답들을 리뷰응답리스트로 변환
+    //5. 리뷰응답리스트 반환
+    List<Tag> filterTags = tagService.findTagsByIdIn(filterTagsId);
+    List<PlaceBriefWithDistanceResponse> nearbyPlaces = placeService.getNearbyPlacesBriefWithDistance(
+        nearbyPlacesParams);
+    if (nearbyPlaces.isEmpty()) {
+      return new ArrayList<>();
+    }
+    List<Review> reviews = reviewRepository.findReviewByPlaceIdInAndTagsInReviewTagIdIn(
+        nearbyPlaces.stream().map(PlaceBriefWithDistanceResponse::getId).toList(), filterTagsId);
+    if (reviews.isEmpty()) {
+      return new ArrayList<>();
+    }
+    return getReviewResponses(reviews);
   }
 }

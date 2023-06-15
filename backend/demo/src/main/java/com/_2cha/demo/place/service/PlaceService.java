@@ -293,4 +293,22 @@ public class PlaceService {
 
     return "[" + start + "-" + end + "]";
   }
+
+  public List<PlaceBriefWithDistanceResponse> getNearbyPlacesBriefWithDistance(
+      NearbyPlaceSearchParams nearbyPlacesParams) {
+    List<Pair<Place, Double>> placesWithDist = placeQueryRepository.findAround(nearbyPlacesParams);
+    if (placesWithDist.isEmpty()) return Collections.emptyList();
+
+    Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
+        placesWithDist.stream().map(pair -> pair.getFirst().getId()).toList(), REVIEW_SUMMARY_SIZE);
+
+    return placesWithDist.stream().map(pair -> {
+      Place place = pair.getFirst();
+      Double distGap = pair.getSecond();
+      PlaceBriefWithDistanceResponse brief = new PlaceBriefWithDistanceResponse(place, distGap,
+                                                                                fileStorageService.getBaseUrl());
+      brief.setTagSummary(placesTagCounts.get(place.getId()));
+      return brief;
+    }).toList();
+  }
 }
