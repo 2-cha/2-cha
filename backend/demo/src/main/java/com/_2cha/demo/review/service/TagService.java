@@ -62,7 +62,11 @@ public class TagService {
       String queryRegex = FuzzyMatchingUtils.makeFuzzyRegex(queryText);
       tags = tagRepository.findTagsByMsgMatchesRegex(queryRegex);
     }
-    return tags.stream().map(TagSearchResponse::new).toList();
+
+    return tags.stream().map(
+                   tag -> new TagSearchResponse(tag, FuzzyMatchingUtils.findFuzzyMatchingIndexes(queryText,
+                                                                                                 tag.getMsg())))
+               .toList();
   }
 
   public Map<Category, List<TagWithoutCategoryResponse>> fuzzySearchCategorizedTagsByHangul(

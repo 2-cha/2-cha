@@ -265,7 +265,11 @@ public class PlaceService {
     String queryRegex = FuzzyMatchingUtils.makeFuzzyRegex(queryText);
     String baseUrl = fileStorageService.getBaseUrl();
     List<Place> places = placeRepository.findPlacesByNameMatchesRegex(queryRegex, pageParam);
-    return places.stream().map(place -> new PlaceSearchResponse(place, baseUrl)).toList();
+
+    return places.stream().map(place -> new PlaceSearchResponse(place,
+                                                                FuzzyMatchingUtils.findFuzzyMatchingIndexes(
+                                                                    queryText, place.getName()),
+                                                                baseUrl)).toList();
   }
 
 
