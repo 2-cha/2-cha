@@ -1,5 +1,8 @@
 package com._2cha.demo.collection.controller;
 
+import static com._2cha.demo.member.domain.Role.GUEST;
+import static com._2cha.demo.member.domain.Role.MEMBER;
+
 import com._2cha.demo.collection.dto.CollectionCreateRequest;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
 import com._2cha.demo.collection.dto.CollectionRemovedResponse;
@@ -30,7 +33,7 @@ public class CollectionController {
 
   private final CollectionService collectionService;
 
-  @Auth
+  @Auth(GUEST)
   @GetMapping("/members/{memberId}/collections")
   public List<CollectionViewResponse> getMemberCollections(@Authed Long requesterId,
                                                            @PathVariable Long memberId) {
@@ -40,7 +43,7 @@ public class CollectionController {
     return collections;
   }
 
-  @Auth
+  @Auth(MEMBER)
   @GetMapping("/collections")
   public List<CollectionViewResponse> getCollectionsIncludingPrivate(@Authed Long memberId) {
     List<CollectionViewResponse> collections = collectionService.getMemberCollections(
@@ -49,7 +52,7 @@ public class CollectionController {
     return collections;
   }
 
-  @Auth
+  @Auth(MEMBER)
   @PostMapping("/collections")
   public CollectionCreatedResponse createCollection(@Authed Long memberId,
                                                     @RequestBody @Valid CollectionCreateRequest dto) {
@@ -57,14 +60,14 @@ public class CollectionController {
                                               dto.getThumbnail(), dto.getReviewIds());
   }
 
-  @Auth
+  @Auth(GUEST)
   @GetMapping("/collections/{collId}")
   public CollectionReviewsResponse getCollectionDetail(@Authed Long memberId,
                                                        @PathVariable Long collId) {
     return collectionService.getCollectionDetail(memberId, collId);
   }
 
-  @Auth
+  @Auth(MEMBER)
   @DeleteMapping("/collections/{collId}")
   public CollectionRemovedResponse removeCollection(@Authed Long memberId,
                                                     @PathVariable Long collId) {
@@ -74,7 +77,7 @@ public class CollectionController {
   /**
    * exposure / title / description / thumbnail
    */
-  @Auth
+  @Auth(MEMBER)
   @PatchMapping("/collections/{collId}")
   public CollectionUpdatedResponse updateCollection(@Authed Long memberId,
                                                     @PathVariable Long collId,
@@ -84,7 +87,7 @@ public class CollectionController {
                                               dto.getThumbnail(), dto.getExposure());
   }
 
-  @Auth
+  @Auth(MEMBER)
   @PutMapping("/collections/{collId}/reviews")
   public CollectionReviewsUpdatedResponse updateReviews(@Authed Long memberId,
                                                         @PathVariable Long collId,
@@ -92,19 +95,19 @@ public class CollectionController {
     return collectionService.updateReviews(memberId, collId, dto.getReviewIds());
   }
 
-  @Auth
+  @Auth(MEMBER)
   @GetMapping("/bookmarks/collections")
   public List<CollectionViewResponse> getBookmarkedPlaces(@Authed Long memberId) {
     return collectionService.getBookmarkedCollections(memberId);
   }
 
-  @Auth
+  @Auth(MEMBER)
   @PostMapping("/bookmarks/collections/{collId}")
   public void createBookmark(@Authed Long memberId, @PathVariable Long collId) {
     collectionService.createBookmark(memberId, collId);
   }
 
-  @Auth
+  @Auth(MEMBER)
   @DeleteMapping("/bookmarks/collections/{collId}")
   public void removeBookmark(@Authed Long memberId, @PathVariable Long collId) {
     collectionService.removeBookmark(memberId, collId);
