@@ -8,10 +8,10 @@ import com._2cha.demo.review.dto.MakeTagReqRequest;
 import com._2cha.demo.review.dto.MakeTagReqResponse;
 import com._2cha.demo.review.dto.TagCreationReqBriefResponse;
 import com._2cha.demo.review.dto.TagCreationReqDetailResponse;
+import com._2cha.demo.review.dto.TagFuzzySearchResponse;
 import com._2cha.demo.review.dto.TagReqAcceptedResponse;
 import com._2cha.demo.review.dto.TagReqUpdateRequest;
 import com._2cha.demo.review.dto.TagReqUpdatedResponse;
-import com._2cha.demo.review.dto.TagSearchResponse;
 import com._2cha.demo.review.dto.TagWithoutCategoryResponse;
 import com._2cha.demo.review.service.TagService;
 import com._2cha.demo.review.validator.Hangul;
@@ -39,7 +39,7 @@ public class TagController {
   private final TagService tagService;
 
   @GetMapping("/tags")
-  public List<TagSearchResponse> fuzzySearchTagsByHangul(
+  public List<TagFuzzySearchResponse> fuzzySearchTagsByHangul(
       @Hangul @RequestParam(required = false) String query) {
     return tagService.fuzzySearchTagsByHangul(query);
   }

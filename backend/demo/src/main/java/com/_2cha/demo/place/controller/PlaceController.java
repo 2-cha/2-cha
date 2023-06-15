@@ -14,7 +14,7 @@ import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceCreatedResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
 import com._2cha.demo.place.dto.PlaceEnrollRequest;
-import com._2cha.demo.place.dto.PlaceSearchResponse;
+import com._2cha.demo.place.dto.PlaceFuzzySearchResponse;
 import com._2cha.demo.place.dto.SortBy;
 import com._2cha.demo.place.dto.SortOrder;
 import com._2cha.demo.place.service.PlaceService;
@@ -48,8 +48,8 @@ public class PlaceController {
 
   @Auth(MEMBER)
   @GetMapping("/places")
-  public List<PlaceSearchResponse> searchPlaceByName(@RequestParam String query,
-                                                     Pageable pageParam) {
+  public List<PlaceFuzzySearchResponse> searchPlaceByName(@RequestParam String query,
+                                                          Pageable pageParam) {
     return placeService.fuzzySearch(query, pageParam);
   }
 

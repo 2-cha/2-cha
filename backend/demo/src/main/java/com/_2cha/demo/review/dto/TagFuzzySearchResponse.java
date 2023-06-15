@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class TagSearchResponse {
+public class TagFuzzySearchResponse {
 
   private Long id;
   private String emoji;
@@ -14,7 +14,7 @@ public class TagSearchResponse {
   private Category category;
   private List<Integer> matchingIndexes;
 
-  public TagSearchResponse(Tag tag, List<Integer> matchingIndexes) {
+  public TagFuzzySearchResponse(Tag tag, List<Integer> matchingIndexes) {
     this.id = tag.getId();
     this.emoji = tag.getEmoji();
     this.message = tag.getMsg();

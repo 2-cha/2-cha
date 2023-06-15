@@ -13,9 +13,9 @@ import com._2cha.demo.review.domain.TagCreationRequest;
 import com._2cha.demo.review.dto.MakeTagReqResponse;
 import com._2cha.demo.review.dto.TagCreationReqBriefResponse;
 import com._2cha.demo.review.dto.TagCreationReqDetailResponse;
+import com._2cha.demo.review.dto.TagFuzzySearchResponse;
 import com._2cha.demo.review.dto.TagReqAcceptedResponse;
 import com._2cha.demo.review.dto.TagReqUpdatedResponse;
-import com._2cha.demo.review.dto.TagSearchResponse;
 import com._2cha.demo.review.dto.TagWithoutCategoryResponse;
 import com._2cha.demo.review.exception.NoSuchTagCreationReqException;
 import com._2cha.demo.review.repository.TagCreationRequestRepository;
@@ -54,7 +54,7 @@ public class TagService {
   /*-----------
    @ Queries
    ----------*/
-  public List<TagSearchResponse> fuzzySearchTagsByHangul(String queryText) {
+  public List<TagFuzzySearchResponse> fuzzySearchTagsByHangul(String queryText) {
     List<Tag> tags;
     if (queryText == null) {
       tags = tagRepository.findAll();
@@ -64,7 +64,8 @@ public class TagService {
     }
 
     return tags.stream().map(
-                   tag -> new TagSearchResponse(tag, FuzzyMatchingUtils.findFuzzyMatchingIndexes(queryText,
+                   tag -> new TagFuzzySearchResponse(tag,
+                                                     FuzzyMatchingUtils.findFuzzyMatchingIndexes(queryText,
                                                                                                  tag.getMsg())))
                .toList();
   }

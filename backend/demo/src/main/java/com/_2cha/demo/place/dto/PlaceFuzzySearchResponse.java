@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class PlaceSearchResponse {
+public class PlaceFuzzySearchResponse {
 
   private Long id;
   private String name;
@@ -17,7 +17,7 @@ public class PlaceSearchResponse {
   private Double lat;
   private List<Integer> matchingIndexes;
 
-  public PlaceSearchResponse(Place place, List<Integer> matchingIndexes, String baseUrl) {
+  public PlaceFuzzySearchResponse(Place place, List<Integer> matchingIndexes, String baseUrl) {
     this.id = place.getId();
     this.name = place.getName();
     this.category = place.getCategory();

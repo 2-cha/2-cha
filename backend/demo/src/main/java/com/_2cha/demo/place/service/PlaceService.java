@@ -22,7 +22,7 @@ import com._2cha.demo.place.dto.PlaceBriefResponse;
 import com._2cha.demo.place.dto.PlaceBriefWithDistanceResponse;
 import com._2cha.demo.place.dto.PlaceCreatedResponse;
 import com._2cha.demo.place.dto.PlaceDetailResponse;
-import com._2cha.demo.place.dto.PlaceSearchResponse;
+import com._2cha.demo.place.dto.PlaceFuzzySearchResponse;
 import com._2cha.demo.place.dto.PlaceSuggestionResponse;
 import com._2cha.demo.place.dto.SortBy;
 import com._2cha.demo.place.dto.SortOrder;
@@ -261,15 +261,16 @@ public class PlaceService {
     place.setBookmarkStatus(new BookmarkStatus(bookmark != null, count));
   }
 
-  public List<PlaceSearchResponse> fuzzySearch(String queryText, Pageable pageParam) {
+  public List<PlaceFuzzySearchResponse> fuzzySearch(String queryText, Pageable pageParam) {
     String queryRegex = FuzzyMatchingUtils.makeFuzzyRegex(queryText);
     String baseUrl = fileStorageService.getBaseUrl();
     List<Place> places = placeRepository.findPlacesByNameMatchesRegex(queryRegex, pageParam);
 
-    return places.stream().map(place -> new PlaceSearchResponse(place,
-                                                                FuzzyMatchingUtils.findFuzzyMatchingIndexes(
-                                                                    queryText, place.getName()),
-                                                                baseUrl)).toList();
+    return places.stream().map(place -> new PlaceFuzzySearchResponse(place,
+                                                                     FuzzyMatchingUtils.findFuzzyMatchingIndexes(
+                                                                         queryText,
+                                                                         place.getName()),
+                                                                     baseUrl)).toList();
   }
 
 
