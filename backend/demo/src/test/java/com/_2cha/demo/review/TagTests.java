@@ -4,7 +4,7 @@ import static com._2cha.demo.review.domain.Category.ACTIVITY;
 
 import com._2cha.demo.review.controller.TagController;
 import com._2cha.demo.review.domain.Tag;
-import com._2cha.demo.review.dto.TagWithIdResponse;
+import com._2cha.demo.review.dto.TagSearchResponse;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import org.assertj.core.api.Assertions;
@@ -38,27 +38,27 @@ class TagTests {
 
   @Test
   void fuzzySearchTagsByHangul() {
-    List<TagWithIdResponse> ㅈㅇㅇ = tagController.fuzzySearchTagsByHangul("ㅈㅇㅇ");
+    List<TagSearchResponse> ㅈㅇㅇ = tagController.fuzzySearchTagsByHangul("ㅈㅇㅇ");
     Assertions.assertThat(ㅈㅇㅇ)
               .extracting("message")
               .containsExactly("이야기 나누기 좋아요", "책 읽기 좋아요");
 
-    List<TagWithIdResponse> ㅇㄱ = tagController.fuzzySearchTagsByHangul("ㅇㄱ");
+    List<TagSearchResponse> ㅇㄱ = tagController.fuzzySearchTagsByHangul("ㅇㄱ");
     Assertions.assertThat(ㅇㄱ)
               .extracting("message")
               .containsExactly("이야기 나누기 좋아요", "책 읽기 좋아요");
 
-    List<TagWithIdResponse> ㅇㅇㄱ = tagController.fuzzySearchTagsByHangul("ㅇㅇㄱ");
+    List<TagSearchResponse> ㅇㅇㄱ = tagController.fuzzySearchTagsByHangul("ㅇㅇㄱ");
     Assertions.assertThat(ㅇㅇㄱ)
               .extracting("message")
               .containsExactly("이야기 나누기 좋아요");
 
-    List<TagWithIdResponse> ㅇㅈ = tagController.fuzzySearchTagsByHangul("ㅇㅈ");
+    List<TagSearchResponse> ㅇㅈ = tagController.fuzzySearchTagsByHangul("ㅇㅈ");
     Assertions.assertThat(ㅇㅈ)
               .extracting("message")
               .containsExactly("이야기 나누기 좋아요", "책 읽기 좋아요");
 
-    List<TagWithIdResponse> ㄴㅈ = tagController.fuzzySearchTagsByHangul("ㄴㅈ");
+    List<TagSearchResponse> ㄴㅈ = tagController.fuzzySearchTagsByHangul("ㄴㅈ");
     Assertions.assertThat(ㄴㅈ)
               .extracting("message")
               .containsExactly("이야기 나누기 좋아요");
