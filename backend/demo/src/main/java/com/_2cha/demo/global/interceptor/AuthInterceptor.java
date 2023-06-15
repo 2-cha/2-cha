@@ -33,8 +33,13 @@ public class AuthInterceptor implements HandlerInterceptor {
     if (!hasAuthAnnotation(handlerMethod)) {
       return true;
     }
+
+    Role requiredRole = getRole(handlerMethod);
+    boolean allowsGuest = requiredRole.equals(Role.GUEST);
+
     String authHeader = request.getHeader("Authorization");
     if (authHeader == null) {
+      if (allowsGuest) return true;
       throw new NoTokenException();
     }
     String[] bearerToken = authHeader.split(" ");
@@ -44,7 +49,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     JwtAccessTokenPayload payload = authService.verifyJwt(bearerToken[1],
                                                           JwtAccessTokenPayload.class);
-    Role requiredRole = getRole(handlerMethod);
     Role memberRole = payload.getRole();
 
     if (memberRole.ordinal() < requiredRole.ordinal()) {
