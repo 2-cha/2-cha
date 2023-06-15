@@ -13,14 +13,14 @@ import com._2cha.demo.review.domain.TagCreationRequest;
 import com._2cha.demo.review.dto.MakeTagReqResponse;
 import com._2cha.demo.review.dto.TagCreationReqBriefResponse;
 import com._2cha.demo.review.dto.TagCreationReqDetailResponse;
+import com._2cha.demo.review.dto.TagFuzzySearchResponse;
 import com._2cha.demo.review.dto.TagReqAcceptedResponse;
 import com._2cha.demo.review.dto.TagReqUpdatedResponse;
-import com._2cha.demo.review.dto.TagWithIdResponse;
 import com._2cha.demo.review.dto.TagWithoutCategoryResponse;
 import com._2cha.demo.review.exception.NoSuchTagCreationReqException;
 import com._2cha.demo.review.repository.TagCreationRequestRepository;
 import com._2cha.demo.review.repository.TagRepository;
-import com._2cha.demo.util.HangulUtils;
+import com._2cha.demo.util.FuzzyMatchingUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -54,15 +54,20 @@ public class TagService {
   /*-----------
    @ Queries
    ----------*/
-  public List<TagWithIdResponse> fuzzySearchTagsByHangul(String queryText) {
+  public List<TagFuzzySearchResponse> fuzzySearchTagsByHangul(String queryText) {
     List<Tag> tags;
     if (queryText == null) {
       tags = tagRepository.findAll();
     } else {
-      String queryRegex = this.makeQueryRegex(queryText);
+      String queryRegex = FuzzyMatchingUtils.makeFuzzyRegex(queryText);
       tags = tagRepository.findTagsByMsgMatchesRegex(queryRegex);
     }
-    return tags.stream().map(TagWithIdResponse::new).toList();
+
+    return tags.stream().map(
+                   tag -> new TagFuzzySearchResponse(tag,
+                                                     FuzzyMatchingUtils.findFuzzyMatchingIndexes(queryText,
+                                                                                                 tag.getMsg())))
+               .toList();
   }
 
   public Map<Category, List<TagWithoutCategoryResponse>> fuzzySearchCategorizedTagsByHangul(
@@ -71,7 +76,7 @@ public class TagService {
     if (queryText == null) {
       tags = tagRepository.findAll();
     } else {
-      String queryRegex = this.makeQueryRegex(queryText);
+      String queryRegex = FuzzyMatchingUtils.makeFuzzyRegex(queryText);
       tags = tagRepository.findTagsByMsgMatchesRegex(queryRegex);
     }
     return tags.stream().collect(Collectors.groupingBy(Tag::getCategory,
@@ -159,38 +164,5 @@ public class TagService {
 
     //tagReq.getRequester();  // May notify to requester
     tagReqRepository.delete(tagReq);
-  }
-
-
-  private String makeQueryRegex(String queryText) {
-
-    int i = -1;
-    boolean prevSpace = false;
-    String queryRegex = "";
-
-    while (++i < queryText.length()) {
-      char c = queryText.charAt(i);
-      if (HangulUtils.isCompleteChar(c)) {
-        queryRegex += c;
-      } else if (HangulUtils.isPartialChar(c)) {
-        queryRegex += makeCompleteRange(c);
-      } else if (Character.isSpaceChar(c)) {
-        prevSpace = true;
-      } else {
-        continue;
-      }
-      if (!prevSpace) {
-        queryRegex += ".*"; // Fuzzy Matching, to ignore only spaces, use "\\s*".
-      }
-      prevSpace = false;
-    }
-    return queryRegex;
-  }
-
-  private String makeCompleteRange(char 초성) {
-    char start = HangulUtils.makeCompleteChar(초성, 'ㅏ', '\0');
-    char end = HangulUtils.makeCompleteChar(초성, 'ㅣ', 'ㅎ');
-
-    return "[" + start + "-" + end + "]";
   }
 }
