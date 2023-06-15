@@ -1,8 +1,12 @@
 package com._2cha.demo.place.controller;
 
+import static com._2cha.demo.member.domain.Role.GUEST;
+import static com._2cha.demo.member.domain.Role.MEMBER;
+
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
+import com._2cha.demo.member.domain.Role;
 import com._2cha.demo.place.dto.FilterBy;
 import com._2cha.demo.place.dto.NearbyPlaceSearchParams;
 import com._2cha.demo.place.dto.PlaceBriefResponse;
@@ -27,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Auth
 @RestController
 @RequiredArgsConstructor
 public class PlaceController {
@@ -35,6 +38,7 @@ public class PlaceController {
   private final PlaceService placeService;
   private final ImageUploadService imageUploadService;
 
+  @Auth(GUEST)
   @GetMapping("/places/{placeId}")
   public PlaceDetailResponse getPlaceDetailById(@Authed Long memberId, @PathVariable Long placeId) {
     PlaceDetailResponse place = placeService.getPlaceDetailById(placeId);
@@ -42,12 +46,14 @@ public class PlaceController {
     return place;
   }
 
+  @Auth(MEMBER)
   @GetMapping("/places")
   public List<PlaceSearchResponse> searchPlaceByName(@RequestParam String query,
                                                      Pageable pageParam) {
     return placeService.fuzzySearch(query, pageParam);
   }
 
+  @Auth(GUEST)
   @GetMapping("/places/nearby")
   public List<PlaceBriefWithDistanceResponse> getNearbyPlace(
       @Authed Long memberId,
@@ -71,27 +77,32 @@ public class PlaceController {
     return places;
   }
 
+  @Auth(MEMBER)
   @PostMapping("/places")
   public PlaceCreatedResponse createPlace(@RequestBody @Valid PlaceEnrollRequest dto) {
     return placeService.createPlace(dto.getName(), dto.getCategory(), dto.getAddress(),
                                     dto.getLotAddress(), dto.getLon(), dto.getLat(), dto.getSite());
   }
 
+  @Auth(Role.MEMBER)
   @PutMapping("/places/{placeId}")
   public void updatePlace(@RequestBody @Valid PlaceEnrollRequest dto) {
     //TODO
   }
 
+  @Auth(Role.MEMBER)
   @GetMapping("/bookmarks/places")
   public List<PlaceBriefResponse> getBookmarkedPlaces(@Authed Long memberId) {
     return placeService.getBookmarkedPlaces(memberId);
   }
 
+  @Auth(Role.MEMBER)
   @PostMapping("/bookmarks/places/{placeId}")
   public void createBookmark(@Authed Long memberId, @PathVariable Long placeId) {
     placeService.createBookmark(memberId, placeId);
   }
 
+  @Auth(Role.MEMBER)
   @DeleteMapping("/bookmarks/places/{placeId}")
   public void removeBookmark(@Authed Long memberId, @PathVariable Long placeId) {
     placeService.removeBookmark(memberId, placeId);

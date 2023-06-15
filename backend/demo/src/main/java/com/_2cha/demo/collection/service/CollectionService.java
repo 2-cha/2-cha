@@ -15,6 +15,7 @@ import com._2cha.demo.collection.dto.CollectionReviewsResponse;
 import com._2cha.demo.collection.dto.CollectionReviewsUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionViewResponse;
+import com._2cha.demo.collection.exception.CannotAccessToPrivateException;
 import com._2cha.demo.collection.exception.CannotCreateException;
 import com._2cha.demo.collection.exception.CannotRemoveException;
 import com._2cha.demo.collection.exception.CannotUpdateException;
@@ -31,6 +32,8 @@ import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.service.ReviewService;
+import jakarta.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -64,6 +67,10 @@ public class CollectionService {
   public CollectionReviewsResponse getCollectionDetail(Long memberId, Long collId) {
     Collection collection = collectionRepository.findCollectionById(collId);
     if (collection == null) throw new NoSuchCollectionException();
+    if (!collection.isExposed() &&
+        !Objects.equals(memberId, collection.getMember().getId())) {
+      throw new CannotAccessToPrivateException();
+    }
 
     List<Long> reviewIds = collection.getReviews()
                                      .stream()
@@ -83,8 +90,10 @@ public class CollectionService {
   @Transactional(readOnly = true)
   public void setResponseBookmarkStatus(Long memberId, List<CollectionViewResponse> collections) {
     List<Long> collIds = collections.stream().map(CollectionViewResponse::getId).toList();
-    List<CollectionBookmark> bookmarks = bookmarkRepository.findAllByMemberIdAndCollectionIdIn(
-        memberId, collIds);
+    List<CollectionBookmark> bookmarks =
+        (memberId != null) ? bookmarkRepository.findAllByMemberIdAndCollectionIdIn(memberId,
+                                                                                   collIds)
+                           : Collections.emptyList();
     List<Long> bookmarkedIds = bookmarks.stream().map(b -> b.getCollection().getId()).toList();
     Map<Long, Long> totalCountMap = bookmarkRepository.countAllByCollectionIdIn(collIds).stream()
                                                       .collect(toMap(
@@ -98,9 +107,12 @@ public class CollectionService {
   }
 
   @Transactional(readOnly = true)
-  public void setResponseBookmarkStatus(Long memberId, CollectionViewResponse collection) {
-    CollectionBookmark bookmark = bookmarkRepository.findByMemberIdAndCollectionId(memberId,
-                                                                                   collection.getId());
+  public void setResponseBookmarkStatus(@Nullable Long memberId,
+                                        CollectionViewResponse collection) {
+    CollectionBookmark bookmark =
+        (memberId != null) ? bookmarkRepository.findByMemberIdAndCollectionId(memberId,
+                                                                              collection.getId())
+                           : null;
     Long count = bookmarkRepository.countAllByCollectionId(collection.getId());
     collection.setBookmarkStatus(new BookmarkStatus(bookmark != null, count));
   }

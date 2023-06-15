@@ -1,5 +1,7 @@
 package com._2cha.demo.review.controller;
 
+import static com._2cha.demo.member.domain.Role.GUEST;
+import static com._2cha.demo.member.domain.Role.MEMBER;
 import static com._2cha.demo.util.GeomUtils.lat;
 import static com._2cha.demo.util.GeomUtils.lon;
 import static java.util.concurrent.CompletableFuture.completedFuture;
@@ -34,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-@Auth
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -44,6 +45,7 @@ public class ReviewController {
   private final PlaceService placeService;
   private final ImageUploadService imageUploadService;
 
+  @Auth(GUEST)
   @GetMapping("/places/{placeId}/reviews")
   public List<ReviewResponse> getPlaceReviews(@Authed Long memberId, @PathVariable Long placeId,
                                               Pageable pageParam) {
@@ -52,6 +54,7 @@ public class ReviewController {
     return reviews;
   }
 
+  @Auth(GUEST)
   @GetMapping("/members/{memberId}/reviews")
   public List<ReviewResponse> getMemberReviews(@Authed Long requesterId,
                                                @PathVariable Long memberId, Pageable pageParam) {
@@ -60,6 +63,7 @@ public class ReviewController {
     return reviews;
   }
 
+  @Auth(GUEST)
   @GetMapping("/reviews/{reviewId}")
   public ReviewResponse getReview(@Authed Long memberId, @PathVariable Long reviewId) {
     ReviewResponse review = reviewService.getReviewById(reviewId);
@@ -67,17 +71,20 @@ public class ReviewController {
     return review;
   }
 
+  @Auth(MEMBER)
   @PostMapping("/places/{placeId}/reviews")
   public void writePlaceReview(@Authed Long memberId, @PathVariable Long placeId,
                                @Valid @RequestBody WriteReviewRequest dto) {
     reviewService.writeReview(memberId, placeId, dto.getTagIds(), dto.getImgUrls());
   }
 
+  @Auth(MEMBER)
   @DeleteMapping("/reviews/{reviewId}")
   public void deleteReview(@Authed Long memberId, @PathVariable Long reviewId) {
     reviewService.deleteReview(memberId, reviewId);
   }
 
+  @Auth(MEMBER)
   @PostMapping(value = "/reviews/images")
   public CompletableFuture<ImageUrlWithSuggestionResponse> saveReviewImage(
       @RequestParam @ImageMime MultipartFile file)
@@ -96,16 +103,19 @@ public class ReviewController {
                            );
   }
 
+  @Auth(MEMBER)
   @GetMapping("/bookmarks/reviews")
   public List<ReviewResponse> getBookmarkedPlaces(@Authed Long memberId) {
     return reviewService.getBookmarkedReviews(memberId);
   }
 
+  @Auth(MEMBER)
   @PostMapping("/bookmarks/reviews/{reviewId}")
   public void createBookmark(@Authed Long memberId, @PathVariable Long reviewId) {
     reviewService.createBookmark(memberId, reviewId);
   }
 
+  @Auth(MEMBER)
   @DeleteMapping("/bookmarks/reviews/{reviewId}")
   public void removeBookmark(@Authed Long memberId, @PathVariable Long reviewId) {
     reviewService.removeBookmark(memberId, reviewId);
