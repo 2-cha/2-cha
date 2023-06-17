@@ -7,7 +7,7 @@ import SearchAddressModal from './SearchAddressModal';
 import s from './Header.module.scss';
 
 export default function Header() {
-  const { location, isError } = useCurrentLocation();
+  const { location, isError, refresh } = useCurrentLocation();
   const { isOpen, onOpen, onClose } = useModal();
 
   useEffect(() => {
@@ -25,10 +25,14 @@ export default function Header() {
   return (
     <div className={s.root}>
       <header className={s.header}>
-        <button onClick={onOpen} className={s.header__button}>
-          <LocationIcon />
-          <p className={s.header__title}>{region}</p>
-        </button>
+        <div className={s.location}>
+          <button onClick={refresh} className={s.header__button}>
+            <LocationIcon />
+          </button>
+          <button onClick={onOpen} className={s.header__button}>
+            <p className={s.header__title}>{region}</p>
+          </button>
+        </div>
       </header>
       <SearchAddressModal isOpen={isOpen} onClose={onClose} />
     </div>
