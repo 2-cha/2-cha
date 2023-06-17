@@ -34,6 +34,7 @@ export function useCurrentLocation() {
         };
 
         setLocation(loc);
+        setIsError(false);
         try {
           localStorage.setItem(LOCATION_KEY, JSON.stringify(loc));
         } catch {}
