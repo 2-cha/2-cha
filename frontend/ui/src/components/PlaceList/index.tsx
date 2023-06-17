@@ -6,6 +6,7 @@ import { PlaceSearchResult } from '@/types';
 import { ShortTags } from '../Tags';
 import BookmarkToggleButton from '@/components/BookmarkToggleButton';
 
+import SadIcon from '../Icons/SadIcon';
 import s from './PlaceList.module.scss';
 
 interface PlaceListProps {
@@ -71,7 +72,15 @@ export function PlaceItem({ place }: PlaceItemProps) {
           className={s.thumbnail}
         />
       ) : (
-        <div className={s.thumbnail__skeleton} />
+        <div className={s.thumbnail__skeleton}>
+          <SadIcon width={100} height={100} />
+          <span className={s.thumbnail__skeleton__title}>
+            사진을 찾을 수 없어요
+          </span>
+          <span className={s.thumbnail__skeleton__subtitle}>
+            첫 리뷰어가 되어보세요
+          </span>
+        </div>
       )}
     </li>
   );

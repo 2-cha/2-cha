@@ -20,10 +20,10 @@ $img-height: 360px;
   position: relative;
   width: 100%;
   height: $img-height;
-  margin-bottom: 20px;
+  @include mixins.margin(bottom, lg);
   border-radius: 5px;
   overflow: hidden;
-  box-shadow: 0 5px 5px -1px var(--border-color);
+  box-shadow: 0 5px 5px -1px var(--shadow-color);
 
   @include mixins.flex(column, flex-start, flex-start);
 
@@ -67,7 +67,7 @@ $img-height: 360px;
 
   .thumbnail {
     position: absolute;
-    width: 480px;
+    width: 100%;
     top: 0;
     left: 0;
     object-fit: cover;
@@ -78,6 +78,25 @@ $img-height: 360px;
       background: var(--background-inactive-color);
       width: 100%;
       height: $img-height;
+      @include mixins.flex(column, flex-start, center);
+      @include mixins.padding(y, 70);
+
+      & > svg {
+        fill: var(--border-color);
+        @include mixins.margin(bottom, md);
+      }
+
+      &__title {
+        color: var(--text-color);
+        @include mixins.text-lg;
+        user-select: none;
+      }
+
+      &__subtitle {
+        color: var(--text-secondary-color);
+        @include mixins.text-sm;
+        user-select: none;
+      }
     }
   }
 }
