@@ -9,6 +9,9 @@ const nextConfig = {
   images: {
     domains: ['static.2chaproj.com', 'picsum.photos'],
   },
+  experimental: {
+    scrollRestoration: true,
+  },
 };
 
 module.exports = nextConfig;
