@@ -26,6 +26,9 @@ public class ReviewResponse {
   @JsonInclude(Include.NON_NULL)
   private BookmarkStatus bookmarkStatus;
 
+  @JsonInclude(Include.NON_NULL)
+  private LikeStatus likeStatus;
+
   public ReviewResponse(Review review, MemberProfileResponse member, PlaceBriefResponse place,
                         String imgBaseUrl) {
     review.getImages().forEach(img -> {

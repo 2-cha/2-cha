@@ -27,6 +27,7 @@ import com._2cha.demo.place.service.PlaceService;
 import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.domain.ReviewBookmark;
 import com._2cha.demo.review.domain.Tag;
+import com._2cha.demo.review.dto.LikeStatus;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.dto.TagCountResponse;
 import com._2cha.demo.review.exception.CannotRemoveException;
@@ -65,6 +66,7 @@ public class ReviewService {
   private final ReviewRepository reviewRepository;
   private final ReviewBookmarkRepository reviewBookmarkRepository;
   private final TagService tagService;
+  private final LikeService likeService;
   private final FileStorageService fileStorageService;
   private final ImageUploadService imageUploadService;
   private final ApplicationEventPublisher eventPublisher;
@@ -302,6 +304,7 @@ public class ReviewService {
   }
 
   public void setResponseBookmarkStatus(@Nullable Long memberId, List<ReviewResponse> reviews) {
+    //TODO: bookmarkService로 분리
     List<Long> reviewIds = reviews.stream().map(ReviewResponse::getId).toList();
     List<ReviewBookmark> bookmarks = (memberId != null) ?
                                      reviewBookmarkRepository.findAllByMemberIdAndReviewIdIn(
@@ -326,6 +329,18 @@ public class ReviewService {
                            : null;
     Long count = reviewBookmarkRepository.countAllByReviewId(review.getId());
     review.setBookmarkStatus(new BookmarkStatus(bookmark != null, count));
+  }
+
+  public void setResponseLikeStatus(@Nullable Long memberId, List<ReviewResponse> reviews) {
+    List<Long> reviewIds = reviews.stream().map(ReviewResponse::getId).toList();
+    Map<Long, LikeStatus> likeStatusMap = likeService.getLikeStatus(memberId, reviewIds);
+
+    reviews.forEach(review -> review.setLikeStatus(likeStatusMap.get(review.getId())));
+  }
+
+  public void setResponseLikeStatus(@Nullable Long memberId, ReviewResponse review) {
+    LikeStatus likeStatus = likeService.getLikeStatus(memberId, review.getId());
+    review.setLikeStatus(likeStatus);
   }
 
   // 생성순 으로 정렬된 리뷰 목록 조회
