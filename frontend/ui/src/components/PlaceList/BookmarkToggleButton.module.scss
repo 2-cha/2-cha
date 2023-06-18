@@ -1,0 +1,16 @@
+.container {
+  color: inherit;
+  background-color: inherit;
+}
+
+.icon {
+  stroke: var(--background-color);
+}
+
+.fill {
+  color: var(--background-active-color);
+}
+
+.empty {
+  color: var(--background-inactive-color);
+}
