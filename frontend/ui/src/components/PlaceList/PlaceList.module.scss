@@ -4,19 +4,16 @@
 $img-height: 360px;
 
 .container {
+  scroll-snap-type: y mandatory;
   height: 100%;
   width: 100%;
   min-width: 0;
-  // overflow-y: ㄴㅊ;
-}
-
-.placeList {
-  width: 100%;
-
-  @include mixins.flex(column);
+  overflow-y: scroll;
 }
 
 .placeItem {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
   position: relative;
   width: 100%;
   height: $img-height;

@@ -15,19 +15,15 @@ interface PlaceListProps {
 
 export default function PlaceList({ pages }: PlaceListProps) {
   return (
-    <>
-      <div className={s.container}>
-        <ul className={s.placeList}>
-          {pages.map((page, idx) => (
-            <Fragment key={idx}>
-              {page.map((place) => (
-                <PlaceItem place={place} key={place.id} />
-              ))}
-            </Fragment>
+    <ul className={s.container}>
+      {pages.map((page, idx) => (
+        <Fragment key={idx}>
+          {page.map((place) => (
+            <PlaceItem place={place} key={place.id} />
           ))}
-        </ul>
-      </div>
-    </>
+        </Fragment>
+      ))}
+    </ul>
   );
 }
 
