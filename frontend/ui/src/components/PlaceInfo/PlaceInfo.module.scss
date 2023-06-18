@@ -51,42 +51,6 @@
   }
 }
 
-.menu {
-  position: sticky;
-  top: var.$header-height;
-  width: 100%;
-  height: var.$header-height;
-  background-color: var(--background-color);
-  z-index: 2;
-
-  @include mixins.flex(row, space-around, flex-start);
-  @include mixins.margin(top, var.$size-lg * 2);
-
-  .active {
-    border-bottom: 2px solid var(--border-color);
-  }
-
-  &__item {
-    background-color: inherit;
-    color: inherit;
-    cursor: pointer;
-    flex: 1 1 0;
-
-    @include mixins.text-md;
-    @include mixins.padding(all, md);
-
-    &:hover,
-    &:active,
-    &:focus {
-      @extend .active;
-    }
-  }
-
-  &__itemActive {
-    @extend .active;
-  }
-}
-
 .map {
   width: 100%;
   height: 420px;
