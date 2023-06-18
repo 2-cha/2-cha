@@ -7,23 +7,6 @@
   @include mixins.flex(column);
 }
 
-.tabsection {
-  width: 100%;
-  height: 50px;
-  @include mixins.flex(row);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.button {
-  flex: 1;
-  height: 100%;
-  background-color: var(--background-inactive-color);
-}
-
-.selected {
-  background-color: var(--background-color);
-}
-
 .review {
   flex: 1;
   width: 100%;
