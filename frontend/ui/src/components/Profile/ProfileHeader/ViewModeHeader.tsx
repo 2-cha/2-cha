@@ -34,7 +34,7 @@ export default function ViewModeHeader({ member, isMe, setIsEditing }: Props) {
       <div className={styles.profileData}>
         <div className={styles.profileData__under}>
           <h1>{member.name}</h1>
-          <h2>aaa{member.prof_msg}</h2>
+          <h2>{member.prof_msg}</h2>
         </div>
         {isMe ? (
           <button type="button" onClick={handleClickEditButton}>

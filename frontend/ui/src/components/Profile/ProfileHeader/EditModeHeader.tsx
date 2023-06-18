@@ -17,9 +17,10 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { Member } from '@/types';
 
-import styles from './EditModeHeader.module.scss';
 import CheckIcon from '@/components/Icons/CheckIcon';
 import XIcon from '@/components/Icons/XIcon';
+
+import styles from './EditModeHeader.module.scss';
 
 interface ProfileFormData {
   name: string;
@@ -40,7 +41,7 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
     formState: { errors },
   } = method;
   const { user } = useAuth();
-  const { invalidateQueries } = useQueryClient();
+  const queryCache = useQueryClient();
 
   const profileMutation = useProfileMutation();
   const imageMutation = useProfileImageMutation();
@@ -52,7 +53,7 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
         { name: data.name, prof_msg: data.prof_msg },
         {
           onSuccess: () => {
-            invalidateQueries(['members', user?.sub]);
+            queryCache.invalidateQueries(['members', user?.sub]);
             imageUrlMutation.mutate(image, {
               onSuccess: () => {
                 setIsEditing(false);
