@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -8,6 +8,7 @@ import BookmarkToggleButton from './BookmarkToggleButton';
 
 import SadIcon from '../Icons/SadIcon';
 import s from './PlaceList.module.scss';
+import PlaceIcon from '../Icons/PlaceIcon';
 
 interface PlaceListProps {
   pages: PlaceSearchResult[][];
@@ -32,7 +33,23 @@ interface PlaceItemProps {
 }
 
 export function PlaceItem({ place }: PlaceItemProps) {
-  console.log(place);
+  const [isTooltipShown, setIsTooltipShown] = useState(false);
+
+  const icon = {
+    COCKTAIL_BAR: '🍸',
+    WINE_BAR: '🍷',
+    WHISKEY_BAR: '🥃',
+    BEER_BAR: '🍺',
+  }[place.category];
+
+  const handleOnHover = useCallback(function () {
+    return () => setIsTooltipShown(true);
+  }, []);
+
+  const handleOnBlur = useCallback(function () {
+    return () => setIsTooltipShown(false);
+  }, []);
+
   return (
     <li className={s.placeItem}>
       <div className={s.placeItem__inner}>
@@ -45,12 +62,25 @@ export function PlaceItem({ place }: PlaceItemProps) {
         )}
         <Link href={`/places/${place.id}`}>
           <div className={s.placeItem__header}>
-            <div className={s.placeItem__headerTop}>
+            <div className={s.placeItem__headerLeft}>
+              <div>{icon}</div> {/* TODO: 아이콘 수정 */}
               <p className={s.placeItem__title}>{place.name}</p>
             </div>
-            <p className={s.placeItem__address}>
-              {place.address} / {place.distance}
-            </p>
+            <div
+              className={s.placeItem__headerRight}
+              onFocus={handleOnHover()}
+              onMouseOver={handleOnHover()}
+              onBlur={handleOnBlur()}
+              onMouseOut={handleOnBlur()}
+            >
+              <PlaceIcon />
+              <span>{place.distance.toFixed(2)}m</span>
+              {isTooltipShown && (
+                <div className={s.placeItem__tooltip}>
+                  <span>{place.address}</span>
+                </div>
+              )}
+            </div>
           </div>
         </Link>
       </div>
