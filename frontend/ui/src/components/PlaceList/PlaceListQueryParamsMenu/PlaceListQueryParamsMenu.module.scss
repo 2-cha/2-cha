@@ -54,8 +54,7 @@
 
   .menuWrapper {
     width: 100%;
-    margin: 24px 0;
-
+    @include mixins.margin('y', 24px);
     @include mixins.flex(column, flex-start, flex-start);
   }
 

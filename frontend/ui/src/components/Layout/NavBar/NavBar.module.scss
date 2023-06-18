@@ -15,28 +15,59 @@
   &__item {
     flex: 1;
     height: 100%;
-    transition: color 0.1s ease-in-out;
+    transition: color 0.1s ease-in-out 0.2s;
+    transition: background ease-in-out 0.2s;
 
     @include mixins.flex(row);
+    opacity: 0.5;
 
     &_active,
     &:hover {
+      opacity: 1;
       color: var(--background-active-color);
+    }
+
+    &:hover {
+      background-color: var(--background-inactive-color);
+    }
+
+    &:nth-child(2):hover {
+      background: linear-gradient(
+        to right,
+        var(--background-inactive-color) 0%,
+        var(--background-inactive-color) 90%,
+        var(--background-color) 100%
+      );
+    }
+
+    &:nth-child(4):hover {
+      background: linear-gradient(
+        to left,
+        var(--background-inactive-color) 0%,
+        var(--background-inactive-color) 90%,
+        var(--background-color) 100%
+      );
     }
   }
 
   &__link {
-    text-transform: capitalize;
+    width: 100%;
+    height: 100%;
+    @include mixins.flex(column, center, center);
   }
 }
 
 .addButton {
   @include mixins.flex();
-  margin-top: 0px;
-  background-color: var(--background-color);
-  width: 80px;
-  height: 80px;
-  border-radius: 50px;
+  background-color: var(--background-active-color);
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
 
-  box-shadow: 0 0 10px 1px var(--border-color);
+  color: var(--background-color);
+  transition: transform 0.1s ease-in-out;
+
+  &:hover {
+    transform: scale(0.95);
+  }
 }
