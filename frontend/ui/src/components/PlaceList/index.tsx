@@ -7,8 +7,12 @@ import { ShortTags } from '../Tags';
 import BookmarkToggleButton from './BookmarkToggleButton';
 
 import SadIcon from '../Icons/SadIcon';
+import CocktailIcon from '../Icons/CocktailIcon';
+import WineIcon from '../Icons/WineIcon';
+import WhiskeyIcon from '../Icons/WhiskeyIcon';
+import PinIcon from '../Icons/PinIcon';
+
 import s from './PlaceList.module.scss';
-import PlaceIcon from '../Icons/PlaceIcon';
 
 interface PlaceListProps {
   pages: PlaceSearchResult[][];
@@ -36,9 +40,9 @@ export function PlaceItem({ place }: PlaceItemProps) {
   const [isTooltipShown, setIsTooltipShown] = useState(false);
 
   const icon = {
-    COCKTAIL_BAR: '🍸',
-    WINE_BAR: '🍷',
-    WHISKEY_BAR: '🥃',
+    COCKTAIL_BAR: <CocktailIcon />,
+    WINE_BAR: <WineIcon />,
+    WHISKEY_BAR: <WhiskeyIcon />,
     BEER_BAR: '🍺',
   }[place.category];
 
@@ -73,7 +77,7 @@ export function PlaceItem({ place }: PlaceItemProps) {
               onBlur={handleOnBlur()}
               onMouseOut={handleOnBlur()}
             >
-              <PlaceIcon />
+              <PinIcon />
               <span>{place.distance.toFixed(2)}m</span>
               {isTooltipShown && (
                 <div className={s.placeItem__tooltip}>
