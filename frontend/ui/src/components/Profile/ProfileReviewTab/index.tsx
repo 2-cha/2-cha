@@ -17,7 +17,6 @@ export default function ProfileReviewTab({ memberId }: Props) {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { data, fetchNextPage, isFetching, isLoading, isError } =
     useMemberReviewsQuery(memberId);
-  console.log(data);
 
   const handleNextPage = useCallback(
     (isIntersecting: boolean) => isIntersecting && fetchNextPage(),
