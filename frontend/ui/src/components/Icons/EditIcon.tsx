@@ -2,7 +2,7 @@ import { memo } from 'react';
 import cn from 'classnames';
 import s from './Icon.module.scss';
 
-export default memo(function CopyIcon({
+export default memo(function EditIcon({
   width = 20,
   height = 20,
   className,

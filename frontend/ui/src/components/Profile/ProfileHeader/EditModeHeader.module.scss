@@ -3,21 +3,20 @@
 
 .topDiv {
   width: 100%;
-  margin-bottom: 30px;
   @include mixins.flex(row);
 }
 
 .imageWrapper {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   border-radius: 100px;
-  margin-right: 45px;
   overflow: hidden;
+  @include mixins.margin(right, 45px);
 
   .image {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
     border-radius: 100px;
     background-color: var(--background-inactive-color);
@@ -27,7 +26,7 @@
 
 .editPhotoButtonWrapper {
   position: absolute;
-  width: 120px;
+  width: 100px;
   height: 30px;
   bottom: 0;
   left: 0;
@@ -53,13 +52,32 @@
 }
 
 .profileData {
-  @include mixins.flex(column, center, flex-start);
+  @include mixins.flex(row, center, center);
+
+  &__under {
+    @include mixins.flex(column, center, flex-start);
+    gap: 10px;
+  }
+
+  &__buttons {
+    @include mixins.margin(left, 10px);
+    @include mixins.flex(column, center, center);
+    gap: 10px;
+
+    button {
+      @include mixins.padding(x, 5);
+      @include mixins.padding(y, 5);
+      border: 1px solid var(--background-active-color);
+      border-radius: 50px;
+      background: none;
+      color: var(--background-active-color);
+    }
+  }
 
   input {
     width: 150px;
-    margin-bottom: 10px;
     border: none;
-    border-bottom: 1px solid var(--text-active-color);
+    border-bottom: 1px solid var(--border-color);
     padding: 0;
   }
 }
@@ -70,16 +88,4 @@
 
 .profMsg {
   font-size: 16px;
-}
-
-.buttonWrapper {
-  @include mixins.flex(row, center, flex-start);
-
-  button {
-    padding: 5px 10px;
-  }
-
-  button:first-child {
-    margin-right: 10px;
-  }
 }

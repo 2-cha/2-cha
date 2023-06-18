@@ -18,6 +18,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { Member } from '@/types';
 
 import styles from './EditModeHeader.module.scss';
+import CheckIcon from '@/components/Icons/CheckIcon';
+import XIcon from '@/components/Icons/XIcon';
 
 interface ProfileFormData {
   name: string;
@@ -109,24 +111,26 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
           </div>
         </div>
         <div className={styles.profileData}>
-          <input
-            type="text"
-            {...register('name', { required: true })}
-            defaultValue={member.name}
-            className={styles.name}
-          />
-          <input
-            type="text"
-            {...register('prof_msg', { required: true })}
-            defaultValue={member.prof_msg}
-            className={styles.profMsg}
-          />
-          <div className={styles.buttonWrapper}>
+          <div className={styles.profileData__under}>
+            <input
+              type="text"
+              {...register('name', { required: true })}
+              defaultValue={member.name}
+              className={styles.name}
+            />
+            <input
+              type="text"
+              {...register('prof_msg', { required: true })}
+              defaultValue={member.prof_msg}
+              className={styles.profMsg}
+            />
+          </div>
+          <div className={styles.profileData__buttons}>
             <button type="submit" form="write" onClick={handleSubmitProfile}>
-              <span>저장</span>
+              <CheckIcon />
             </button>
             <button type="button" onClick={handleCancelEdit}>
-              <span>취소</span>
+              <XIcon />
             </button>
           </div>
         </div>
