@@ -2,6 +2,7 @@ package com._2cha.demo.review.domain;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
+import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 import com._2cha.demo.member.domain.Member;
 import jakarta.persistence.Entity;
@@ -13,6 +14,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
 
 @Entity
 @Getter
@@ -30,11 +32,13 @@ public class Like {
 
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "MEMBER_ID", nullable = false)
+  @OnDelete(action = CASCADE)
   private Member member;
 
 
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "REV_ID", nullable = false)
+  @OnDelete(action = CASCADE)
   private Review review;
 
   public static Like createLike(Member member, Review review) {
