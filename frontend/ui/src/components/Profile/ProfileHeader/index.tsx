@@ -24,14 +24,6 @@ export default function ProfileHeader({ member, isMe }: Props) {
           isMe={isMe}
         />
       )}
-      <div className={styles.tagData}>
-        <h3>Top 5</h3>
-        <ul className={styles.tagList}>
-          <li>태그</li>
-          <li>태그</li>
-          <li>태그</li>
-        </ul>
-      </div>
     </header>
   );
 }
