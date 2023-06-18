@@ -4,11 +4,11 @@
 $img-height: 360px;
 
 .container {
-  scroll-snap-type: y mandatory;
-  height: 100%;
+  height: calc(100vh - var.$navbar-height);
   width: 100%;
   min-width: 0;
   overflow-y: scroll;
+  scroll-snap-type: y mandatory;
 }
 
 .placeItem {
