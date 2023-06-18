@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 import { PlaceSearchResult } from '@/types';
 import { ShortTags } from '../Tags';
-import BookmarkToggleButton from '@/components/BookmarkToggleButton';
+import BookmarkToggleButton from './BookmarkToggleButton';
 
 import SadIcon from '../Icons/SadIcon';
 import s from './PlaceList.module.scss';
@@ -51,17 +51,19 @@ export function PlaceItem({ place }: PlaceItemProps) {
             <Link href={`/places/${place.id}`}>
               <p className={s.placeItem__title}>{place.name}</p>
             </Link>
-            <BookmarkToggleButton
-              itemType="places"
-              itemId={place.id}
-              isBookmarked={place.bookmark_status.is_bookmarked}
-            />
           </div>
           <p className={s.placeItem__address}>
             {place.address} / {place.distance}
           </p>
         </div>
       </div>
+      <BookmarkToggleButton
+        size={48}
+        className={s.placeItem__bookmark}
+        itemType="places"
+        itemId={place.id}
+        isBookmarked={place.bookmark_status.is_bookmarked}
+      />
       {place.image ? (
         <Image
           src={place.image}

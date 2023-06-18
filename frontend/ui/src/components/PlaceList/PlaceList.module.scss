@@ -22,7 +22,6 @@ $img-height: 360px;
   height: $img-height;
   @include mixins.margin(bottom, lg);
   border-radius: 5px;
-  overflow: hidden;
   box-shadow: 0 5px 5px -1px var(--shadow-color);
 
   @include mixins.flex(column, flex-start, flex-start);
@@ -65,14 +64,20 @@ $img-height: 360px;
     @include mixins.text-sm;
   }
 
+  &__bookmark {
+    position: absolute;
+    top: -10px;
+    right: 5px;
+    z-index: 3;
+  }
+
   .thumbnail {
     position: absolute;
     width: 100%;
+    height: $img-height;
     top: 0;
     left: 0;
     object-fit: cover;
-    min-height: $img-height;
-    max-height: $img-height * 1.5;
 
     &__skeleton {
       background: var(--background-inactive-color);
