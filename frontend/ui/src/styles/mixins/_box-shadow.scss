@@ -1,4 +1,10 @@
-@mixin box-shadow($direction: bottom, $size: 16px, $color: rgba(0, 0, 0, 0.1)) {
+@use 'var';
+
+@mixin box-shadow(
+  $direction: bottom,
+  $size: 16px,
+  $color: var(--shadow-color)
+) {
   $offset-x: 0;
   $offset-y: $size;
   $blur-radius: $size * 2;

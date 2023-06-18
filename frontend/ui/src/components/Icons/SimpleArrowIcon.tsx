@@ -1,5 +1,5 @@
 import { ComponentProps, memo } from 'react';
-import cx from 'classnames';
+import cn from 'classnames';
 
 import s from './Icon.module.scss';
 
@@ -15,7 +15,7 @@ export default memo(function SimpleArrowIcon({
       width={width}
       height={height}
       viewBox="0 -4.5 20 20"
-      className={cx(s.fill, className)}
+      className={cn(s.fill, className)}
       {...props}
     >
       <g

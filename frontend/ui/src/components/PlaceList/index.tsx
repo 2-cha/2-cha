@@ -1,10 +1,16 @@
-import { Fragment } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 import { PlaceSearchResult } from '@/types';
 import { ShortTags } from '../Tags';
-import BookmarkToggleButton from '@/components/BookmarkToggleButton';
+import BookmarkToggleButton from './BookmarkToggleButton';
+
+import SadIcon from '../Icons/SadIcon';
+import CocktailIcon from '../Icons/CocktailIcon';
+import WineIcon from '../Icons/WineIcon';
+import WhiskeyIcon from '../Icons/WhiskeyIcon';
+import PinIcon from '../Icons/PinIcon';
 
 import s from './PlaceList.module.scss';
 
@@ -14,19 +20,15 @@ interface PlaceListProps {
 
 export default function PlaceList({ pages }: PlaceListProps) {
   return (
-    <>
-      <div className={s.container}>
-        <ul className={s.placeList}>
-          {pages.map((page, idx) => (
-            <Fragment key={idx}>
-              {page.map((place) => (
-                <PlaceItem place={place} key={place.id} />
-              ))}
-            </Fragment>
+    <ul className={s.container}>
+      {pages.map((page, idx) => (
+        <Fragment key={idx}>
+          {page.map((place) => (
+            <PlaceItem place={place} key={place.id} />
           ))}
-        </ul>
-      </div>
-    </>
+        </Fragment>
+      ))}
+    </ul>
   );
 }
 
@@ -35,6 +37,23 @@ interface PlaceItemProps {
 }
 
 export function PlaceItem({ place }: PlaceItemProps) {
+  const [isTooltipShown, setIsTooltipShown] = useState(false);
+
+  const icon = {
+    COCKTAIL_BAR: <CocktailIcon />,
+    WINE_BAR: <WineIcon />,
+    WHISKEY_BAR: <WhiskeyIcon />,
+    BEER_BAR: '🍺',
+  }[place.category];
+
+  const handleOnHover = useCallback(function () {
+    return () => setIsTooltipShown(true);
+  }, []);
+
+  const handleOnBlur = useCallback(function () {
+    return () => setIsTooltipShown(false);
+  }, []);
+
   return (
     <li className={s.placeItem}>
       <div className={s.placeItem__inner}>
@@ -45,22 +64,38 @@ export function PlaceItem({ place }: PlaceItemProps) {
             keyID={place.id.toString()}
           />
         )}
-        <div className={s.placeItem__header}>
-          <div className={s.placeItem__headerTop}>
-            <Link href={`/places/${place.id}`}>
+        <Link href={`/places/${place.id}`}>
+          <div className={s.placeItem__header}>
+            <div className={s.placeItem__headerLeft}>
+              <div>{icon}</div> {/* TODO: 아이콘 수정 */}
               <p className={s.placeItem__title}>{place.name}</p>
-            </Link>
-            <BookmarkToggleButton
-              itemType="places"
-              itemId={place.id}
-              isBookmarked={place.bookmark_status.is_bookmarked}
-            />
+            </div>
+            <div
+              className={s.placeItem__headerRight}
+              onFocus={handleOnHover()}
+              onMouseOver={handleOnHover()}
+              onBlur={handleOnBlur()}
+              onMouseOut={handleOnBlur()}
+            >
+              <PinIcon />
+              <span>{place.distance.toFixed(2)}m</span>
+              {isTooltipShown && (
+                <div className={s.placeItem__tooltip}>
+                  <span>{place.address}</span>
+                </div>
+              )}
+            </div>
           </div>
-          <p className={s.placeItem__address}>
-            {place.address} / {place.distance}
-          </p>
-        </div>
+        </Link>
       </div>
+      <BookmarkToggleButton
+        size={48}
+        className={s.placeItem__bookmark}
+        itemType="places"
+        itemId={place.id}
+        isBookmarked={place.bookmark_status.is_bookmarked}
+        nOfBookmarks={place.bookmark_status.count}
+      />
       {place.image ? (
         <Image
           src={place.image}
@@ -71,7 +106,15 @@ export function PlaceItem({ place }: PlaceItemProps) {
           className={s.thumbnail}
         />
       ) : (
-        <div className={s.thumbnail__skeleton} />
+        <div className={s.thumbnail__skeleton}>
+          <SadIcon width={100} height={100} />
+          <span className={s.thumbnail__skeleton__title}>
+            사진을 찾을 수 없어요
+          </span>
+          <span className={s.thumbnail__skeleton__subtitle}>
+            첫 리뷰어가 되어보세요
+          </span>
+        </div>
       )}
     </li>
   );

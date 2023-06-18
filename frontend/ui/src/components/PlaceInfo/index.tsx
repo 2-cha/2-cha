@@ -10,12 +10,12 @@ import type { Place } from '@/types';
 import { getCategoryLabel } from '@/lib/placeUtil';
 
 import s from './PlaceInfo.module.scss';
+import Tab from '../Tab';
 
-const menuItems = {
-  review: '리뷰',
-  map: '지도',
-  info: '정보',
-};
+const menuItems = ['리뷰', '지도', '정보'];
+const MENU_REVIEW = 0;
+const MENU_MAP = 1;
+const MENU_INFO = 2;
 
 interface PlaceInfoProps {
   placeInfo: Place;
@@ -23,7 +23,7 @@ interface PlaceInfoProps {
 
 export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
   function PlaceInfo({ placeInfo }: PlaceInfoProps, ref) {
-    const [currentMenu, setCurrentMenu] = useState(menuItems.review);
+    const [currentMenu, setCurrentMenu] = useState(MENU_REVIEW);
 
     return (
       <div className={s.root}>
@@ -48,33 +48,25 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
               {getCategoryLabel(placeInfo.category)}
             </p>
           </div>
-          <Tags
-            keyID={`place-${placeInfo.id}`}
-            tagList={placeInfo.tags}
-            limit={5}
-            isNumberShown
+          {placeInfo.tags && placeInfo.tags.length > 0 && (
+            <Tags
+              keyID={`place-${placeInfo.id}`}
+              tagList={placeInfo.tags}
+              limit={5}
+              isNumberShown
+            />
+          )}
+          <Tab
+            menuList={menuItems}
+            isSticky
+            currentIndex={currentMenu}
+            setCurrentIndex={setCurrentMenu}
           />
-
-          {/* TODO: refactor */}
-          <div className={s.menu}>
-            {Object.entries(menuItems).map(([item, label]) => (
-              <button
-                key={item}
-                className={cn(s.menu__item, {
-                  [s.menu__itemActive]: label === currentMenu,
-                })}
-                onClick={() => setCurrentMenu(label)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-          {currentMenu === menuItems.review ? (
+          {currentMenu === MENU_REVIEW ? (
             <PlaceReviews placeId={placeInfo.id} />
-          ) : currentMenu === menuItems.map ? (
+          ) : currentMenu === MENU_MAP ? (
             <PlaceMap position={{ lat: placeInfo.lat, lng: placeInfo.lon }} />
-          ) : currentMenu === menuItems.info ? (
+          ) : currentMenu === MENU_INFO ? (
             <PlaceDetail placeInfo={placeInfo} />
           ) : null}
         </div>

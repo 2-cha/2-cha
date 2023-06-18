@@ -1,7 +1,7 @@
-import cx from 'classnames';
+import cn from 'classnames';
 import { Tag } from '@/types';
 
-import styles from './ShortTags.module.scss';
+import s from './ShortTags.module.scss';
 import { useCallback, useState } from 'react';
 
 interface Props {
@@ -23,23 +23,23 @@ export default function ShortTags({ tagList, keyID, className }: Props) {
   }, []);
 
   return (
-    <div className={cx(className, styles.tagWrapper)}>
+    <div className={cn(className, s.tagWrapper)}>
       {tagList.map((tag, index) => (
         <div
-          className={styles.tag}
+          className={s.tag}
           key={`tag-ist-${keyID}-${index}`}
           onFocus={handleOnHover(index)}
           onMouseOver={handleOnHover(index)}
           onBlur={handleOnBlur()}
           onMouseOut={handleOnBlur()}
         >
-          <div className={styles.tagInner}>
+          <div className={s.tagInner}>
             <span>
               {tag.emoji} {tag.count}
             </span>
           </div>
           {shownTooltipIndex === index && (
-            <div className={styles.tooltip}>
+            <div className={s.tooltip}>
               <span>{tag.message}</span>
             </div>
           )}

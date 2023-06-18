@@ -4,26 +4,22 @@
 $img-height: 360px;
 
 .container {
-  height: 100%;
+  height: calc(100vh - var.$navbar-height);
   width: 100%;
   min-width: 0;
-  overflow-y: auto;
-}
-
-.placeList {
-  width: 100%;
-
-  @include mixins.flex(column);
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
 }
 
 .placeItem {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
   position: relative;
   width: 100%;
   height: $img-height;
-  margin-bottom: 20px;
+  @include mixins.margin(bottom, lg);
   border-radius: 5px;
-  overflow: hidden;
-  box-shadow: 0 5px 5px -1px var(--border-color);
+  box-shadow: 0 5px 5px -1px var(--shadow-color);
 
   @include mixins.flex(column, flex-start, flex-start);
 
@@ -46,14 +42,41 @@ $img-height: 360px;
     background-color: var(--background-color);
     box-shadow: 0 0px 5px 0px var(--border-color);
 
-    @include mixins.flex(column, center, flex-start);
+    @include mixins.flex(row, center, center);
     @include mixins.padding(x, lg);
     @include mixins.padding(y, md);
   }
 
-  &__headerTop {
+  &__headerLeft {
     width: 100%;
-    @include mixins.flex(row, space-between, center);
+    @include mixins.flex(row, flex-start, center);
+
+    & > div {
+      @include mixins.margin(right, 10px);
+    }
+  }
+
+  &__headerRight {
+    position: relative;
+    width: 60px;
+    @include mixins.flex(column, center, flex-end);
+    color: var(--background-active-color);
+
+    & > span {
+      @include mixins.text-sm;
+      color: var(--text-color);
+    }
+  }
+
+  &__tooltip {
+    width: max-content;
+    position: absolute;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    @include mixins.padding(x, sm);
+    @include mixins.padding(y, xs);
+    top: -30px;
+    right: 0px;
   }
 
   &__title {
@@ -65,19 +88,44 @@ $img-height: 360px;
     @include mixins.text-sm;
   }
 
+  &__bookmark {
+    position: absolute;
+    top: -10px;
+    right: 5px;
+    z-index: 3;
+  }
+
   .thumbnail {
     position: absolute;
-    width: 480px;
+    width: 100%;
+    height: $img-height;
     top: 0;
     left: 0;
     object-fit: cover;
-    min-height: $img-height;
-    max-height: $img-height * 1.5;
 
     &__skeleton {
       background: var(--background-inactive-color);
       width: 100%;
       height: $img-height;
+      @include mixins.flex(column, flex-start, center);
+      @include mixins.padding(y, 70);
+
+      & > svg {
+        fill: var(--border-color);
+        @include mixins.margin(bottom, md);
+      }
+
+      &__title {
+        color: var(--text-color);
+        @include mixins.text-lg;
+        user-select: none;
+      }
+
+      &__subtitle {
+        color: var(--text-secondary-color);
+        @include mixins.text-sm;
+        user-select: none;
+      }
     }
   }
 }

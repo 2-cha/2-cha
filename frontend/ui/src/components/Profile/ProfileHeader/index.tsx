@@ -1,9 +1,10 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
-import styles from './ProfileHeader.module.scss';
 import EditModeHeader from './EditModeHeader';
 import ViewModeHeader from './ViewModeHeader';
 import { Member } from '@/types';
+
+import s from './ProfileHeader.module.scss';
 
 interface Props {
   member: Member;
@@ -14,7 +15,7 @@ export default function ProfileHeader({ member, isMe }: Props) {
   const [isEditing, setIsEditing] = useState(false);
 
   return (
-    <header className={styles.root}>
+    <header className={s.root}>
       {isEditing && isMe ? (
         <EditModeHeader member={member} setIsEditing={setIsEditing} />
       ) : (
@@ -24,14 +25,6 @@ export default function ProfileHeader({ member, isMe }: Props) {
           isMe={isMe}
         />
       )}
-      <div className={styles.tagData}>
-        <h3>Top 5</h3>
-        <ul className={styles.tagList}>
-          <li>태그</li>
-          <li>태그</li>
-          <li>태그</li>
-        </ul>
-      </div>
     </header>
   );
 }

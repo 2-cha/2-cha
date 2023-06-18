@@ -25,6 +25,7 @@
   }
 
   &__item {
+    scroll-snap-align: center;
     width: 100%;
     border-bottom: 0.5px solid var(--border-color);
 
@@ -41,10 +42,12 @@
 
   .image {
     width: 100%;
+    height: 320px;
     @include mixins.flex;
 
     img {
       width: 100%;
+      height: 100%;
       object-fit: cover;
     }
   }

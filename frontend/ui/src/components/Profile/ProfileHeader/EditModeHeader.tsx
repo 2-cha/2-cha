@@ -17,7 +17,10 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { Member } from '@/types';
 
-import styles from './EditModeHeader.module.scss';
+import CheckIcon from '@/components/Icons/CheckIcon';
+import XIcon from '@/components/Icons/XIcon';
+
+import s from './EditModeHeader.module.scss';
 
 interface ProfileFormData {
   name: string;
@@ -38,7 +41,7 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
     formState: { errors },
   } = method;
   const { user } = useAuth();
-  const { invalidateQueries } = useQueryClient();
+  const queryCache = useQueryClient();
 
   const profileMutation = useProfileMutation();
   const imageMutation = useProfileImageMutation();
@@ -50,7 +53,7 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
         { name: data.name, prof_msg: data.prof_msg },
         {
           onSuccess: () => {
-            invalidateQueries(['members', user?.sub]);
+            queryCache.invalidateQueries(['members', user?.sub]);
             imageUrlMutation.mutate(image, {
               onSuccess: () => {
                 setIsEditing(false);
@@ -89,16 +92,16 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
 
   return (
     <FormProvider {...method}>
-      <div className={styles.topDiv}>
-        <div className={styles.imageWrapper}>
+      <div className={s.topDiv}>
+        <div className={s.imageWrapper}>
           <Image
             src={image}
             width={120}
             height={120}
             alt="member profile pic"
-            className={styles.image}
+            className={s.image}
           />
-          <div className={styles.editPhotoButtonWrapper}>
+          <div className={s.editPhotoButtonWrapper}>
             <label htmlFor="profile-image-upload">업로드</label>
             <input
               type="file"
@@ -108,25 +111,27 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
             />
           </div>
         </div>
-        <div className={styles.profileData}>
-          <input
-            type="text"
-            {...register('name', { required: true })}
-            defaultValue={member.name}
-            className={styles.name}
-          />
-          <input
-            type="text"
-            {...register('prof_msg', { required: true })}
-            defaultValue={member.prof_msg}
-            className={styles.profMsg}
-          />
-          <div className={styles.buttonWrapper}>
+        <div className={s.profileData}>
+          <div className={s.profileData__under}>
+            <input
+              type="text"
+              {...register('name', { required: true })}
+              defaultValue={member.name}
+              className={s.name}
+            />
+            <input
+              type="text"
+              {...register('prof_msg', { required: true })}
+              defaultValue={member.prof_msg}
+              className={s.profMsg}
+            />
+          </div>
+          <div className={s.profileData__buttons}>
             <button type="submit" form="write" onClick={handleSubmitProfile}>
-              <span>저장</span>
+              <CheckIcon />
             </button>
             <button type="button" onClick={handleCancelEdit}>
-              <span>취소</span>
+              <XIcon />
             </button>
           </div>
         </div>

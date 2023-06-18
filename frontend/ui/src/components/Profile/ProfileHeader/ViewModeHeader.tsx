@@ -1,8 +1,12 @@
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback } from 'react';
 import Image from 'next/image';
 
-import styles from './ViewModeHeader.module.scss';
 import { Member } from '@/types';
+
+import EditIcon from '@/components/Icons/EditIcon';
+import PlusSquareIcon from '@/components/Icons/PlusSquareIcon';
+
+import s from './ViewModeHeader.module.scss';
 
 interface Props {
   member: Member;
@@ -19,26 +23,26 @@ export default function ViewModeHeader({ member, isMe, setIsEditing }: Props) {
   );
 
   return (
-    <div className={styles.topDiv}>
-      <div className={styles.imageWrapper}>
-        <Image
-          src={member.prof_img}
-          width={120}
-          height={120}
-          alt="member profile pic"
-          className={styles.image}
-        />
-      </div>
-      <div className={styles.profileData}>
-        <h1>{member.name}</h1>
-        <h2>{member.prof_msg}</h2>
+    <div className={s.topDiv}>
+      <Image
+        src={member.prof_img}
+        width={100}
+        height={100}
+        alt="member profile pic"
+        className={s.image}
+      />
+      <div className={s.profileData}>
+        <div className={s.profileData__under}>
+          <h1>{member.name}</h1>
+          <h2>{member.prof_msg}</h2>
+        </div>
         {isMe ? (
           <button type="button" onClick={handleClickEditButton}>
-            <span>프로필 편집</span>
+            <EditIcon />
           </button>
         ) : (
           <button type="button">
-            <span>팔로우</span>
+            <PlusSquareIcon />
           </button>
         )}
       </div>

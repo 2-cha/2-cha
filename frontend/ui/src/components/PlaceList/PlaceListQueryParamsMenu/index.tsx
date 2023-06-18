@@ -1,7 +1,9 @@
-import Drawer from '@/components/Layout/Drawer';
-import TagPicker from '@/components/TagPicker';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import cn from 'classnames';
+
+import Drawer from '@/components/Layout/Drawer';
+import TagPicker from '@/components/TagPicker';
 import { useModal } from '@/hooks/useModal';
 import { useTagPicker } from '@/hooks/useTagPicker';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
@@ -11,7 +13,7 @@ import {
   placeFilterByState,
   placeSortByState,
 } from '@/atoms/placesQueryParams';
-import cn from 'classnames';
+
 import s from './PlaceListQueryParamsMenu.module.scss';
 
 export default function PlaceListQueryParamsMenu() {

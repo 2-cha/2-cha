@@ -1,0 +1,27 @@
+@use 'mixins';
+
+.container {
+  color: inherit;
+  background-color: inherit;
+  @include mixins.flex(column, center, center);
+
+  & > span {
+    // display: inline-block;
+    @include mixins.margin(right, 10px);
+    @include mixins.text-sm;
+    color: var(--background-color);
+    font-weight: 700;
+  }
+}
+
+.icon {
+  stroke: var(--background-color);
+}
+
+.fill {
+  color: var(--background-active-color);
+}
+
+.empty {
+  color: var(--background-inactive-color);
+}
