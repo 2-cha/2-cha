@@ -4,7 +4,7 @@ import cn from 'classnames';
 import SimpleArrowIcon from '@/components/Icons/SimpleArrowIcon';
 import { Tag } from '@/types';
 
-import styles from './Tags.module.scss';
+import s from './Tags.module.scss';
 
 interface Props {
   tagList: Tag[];
@@ -50,29 +50,29 @@ export default function Tags({
 
   return (
     <div
-      className={cn(styles.tags, {
+      className={cn(s.tags, {
         className,
-        [styles.gradient]: !isOpen && tagProperty.hasLimit,
-        [styles.padding]: tagProperty.hasLimit,
+        [s.gradient]: !isOpen && tagProperty.hasLimit,
+        [s.padding]: tagProperty.hasLimit,
       })}
     >
       <button
         type="button"
-        className={cn(styles.button, {
-          [styles.hidden]: !tagProperty.hasLimit,
-          [styles.flipped]: isOpen,
+        className={cn(s.button, {
+          [s.hidden]: !tagProperty.hasLimit,
+          [s.flipped]: isOpen,
         })}
         onClick={handleClickButton}
       >
         <SimpleArrowIcon />
       </button>
-      <div className={styles.tagWrapper}>
+      <div className={s.tagWrapper}>
         {tagProperty.topTags.map((tag, index) => (
-          <div key={`tag-list-${keyID}-${index}`} className={styles.tag}>
+          <div key={`tag-list-${keyID}-${index}`} className={s.tag}>
             <span>
               {tag.emoji} {tag.message}
             </span>
-            <span className={cn({ [styles.hidden]: !isNumberShown })}>
+            <span className={cn({ [s.hidden]: !isNumberShown })}>
               {tag.count}
             </span>
           </div>
@@ -80,12 +80,12 @@ export default function Tags({
         {tagProperty.bottomTags.map((tag, index) => (
           <div
             key={`tag-list-${keyID}-${index + limit}`}
-            className={cn({ [styles.tag]: true, [styles.hidden]: !isOpen })}
+            className={cn({ [s.tag]: true, [s.hidden]: !isOpen })}
           >
             <span>
               {tag.emoji} {tag.message}
             </span>
-            <span className={cn({ [styles.hidden]: !isNumberShown })}>
+            <span className={cn({ [s.hidden]: !isNumberShown })}>
               {tag.count}
             </span>
           </div>

@@ -20,7 +20,7 @@ import { Member } from '@/types';
 import CheckIcon from '@/components/Icons/CheckIcon';
 import XIcon from '@/components/Icons/XIcon';
 
-import styles from './EditModeHeader.module.scss';
+import s from './EditModeHeader.module.scss';
 
 interface ProfileFormData {
   name: string;
@@ -92,16 +92,16 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
 
   return (
     <FormProvider {...method}>
-      <div className={styles.topDiv}>
-        <div className={styles.imageWrapper}>
+      <div className={s.topDiv}>
+        <div className={s.imageWrapper}>
           <Image
             src={image}
             width={120}
             height={120}
             alt="member profile pic"
-            className={styles.image}
+            className={s.image}
           />
-          <div className={styles.editPhotoButtonWrapper}>
+          <div className={s.editPhotoButtonWrapper}>
             <label htmlFor="profile-image-upload">업로드</label>
             <input
               type="file"
@@ -111,22 +111,22 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
             />
           </div>
         </div>
-        <div className={styles.profileData}>
-          <div className={styles.profileData__under}>
+        <div className={s.profileData}>
+          <div className={s.profileData__under}>
             <input
               type="text"
               {...register('name', { required: true })}
               defaultValue={member.name}
-              className={styles.name}
+              className={s.name}
             />
             <input
               type="text"
               {...register('prof_msg', { required: true })}
               defaultValue={member.prof_msg}
-              className={styles.profMsg}
+              className={s.profMsg}
             />
           </div>
-          <div className={styles.profileData__buttons}>
+          <div className={s.profileData__buttons}>
             <button type="submit" form="write" onClick={handleSubmitProfile}>
               <CheckIcon />
             </button>

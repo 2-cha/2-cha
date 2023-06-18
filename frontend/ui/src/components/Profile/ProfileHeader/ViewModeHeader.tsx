@@ -6,7 +6,7 @@ import { Member } from '@/types';
 import EditIcon from '@/components/Icons/EditIcon';
 import PlusSquareIcon from '@/components/Icons/PlusSquareIcon';
 
-import styles from './ViewModeHeader.module.scss';
+import s from './ViewModeHeader.module.scss';
 
 interface Props {
   member: Member;
@@ -23,16 +23,16 @@ export default function ViewModeHeader({ member, isMe, setIsEditing }: Props) {
   );
 
   return (
-    <div className={styles.topDiv}>
+    <div className={s.topDiv}>
       <Image
         src={member.prof_img}
         width={100}
         height={100}
         alt="member profile pic"
-        className={styles.image}
+        className={s.image}
       />
-      <div className={styles.profileData}>
-        <div className={styles.profileData__under}>
+      <div className={s.profileData}>
+        <div className={s.profileData__under}>
           <h1>{member.name}</h1>
           <h2>{member.prof_msg}</h2>
         </div>

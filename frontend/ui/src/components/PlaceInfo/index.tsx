@@ -24,7 +24,6 @@ interface PlaceInfoProps {
 export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
   function PlaceInfo({ placeInfo }: PlaceInfoProps, ref) {
     const [currentMenu, setCurrentMenu] = useState(MENU_REVIEW);
-    console.log(placeInfo);
 
     return (
       <div className={s.root}>
