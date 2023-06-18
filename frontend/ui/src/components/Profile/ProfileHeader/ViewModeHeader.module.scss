@@ -3,47 +3,45 @@
 
 .topDiv {
   width: 100%;
-  margin-bottom: 30px;
   @include mixins.flex(row);
 }
 
-.imageWrapper {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  border-radius: 100px;
-  margin-right: 45px;
-  overflow: hidden;
-}
-
 .image {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
   border-radius: 100px;
   background-color: var(--background-inactive-color);
   @include mixins.flex();
+  @include mixins.margin(right, 45px);
 }
 
 .profileData {
-  @include mixins.flex(column, center, flex-start);
+  @include mixins.flex(row, center, center);
 
-  h1 {
-    font-size: 20px;
-    width: 150px;
-    max-width: 150px;
-    margin-bottom: 10px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
+  &__under {
+    @include mixins.flex(column, center, flex-start);
 
-  h2 {
-    font-size: 16px;
-    margin-bottom: 10px;
+    h1 {
+      font-size: 20px;
+      width: 150px;
+      max-width: 150px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      @include mixins.margin(bottom, 10px);
+    }
+
+    h2 {
+      width: 150px;
+      max-width: 150px;
+      font-size: 16px;
+    }
   }
 
   button {
+    background: none;
     padding: 5px 10px;
+    color: var(--background-active-color);
   }
 }

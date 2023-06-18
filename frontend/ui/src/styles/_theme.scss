@@ -1,27 +1,25 @@
 $themes: (
   light: (
-    background-color: #fff,
-    background-inactive-color: #ccc,
-    background-active-color: #82e,
-    background-skeleton-color: #eee,
-
-    text-color: #000,
-    text-secondary-color: #666,
-    text-active-color: #444,
-
-    border-color: #999,
+    background-color: rgba(255, 255, 255, 1),
+    background-inactive-color: rgba(248, 226, 223, 1),
+    background-active-color: rgba(237, 134, 114, 1),
+    background-skeleton-color: rgba(237, 127, 106, 0.08),
+    text-color: rgba(69, 41, 36, 1),
+    text-secondary-color: rgba(91, 69, 66, 1),
+    text-active-color: rgba(74, 74, 74, 1),
+    border-color: rgba(237, 199, 195, 1),
+    shadow-color: rgba(223, 181, 176, 0.3),
   ),
   dark: (
-    background-color: #2e2e2e,
-    background-inactive-color: #222,
-    background-active-color: #82e,
-    background-skeleton-color: #444,
-
-    text-color: #fff,
-    text-secondary-color: #ccc,
-    text-active-color: #bbb,
-
-    border-color: #ccc,
+    background-color: rgba(32, 32, 32, 1),
+    background-inactive-color: rgba(60, 45, 43, 1),
+    background-active-color: rgba(170, 87, 70, 1),
+    background-skeleton-color: rgba(191, 99, 80, 0.08),
+    text-color: rgba(228, 222, 221, 1),
+    text-secondary-color: rgba(194, 186, 185, 1),
+    text-active-color: rgba(187, 187, 187, 1),
+    border-color: rgba(225, 144, 131, 1),
+    shadow-color: rgba(0, 0, 0, 0.3),
   ),
 );
 
@@ -33,3 +31,45 @@ $themes: (
     }
   }
 }
+
+// :root {
+//   --bg-color: rgba(255, 255, 255, 1);
+//   --text-color: rgba(69, 41, 36, 1);
+//   --text-soft-color: rgba(91, 69, 66, 1);
+//   --text-strong-color: rgba(74, 74, 74, 1);
+//   --subtle-color: rgba(253, 248, 248, 1);
+//   --border-color: rgba(248, 226, 223, 1);
+//   --shadow-color: rgba(223, 181, 176, 1);
+//   --input-color: rgba(255, 255, 255, 1);
+//   --outline-color: rgba(237, 199, 195, 1);
+//   --mark-color: rgba(237, 127, 106, 0.08);
+//   --special-color: rgba(237, 127, 106, 1);
+//   --special-bg-color: rgba(237, 134, 114, 1);
+//   --special-text-color: rgba(255, 255, 255, 1);
+//   --special-shadow-color: rgba(147, 106, 100, 1);
+//   --special-mark-color: rgba(255, 255, 255, 0.08);
+//   --light-color: rgba(252, 241, 240, 1);
+//   --dark-color: rgba(99, 61, 55, 1);
+// }
+
+// @media (prefers-color-scheme: dark) {
+//   :root {
+//     --bg-color: rgba(32, 32, 32, 1);
+//     --text-color: rgba(228, 222, 221, 1);
+//     --text-soft-color: rgba(194, 186, 185, 1);
+//     --text-strong-color: rgba(187, 187, 187, 1);
+//     --subtle-color: rgba(41, 35, 34, 1);
+//     --border-color: rgba(60, 45, 43, 1);
+//     --shadow-color: rgba(0, 0, 0, 1);
+//     --input-color: rgba(28, 28, 28, 1);
+//     --outline-color: rgba(225, 144, 131, 1);
+//     --mark-color: rgba(191, 99, 80, 0.08);
+//     --special-color: rgba(191, 99, 80, 1);
+//     --special-bg-color: rgba(170, 87, 70, 1);
+//     --special-text-color: rgba(228, 222, 221, 1);
+//     --special-shadow-color: rgba(59, 40, 38, 1);
+//     --special-mark-color: rgba(228, 222, 221, 0.08);
+//     --light-color: rgba(238, 204, 200, 1);
+//     --dark-color: rgba(68, 48, 45, 1);
+//   }
+// }

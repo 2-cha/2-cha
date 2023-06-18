@@ -1,0 +1,19 @@
+@use 'mixins';
+@use 'var';
+
+.list {
+  width: 100%;
+  gap: 5px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  &__element {
+    height: 100%;
+    overflow: hidden;
+    aspect-ratio: 1;
+
+    & > img {
+      object-fit: cover;
+    }
+  }
+}

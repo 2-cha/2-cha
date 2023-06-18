@@ -1,15 +1,18 @@
 import * as React from 'react';
 import { useState } from 'react';
 import cn from 'classnames';
-import s from './BookmarkToggleButton.module.scss';
+
 import { useBookmakrMutation } from '@/hooks/mutation/useBookmark';
 import BookmarkIcon from '@/components/Icons/BookmarkIcon';
+
+import s from './BookmarkToggleButton.module.scss';
 
 interface BookmarkButtonProps {
   isBookmarked?: boolean;
   itemType: string;
   itemId: string | number;
   size?: number;
+  nOfBookmarks: number;
 }
 
 export default function BookmarkToggleButton({
@@ -17,6 +20,7 @@ export default function BookmarkToggleButton({
   itemType,
   itemId,
   size = 32,
+  nOfBookmarks,
   className,
   ...props
 }: React.ComponentProps<'button'> & BookmarkButtonProps) {
@@ -44,11 +48,13 @@ export default function BookmarkToggleButton({
       {...props}
     >
       <BookmarkIcon
+        className={cn(s.icon, isBookmarked ? s.fill : s.empty)}
         width={size}
         height={size}
         isSingle
-        isActive={isBookmarked}
+        isActive
       />
+      <span>{nOfBookmarks}</span>
     </button>
   );
 }
