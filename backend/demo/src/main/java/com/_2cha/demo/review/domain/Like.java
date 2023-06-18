@@ -21,7 +21,8 @@ import org.hibernate.annotations.OnDelete;
 @Table(
     name = "MEMBER_LIKE_REVIEW",
     uniqueConstraints =
-    @UniqueConstraint(columnNames = {"MEMBER_ID", "REV_ID"}, name = "uk_like_member_id_and_rev_id")
+    @UniqueConstraint(columnNames = {"MEMBER_ID", "REV_ID"},
+        name = "uk_member_like_review_member_id_and_rev_id")
 )
 @NoArgsConstructor(access = PROTECTED)
 public class Like {
