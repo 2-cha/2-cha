@@ -16,6 +16,7 @@ import com._2cha.demo.place.service.PlaceService;
 import com._2cha.demo.review.dto.ImageUrlWithSuggestionResponse;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.dto.WriteReviewRequest;
+import com._2cha.demo.review.service.LikeService;
 import com._2cha.demo.review.service.ReviewService;
 import com._2cha.demo.util.ImageUtils;
 import jakarta.validation.Valid;
@@ -43,6 +44,7 @@ public class ReviewController {
 
   private final ReviewService reviewService;
   private final PlaceService placeService;
+  private final LikeService likeService;
   private final ImageUploadService imageUploadService;
 
   @Auth(GUEST)
@@ -51,6 +53,7 @@ public class ReviewController {
                                               Pageable pageParam) {
     List<ReviewResponse> reviews = reviewService.getReviewsByPlaceId(placeId, pageParam);
     reviewService.setResponseBookmarkStatus(memberId, reviews);
+    reviewService.setResponseLikeStatus(memberId, reviews);
     return reviews;
   }
 
@@ -60,6 +63,7 @@ public class ReviewController {
                                                @PathVariable Long memberId, Pageable pageParam) {
     List<ReviewResponse> reviews = reviewService.getReviewsByMemberId(memberId, pageParam);
     reviewService.setResponseBookmarkStatus(requesterId, reviews);
+    reviewService.setResponseLikeStatus(requesterId, reviews);
     return reviews;
   }
 
@@ -68,6 +72,7 @@ public class ReviewController {
   public ReviewResponse getReview(@Authed Long memberId, @PathVariable Long reviewId) {
     ReviewResponse review = reviewService.getReviewById(reviewId);
     reviewService.setResponseBookmarkStatus(memberId, review);
+    reviewService.setResponseLikeStatus(memberId, review);
     return review;
   }
 
@@ -119,5 +124,17 @@ public class ReviewController {
   @DeleteMapping("/bookmarks/reviews/{reviewId}")
   public void removeBookmark(@Authed Long memberId, @PathVariable Long reviewId) {
     reviewService.removeBookmark(memberId, reviewId);
+  }
+
+  @Auth(MEMBER)
+  @PostMapping("/reviews/{reviewId}/like")
+  public void like(@Authed Long memberId, @PathVariable Long reviewId) {
+    likeService.likeReview(memberId, reviewId);
+  }
+
+  @Auth(MEMBER)
+  @DeleteMapping("/reviews/{reviewId}/like")
+  public void unlike(@Authed Long memberId, @PathVariable Long reviewId) {
+    likeService.unlikeReview(memberId, reviewId);
   }
 }
