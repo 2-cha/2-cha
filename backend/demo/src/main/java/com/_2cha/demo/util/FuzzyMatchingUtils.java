@@ -1,6 +1,7 @@
 package com._2cha.demo.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -40,6 +41,7 @@ public class FuzzyMatchingUtils {
    * e.g. 2: param ["ㅇㅇ", "안녕하세요"] will return [0, 4].
    */
   public static List<Integer> findFuzzyMatchingIndexes(String pattern, String target) {
+    if (pattern == null) return Collections.emptyList();
     List<Integer> ret = new ArrayList<>(target.length());
 
     int targetIdx = 0;
