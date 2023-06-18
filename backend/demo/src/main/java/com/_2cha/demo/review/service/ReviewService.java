@@ -1,7 +1,6 @@
 package com._2cha.demo.review.service;
 
-import static java.util.Comparator.reverseOrder;
-import static java.util.Map.Entry.comparingByValue;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
@@ -277,9 +276,13 @@ public class ReviewService {
 
     Stream<TagCountResponse> tagCountStream = tagCountMap.entrySet()
                                                          .stream()
-                                                         .sorted(comparingByValue(reverseOrder()))
                                                          .map(entry -> new TagCountResponse(
-                                                             entry.getKey(), entry.getValue()));
+                                                             entry.getKey(), entry.getValue()))
+                                                         .sorted(
+                                                             comparing(TagCountResponse::getCount)
+                                                                 .reversed()
+                                                                 .thenComparing(
+                                                                     TagCountResponse::getId));
 
     return (size == null) ? tagCountStream.toList() : tagCountStream.limit(size).toList();
   }
