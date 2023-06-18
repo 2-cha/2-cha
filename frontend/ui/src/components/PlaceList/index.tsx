@@ -32,6 +32,7 @@ interface PlaceItemProps {
 }
 
 export function PlaceItem({ place }: PlaceItemProps) {
+  console.log(place);
   return (
     <li className={s.placeItem}>
       <div className={s.placeItem__inner}>
@@ -42,16 +43,16 @@ export function PlaceItem({ place }: PlaceItemProps) {
             keyID={place.id.toString()}
           />
         )}
-        <div className={s.placeItem__header}>
-          <div className={s.placeItem__headerTop}>
-            <Link href={`/places/${place.id}`}>
+        <Link href={`/places/${place.id}`}>
+          <div className={s.placeItem__header}>
+            <div className={s.placeItem__headerTop}>
               <p className={s.placeItem__title}>{place.name}</p>
-            </Link>
+            </div>
+            <p className={s.placeItem__address}>
+              {place.address} / {place.distance}
+            </p>
           </div>
-          <p className={s.placeItem__address}>
-            {place.address} / {place.distance}
-          </p>
-        </div>
+        </Link>
       </div>
       <BookmarkToggleButton
         size={48}
