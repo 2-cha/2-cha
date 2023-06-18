@@ -15,7 +15,7 @@ export default function ProfilePage() {
     <>
       <ProfileHeader member={member} isMe />
       <ProfileCollection />
-      <ProfileReviewTab />
+      <ProfileReviewTab memberId={member.id} />
     </>
   ) : (
     <div>member not found</div>
