@@ -58,6 +58,7 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
           )}
           <Tab
             menuList={menuItems}
+            isSticky
             currentIndex={currentMenu}
             setCurrentIndex={setCurrentMenu}
           />

@@ -1,16 +1,19 @@
 @use 'mixins';
 @use 'var';
 
-.menu {
+.sticky {
   position: sticky;
   top: var.$header-height;
-  width: 100%;
-  height: var.$header-height;
-  background-color: var(--background-color);
   z-index: 2;
 
-  @include mixins.flex(row, space-around, flex-start);
   @include mixins.margin(top, var.$size-lg * 2);
+}
+
+.menu {
+  width: 100%;
+  height: var.$header-height;
+  @include mixins.flex(row, space-around, flex-start);
+  background-color: var(--background-color);
 
   .active {
     border-bottom: 2px solid var(--border-color);
