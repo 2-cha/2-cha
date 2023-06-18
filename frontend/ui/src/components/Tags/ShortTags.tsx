@@ -1,4 +1,4 @@
-import cx from 'classnames';
+import cn from 'classnames';
 import { Tag } from '@/types';
 
 import styles from './ShortTags.module.scss';
@@ -23,7 +23,7 @@ export default function ShortTags({ tagList, keyID, className }: Props) {
   }, []);
 
   return (
-    <div className={cx(className, styles.tagWrapper)}>
+    <div className={cn(className, styles.tagWrapper)}>
       {tagList.map((tag, index) => (
         <div
           className={styles.tag}

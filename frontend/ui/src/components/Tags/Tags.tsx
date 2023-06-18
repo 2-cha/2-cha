@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import cx from 'classnames';
+import cn from 'classnames';
 
 import SimpleArrowIcon from '@/components/Icons/SimpleArrowIcon';
 import { Tag } from '@/types';
@@ -50,7 +50,7 @@ export default function Tags({
 
   return (
     <div
-      className={cx(styles.tags, {
+      className={cn(styles.tags, {
         className,
         [styles.gradient]: !isOpen && tagProperty.hasLimit,
         [styles.padding]: tagProperty.hasLimit,
@@ -58,7 +58,7 @@ export default function Tags({
     >
       <button
         type="button"
-        className={cx(styles.button, {
+        className={cn(styles.button, {
           [styles.hidden]: !tagProperty.hasLimit,
           [styles.flipped]: isOpen,
         })}
@@ -72,7 +72,7 @@ export default function Tags({
             <span>
               {tag.emoji} {tag.message}
             </span>
-            <span className={cx({ [styles.hidden]: !isNumberShown })}>
+            <span className={cn({ [styles.hidden]: !isNumberShown })}>
               {tag.count}
             </span>
           </div>
@@ -80,12 +80,12 @@ export default function Tags({
         {tagProperty.bottomTags.map((tag, index) => (
           <div
             key={`tag-list-${keyID}-${index + limit}`}
-            className={cx({ [styles.tag]: true, [styles.hidden]: !isOpen })}
+            className={cn({ [styles.tag]: true, [styles.hidden]: !isOpen })}
           >
             <span>
               {tag.emoji} {tag.message}
             </span>
-            <span className={cx({ [styles.hidden]: !isNumberShown })}>
+            <span className={cn({ [styles.hidden]: !isNumberShown })}>
               {tag.count}
             </span>
           </div>
