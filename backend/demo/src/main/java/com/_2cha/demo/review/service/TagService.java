@@ -14,9 +14,9 @@ import com._2cha.demo.review.dto.MakeTagReqResponse;
 import com._2cha.demo.review.dto.TagCreationReqBriefResponse;
 import com._2cha.demo.review.dto.TagCreationReqDetailResponse;
 import com._2cha.demo.review.dto.TagFuzzySearchResponse;
+import com._2cha.demo.review.dto.TagFuzzySearchWithoutCategoryResponse;
 import com._2cha.demo.review.dto.TagReqAcceptedResponse;
 import com._2cha.demo.review.dto.TagReqUpdatedResponse;
-import com._2cha.demo.review.dto.TagWithoutCategoryResponse;
 import com._2cha.demo.review.exception.NoSuchTagCreationReqException;
 import com._2cha.demo.review.repository.TagCreationRequestRepository;
 import com._2cha.demo.review.repository.TagRepository;
@@ -70,7 +70,7 @@ public class TagService {
                .toList();
   }
 
-  public Map<Category, List<TagWithoutCategoryResponse>> fuzzySearchCategorizedTagsByHangul(
+  public Map<Category, List<TagFuzzySearchWithoutCategoryResponse>> fuzzySearchCategorizedTagsByHangul(
       String queryText) {
     List<Tag> tags;
     if (queryText == null) {
@@ -80,8 +80,12 @@ public class TagService {
       tags = tagRepository.findTagsByMsgMatchesRegex(queryRegex);
     }
     return tags.stream().collect(Collectors.groupingBy(Tag::getCategory,
-                                                       mapping(TagWithoutCategoryResponse::new,
-                                                               toList())));
+                                                       mapping(tag ->
+                                                                   new TagFuzzySearchWithoutCategoryResponse(
+                                                                       tag,
+                                                                       FuzzyMatchingUtils.findFuzzyMatchingIndexes(
+                                                                           queryText, tag.getMsg())
+                                                                   ), toList())));
   }
 
   public List<TagCreationReqBriefResponse> getAllTagCreationRequests(Pageable pageParam) {

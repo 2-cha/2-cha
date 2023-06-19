@@ -9,10 +9,10 @@ import com._2cha.demo.review.dto.MakeTagReqResponse;
 import com._2cha.demo.review.dto.TagCreationReqBriefResponse;
 import com._2cha.demo.review.dto.TagCreationReqDetailResponse;
 import com._2cha.demo.review.dto.TagFuzzySearchResponse;
+import com._2cha.demo.review.dto.TagFuzzySearchWithoutCategoryResponse;
 import com._2cha.demo.review.dto.TagReqAcceptedResponse;
 import com._2cha.demo.review.dto.TagReqUpdateRequest;
 import com._2cha.demo.review.dto.TagReqUpdatedResponse;
-import com._2cha.demo.review.dto.TagWithoutCategoryResponse;
 import com._2cha.demo.review.service.TagService;
 import com._2cha.demo.review.validator.Hangul;
 import jakarta.validation.Valid;
@@ -45,7 +45,7 @@ public class TagController {
   }
 
   @GetMapping("/tags/categorized")
-  public Map<Category, List<TagWithoutCategoryResponse>> fuzzySearchCategorizedTagsByHangul(
+  public Map<Category, List<TagFuzzySearchWithoutCategoryResponse>> fuzzySearchCategorizedTagsByHangul(
       @Hangul @RequestParam(required = false) String query) {
     return tagService.fuzzySearchCategorizedTagsByHangul(query);
   }
