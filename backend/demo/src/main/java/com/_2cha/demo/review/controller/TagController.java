@@ -1,8 +1,11 @@
 package com._2cha.demo.review.controller;
 
+import static com._2cha.demo.member.domain.Role.ADMIN;
+import static com._2cha.demo.member.domain.Role.GUEST;
+import static com._2cha.demo.member.domain.Role.MEMBER;
+
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
-import com._2cha.demo.member.domain.Role;
 import com._2cha.demo.review.domain.Category;
 import com._2cha.demo.review.dto.MakeTagReqRequest;
 import com._2cha.demo.review.dto.MakeTagReqResponse;
@@ -30,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Auth
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -38,49 +40,52 @@ public class TagController {
 
   private final TagService tagService;
 
+  @Auth(GUEST)
   @GetMapping("/tags")
   public List<TagFuzzySearchResponse> fuzzySearchTagsByHangul(
       @Hangul @RequestParam(required = false) String query) {
     return tagService.fuzzySearchTagsByHangul(query);
   }
 
+  @Auth(GUEST)
   @GetMapping("/tags/categorized")
   public Map<Category, List<TagFuzzySearchWithoutCategoryResponse>> fuzzySearchCategorizedTagsByHangul(
       @Hangul @RequestParam(required = false) String query) {
     return tagService.fuzzySearchCategorizedTagsByHangul(query);
   }
 
+  @Auth(MEMBER)
   @PostMapping("/tags/requests")
   public MakeTagReqResponse makeTagCreationRequest(@Authed Long memberId,
                                                    @RequestBody @Valid MakeTagReqRequest dto) {
     return tagService.makeTagCreationRequest(memberId, dto.getEmoji(), dto.getMessage());
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(ADMIN)
   @GetMapping("/tags/requests")
   public List<TagCreationReqBriefResponse> getAllTagCreationRequests(Pageable pageParam) {
     return tagService.getAllTagCreationRequests(pageParam);
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(ADMIN)
   @GetMapping("/tags/requests/{tagReqId}")
   public TagCreationReqDetailResponse getTagCreationRequest(@PathVariable Long tagReqId) {
     return tagService.getTagCreationRequest(tagReqId);
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(ADMIN)
   @PostMapping("/tags/requests/{tagReqId}/accept")
   public TagReqAcceptedResponse acceptTagCreationRequest(@PathVariable Long tagReqId) {
     return tagService.acceptTagCreationRequest(tagReqId);
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(ADMIN)
   @DeleteMapping("/tags/requests/{tagReqId}")
   public void rejectTagCreationRequest(@PathVariable Long tagReqId) {
     tagService.rejectTagCreationRequest(tagReqId);
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(ADMIN)
   @PutMapping("/tags/requests/{tagReqId}")
   public TagReqUpdatedResponse updateTagCreationRequest(@PathVariable Long tagReqId,
                                                         @RequestBody @Valid TagReqUpdateRequest dto) {
