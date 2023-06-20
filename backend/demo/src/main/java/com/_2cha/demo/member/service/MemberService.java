@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +52,7 @@ public class MemberService {
   private final FileStorageService fileStorageService;
   private final ImageUploadService imageUploadService;
   private final ApplicationEventPublisher eventPublisher;
+  private final NicknameGeneratorService nicknameGeneratorService;
 
 
   public Member findById(Long id) {
@@ -125,7 +128,23 @@ public class MemberService {
                                            String name, String email,
                                            String srcImgUrl
                                           ) {
-    Member member = Member.createMemberWithOIDC(oidcProvider, oidcId, email, name, null, null);
+    final int retry = 10;
+    String nickname = name + "_" + UUID.randomUUID();
+    for (int i = 0; i < retry; i++) {
+
+      List<String> nicknamePool = nicknameGeneratorService.generate(100);
+      List<Member> members = memberRepository.findAllByNameIn(nicknamePool);
+      Optional<String> res = nicknamePool.stream()
+                                         .filter(n -> members.stream()
+                                                             .noneMatch(m -> m.getName().equals(n)))
+                                         .findFirst();
+      if (res.isPresent()) {
+        nickname = res.get();
+        break;
+      }
+    }
+
+    Member member = Member.createMemberWithOIDC(oidcProvider, oidcId, email, nickname, null, null);
     memberRepository.save(member);
     eventPublisher.publishEvent(
         new ProfileImageUploadRequiredEvent(this, member.getId(), srcImgUrl));
