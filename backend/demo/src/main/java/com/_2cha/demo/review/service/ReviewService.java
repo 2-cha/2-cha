@@ -358,6 +358,15 @@ public class ReviewService {
     return getReviewResponses(reviews);
   }
 
+  public Long getReviewCountByPlaceId(Long placeId) {
+    return reviewRepository.countByPlaceId(placeId);
+  }
+
+  public Map<Long, Long> getReviewCountByPlaceIdIn(List<Long> placeIds) {
+    return reviewRepository.countByPlaceIdIn(placeIds);
+  }
+
+
   private List<ReviewResponse> getReviewResponses(List<Review> reviews) {
     Set<Long> placeIds = reviews.stream().map(review -> review.getPlace().getId()).collect(toSet());
     Set<Long> memberIds = reviews.stream().map(review -> review.getMember().getId())

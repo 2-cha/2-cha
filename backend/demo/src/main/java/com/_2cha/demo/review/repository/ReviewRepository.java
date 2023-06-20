@@ -3,6 +3,7 @@ package com._2cha.demo.review.repository;
 import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.domain.Tag;
 import java.util.List;
+import java.util.Map;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
@@ -31,6 +32,11 @@ public interface ReviewRepository extends Repository<Review, Long> {
 
   List<Review> findReviewsByTagsInReviewTagIn(List<Tag> tags);
 
+  Long countByPlaceId(Long placeId);
+
+  Map<Long, Long> countByPlaceIdIn(List<Long> placeIds);
+
   @Query("SELECT DISTINCT r FROM Review r JOIN r.tagsInReview tir WHERE r.place.id IN :placeIds AND tir.tag.id IN :tagIds")
-  List<Review> findReviewByPlaceIdInAndTagsInReviewTagIdIn(@Param("placeIds") List<Long> placeIds, @Param("tagIds") List<Long> tagIds);
+  List<Review> findReviewByPlaceIdInAndTagsInReviewTagIdIn(@Param("placeIds") List<Long> placeIds,
+                                                           @Param("tagIds") List<Long> tagIds);
 }
