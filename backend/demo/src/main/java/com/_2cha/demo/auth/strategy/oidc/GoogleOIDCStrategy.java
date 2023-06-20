@@ -79,7 +79,7 @@ public class GoogleOIDCStrategy implements OIDCStrategy {
   public OIDCUserProfile getProfile(String idToken) throws JsonProcessingException {
     String base64payload = JWT.decode(idToken)
                               .getPayload();  // not decoded
-    String payload = new String(Base64.getDecoder()
+    String payload = new String(Base64.getUrlDecoder()
                                       .decode(base64payload));
 
     GoogleIdTokenPayload idTokenPayload = objectMapper.readValue(payload,
