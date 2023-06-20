@@ -3,15 +3,15 @@ package com._2cha.demo.collection.controller;
 import static com._2cha.demo.member.domain.Role.GUEST;
 import static com._2cha.demo.member.domain.Role.MEMBER;
 
+import com._2cha.demo.collection.dto.CollectionBriefResponse;
 import com._2cha.demo.collection.dto.CollectionCreateRequest;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
+import com._2cha.demo.collection.dto.CollectionDetailResponse;
 import com._2cha.demo.collection.dto.CollectionRemovedResponse;
-import com._2cha.demo.collection.dto.CollectionReviewsResponse;
 import com._2cha.demo.collection.dto.CollectionReviewsUpdateRequest;
 import com._2cha.demo.collection.dto.CollectionReviewsUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionUpdateRequest;
 import com._2cha.demo.collection.dto.CollectionUpdatedResponse;
-import com._2cha.demo.collection.dto.CollectionViewResponse;
 import com._2cha.demo.collection.service.CollectionLikeService;
 import com._2cha.demo.collection.service.CollectionService;
 import com._2cha.demo.global.annotation.Auth;
@@ -19,6 +19,7 @@ import com._2cha.demo.global.annotation.Authed;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -37,23 +38,16 @@ public class CollectionController {
 
   @Auth(GUEST)
   @GetMapping("/members/{memberId}/collections")
-  public List<CollectionViewResponse> getMemberCollections(@Authed Long requesterId,
-                                                           @PathVariable Long memberId) {
-    List<CollectionViewResponse> collections = collectionService.getMemberCollections(
-        memberId, true);
-    collectionService.setResponseBookmarkStatus(requesterId, collections);
-    collectionService.setResponseLikeStatus(requesterId, collections);
-    return collections;
+  public List<CollectionBriefResponse> getMemberCollections(@Authed Long requesterId,
+                                                            @PathVariable Long memberId) {
+    return collectionService.getMemberCollections(requesterId, memberId);
   }
 
-  @Auth(MEMBER)
+  @Auth(GUEST)
   @GetMapping("/collections")
-  public List<CollectionViewResponse> getCollectionsIncludingPrivate(@Authed Long memberId) {
-    List<CollectionViewResponse> collections = collectionService.getMemberCollections(
-        memberId, false);
-    collectionService.setResponseBookmarkStatus(memberId, collections);
-    collectionService.setResponseLikeStatus(memberId, collections);
-    return collections;
+  public List<CollectionBriefResponse> getCollectionsIncludingPrivate(@Authed Long memberId,
+                                                                      Pageable pageParam) {
+    return collectionService.getLatestCollections(memberId, pageParam);
   }
 
   @Auth(MEMBER)
@@ -66,8 +60,8 @@ public class CollectionController {
 
   @Auth(GUEST)
   @GetMapping("/collections/{collId}")
-  public CollectionReviewsResponse getCollectionDetail(@Authed Long memberId,
-                                                       @PathVariable Long collId) {
+  public CollectionDetailResponse getCollectionDetail(@Authed Long memberId,
+                                                      @PathVariable Long collId) {
     return collectionService.getCollectionDetail(memberId, collId);
   }
 
@@ -101,7 +95,7 @@ public class CollectionController {
 
   @Auth(MEMBER)
   @GetMapping("/bookmarks/collections")
-  public List<CollectionViewResponse> getBookmarkedPlaces(@Authed Long memberId) {
+  public List<CollectionBriefResponse> getBookmarkedPlaces(@Authed Long memberId) {
     return collectionService.getBookmarkedCollections(memberId);
   }
 

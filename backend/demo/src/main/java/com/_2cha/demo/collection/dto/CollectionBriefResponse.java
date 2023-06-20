@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
 
 @Data
-public class CollectionViewResponse {
+public class CollectionBriefResponse {
 
   private Long id;
   private String title;
@@ -20,7 +20,7 @@ public class CollectionViewResponse {
   @JsonInclude(Include.NON_NULL)
   private LikeStatus likeStatus;
 
-  public CollectionViewResponse(Long id, String title, String description, String thumbnail) {
+  public CollectionBriefResponse(Long id, String title, String description, String thumbnail) {
     this.id = id;
     this.title = title;
     this.description = description;

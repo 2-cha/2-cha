@@ -9,12 +9,13 @@ import com._2cha.demo.bookmark.exception.AlreadyBookmarkedException;
 import com._2cha.demo.bookmark.exception.NotBookmarkedException;
 import com._2cha.demo.collection.domain.Collection;
 import com._2cha.demo.collection.domain.CollectionBookmark;
+import com._2cha.demo.collection.dto.CollectionBriefResponse;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
+import com._2cha.demo.collection.dto.CollectionDetailResponse;
 import com._2cha.demo.collection.dto.CollectionRemovedResponse;
-import com._2cha.demo.collection.dto.CollectionReviewsResponse;
 import com._2cha.demo.collection.dto.CollectionReviewsUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionUpdatedResponse;
-import com._2cha.demo.collection.dto.CollectionViewResponse;
+import com._2cha.demo.collection.dto.ReviewInCollectionResponse;
 import com._2cha.demo.collection.exception.CannotAccessToPrivateException;
 import com._2cha.demo.collection.exception.CannotCreateException;
 import com._2cha.demo.collection.exception.CannotRemoveException;
@@ -27,6 +28,7 @@ import com._2cha.demo.collection.repository.CollectionRepository;
 import com._2cha.demo.collection.repository.ReviewInCollectionRepository;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Member;
+import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.review.domain.Review;
@@ -39,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,13 +63,48 @@ public class CollectionService {
    @ Queries
    ----------*/
   @Transactional(readOnly = true)
-  public List<CollectionViewResponse> getMemberCollections(Long memberId, boolean exposedOnly) {
-    return collectionQueryRepository.getMemberCollections(memberId, exposedOnly,
-                                                          fileStorageService.getBaseUrl());
+  public List<CollectionBriefResponse> getMemberCollections(@Nullable Long requesterId,
+                                                            Long memberId) {
+
+    List<CollectionBriefResponse> collections = collectionQueryRepository.getMemberCollections(
+        memberId,
+        // expose private only if requester is collection owner
+        !Objects.equals(requesterId, memberId),
+        fileStorageService.getBaseUrl());
+
+    List<Long> collIds = collections.stream().map(CollectionBriefResponse::getId).toList();
+    Map<Long, LikeStatus> likeStatus = likeService.getLikeStatus(requesterId, collIds);
+    Map<Long, BookmarkStatus> bookmarkStatus = getBookmarkStatus(requesterId, collIds);
+
+    collections.forEach(collection -> {
+      collection.setLikeStatus(likeStatus.get(collection.getId()));
+      collection.setBookmarkStatus(bookmarkStatus.get(collection.getId()));
+    });
+
+    return collections;
+  }
+
+  public List<CollectionBriefResponse> getLatestCollections(Long memberId, Pageable pageParam) {
+
+    List<CollectionBriefResponse> collections = collectionQueryRepository.getLatestCollections(
+        fileStorageService.getBaseUrl(),
+        pageParam.getOffset(),
+        pageParam.getPageSize());
+
+    List<Long> collIds = collections.stream().map(CollectionBriefResponse::getId).toList();
+    Map<Long, LikeStatus> likeStatus = likeService.getLikeStatus(memberId, collIds);
+    Map<Long, BookmarkStatus> bookmarkStatus = getBookmarkStatus(memberId, collIds);
+
+    collections.forEach(collection -> {
+      collection.setLikeStatus(likeStatus.get(collection.getId()));
+      collection.setBookmarkStatus(bookmarkStatus.get(collection.getId()));
+    });
+
+    return collections;
   }
 
   @Transactional(readOnly = true)
-  public CollectionReviewsResponse getCollectionDetail(Long memberId, Long collId) {
+  public CollectionDetailResponse getCollectionDetail(Long memberId, Long collId) {
     Collection collection = collectionRepository.findCollectionById(collId);
     if (collection == null) throw new NoSuchCollectionException();
     if (!collection.isExposed() &&
@@ -78,20 +116,37 @@ public class CollectionService {
                                      .stream()
                                      .map(revInColl -> revInColl.getReview().getId())
                                      .toList();
-    List<ReviewResponse> reviews = reviewService.getReviewsByIdInPreservingOrder(reviewIds);
-    return new CollectionReviewsResponse(collection, reviews, fileStorageService.getBaseUrl());
+    List<ReviewResponse> reviewResponses = reviewService.getReviewsByIdInPreservingOrder(reviewIds);
+    List<ReviewInCollectionResponse> revInCollResponses = reviewResponses.stream()
+                                                                         .map(
+                                                                             review -> new ReviewInCollectionResponse(
+                                                                                 review.getId(),
+                                                                                 review.getImages()
+                                                                                       .get(0),
+                                                                                 review.getPlace(),
+                                                                                 review.getTags()))
+                                                                         .toList();
+    MemberProfileResponse member = memberService.getMemberProfileById(
+        collection.getMember().getId());
+
+    CollectionDetailResponse detail = new CollectionDetailResponse(collection,
+                                                                   member,
+                                                                   revInCollResponses,
+                                                                   fileStorageService.getBaseUrl());
+    detail.setBookmarkStatus(getBookmarkStatus(memberId, collId));
+    detail.setLikeStatus(likeService.getLikeStatus(memberId, collId));
+    return detail;
   }
 
   @Transactional(readOnly = true)
-  public List<CollectionViewResponse> getBookmarkedCollections(Long memberId) {
+  public List<CollectionBriefResponse> getBookmarkedCollections(Long memberId) {
     List<CollectionBookmark> bookmarks = bookmarkRepository.findAllByMemberId(memberId);
     List<Long> collIds = bookmarks.stream().map(b -> b.getCollection().getId()).toList();
     return collectionQueryRepository.getCollectionsByIdIn(collIds, fileStorageService.getBaseUrl());
   }
 
   @Transactional(readOnly = true)
-  public void setResponseBookmarkStatus(Long memberId, List<CollectionViewResponse> collections) {
-    List<Long> collIds = collections.stream().map(CollectionViewResponse::getId).toList();
+  public Map<Long, BookmarkStatus> getBookmarkStatus(Long memberId, List<Long> collIds) {
     List<CollectionBookmark> bookmarks =
         (memberId != null) ? bookmarkRepository.findAllByMemberIdAndCollectionIdIn(memberId,
                                                                                    collIds)
@@ -101,39 +156,20 @@ public class CollectionService {
                                                       .collect(toMap(
                                                           BookmarkCountProjection::getId,
                                                           BookmarkCountProjection::getCount));
-    for (var collection : collections) {
-      collection.setBookmarkStatus(new BookmarkStatus(bookmarkedIds.contains(collection.getId()),
-                                                      totalCountMap.getOrDefault(collection.getId(),
-                                                                                 0L)));
-    }
+    return collIds.stream()
+                  .collect(toMap(id -> id,
+                                 id -> new BookmarkStatus(bookmarkedIds.contains(id),
+                                                          totalCountMap.getOrDefault(id, 0L))));
   }
 
   @Transactional(readOnly = true)
-  public void setResponseLikeStatus(@Nullable Long memberId,
-                                    CollectionViewResponse collection) {
-    collection.setLikeStatus(likeService.getLikeStatus(memberId, collection.getId()));
-  }
-
-  @Transactional(readOnly = true)
-  public void setResponseLikeStatus(Long memberId, List<CollectionViewResponse> collections) {
-    Map<Long, LikeStatus> likeStatusMap = likeService.getLikeStatus(memberId,
-                                                                    collections.stream().map(
-                                                                                   CollectionViewResponse::getId)
-                                                                               .toList());
-
-    collections.forEach(
-        collection -> collection.setLikeStatus(likeStatusMap.get(collection.getId())));
-  }
-
-  @Transactional(readOnly = true)
-  public void setResponseBookmarkStatus(@Nullable Long memberId,
-                                        CollectionViewResponse collection) {
+  public BookmarkStatus getBookmarkStatus(@Nullable Long memberId, Long collId) {
     CollectionBookmark bookmark =
         (memberId != null) ? bookmarkRepository.findByMemberIdAndCollectionId(memberId,
-                                                                              collection.getId())
+                                                                              collId)
                            : null;
-    Long count = bookmarkRepository.countAllByCollectionId(collection.getId());
-    collection.setBookmarkStatus(new BookmarkStatus(bookmark != null, count));
+    Long count = bookmarkRepository.countAllByCollectionId(collId);
+    return new BookmarkStatus(bookmark != null, count);
   }
 
 
