@@ -12,7 +12,7 @@ import s from './NavBar.module.scss';
 
 const sections = [
   { name: 'places', path: '/places', Icon: PlaceIcon },
-  { name: 'reviews', path: '/reviews', Icon: HashIcon },
+  { name: 'collections', path: '/collections', Icon: HashIcon },
   { name: 'add-review', path: '/write', Icon: PlusSquareIcon },
   { name: 'bookmark', path: '/bookmark', Icon: BookmarkIcon },
   { name: 'profile', path: '/profile', Icon: UserIcon },
