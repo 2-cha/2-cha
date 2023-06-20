@@ -19,13 +19,12 @@ import org.hibernate.annotations.OnDelete;
 @Entity
 @Getter
 @Table(
-    name = "MEMBER_LIKE_REVIEW",
     uniqueConstraints =
     @UniqueConstraint(columnNames = {"MEMBER_ID", "REV_ID"},
-        name = "uk_member_like_review_member_id_and_rev_id")
+        name = "uk_review_like_member_id_and_rev_id")
 )
 @NoArgsConstructor(access = PROTECTED)
-public class Like {
+public class ReviewLike {
 
   @Id
   @GeneratedValue
@@ -42,8 +41,8 @@ public class Like {
   @OnDelete(action = CASCADE)
   private Review review;
 
-  public static Like createLike(Member member, Review review) {
-    Like like = new Like();
+  public static ReviewLike createLike(Member member, Review review) {
+    ReviewLike like = new ReviewLike();
 
     like.member = member;
     like.review = review;
