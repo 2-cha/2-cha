@@ -43,6 +43,17 @@ public class NicknameGeneratorService {
            randomPick(suffixPool).trim();
   }
 
+  public List<String> generate(int size) {
+    List<String> result = new ArrayList<>();
+
+    for (int i = 0; i < size; i++) {
+      result.add(randomPick(prefixPool).trim() + " " +
+                 randomPick(middlePool).trim() + " " +
+                 randomPick(suffixPool).trim());
+    }
+    return result;
+  }
+
   public String randomPick(List<String> pool) {
     return pool.get((int) (Math.random() * pool.size()));
   }
