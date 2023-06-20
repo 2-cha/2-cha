@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Data
-public class CollectionReviewsResponse {
+public class CollectionDetailResponse {
 
   private Long id;
   private String title;
@@ -35,8 +35,8 @@ public class CollectionReviewsResponse {
     isBookmarked = bookmarked;
   }
 
-  public CollectionReviewsResponse(Collection collection, List<ReviewResponse> reviews,
-                                   String baseUrl) {
+  public CollectionDetailResponse(Collection collection, List<ReviewResponse> reviews,
+                                  String baseUrl) {
     this.id = collection.getId();
     this.title = collection.getTitle();
     this.description = collection.getDescription();

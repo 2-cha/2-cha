@@ -3,7 +3,7 @@ package com._2cha.demo.collection.repository;
 import static com._2cha.demo.collection.domain.QCollection.collection;
 import static com.querydsl.core.types.Projections.constructor;
 
-import com._2cha.demo.collection.dto.CollectionViewResponse;
+import com._2cha.demo.collection.dto.CollectionBriefResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -25,9 +25,9 @@ public class CollectionQueryRepository {
   }
 
 
-  public List<CollectionViewResponse> getMemberCollections(Long memberId, boolean exposureCond,
-                                                           String thumbBaseUrl) {
-    return queryFactory.select(constructor(CollectionViewResponse.class,
+  public List<CollectionBriefResponse> getMemberCollections(Long memberId, boolean exposureCond,
+                                                            String thumbBaseUrl) {
+    return queryFactory.select(constructor(CollectionBriefResponse.class,
                                            collection.id,
                                            collection.title,
                                            collection.description,
@@ -38,9 +38,9 @@ public class CollectionQueryRepository {
                        .fetch();
   }
 
-  public List<CollectionViewResponse> getCollectionsByIdIn(List<Long> collIds,
-                                                           String thumbBaseUrl) {
-    return queryFactory.select(constructor(CollectionViewResponse.class,
+  public List<CollectionBriefResponse> getCollectionsByIdIn(List<Long> collIds,
+                                                            String thumbBaseUrl) {
+    return queryFactory.select(constructor(CollectionBriefResponse.class,
                                            collection.id,
                                            collection.title,
                                            collection.description,

@@ -3,15 +3,15 @@ package com._2cha.demo.collection.controller;
 import static com._2cha.demo.member.domain.Role.GUEST;
 import static com._2cha.demo.member.domain.Role.MEMBER;
 
+import com._2cha.demo.collection.dto.CollectionBriefResponse;
 import com._2cha.demo.collection.dto.CollectionCreateRequest;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
+import com._2cha.demo.collection.dto.CollectionDetailResponse;
 import com._2cha.demo.collection.dto.CollectionRemovedResponse;
-import com._2cha.demo.collection.dto.CollectionReviewsResponse;
 import com._2cha.demo.collection.dto.CollectionReviewsUpdateRequest;
 import com._2cha.demo.collection.dto.CollectionReviewsUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionUpdateRequest;
 import com._2cha.demo.collection.dto.CollectionUpdatedResponse;
-import com._2cha.demo.collection.dto.CollectionViewResponse;
 import com._2cha.demo.collection.service.CollectionLikeService;
 import com._2cha.demo.collection.service.CollectionService;
 import com._2cha.demo.global.annotation.Auth;
@@ -37,9 +37,9 @@ public class CollectionController {
 
   @Auth(GUEST)
   @GetMapping("/members/{memberId}/collections")
-  public List<CollectionViewResponse> getMemberCollections(@Authed Long requesterId,
-                                                           @PathVariable Long memberId) {
-    List<CollectionViewResponse> collections = collectionService.getMemberCollections(
+  public List<CollectionBriefResponse> getMemberCollections(@Authed Long requesterId,
+                                                            @PathVariable Long memberId) {
+    List<CollectionBriefResponse> collections = collectionService.getMemberCollections(
         memberId, true);
     collectionService.setResponseBookmarkStatus(requesterId, collections);
     collectionService.setResponseLikeStatus(requesterId, collections);
@@ -48,8 +48,8 @@ public class CollectionController {
 
   @Auth(MEMBER)
   @GetMapping("/collections")
-  public List<CollectionViewResponse> getCollectionsIncludingPrivate(@Authed Long memberId) {
-    List<CollectionViewResponse> collections = collectionService.getMemberCollections(
+  public List<CollectionBriefResponse> getCollectionsIncludingPrivate(@Authed Long memberId) {
+    List<CollectionBriefResponse> collections = collectionService.getMemberCollections(
         memberId, false);
     collectionService.setResponseBookmarkStatus(memberId, collections);
     collectionService.setResponseLikeStatus(memberId, collections);
@@ -66,8 +66,8 @@ public class CollectionController {
 
   @Auth(GUEST)
   @GetMapping("/collections/{collId}")
-  public CollectionReviewsResponse getCollectionDetail(@Authed Long memberId,
-                                                       @PathVariable Long collId) {
+  public CollectionDetailResponse getCollectionDetail(@Authed Long memberId,
+                                                      @PathVariable Long collId) {
     return collectionService.getCollectionDetail(memberId, collId);
   }
 
@@ -101,7 +101,7 @@ public class CollectionController {
 
   @Auth(MEMBER)
   @GetMapping("/bookmarks/collections")
-  public List<CollectionViewResponse> getBookmarkedPlaces(@Authed Long memberId) {
+  public List<CollectionBriefResponse> getBookmarkedPlaces(@Authed Long memberId) {
     return collectionService.getBookmarkedCollections(memberId);
   }
 

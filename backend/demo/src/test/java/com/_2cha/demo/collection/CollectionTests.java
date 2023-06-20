@@ -5,15 +5,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com._2cha.demo.collection.controller.CollectionController;
+import com._2cha.demo.collection.dto.CollectionBriefResponse;
 import com._2cha.demo.collection.dto.CollectionCreateRequest;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
+import com._2cha.demo.collection.dto.CollectionDetailResponse;
 import com._2cha.demo.collection.dto.CollectionRemovedResponse;
-import com._2cha.demo.collection.dto.CollectionReviewsResponse;
 import com._2cha.demo.collection.dto.CollectionReviewsUpdateRequest;
 import com._2cha.demo.collection.dto.CollectionReviewsUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionUpdateRequest;
 import com._2cha.demo.collection.dto.CollectionUpdatedResponse;
-import com._2cha.demo.collection.dto.CollectionViewResponse;
 import com._2cha.demo.collection.repository.CollectionQueryRepository;
 import com._2cha.demo.global.exception.BadRequestException;
 import com._2cha.demo.global.exception.ForbiddenException;
@@ -136,8 +136,8 @@ public class CollectionTests {
     sendCreateRequest(1L, reviewIds, "Test Collection", " ",
                       fileStorageService.getBaseUrl() + "images/1.png");
 
-    List<CollectionViewResponse> memberCollections = collectionController.getMemberCollections(1L,
-                                                                                               1L);
+    List<CollectionBriefResponse> memberCollections = collectionController.getMemberCollections(1L,
+                                                                                                1L);
     assertThat(memberCollections).extracting("title").containsExactly("Test Collection");
   }
 
@@ -184,7 +184,7 @@ public class CollectionTests {
                       fileStorageService.getBaseUrl() + "images/1.png");
     sendUpdateRequest(1L, 1L, null, null, null, false);
 
-    List<CollectionViewResponse> memberCollections;
+    List<CollectionBriefResponse> memberCollections;
     memberCollections = collectionController.getCollectionsIncludingPrivate(1L);
     assertThat(memberCollections).extracting("title").containsExactly("Test Collection");
 
@@ -199,8 +199,8 @@ public class CollectionTests {
     sendCreateRequest(1L, reviewIds, "Test Collection", " ",
                       fileStorageService.getBaseUrl() + "images/thumb_1.png");
 
-    List<CollectionViewResponse> memberCollections = collectionController.getMemberCollections(1L,
-                                                                                               1L);
+    List<CollectionBriefResponse> memberCollections = collectionController.getMemberCollections(1L,
+                                                                                                1L);
     assertThat(memberCollections).extracting("title").containsExactly("Test Collection");
 
     sendUpdateRequest(1L, 1L, "New Collection", null, null, null);
@@ -219,8 +219,8 @@ public class CollectionTests {
     sendCreateRequest(1L, reviewIds, "Test Collection", " ",
                       fileStorageService.getBaseUrl() + "images/thumb_1.png");
 
-    List<CollectionViewResponse> memberCollections = collectionController.getMemberCollections(1L,
-                                                                                               1L);
+    List<CollectionBriefResponse> memberCollections = collectionController.getMemberCollections(1L,
+                                                                                                1L);
     assertThat(memberCollections).extracting("title").containsExactly("Test Collection");
 
     sendUpdateRequest(1L, 1L, null, "Short Description", null, null);
@@ -239,8 +239,8 @@ public class CollectionTests {
     sendCreateRequest(1L, reviewIds, "Test Collection", " ",
                       fileStorageService.getBaseUrl() + "images/1.png");
 
-    List<CollectionViewResponse> memberCollections = collectionController.getMemberCollections(1L,
-                                                                                               1L);
+    List<CollectionBriefResponse> memberCollections = collectionController.getMemberCollections(1L,
+                                                                                                1L);
     assertThat(memberCollections).extracting("title").containsExactly("Test Collection");
 
     String newUrl = fileStorageService.getBaseUrl() + "images/new.png";
@@ -259,8 +259,8 @@ public class CollectionTests {
     sendCreateRequest(1L, reviewIds, "Test Collection", " ",
                       fileStorageService.getBaseUrl() + "images/thumb_1.png");
 
-    List<CollectionViewResponse> memberCollections = collectionController.getMemberCollections(1L,
-                                                                                               1L);
+    List<CollectionBriefResponse> memberCollections = collectionController.getMemberCollections(1L,
+                                                                                                1L);
     assertThat(memberCollections).extracting("title").containsExactly("Test Collection");
 
     sendUpdateRequest(1L, 1L, null, null, null, false);
@@ -282,8 +282,8 @@ public class CollectionTests {
     sendCreateRequest(1L, reviewIds, "Test Collection", " ",
                       fileStorageService.getBaseUrl() + "images/1.png");
 
-    List<CollectionViewResponse> memberCollections = collectionController.getMemberCollections(1L,
-                                                                                               1L);
+    List<CollectionBriefResponse> memberCollections = collectionController.getMemberCollections(1L,
+                                                                                                1L);
     assertThat(memberCollections).extracting("title").containsExactly("Test Collection");
 
     // other member's collection
@@ -306,7 +306,7 @@ public class CollectionTests {
     sendCreateRequest(1L, reviewIds, "Test Collection", " ",
                       fileStorageService.getBaseUrl() + "images/1.png");
 
-    List<CollectionViewResponse> memberCollections;
+    List<CollectionBriefResponse> memberCollections;
     memberCollections = collectionController.getMemberCollections(1L, 1L);
     assertThat(memberCollections).hasSize(1);
 
@@ -322,7 +322,7 @@ public class CollectionTests {
     sendCreateRequest(1L, reviewIds, "Test Collection", " ",
                       fileStorageService.getBaseUrl() + "images/1.png");
 
-    List<CollectionViewResponse> memberCollections;
+    List<CollectionBriefResponse> memberCollections;
     memberCollections = collectionController.getMemberCollections(1L, 1L);
     assertThat(memberCollections).hasSize(1);
 
@@ -345,7 +345,7 @@ public class CollectionTests {
     sendCreateRequest(1L, reviewIds, "Member1 Collection", " ",
                       fileStorageService.getBaseUrl() + "images/1.png");
 
-    CollectionReviewsResponse collection1 = collectionController.getCollectionDetail(1L, 1L);
+    CollectionDetailResponse collection1 = collectionController.getCollectionDetail(1L, 1L);
     assertThat(collection1.getReviews()).extracting("id")
                                         .containsExactly(1L, 3L);
 
@@ -368,7 +368,7 @@ public class CollectionTests {
     sendCreateRequest(1L, reviewIds, "Member1 Collection", " ",
                       fileStorageService.getBaseUrl() + "images/1.png");
 
-    CollectionReviewsResponse collection1 = collectionController.getCollectionDetail(1L, 1L);
+    CollectionDetailResponse collection1 = collectionController.getCollectionDetail(1L, 1L);
     assertThat(collection1.getReviews()).extracting("id")
                                         .containsExactly(1L, 3L);
 
