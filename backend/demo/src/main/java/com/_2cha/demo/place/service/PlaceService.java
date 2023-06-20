@@ -214,12 +214,16 @@ public class PlaceService {
     Map<Long, List<TagCountResponse>> placesTagCounts = reviewService.getReviewTagCountsByPlaceIdIn(
         placesWithDist.stream().map(pair -> pair.getFirst().getId()).toList(), REVIEW_SUMMARY_SIZE);
 
+    Map<Long, Long> reviewCounts = reviewService.getReviewCountByPlaceIdIn(
+        placesWithDist.stream().map(pair -> pair.getFirst().getId()).toList());
+
     return placesWithDist.stream().map(pair -> {
       Place place = pair.getFirst();
       Double distGap = pair.getSecond();
       PlaceBriefWithDistanceResponse brief = new PlaceBriefWithDistanceResponse(place, distGap,
                                                                                 fileStorageService.getBaseUrl());
       brief.setTagSummary(placesTagCounts.get(place.getId()));
+      brief.setReviewCount(reviewCounts.get(place.getId()));
       return brief;
     }).toList();
   }

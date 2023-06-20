@@ -26,6 +26,9 @@ public class PlaceBriefResponse {
   @JsonInclude(Include.NON_NULL)
   private BookmarkStatus bookmarkStatus;
 
+  @JsonInclude(Include.NON_NULL)
+  private Long reviewCount;
+
   public PlaceBriefResponse(Long id, String name, Category category, String address,
                             String imageUrl) {
     this.id = id;
