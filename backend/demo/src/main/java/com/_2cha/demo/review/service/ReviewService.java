@@ -65,7 +65,7 @@ public class ReviewService {
   private final ReviewRepository reviewRepository;
   private final ReviewBookmarkRepository reviewBookmarkRepository;
   private final TagService tagService;
-  private final LikeService likeService;
+  private final ReviewLikeService likeService;
   private final FileStorageService fileStorageService;
   private final ImageUploadService imageUploadService;
   private final ApplicationEventPublisher eventPublisher;

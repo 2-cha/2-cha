@@ -30,6 +30,7 @@ import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.review.domain.Review;
+import com._2cha.demo.review.dto.LikeStatus;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.service.ReviewService;
 import jakarta.annotation.Nullable;
@@ -53,6 +54,7 @@ public class CollectionService {
   private final FileStorageService fileStorageService;
   private final MemberService memberService;
   private final ReviewService reviewService;
+  private final CollectionLikeService likeService;
 
   /*-----------
    @ Queries
@@ -104,6 +106,23 @@ public class CollectionService {
                                                       totalCountMap.getOrDefault(collection.getId(),
                                                                                  0L)));
     }
+  }
+
+  @Transactional(readOnly = true)
+  public void setResponseLikeStatus(@Nullable Long memberId,
+                                    CollectionViewResponse collection) {
+    collection.setLikeStatus(likeService.getLikeStatus(memberId, collection.getId()));
+  }
+
+  @Transactional(readOnly = true)
+  public void setResponseLikeStatus(Long memberId, List<CollectionViewResponse> collections) {
+    Map<Long, LikeStatus> likeStatusMap = likeService.getLikeStatus(memberId,
+                                                                    collections.stream().map(
+                                                                                   CollectionViewResponse::getId)
+                                                                               .toList());
+
+    collections.forEach(
+        collection -> collection.setLikeStatus(likeStatusMap.get(collection.getId())));
   }
 
   @Transactional(readOnly = true)

@@ -12,6 +12,7 @@ import com._2cha.demo.collection.dto.CollectionReviewsUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionUpdateRequest;
 import com._2cha.demo.collection.dto.CollectionUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionViewResponse;
+import com._2cha.demo.collection.service.CollectionLikeService;
 import com._2cha.demo.collection.service.CollectionService;
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CollectionController {
 
   private final CollectionService collectionService;
+  private final CollectionLikeService likeService;
 
   @Auth(GUEST)
   @GetMapping("/members/{memberId}/collections")
@@ -40,6 +42,7 @@ public class CollectionController {
     List<CollectionViewResponse> collections = collectionService.getMemberCollections(
         memberId, true);
     collectionService.setResponseBookmarkStatus(requesterId, collections);
+    collectionService.setResponseLikeStatus(requesterId, collections);
     return collections;
   }
 
@@ -49,6 +52,7 @@ public class CollectionController {
     List<CollectionViewResponse> collections = collectionService.getMemberCollections(
         memberId, false);
     collectionService.setResponseBookmarkStatus(memberId, collections);
+    collectionService.setResponseLikeStatus(memberId, collections);
     return collections;
   }
 
@@ -111,5 +115,17 @@ public class CollectionController {
   @DeleteMapping("/bookmarks/collections/{collId}")
   public void removeBookmark(@Authed Long memberId, @PathVariable Long collId) {
     collectionService.removeBookmark(memberId, collId);
+  }
+
+  @Auth(MEMBER)
+  @PostMapping("/collections/{collId}/like")
+  public void like(@Authed Long memberId, @PathVariable Long collId) {
+    likeService.likeCollection(memberId, collId);
+  }
+
+  @Auth(MEMBER)
+  @DeleteMapping("/collections/{collId}/like")
+  public void unlike(@Authed Long memberId, @PathVariable Long collId) {
+    likeService.unlikeCollection(memberId, collId);
   }
 }

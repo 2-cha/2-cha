@@ -2,13 +2,13 @@ package com._2cha.demo.review.service;
 
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
-import com._2cha.demo.review.domain.Like;
 import com._2cha.demo.review.domain.Review;
+import com._2cha.demo.review.domain.ReviewLike;
 import com._2cha.demo.review.dto.LikeStatus;
 import com._2cha.demo.review.exception.AlreadyLikedException;
 import com._2cha.demo.review.exception.NoSuchReviewException;
 import com._2cha.demo.review.exception.NotLikedException;
-import com._2cha.demo.review.repository.LikeRepository;
+import com._2cha.demo.review.repository.ReviewLikeRepository;
 import com._2cha.demo.review.repository.ReviewRepository;
 import jakarta.annotation.Nullable;
 import java.util.Collections;
@@ -23,9 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class LikeService {
+public class ReviewLikeService {
 
-  private final LikeRepository likeRepository;
+  private final ReviewLikeRepository likeRepository;
   private final ReviewRepository reviewRepository;
   private final MemberService memberService;
 
@@ -34,20 +34,20 @@ public class LikeService {
    ----------*/
 
   public void likeReview(Long memberId, Long reviewId) {
-    Like like = likeRepository.findByMemberIdAndReviewId(memberId, reviewId);
+    ReviewLike like = likeRepository.findByMemberIdAndReviewId(memberId, reviewId);
     if (like != null) throw new AlreadyLikedException();
 
     Member member = memberService.findById(memberId);
     Review review = reviewRepository.findReviewById(reviewId);
     if (review == null) throw new NoSuchReviewException(reviewId);
 
-    like = Like.createLike(member, review);
+    like = ReviewLike.createLike(member, review);
 
     likeRepository.save(like);
   }
 
   public void unlikeReview(Long memberId, Long reviewId) {
-    Like like = likeRepository.findByMemberIdAndReviewId(memberId, reviewId);
+    ReviewLike like = likeRepository.findByMemberIdAndReviewId(memberId, reviewId);
     if (like == null) throw new NotLikedException();
 
     likeRepository.delete(like);
@@ -83,9 +83,9 @@ public class LikeService {
   }
 
   private boolean isLikedReview(@Nullable Long memberId, Long reviewId) {
-    Like like = (memberId != null) ?
-                likeRepository.findByMemberIdAndReviewId(memberId, reviewId) :
-                null;
+    ReviewLike like = (memberId != null) ?
+                      likeRepository.findByMemberIdAndReviewId(memberId, reviewId) :
+                      null;
 
     return like != null;
   }
@@ -94,9 +94,9 @@ public class LikeService {
     Map<Long, Boolean> likedMap = new HashMap<>();
     reviewIds.forEach(reviewId -> likedMap.put(reviewId, false));
 
-    List<Like> likes = (memberId != null) ?
-                       likeRepository.findAllByMemberIdAndReviewIdIn(memberId, reviewIds) :
-                       Collections.emptyList();
+    List<ReviewLike> likes = (memberId != null) ?
+                             likeRepository.findAllByMemberIdAndReviewIdIn(memberId, reviewIds) :
+                             Collections.emptyList();
 
     likes.forEach(like -> likedMap.put(like.getReview().getId(), true));
 

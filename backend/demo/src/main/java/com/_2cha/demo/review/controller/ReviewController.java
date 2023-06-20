@@ -16,7 +16,7 @@ import com._2cha.demo.place.service.PlaceService;
 import com._2cha.demo.review.dto.ImageUrlWithSuggestionResponse;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.dto.WriteReviewRequest;
-import com._2cha.demo.review.service.LikeService;
+import com._2cha.demo.review.service.ReviewLikeService;
 import com._2cha.demo.review.service.ReviewService;
 import com._2cha.demo.util.ImageUtils;
 import jakarta.validation.Valid;
@@ -44,7 +44,7 @@ public class ReviewController {
 
   private final ReviewService reviewService;
   private final PlaceService placeService;
-  private final LikeService likeService;
+  private final ReviewLikeService likeService;
   private final ImageUploadService imageUploadService;
 
   @Auth(GUEST)
