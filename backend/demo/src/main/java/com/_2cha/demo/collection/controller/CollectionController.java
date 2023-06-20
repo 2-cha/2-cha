@@ -39,21 +39,13 @@ public class CollectionController {
   @GetMapping("/members/{memberId}/collections")
   public List<CollectionBriefResponse> getMemberCollections(@Authed Long requesterId,
                                                             @PathVariable Long memberId) {
-    List<CollectionBriefResponse> collections = collectionService.getMemberCollections(
-        memberId, true);
-    collectionService.setResponseBookmarkStatus(requesterId, collections);
-    collectionService.setResponseLikeStatus(requesterId, collections);
-    return collections;
+    return collectionService.getMemberCollections(memberId, true);
   }
 
   @Auth(MEMBER)
   @GetMapping("/collections")
   public List<CollectionBriefResponse> getCollectionsIncludingPrivate(@Authed Long memberId) {
-    List<CollectionBriefResponse> collections = collectionService.getMemberCollections(
-        memberId, false);
-    collectionService.setResponseBookmarkStatus(memberId, collections);
-    collectionService.setResponseLikeStatus(memberId, collections);
-    return collections;
+    return collectionService.getMemberCollections(memberId, false);
   }
 
   @Auth(MEMBER)

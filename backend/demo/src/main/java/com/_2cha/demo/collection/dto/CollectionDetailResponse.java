@@ -1,15 +1,13 @@
 package com._2cha.demo.collection.dto;
 
+import com._2cha.demo.bookmark.dto.BookmarkStatus;
 import com._2cha.demo.collection.domain.Collection;
-import com._2cha.demo.review.dto.ReviewResponse;
+import com._2cha.demo.member.dto.MemberProfileResponse;
+import com._2cha.demo.review.dto.LikeStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 public class CollectionDetailResponse {
@@ -18,28 +16,23 @@ public class CollectionDetailResponse {
   private String title;
   private String description;
   private String thumbnail;
-  private List<ReviewResponse> reviews;
-
-
-  @Getter(AccessLevel.NONE)
-  @Setter(AccessLevel.NONE)
-  private Boolean isBookmarked;
+  private MemberProfileResponse member;
+  private List<ReviewInCollectionResponse> reviews;
 
   @JsonInclude(Include.NON_NULL)
-  @JsonProperty(value = "is_bookmarked")
-  public Boolean isBookmarked() {
-    return isBookmarked;
-  }
+  private BookmarkStatus bookmarkStatus;
 
-  public void setBookmarked(Boolean bookmarked) {
-    isBookmarked = bookmarked;
-  }
+  @JsonInclude(Include.NON_NULL)
+  private LikeStatus likeStatus;
 
-  public CollectionDetailResponse(Collection collection, List<ReviewResponse> reviews,
+  public CollectionDetailResponse(Collection collection,
+                                  MemberProfileResponse member,
+                                  List<ReviewInCollectionResponse> reviews,
                                   String baseUrl) {
     this.id = collection.getId();
     this.title = collection.getTitle();
     this.description = collection.getDescription();
+    this.member = member;
     String path = collection.getThumbnailUrlPath();
     this.thumbnail = path != null ? baseUrl + path : null;
     this.reviews = reviews;
