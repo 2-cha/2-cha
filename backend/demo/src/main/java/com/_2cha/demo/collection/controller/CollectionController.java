@@ -19,6 +19,7 @@ import com._2cha.demo.global.annotation.Authed;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -39,13 +40,14 @@ public class CollectionController {
   @GetMapping("/members/{memberId}/collections")
   public List<CollectionBriefResponse> getMemberCollections(@Authed Long requesterId,
                                                             @PathVariable Long memberId) {
-    return collectionService.getMemberCollections(memberId, true);
+    return collectionService.getMemberCollections(requesterId, memberId);
   }
 
-  @Auth(MEMBER)
+  @Auth(GUEST)
   @GetMapping("/collections")
-  public List<CollectionBriefResponse> getCollectionsIncludingPrivate(@Authed Long memberId) {
-    return collectionService.getMemberCollections(memberId, false);
+  public List<CollectionBriefResponse> getCollectionsIncludingPrivate(@Authed Long memberId,
+                                                                      Pageable pageParam) {
+    return collectionService.getLatestCollections(memberId, pageParam);
   }
 
   @Auth(MEMBER)

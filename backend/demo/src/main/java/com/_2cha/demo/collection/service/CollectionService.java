@@ -32,6 +32,7 @@ import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.review.domain.Review;
+import com._2cha.demo.review.dto.LikeStatus;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.service.ReviewService;
 import jakarta.annotation.Nullable;
@@ -40,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,14 +63,44 @@ public class CollectionService {
    @ Queries
    ----------*/
   @Transactional(readOnly = true)
-  //TODO: requester 받고 like, bookmark 설정
-  public List<CollectionBriefResponse> getMemberCollections(Long memberId, boolean exposedOnly) {
-    return collectionQueryRepository.getMemberCollections(memberId, exposedOnly,
-                                                          fileStorageService.getBaseUrl());
+  public List<CollectionBriefResponse> getMemberCollections(@Nullable Long requesterId,
+                                                            Long memberId) {
+
+    List<CollectionBriefResponse> collections = collectionQueryRepository.getMemberCollections(
+        memberId,
+        // expose private only if requester is collection owner
+        !Objects.equals(requesterId, memberId),
+        fileStorageService.getBaseUrl());
+
+    List<Long> collIds = collections.stream().map(CollectionBriefResponse::getId).toList();
+    Map<Long, LikeStatus> likeStatus = likeService.getLikeStatus(requesterId, collIds);
+    Map<Long, BookmarkStatus> bookmarkStatus = getBookmarkStatus(requesterId, collIds);
+
+    collections.forEach(collection -> {
+      collection.setLikeStatus(likeStatus.get(collection.getId()));
+      collection.setBookmarkStatus(bookmarkStatus.get(collection.getId()));
+    });
+
+    return collections;
   }
 
-  public List<CollectionBriefResponse> getLatestCollections(Long memberId, boolean exposedOnly) {
-    return Collections.emptyList();
+  public List<CollectionBriefResponse> getLatestCollections(Long memberId, Pageable pageParam) {
+
+    List<CollectionBriefResponse> collections = collectionQueryRepository.getLatestCollections(
+        fileStorageService.getBaseUrl(),
+        pageParam.getOffset(),
+        pageParam.getPageSize());
+
+    List<Long> collIds = collections.stream().map(CollectionBriefResponse::getId).toList();
+    Map<Long, LikeStatus> likeStatus = likeService.getLikeStatus(memberId, collIds);
+    Map<Long, BookmarkStatus> bookmarkStatus = getBookmarkStatus(memberId, collIds);
+
+    collections.forEach(collection -> {
+      collection.setLikeStatus(likeStatus.get(collection.getId()));
+      collection.setBookmarkStatus(bookmarkStatus.get(collection.getId()));
+    });
+
+    return collections;
   }
 
   @Transactional(readOnly = true)

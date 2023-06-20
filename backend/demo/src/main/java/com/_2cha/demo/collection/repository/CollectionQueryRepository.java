@@ -25,7 +25,7 @@ public class CollectionQueryRepository {
   }
 
 
-  public List<CollectionBriefResponse> getMemberCollections(Long memberId, boolean exposureCond,
+  public List<CollectionBriefResponse> getMemberCollections(Long memberId, boolean exposureOnly,
                                                             String thumbBaseUrl) {
     return queryFactory.select(constructor(CollectionBriefResponse.class,
                                            collection.id,
@@ -34,7 +34,7 @@ public class CollectionQueryRepository {
                                            collection.thumbnailUrlPath.prepend(thumbBaseUrl)
                                           ))
                        .from(collection)
-                       .where(collection.member.id.eq(memberId), isExposed(exposureCond))
+                       .where(collection.member.id.eq(memberId), isExposed(exposureOnly))
                        .fetch();
   }
 
@@ -51,7 +51,23 @@ public class CollectionQueryRepository {
                        .fetch();
   }
 
-  private BooleanExpression isExposed(boolean cond) {
-    return cond ? collection.isExposed.eq(true) : null;
+  public List<CollectionBriefResponse> getLatestCollections(String thumbBaseUrl,
+                                                            Long offset, Integer limit) {
+    return queryFactory.select(constructor(CollectionBriefResponse.class,
+                                           collection.id,
+                                           collection.title,
+                                           collection.description,
+                                           collection.thumbnailUrlPath.prepend(thumbBaseUrl)
+                                          ))
+                       .from(collection)
+                       .where(collection.isExposed.eq(true))
+                       .orderBy(collection.id.desc())
+                       .offset(offset)
+                       .limit(limit)
+                       .fetch();
+  }
+
+  private BooleanExpression isExposed(boolean exposureOnly) {
+    return exposureOnly ? collection.isExposed.eq(true) : null;
   }
 }
