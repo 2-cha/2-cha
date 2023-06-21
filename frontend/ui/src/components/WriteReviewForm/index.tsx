@@ -93,7 +93,12 @@ export default function WriteReviewForm() {
           <TagInput name="tags" />
         </div>
 
-        <button type="submit" form="write" className={s.submit}>
+        <button
+          type="submit"
+          form="write"
+          className={s.submit}
+          disabled={reviewMutation.isLoading}
+        >
           작성
         </button>
       </div>
