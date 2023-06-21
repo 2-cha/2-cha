@@ -83,13 +83,14 @@ function TagSearchForm({
           type="search"
           placeholder="태그"
           onChange={handleChange}
+          autoComplete="off"
         />
       </form>
 
       <List className={cn(s.searchResults, resultClassName)}>
         {tags && !isError
           ? Object.entries(tags).map(([category, tags]) => (
-              <li>
+              <li key={category}>
                 <ul>
                   <List.Subheader>{category}</List.Subheader>
                   {tags.map((tag) => (
@@ -102,6 +103,7 @@ function TagSearchForm({
                       <span className={s.tag__message}>
                         {tag.message.split('').map((char, idx) => (
                           <span
+                            key={tag.message + idx}
                             className={cn({
                               [s.match]: tag.matching_indexes?.includes(idx),
                             })}
