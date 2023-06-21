@@ -88,6 +88,12 @@ function TagFilterMenu() {
     onClose();
   };
 
+  const handleReset = () => {
+    setSelected([]);
+    setPlaceFilterBy(null);
+    onClose();
+  };
+
   return (
     <>
       <button className={s.item} onClick={onOpen}>
@@ -112,6 +118,9 @@ function TagFilterMenu() {
             disabled={selected.length === 0}
           >
             선택
+          </button>
+          <button className={s.reset} onClick={handleReset}>
+            초기화
           </button>
         </div>
       </Drawer>

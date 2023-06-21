@@ -47,6 +47,17 @@
   }
 }
 
+.reset {
+  width: 100%;
+  height: 32px;
+  margin-top: 8px;
+  background-color: inherit;
+  color: var(--text-secondary-color);
+  flex-shrink: 0;
+
+  @include mixins.text-sm;
+}
+
 .modal {
   height: auto;
 
