@@ -134,12 +134,14 @@ const beerTag = {
   emoji: '🍺',
   message: '맥주',
   category: 'DRINK',
+  matching_indexes: [],
 };
 
 const thumbTag = {
   emoji: '👍',
   message: '좋아요',
   category: 'REACTION',
+  matching_indexes: [],
 };
 
 const tags = [...Array(15)]

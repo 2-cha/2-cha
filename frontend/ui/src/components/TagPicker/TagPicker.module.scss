@@ -74,6 +74,11 @@
       &__message {
         padding: 8px 0;
         margin-left: 12px;
+
+        span.match {
+          // TODO: 명시적인 색으로 변경
+          color: var(--border-color);
+        }
       }
     }
   }

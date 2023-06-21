@@ -99,7 +99,17 @@ function TagSearchForm({
                       selected={selected.some((t) => t.id === tag.id)}
                     >
                       <span className={s.tag__imoji}>{tag.emoji}</span>
-                      <span className={s.tag__message}>{tag.message}</span>
+                      <span className={s.tag__message}>
+                        {tag.message.split('').map((char, idx) => (
+                          <span
+                            className={cn({
+                              [s.match]: tag.matching_indexes?.includes(idx),
+                            })}
+                          >
+                            {char}
+                          </span>
+                        ))}
+                      </span>
                     </List.Item>
                   ))}
                 </ul>
