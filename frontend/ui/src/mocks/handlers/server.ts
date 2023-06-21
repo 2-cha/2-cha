@@ -102,7 +102,7 @@ export const serverHandlers = [
     return res(ctx.status(200), ctx.json(success(tags)));
   }),
   rest.get(BASE_URL + '/tags/categorized', (_req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(success(tags)));
+    return res(ctx.status(200), ctx.json(success(categorizedTags)));
   }),
 ];
 
@@ -130,20 +130,28 @@ const member: Member = {
   prof_msg: 'hello world',
 };
 
-const tags = [
-  {
-    id: 1,
-    emoji: '🍺',
-    message: '맥주',
-    category: 'DRINK',
-  },
-  {
-    id: 2,
-    emoji: '👍',
-    message: '좋아요',
-    category: 'REACTION',
-  },
-];
+const beerTag = {
+  emoji: '🍺',
+  message: '맥주',
+  category: 'DRINK',
+  matching_indexes: [],
+};
+
+const thumbTag = {
+  emoji: '👍',
+  message: '좋아요',
+  category: 'REACTION',
+  matching_indexes: [],
+};
+
+const tags = [...Array(15)]
+  .map((_, idx) => ({ ...thumbTag, id: idx }))
+  .concat([...Array(15)].map((_, idx) => ({ ...beerTag, id: idx + 15 })));
+
+const categorizedTags = {
+  DRINK: [...Array(15)].map((_, idx) => ({ ...beerTag, id: idx })),
+  REACTION: [...Array(15)].map((_, idx) => ({ ...thumbTag, id: idx })),
+};
 
 const review: Review = {
   id: 1,
