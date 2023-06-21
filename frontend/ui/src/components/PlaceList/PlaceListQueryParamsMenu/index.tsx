@@ -100,7 +100,12 @@ function TagFilterMenu() {
         header={<p className={s.modal__header}>태그</p>}
       >
         <div className={s.scrollable}>
-          <TagPicker selected={selected} toggleSelect={toggleSelect} />
+          <TagPicker
+            selected={selected}
+            toggleSelect={toggleSelect}
+            className={s.tagPicker}
+            resultClassName={s.tagResult}
+          />
           <button
             className={s.submit}
             onClick={handleSubmit}

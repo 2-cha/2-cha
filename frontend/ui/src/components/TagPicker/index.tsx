@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useTagsQuery } from '@/hooks/query/useTags';
 import { useForm } from 'react-hook-form';
 import { debounce } from '@/lib/debounce';
+import HashIcon from '../Icons/HashIcon';
+import List from '../Layout/List';
 import type { Tag } from '@/types';
 import cn from 'classnames';
 import s from './TagPicker.module.scss';
@@ -9,11 +11,23 @@ import s from './TagPicker.module.scss';
 interface TagPickerProps {
   selected: Tag[];
   toggleSelect: (tag: Tag) => void;
+  className?: string;
+  resultClassName?: string;
 }
 
-export default function TagPicker({ selected, toggleSelect }: TagPickerProps) {
+export default function TagPicker({
+  selected,
+  toggleSelect,
+  className,
+  resultClassName,
+}: TagPickerProps) {
   return (
-    <div className={cn(s.container, s.nonScrollable)}>
+    <div className={cn(s.container, className)}>
+      <TagSearchForm
+        selected={selected}
+        toggleSelect={toggleSelect}
+        resultClassName={resultClassName}
+      />
       <div className={s.tagContainer}>
         {selected.map((tag) => (
           <button
@@ -26,7 +40,6 @@ export default function TagPicker({ selected, toggleSelect }: TagPickerProps) {
           </button>
         ))}
       </div>
-      <TagSearchForm selected={selected} toggleSelect={toggleSelect} />
     </div>
   );
 }
@@ -38,9 +51,14 @@ interface TagFormData {
 interface TagSearchFormProps {
   selected: Tag[];
   toggleSelect: (tag: Tag) => void;
+  resultClassName?: string;
 }
 
-function TagSearchForm({ selected, toggleSelect }: TagSearchFormProps) {
+function TagSearchForm({
+  selected,
+  toggleSelect,
+  resultClassName,
+}: TagSearchFormProps) {
   const { register, handleSubmit } = useForm<TagFormData>();
 
   const [query, setQuery] = useState<string>('');
@@ -56,37 +74,32 @@ function TagSearchForm({ selected, toggleSelect }: TagSearchFormProps) {
   });
 
   return (
-    <div className={cn(s.formContainer, s.nonScrollable)}>
+    <div className={s.formContainer}>
       <form onSubmit={onSubmit} className={s.form}>
+        <HashIcon />
         <input
           {...register('name')}
           className={s.form__input}
           type="search"
-          placeholder="초성으로 태그를 검색하세요"
+          placeholder="태그"
           onChange={handleChange}
         />
       </form>
 
-      <div className={s.scrollable}>
-        <ul className={s.searchResults}>
-          {tags && !isError
-            ? tags.map((tag) => (
-                <li key={tag.id} className={s.searchResults__item}>
-                  <button
-                    type="button"
-                    className={cn(s.tag, {
-                      [s.selected]: selected.find((t) => t.id === tag.id),
-                    })}
-                    onClick={() => toggleSelect(tag)}
-                  >
-                    <span className={s.tag__imoji}>{tag.emoji}</span>
-                    <span>{tag.message}</span>
-                  </button>
-                </li>
-              ))
-            : null}
-        </ul>
-      </div>
+      <List className={cn(s.searchResults, resultClassName)}>
+        {tags && !isError
+          ? tags.map((tag) => (
+              <List.Item
+                key={tag.id}
+                onClick={() => toggleSelect(tag)}
+                selected={selected.some((t) => t.id === tag.id)}
+              >
+                <span className={s.tag__imoji}>{tag.emoji}</span>
+                <span className={s.tag__message}>{tag.message}</span>
+              </List.Item>
+            ))
+          : null}
+      </List>
     </div>
   );
 }

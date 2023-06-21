@@ -34,9 +34,12 @@
 .submit {
   width: 100%;
   height: 42px;
+  position: sticky;
+  bottom: 0;
   background-color: var(--background-active-color);
   color: var(--text-color);
   border-radius: 14px;
+  flex-shrink: 0;
 
   &:disabled {
     background-color: var(--background-inactive-color);
@@ -70,4 +73,13 @@
       padding: var.$size-md;
     }
   }
+}
+
+.tagPicker {
+  min-height: 0;
+}
+
+.tagResult {
+  height: 100%;
+  overflow-y: auto;
 }
