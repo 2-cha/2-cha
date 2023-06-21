@@ -70,7 +70,7 @@ public class AuthService {
     DecodedJWT jwt = verifier.verify(token);  // not decoded..!
 
     String payload = jwt.getPayload();
-    String decodedPayload = new String(Base64.getDecoder().decode(payload));
+    String decodedPayload = new String(Base64.getUrlDecoder().decode(payload));
 
     try {
       return objectMapper.readValue(decodedPayload, payloadType);
