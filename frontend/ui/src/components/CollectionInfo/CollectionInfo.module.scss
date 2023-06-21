@@ -1,0 +1,55 @@
+@use 'mixins';
+@use 'var';
+
+.root {
+  width: 100%;
+  flex: 1;
+  @include mixins.flex(column, flex-start, flex-start);
+}
+
+.carousel {
+  flex: 1;
+  @include mixins.flex(row);
+  scroll-snap-type: x mandatory;
+}
+
+.metadata {
+  width: 100%;
+  height: fit-content;
+  @include mixins.padding(all, lg);
+
+  &__top {
+    @include mixins.flex(row, space-between, center);
+    @include mixins.margin(bottom, md);
+  }
+
+  &__user {
+    @include mixins.flex(row, flex-start, center);
+
+    & > img {
+      width: 40px;
+      height: 40px;
+      border-radius: 30px;
+      @include mixins.margin(right, md);
+    }
+
+    & > h3 {
+      @include mixins.text_md;
+    }
+  }
+
+  &__buttons {
+    & > svg {
+      width: 24px;
+      height: 24px;
+
+      &:not(:last-child) {
+        @include mixins.margin(right, md);
+      }
+    }
+  }
+
+  &__title {
+    @include mixins.text_lg;
+  }
+}
