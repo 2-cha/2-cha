@@ -6,6 +6,8 @@ export interface Tag {
   category?: string;
 }
 
+export type CategorizedTag = Record<string, Omit<Tag, 'category'>[]>;
+
 export interface TagWithCount extends Tag {
   count: number;
 }

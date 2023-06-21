@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTagsQuery } from '@/hooks/query/useTags';
+import { useCategorizedTagsQuery } from '@/hooks/query/useCategorizedTags';
 import { useForm } from 'react-hook-form';
 import { debounce } from '@/lib/debounce';
 import HashIcon from '../Icons/HashIcon';
@@ -62,7 +62,7 @@ function TagSearchForm({
   const { register, handleSubmit } = useForm<TagFormData>();
 
   const [query, setQuery] = useState<string>('');
-  const { data: tags, isError } = useTagsQuery(query);
+  const { data: tags, isError } = useCategorizedTagsQuery(query);
 
   const updateQuery = debounce(setQuery, 300);
 
@@ -88,15 +88,22 @@ function TagSearchForm({
 
       <List className={cn(s.searchResults, resultClassName)}>
         {tags && !isError
-          ? tags.map((tag) => (
-              <List.Item
-                key={tag.id}
-                onClick={() => toggleSelect(tag)}
-                selected={selected.some((t) => t.id === tag.id)}
-              >
-                <span className={s.tag__imoji}>{tag.emoji}</span>
-                <span className={s.tag__message}>{tag.message}</span>
-              </List.Item>
+          ? Object.entries(tags).map(([category, tags]) => (
+              <li>
+                <ul>
+                  <List.Subheader>{category}</List.Subheader>
+                  {tags.map((tag) => (
+                    <List.Item
+                      key={tag.id}
+                      onClick={() => toggleSelect(tag)}
+                      selected={selected.some((t) => t.id === tag.id)}
+                    >
+                      <span className={s.tag__imoji}>{tag.emoji}</span>
+                      <span className={s.tag__message}>{tag.message}</span>
+                    </List.Item>
+                  ))}
+                </ul>
+              </li>
             ))
           : null}
       </List>
