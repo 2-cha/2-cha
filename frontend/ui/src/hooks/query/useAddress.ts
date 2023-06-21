@@ -12,7 +12,7 @@ async function fetchAddress(address: string) {
 
 export function useAddressQuery(address: string) {
   const result = useQuery({
-    queryKey: ['address', address],
+    queryKey: ['kakao', 'address', address],
     queryFn: () => fetchAddress(address),
     staleTime: 1000 * 60 * 60 * 24,
     enabled: !!address,
