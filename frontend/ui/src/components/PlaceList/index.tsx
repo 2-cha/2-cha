@@ -6,11 +6,13 @@ import { PlaceSearchResult } from '@/types';
 import { ShortTags } from '../Tags';
 import { BookmarkToggleButton } from '../Buttons';
 
-import SadIcon from '../Icons/SadIcon';
-import CocktailIcon from '../Icons/CocktailIcon';
-import WineIcon from '../Icons/WineIcon';
-import WhiskeyIcon from '../Icons/WhiskeyIcon';
-import PinIcon from '../Icons/PinIcon';
+import {
+  SadIcon,
+  CocktailIcon,
+  WhiskeyIcon,
+  WineIcon,
+  PinIcon,
+} from '@/components/Icons';
 
 import s from './PlaceList.module.scss';
 

@@ -1,5 +1,5 @@
 import Modal, { type Props as ModalProps } from 'react-modal';
-import CloseIcon from '@/components/Icons/CloseIcon';
+import { CloseIcon } from '@/components/Icons/';
 import cn from 'classnames';
 import s from './Drawer.module.scss';
 

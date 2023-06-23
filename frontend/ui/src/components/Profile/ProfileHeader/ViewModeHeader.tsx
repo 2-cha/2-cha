@@ -3,8 +3,7 @@ import Image from 'next/image';
 
 import { Member } from '@/types';
 
-import EditIcon from '@/components/Icons/EditIcon';
-import PlusSquareIcon from '@/components/Icons/PlusSquareIcon';
+import { EditIcon, PlusSquareIcon } from '@/components/Icons';
 
 import s from './ViewModeHeader.module.scss';
 

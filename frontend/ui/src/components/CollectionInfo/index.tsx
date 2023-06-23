@@ -3,7 +3,7 @@ import ReviewCard from './ReviewCard';
 
 import s from './CollectionInfo.module.scss';
 import Image from 'next/image';
-import PlusSquareIcon from '../Icons/PlusSquareIcon';
+import { PlusSquareIcon } from '@/components/Icons/';
 import { BookmarkToggleButton, LikeToggleButton } from '../Buttons';
 
 interface Props {
@@ -38,6 +38,7 @@ export default function CollectionInfo({ collectionInfo }: Props) {
               itemId={collectionInfo.id}
               isLiked={collectionInfo.like_status.is_liked}
               nOfLikes={collectionInfo.like_status.count}
+              className={s.metadata__buttons__bookmark}
             />
             <BookmarkToggleButton
               itemType="collection"

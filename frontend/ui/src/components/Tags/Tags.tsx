@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import cn from 'classnames';
 
-import SimpleArrowIcon from '@/components/Icons/SimpleArrowIcon';
+import { SimpleArrowIcon } from '@/components/Icons';
 import { Tag } from '@/types';
 
 import s from './Tags.module.scss';

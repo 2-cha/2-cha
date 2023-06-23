@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useCategorizedTagsQuery } from '@/hooks/query/useCategorizedTags';
-import { useForm } from 'react-hook-form';
-import { debounce } from '@/lib/debounce';
-import HashIcon from '../Icons/HashIcon';
-import List from '../Layout/List';
-import type { Tag } from '@/types';
 import cn from 'classnames';
+import { useForm } from 'react-hook-form';
+
+import { useCategorizedTagsQuery } from '@/hooks/query/useCategorizedTags';
+import { debounce } from '@/lib/debounce';
+import type { Tag } from '@/types';
+import { HashIcon } from '@/components/Icons';
+import List from '../Layout/List';
+
 import s from './TagPicker.module.scss';
 
 interface TagPickerProps {

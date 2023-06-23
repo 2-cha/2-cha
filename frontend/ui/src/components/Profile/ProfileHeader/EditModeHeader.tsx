@@ -17,8 +17,7 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { Member } from '@/types';
 
-import CheckIcon from '@/components/Icons/CheckIcon';
-import XIcon from '@/components/Icons/XIcon';
+import { CheckIcon, XIcon } from '@/components/Icons';
 
 import s from './EditModeHeader.module.scss';
 
