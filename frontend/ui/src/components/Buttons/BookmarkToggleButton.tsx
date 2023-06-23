@@ -3,7 +3,7 @@ import { useState } from 'react';
 import cn from 'classnames';
 
 import { useBookmarkMutation } from '@/hooks/mutation/useBookmark';
-import BookmarkIcon from '@/components/Icons/BookmarkIcon';
+import { BookmarkIcon } from '@/components/Icons';
 
 import s from './Button.module.scss';
 

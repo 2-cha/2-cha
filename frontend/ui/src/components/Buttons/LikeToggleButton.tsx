@@ -3,7 +3,7 @@ import cn from 'classnames';
 
 import { useLikeMutation } from '@/hooks/mutation/useLike';
 
-import HeartIcon from '../Icons/HeartIcon';
+import { HeartIcon } from '@/components/Icons';
 
 import s from './Button.module.scss';
 
@@ -46,7 +46,7 @@ export default function LikeToggleButton({
       {...props}
     >
       <HeartIcon
-        className={cn(s.icon)}
+        className={cn(s.icon, s.fill)}
         width={size}
         height={size}
         isFilled={isLiked}

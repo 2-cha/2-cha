@@ -39,6 +39,8 @@
   }
 
   &__buttons {
+    @include mixins.flex(row, flex-end, center);
+
     & > svg {
       width: 24px;
       height: 24px;
