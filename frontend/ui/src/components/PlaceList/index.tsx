@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 import { PlaceSearchResult } from '@/types';
 import { ShortTags } from '../Tags';
-import BookmarkToggleButton from './BookmarkToggleButton';
+import { BookmarkToggleButton } from '../Buttons';
 
 import SadIcon from '../Icons/SadIcon';
 import CocktailIcon from '../Icons/CocktailIcon';
