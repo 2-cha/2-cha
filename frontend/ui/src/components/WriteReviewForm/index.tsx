@@ -11,9 +11,9 @@ import ImagePicker from '@/components/WriteReviewForm/ImagePicker';
 import TagPicker from '@/components/TagPicker';
 import PlaceIcon from '@/components/Icons/PlaceIcon';
 import ImagesIcon from '@/components/Icons/ImagesIcon';
-import HashIcon from '../Icons/HashIcon';
 import type { Tag } from '@/types';
 import { useReviewMutation } from '@/hooks/mutation/useReview';
+import cn from 'classnames';
 import s from './WriteReviewForm.module.scss';
 
 export interface ReviewFormData {
@@ -86,18 +86,19 @@ export default function WriteReviewForm() {
           </div>
         </form>
 
-        <div className={s.full}>
-          <div className={s.label}>
-            <HashIcon />
-            <span>태그</span>
-          </div>
+        <div className={cn(s.full, s.label)}>
           {errors.tags && (
             <div className={s.errorMessage}>태그를 선택해주세요</div>
           )}
           <TagInput name="tags" />
         </div>
 
-        <button type="submit" form="write" className={s.submit}>
+        <button
+          type="submit"
+          form="write"
+          className={s.submit}
+          disabled={reviewMutation.isLoading}
+        >
           작성
         </button>
       </div>
@@ -152,5 +153,11 @@ function TagInput({ name }: { name: keyof ReviewFormData }) {
     setValue(name, selected);
   }, [selected, name, setValue]);
 
-  return <TagPicker selected={selected} toggleSelect={toggleSelect} />;
+  return (
+    <TagPicker
+      selected={selected}
+      toggleSelect={toggleSelect}
+      resultClassName={s.tagSearchResult}
+    />
+  );
 }

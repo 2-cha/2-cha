@@ -1,0 +1,50 @@
+@use 'mixins';
+
+.root {
+  overflow-y: auto;
+}
+
+.list {
+  width: 100%;
+  padding: 8px 0;
+}
+
+.item {
+  width: 100%;
+  background-color: var(--background-color);
+
+  @include mixins.flex;
+
+  &.selected {
+    background-color: var(--background-inactive-color);
+    font-weight: 600;
+  }
+
+  &__button {
+    min-width: 0;
+    background: inherit;
+    color: inherit;
+    flex: 1;
+    padding: 4px 16px;
+
+    @include mixins.flex(row, flex-start, center);
+
+    &:hover {
+      background-color: var(--background-inactive-color);
+    }
+  }
+}
+
+.subheader {
+  min-width: 0;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  flex: 1;
+  padding: 4px 16px;
+  background-color: var(--background-color);
+  color: var(--text-secondary-color);
+
+  @include mixins.flex(row, flex-start, center);
+}

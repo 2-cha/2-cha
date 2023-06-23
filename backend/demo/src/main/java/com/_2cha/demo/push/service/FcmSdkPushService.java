@@ -74,7 +74,7 @@ public class FcmSdkPushService implements PushService {
     FirebaseOptions options = FirebaseOptions.builder()
                                              .setCredentials(this.cred)
                                              .build();
-    FirebaseApp.initializeApp(options);
+    if (FirebaseApp.getApps().isEmpty()) {FirebaseApp.initializeApp(options);}
     this.fcm = FirebaseMessaging.getInstance();
   }
 
