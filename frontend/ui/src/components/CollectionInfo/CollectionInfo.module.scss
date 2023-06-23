@@ -47,6 +47,12 @@
         @include mixins.margin(right, md);
       }
     }
+
+    &__bookmark {
+      span {
+        color: var(--text-color) !important;
+      }
+    }
   }
 
   &__title {

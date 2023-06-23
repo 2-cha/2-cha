@@ -6,6 +6,7 @@ import Image from 'next/image';
 import PlusSquareIcon from '../Icons/PlusSquareIcon';
 import BookmarkIcon from '../Icons/BookmarkIcon';
 import HeartIcon from '../Icons/HeartIcon';
+import BookmarkToggleButton from '../PlaceList/BookmarkToggleButton';
 
 interface Props {
   collectionInfo: Collection;
@@ -13,6 +14,7 @@ interface Props {
 
 export default function CollectionInfo({ collectionInfo }: Props) {
   const { member, reviews } = collectionInfo;
+  console.log(collectionInfo);
   return (
     <div className={s.root}>
       <div className={s.carousel}>
@@ -34,7 +36,12 @@ export default function CollectionInfo({ collectionInfo }: Props) {
           <div className={s.metadata__buttons}>
             <PlusSquareIcon withoutBorder />
             <HeartIcon />
-            <BookmarkIcon isSingle />
+            <BookmarkToggleButton
+              itemType="collection"
+              itemId={collectionInfo.id}
+              className={s.metadata__buttons__bookmark}
+              nOfBookmarks={0}
+            />
           </div>
         </div>
         <h1 className={s.metadata__title}>{collectionInfo.title}</h1>

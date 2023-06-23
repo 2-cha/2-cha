@@ -10,7 +10,7 @@ async function fetchCollection(collectionId: string) {
   return data;
 }
 
-export function useCollectionQuery(collectionId?: string) {
+export function useCollectionQuery(collectionId?: string | string[]) {
   const result = useQuery({
     queryKey: ['collections', collectionId],
     queryFn: () => fetchCollection(collectionId as string),
