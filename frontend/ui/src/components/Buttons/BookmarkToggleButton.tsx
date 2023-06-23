@@ -5,7 +5,7 @@ import cn from 'classnames';
 import { useBookmarkMutation } from '@/hooks/mutation/useBookmark';
 import BookmarkIcon from '@/components/Icons/BookmarkIcon';
 
-import s from './BookmarkToggleButton.module.scss';
+import s from './Button.module.scss';
 
 interface BookmarkButtonProps {
   isBookmarked?: boolean;
