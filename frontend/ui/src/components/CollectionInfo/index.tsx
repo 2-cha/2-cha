@@ -4,9 +4,7 @@ import ReviewCard from './ReviewCard';
 import s from './CollectionInfo.module.scss';
 import Image from 'next/image';
 import PlusSquareIcon from '../Icons/PlusSquareIcon';
-import BookmarkIcon from '../Icons/BookmarkIcon';
-import HeartIcon from '../Icons/HeartIcon';
-import BookmarkToggleButton from '../PlaceList/BookmarkToggleButton';
+import { BookmarkToggleButton, LikeToggleButton } from '../Buttons';
 
 interface Props {
   collectionInfo: Collection;
@@ -35,7 +33,12 @@ export default function CollectionInfo({ collectionInfo }: Props) {
           </div>
           <div className={s.metadata__buttons}>
             <PlusSquareIcon withoutBorder />
-            <HeartIcon />
+            <LikeToggleButton
+              itemType="collections"
+              itemId={collectionInfo.id}
+              isLiked={collectionInfo.like_status.is_liked}
+              nOfLikes={collectionInfo.like_status.count}
+            />
             <BookmarkToggleButton
               itemType="collection"
               itemId={collectionInfo.id}
