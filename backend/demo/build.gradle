@@ -64,6 +64,12 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-admin:9.1.1'
     implementation 'net.logstash.logback:logstash-logback-encoder:7.3'
+
+    implementation 'org.apache.lucene:lucene-core:9.6.0'
+    implementation 'org.apache.lucene:lucene-queryparser:9.6.0'
+    implementation 'org.apache.lucene:lucene-analyzers-nori:8.11.2'
+
+
 }
 
 ext {
