@@ -96,7 +96,7 @@ export function PlaceItem({ place }: PlaceItemProps) {
         itemType="places"
         itemId={place.id}
         isBookmarked={place.bookmark_status.is_bookmarked}
-        nOfBookmarks={place.bookmark_status.count}
+        bookmarkCount={place.bookmark_status.count}
       />
       {place.image ? (
         <Image

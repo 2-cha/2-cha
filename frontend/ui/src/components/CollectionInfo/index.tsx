@@ -38,14 +38,14 @@ export default function CollectionInfo({ collectionInfo }: Props) {
               itemType="collections"
               itemId={collectionInfo.id}
               isLiked={collectionInfo.like_status.is_liked}
-              nOfLikes={collectionInfo.like_status.count}
+              likeCount={collectionInfo.like_status.count}
               className={s.metadata__buttons__bookmark}
             />
             <BookmarkToggleButton
               itemType="collection"
               itemId={collectionInfo.id}
               className={s.metadata__buttons__bookmark}
-              nOfBookmarks={0}
+              bookmarkCount={0}
             />
           </div>
         </div>
