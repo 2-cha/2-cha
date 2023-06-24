@@ -1,9 +1,10 @@
+import { useRouter } from 'next/router';
+
 import NavStackHeader from '@/components/Layout/NavStackHeader';
 import MetaData from '@/components/MetaData';
 import PlaceInfo from '@/components/PlaceInfo';
-import { useIntersection } from '@/hooks/useIntersection';
-import { usePlaceQuery } from '@/hooks/query/usePlace';
-import { useRouter } from 'next/router';
+import { useIntersection } from '@/hooks';
+import { usePlaceQuery } from '@/hooks/query';
 
 export default function PlaceInfoPage() {
   const { query } = useRouter();

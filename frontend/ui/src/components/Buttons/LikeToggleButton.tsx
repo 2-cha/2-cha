@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import cn from 'classnames';
 
-import { useLikeMutation } from '@/hooks/mutation/useLike';
+import { useLikeMutation } from '@/hooks/mutation';
 
 import { HeartIcon } from '@/components/Icons';
 

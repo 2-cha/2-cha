@@ -1,12 +1,13 @@
+import { useCallback } from 'react';
+import { useRecoilValue } from 'recoil';
+
 import PlaceList from '@/components/PlaceList';
 import MetaData from '@/components/MetaData';
 import Header from '@/components/Layout/Header';
 import PlaceListQueryParamsMenu from '@/components/PlaceList/PlaceListQueryParamsMenu';
 import Skeleton from '@/components/Skeleton';
-import { usePlacesQuery } from '@/hooks/query/usePlaces';
-import { useIntersection } from '@/hooks/useIntersection';
-import { useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useIntersection } from '@/hooks';
+import { usePlacesQuery } from '@/hooks/query';
 import { placesQueryParamsState } from '@/atoms/placesQueryParams';
 
 export default function Places() {

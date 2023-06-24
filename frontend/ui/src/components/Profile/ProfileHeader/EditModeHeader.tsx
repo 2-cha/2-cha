@@ -9,12 +9,12 @@ import {
 import { FormProvider, useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { useProfileMutation } from '@/hooks/mutation/useProfile';
 import {
+  useProfileMutation,
   useProfileImageMutation,
   useProfileImageUrlMutation,
-} from '@/hooks/mutation/useProfileImage';
-import { useAuth } from '@/hooks/useAuth';
+} from '@/hooks/mutation';
+import { useAuth } from '@/hooks';
 import { Member } from '@/types';
 
 import { CheckIcon, XIcon } from '@/components/Icons';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import cn from 'classnames';
 
-import { useBookmarkMutation } from '@/hooks/mutation/useBookmark';
+import { useBookmarkMutation } from '@/hooks/mutation';
 import { BookmarkIcon } from '@/components/Icons';
 
 import s from './Button.module.scss';

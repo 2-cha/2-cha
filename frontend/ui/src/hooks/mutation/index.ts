@@ -6,5 +6,8 @@ export {
   useProfileImageUrlMutation,
 } from './useProfileImage';
 export { useReviewMutation } from './useReview';
-export { useReviewImageMutation } from './useReviewImage';
+export {
+  useReviewImageMutation,
+  type PostImageResponse,
+} from './useReviewImage';
 export { useSignInMutation } from './useSignin';

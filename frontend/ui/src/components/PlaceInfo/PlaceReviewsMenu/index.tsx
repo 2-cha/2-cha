@@ -2,8 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, Fragment } from 'react';
 
-import { useIntersection } from '@/hooks/useIntersection';
-import { usePlaceReviewsQuery } from '@/hooks/query/usePlaceReviews';
+import { useIntersection } from '@/hooks';
+import { usePlaceReviewsQuery } from '@/hooks/query';
 import type { Review } from '@/types';
 import { Tags } from '@/components/Tags';
 

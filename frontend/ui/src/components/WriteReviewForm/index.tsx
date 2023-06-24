@@ -4,10 +4,9 @@ import cn from 'classnames';
 import { useRecoilValue } from 'recoil';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
-import { useModal } from '@/hooks/useModal';
-import { useTagPicker } from '@/hooks/useTagPicker';
-import { usePlaceQuery } from '@/hooks/query/usePlace';
-import { useReviewMutation } from '@/hooks/mutation/useReview';
+import { useModal, useTagPicker } from '@/hooks';
+import { usePlaceQuery } from '@/hooks/query';
+import { useReviewMutation } from '@/hooks/mutation';
 import { suggestionsState } from '@/atoms/suggestions';
 import ImagePicker from '@/components/WriteReviewForm/ImagePicker';
 import TagPicker from '@/components/TagPicker';

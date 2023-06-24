@@ -1,4 +1,4 @@
-import { useSignInMutation } from '@/hooks/mutation/useSignin';
+import { useSignInMutation } from '@/hooks/mutation';
 import { useRouter } from 'next/router';
 
 export default function Callback() {

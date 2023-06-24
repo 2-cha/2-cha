@@ -2,7 +2,7 @@ import { useState } from 'react';
 import cn from 'classnames';
 import { useForm } from 'react-hook-form';
 
-import { useCategorizedTagsQuery } from '@/hooks/query/useCategorizedTags';
+import { useCategorizedTagsQuery } from '@/hooks/query';
 import { debounce } from '@/lib/debounce';
 import type { Tag } from '@/types';
 import { HashIcon } from '@/components/Icons';

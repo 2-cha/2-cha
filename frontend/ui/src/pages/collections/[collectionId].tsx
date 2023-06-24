@@ -1,6 +1,6 @@
 import CollectionInfo from '@/components/CollectionInfo';
 import MetaData from '@/components/MetaData';
-import { useCollectionQuery } from '@/hooks/query/useCollection';
+import { useCollectionQuery } from '@/hooks/query';
 import { Collection } from '@/types/collection';
 import { useRouter } from 'next/router';
 
