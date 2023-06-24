@@ -1,4 +1,5 @@
 import cn from 'classnames';
+
 import s from './Tab.module.scss';
 
 interface Props {

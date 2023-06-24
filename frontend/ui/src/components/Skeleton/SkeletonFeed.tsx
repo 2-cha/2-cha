@@ -1,5 +1,6 @@
-import s from './Skeleton.module.scss';
 import cn from 'classnames';
+
+import s from './Skeleton.module.scss';
 
 export default function SkeletonPost() {
   return (

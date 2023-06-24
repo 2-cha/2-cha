@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useModal } from '@/hooks/useModal';
-import { useTagPicker } from '@/hooks/useTagPicker';
-import { usePlaceQuery } from '@/hooks/query/usePlace';
+import cn from 'classnames';
 import { useRecoilValue } from 'recoil';
-import { suggestionsState } from '@/atoms/suggestions';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-import SearchPlaceModal from './SearchPlaceModal';
+
+import { useModal, useTagPicker } from '@/hooks';
+import { usePlaceQuery } from '@/hooks/query';
+import { useReviewMutation } from '@/hooks/mutation';
+import { suggestionsState } from '@/atoms';
 import ImagePicker from '@/components/WriteReviewForm/ImagePicker';
 import TagPicker from '@/components/TagPicker';
-import PlaceIcon from '@/components/Icons/PlaceIcon';
-import ImagesIcon from '@/components/Icons/ImagesIcon';
+import { PlaceIcon, ImagesIcon } from '@/components/Icons';
 import type { Tag } from '@/types';
-import { useReviewMutation } from '@/hooks/mutation/useReview';
-import cn from 'classnames';
+import SearchPlaceModal from './SearchPlaceModal';
+
 import s from './WriteReviewForm.module.scss';
 
 export interface ReviewFormData {

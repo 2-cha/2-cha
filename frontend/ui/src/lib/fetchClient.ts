@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { getToken, refreshToken } from './auth';
 import { getRecoil } from 'recoil-nexus';
-import { jwtPayloadState } from '@/atoms/jwtPayload';
+
+import { jwtPayloadState } from '@/atoms';
 import type { QueryResponse } from '@/types';
+import { getToken, refreshToken } from './auth';
 
 export const fetchClient = axios.create({
   baseURL:

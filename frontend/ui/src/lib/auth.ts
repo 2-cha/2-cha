@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { resetRecoil, setRecoil, getRecoil } from 'recoil-nexus';
-import { tokenState, type Token } from '@/atoms/token';
+import { tokenState, type Token } from '@/atoms';
 import { fetchClient } from './fetchClient';
 
 function generateRandomString() {

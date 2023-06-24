@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useSearchPlaceQuery } from '@/hooks/query/useSearchPlaceQuery';
-import { useIntersection } from '@/hooks/useIntersection';
+import cn from 'classnames';
+
+import { useIntersection } from '@/hooks';
+import { useSearchPlaceQuery } from '@/hooks/query';
 import { getCategoryLabel } from '@/lib/placeUtil';
 import Drawer from '@/components/Layout/Drawer';
 import SearchInput from '@/components/SearchInput';
 import type { Place, SuggestionPlace } from '@/types';
-import cn from 'classnames';
+
 import s from './SearchPlaceModal.module.scss';
 
 interface SearchPlaceFormData {

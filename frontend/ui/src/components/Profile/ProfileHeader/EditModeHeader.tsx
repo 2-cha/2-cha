@@ -9,16 +9,15 @@ import {
 import { FormProvider, useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { useProfileMutation } from '@/hooks/mutation/useProfile';
 import {
+  useProfileMutation,
   useProfileImageMutation,
   useProfileImageUrlMutation,
-} from '@/hooks/mutation/useProfileImage';
-import { useAuth } from '@/hooks/useAuth';
+} from '@/hooks/mutation';
+import { useAuth } from '@/hooks';
 import { Member } from '@/types';
 
-import CheckIcon from '@/components/Icons/CheckIcon';
-import XIcon from '@/components/Icons/XIcon';
+import { CheckIcon, XIcon } from '@/components/Icons';
 
 import s from './EditModeHeader.module.scss';
 

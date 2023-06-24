@@ -1,11 +1,10 @@
-import * as React from 'react';
 import { useState } from 'react';
 import cn from 'classnames';
 
-import { useBookmakrMutation } from '@/hooks/mutation/useBookmark';
-import BookmarkIcon from '@/components/Icons/BookmarkIcon';
+import { useBookmarkMutation } from '@/hooks/mutation';
+import { BookmarkIcon } from '@/components/Icons';
 
-import s from './BookmarkToggleButton.module.scss';
+import s from './Button.module.scss';
 
 interface BookmarkButtonProps {
   isBookmarked?: boolean;
@@ -25,7 +24,7 @@ export default function BookmarkToggleButton({
   ...props
 }: React.ComponentProps<'button'> & BookmarkButtonProps) {
   const [isBookmarked, setBookmarked] = useState(initialIsBookmarked);
-  const mutation = useBookmakrMutation();
+  const mutation = useBookmarkMutation();
 
   const handleClick = () => {
     const prevIsBookmarked = isBookmarked;

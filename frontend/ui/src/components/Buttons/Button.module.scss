@@ -7,7 +7,6 @@
 
   & > span {
     // display: inline-block;
-    @include mixins.margin(right, 10px);
     @include mixins.text-sm;
     color: var(--background-color);
     font-weight: 700;

@@ -1,6 +1,8 @@
-import Modal, { type Props as ModalProps } from 'react-modal';
-import CloseIcon from '@/components/Icons/CloseIcon';
 import cn from 'classnames';
+import Modal, { type Props as ModalProps } from 'react-modal';
+
+import { CloseIcon } from '@/components/Icons';
+
 import s from './Drawer.module.scss';
 
 export interface DrawerProps extends ModalProps {

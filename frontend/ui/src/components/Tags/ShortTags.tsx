@@ -1,8 +1,9 @@
+import { useCallback, useState } from 'react';
 import cn from 'classnames';
+
 import { Tag } from '@/types';
 
 import s from './ShortTags.module.scss';
-import { useCallback, useState } from 'react';
 
 interface Props {
   tagList: Tag[];
