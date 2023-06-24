@@ -8,7 +8,7 @@ import PlaceListQueryParamsMenu from '@/components/PlaceList/PlaceListQueryParam
 import Skeleton from '@/components/Skeleton';
 import { useIntersection } from '@/hooks';
 import { usePlacesQuery } from '@/hooks/query';
-import { placesQueryParamsState } from '@/atoms/placesQueryParams';
+import { placesQueryParamsState } from '@/atoms';
 
 export default function Places() {
   const placesQueryParams = useRecoilValue(placesQueryParamsState);

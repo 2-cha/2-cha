@@ -1,10 +1,11 @@
+import Image from 'next/image';
+
+import { PlusSquareIcon } from '@/components/Icons';
 import { Collection } from '@/types/collection';
 import ReviewCard from './ReviewCard';
+import { BookmarkToggleButton, LikeToggleButton } from '../Buttons';
 
 import s from './CollectionInfo.module.scss';
-import Image from 'next/image';
-import { PlusSquareIcon } from '@/components/Icons/';
-import { BookmarkToggleButton, LikeToggleButton } from '../Buttons';
 
 interface Props {
   collectionInfo: Collection;

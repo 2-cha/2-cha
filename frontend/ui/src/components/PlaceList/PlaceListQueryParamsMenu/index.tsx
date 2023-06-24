@@ -8,11 +8,7 @@ import { useModal } from '@/hooks/useModal';
 import { useTagPicker } from '@/hooks/useTagPicker';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { getCategoryLabel } from '@/lib/placeUtil';
-import {
-  type SortBy,
-  placeFilterByState,
-  placeSortByState,
-} from '@/atoms/placesQueryParams';
+import { type SortBy, placeFilterByState, placeSortByState } from '@/atoms';
 
 import s from './PlaceListQueryParamsMenu.module.scss';
 

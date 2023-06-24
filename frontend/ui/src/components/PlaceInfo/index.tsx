@@ -1,16 +1,15 @@
 import { forwardRef, useState } from 'react';
 import Image from 'next/image';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import cn from 'classnames';
 
+import type { Place } from '@/types';
+import { getCategoryLabel } from '@/lib/placeUtil';
 import PlaceReviews from './PlaceReviewsMenu';
 import PlaceDetail from './PlaceDetailMenu';
 import { Tags } from '../Tags';
-import type { Place } from '@/types';
-import { getCategoryLabel } from '@/lib/placeUtil';
+import Tab from '../Tab';
 
 import s from './PlaceInfo.module.scss';
-import Tab from '../Tab';
 
 const menuItems = ['리뷰', '지도', '정보'];
 const MENU_REVIEW = 0;

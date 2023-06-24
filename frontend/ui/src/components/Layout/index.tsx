@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router';
+
 import NavBar from './NavBar';
+
 import s from './Layout.module.scss';
 
 interface LayoutProps {

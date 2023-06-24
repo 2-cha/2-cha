@@ -4,7 +4,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { useAddressQuery } from '@/hooks/query';
 import Drawer from '@/components/Layout/Drawer';
-import { locationState } from '@/atoms/location';
+import { locationState } from '@/atoms';
 import { type Address } from '@/pages/api/address';
 import SearchInput from '@/components/SearchInput';
 

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   LocationIcon,
   GlobeIcon,
@@ -6,6 +5,7 @@ import {
   CopyIcon,
 } from '@/components/Icons';
 import type { Place } from '@/types';
+
 import s from './PlaceDetailMenu.module.scss';
 
 export default function PlaceDetail({ placeInfo }: { placeInfo: Place }) {

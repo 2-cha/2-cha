@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useCurrentLocation, useModal } from '@/hooks';
 import { useRegion } from '@/hooks/query';
-import { LocationIcon } from '@/components/Icons/';
+import { LocationIcon } from '@/components/Icons';
 import SearchAddressModal from './SearchAddressModal';
 
 import s from './Header.module.scss';

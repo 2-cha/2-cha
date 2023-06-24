@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation } from '@tanstack/react-query';
 import { useSetRecoilState } from 'recoil';
-import { tokenState, type Token } from '@/atoms/token';
+import { useMutation } from '@tanstack/react-query';
+
+import { tokenState, type Token } from '@/atoms';
 import { fetchClient } from '@/lib/fetchClient';
 
 async function signin(code: string | string[]) {

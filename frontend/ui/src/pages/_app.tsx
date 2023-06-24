@@ -1,9 +1,11 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RecoilRoot } from 'recoil';
 import RecoilNexus from 'recoil-nexus';
-import Layout from '@/components/Layout';
 import type { AppProps } from 'next/app';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import Layout from '@/components/Layout';
+
 import '@/styles/globals.scss';
 
 if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {

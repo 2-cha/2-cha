@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction, useCallback } from 'react';
 import Image from 'next/image';
 
 import { Member } from '@/types';
-
 import { EditIcon, PlusSquareIcon } from '@/components/Icons';
 
 import s from './ViewModeHeader.module.scss';

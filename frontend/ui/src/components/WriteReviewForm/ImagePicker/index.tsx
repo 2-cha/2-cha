@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
 
-import { suggestionsState } from '@/atoms/suggestions';
+import { suggestionsState } from '@/atoms';
+import { isNonNullable } from '@/lib/type';
 import { useImagePicker, type Image } from '@/hooks/useImagePicker';
 import { type ReviewFormData } from '@/components/WriteReviewForm';
-import { isNonNullable } from '@/lib/type';
 import { PlusSquareIcon } from '@/components/Icons';
 
 import s from './ImagePicker.module.scss';

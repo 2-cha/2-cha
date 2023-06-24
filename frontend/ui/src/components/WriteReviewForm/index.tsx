@@ -7,7 +7,7 @@ import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { useModal, useTagPicker } from '@/hooks';
 import { usePlaceQuery } from '@/hooks/query';
 import { useReviewMutation } from '@/hooks/mutation';
-import { suggestionsState } from '@/atoms/suggestions';
+import { suggestionsState } from '@/atoms';
 import ImagePicker from '@/components/WriteReviewForm/ImagePicker';
 import TagPicker from '@/components/TagPicker';
 import { PlaceIcon, ImagesIcon } from '@/components/Icons';

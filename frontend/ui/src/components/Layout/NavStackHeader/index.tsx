@@ -1,6 +1,8 @@
-import { ArrowIcon } from '@/components/Icons';
-import { useRouter } from 'next/router';
 import cn from 'classnames';
+import { useRouter } from 'next/router';
+
+import { ArrowIcon } from '@/components/Icons';
+
 import s from './NavStackHeader.module.scss';
 
 interface NavStackHeaderProps {
