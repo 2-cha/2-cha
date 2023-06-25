@@ -5,8 +5,8 @@ import { useIntersection } from '@/hooks/useIntersection';
 import { getCategoryLabel } from '@/lib/placeUtil';
 import Drawer from '@/components/Layout/Drawer';
 import SearchInput from '@/components/SearchInput';
+import List from '@/components/Layout/List';
 import type { Place, SuggestionPlace } from '@/types';
-import cn from 'classnames';
 import s from './SearchPlaceModal.module.scss';
 
 interface SearchPlaceFormData {
@@ -115,35 +115,41 @@ function SearchPlaceResult({
   const result = useMemo(() => pages?.flat(), [pages]);
 
   return (
-    <ul className={s.result}>
+    <List className={s.result}>
       {!suggestions?.length && !result?.length ? (
-        <li className={s.noResult}>검색 결과가 없습니다</li>
+        <li className={s.noResult}>
+          <p>검색 결과가 없습니다</p>
+          <button>장소 추가하기</button>
+        </li>
       ) : null}
       {suggestions?.length ? (
         <>
-          <li className={cn(s.result__item, s.description)}>장소 제안</li>
+          <List.Subheader>
+            <p className={s.description}>장소 제안</p>
+          </List.Subheader>
           {suggestions.map((place) => (
-            <li
+            <List.Item
               key={place.id}
-              className={s.result__item}
               onClick={() => onSelect?.(place.id.toString())}
             >
               <PlaceItem place={place} />
-            </li>
+            </List.Item>
           ))}
           <div className={s.divider} />
         </>
       ) : null}
+      <List.Subheader>
+        <p className={s.description}>검색 결과</p>
+      </List.Subheader>
       {result?.map((place) => (
-        <li
+        <List.Item
           key={place.id}
-          className={s.result__item}
           onClick={() => onSelect?.(place.id.toString())}
         >
           <PlaceItem key={place.id} place={place} />
-        </li>
+        </List.Item>
       ))}
-    </ul>
+    </List>
   );
 }
 

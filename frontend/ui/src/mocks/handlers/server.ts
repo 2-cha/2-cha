@@ -46,6 +46,10 @@ export const serverHandlers = [
     );
   }),
 
+  rest.get(`${BASE_URL}/places`, (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(success([place])));
+  }),
+
   rest.get(`${BASE_URL}/places/:placeId`, (req, res, ctx) => {
     const placeId = req.params.placeId;
 
@@ -85,7 +89,7 @@ export const serverHandlers = [
       ctx.json(
         success({
           url: 'https://picsum.photos/320/480',
-          suggestions: [],
+          suggestions: [place],
         })
       )
     );

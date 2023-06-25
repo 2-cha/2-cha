@@ -16,20 +16,15 @@
 }
 
 .result {
-  width: 100%;
-  gap: 12px;
-
-  @include mixins.flex(column, flex-start, center);
+  li > button {
+    padding: 8px 16px;
+  }
 
   &__container {
     width: 100%;
     height: calc(100% - 20px);
     margin-top: 20px;
     overflow-y: auto;
-  }
-
-  &__item {
-    width: 100%;
   }
 
   &__footer {
@@ -42,6 +37,7 @@
 
   .noResult {
     margin-top: 40px;
+    height: 80px;
   }
 
   .description {
@@ -51,6 +47,7 @@
   .divider {
     height: 1px;
     width: 100%;
+    margin: 8px 0;
     background-color: var(--border-color);
   }
 }
