@@ -21,9 +21,11 @@ export default function CollectionInfo({ collectionInfo }: Props) {
   return (
     <div className={s.root}>
       <div className={s.carousel}>
-        {reviews.map((review) => (
-          <ReviewCard key={`review-${review.id}`} review={review} />
-        ))}
+        <div className={s.carousel__inner}>
+          {reviews.map((review) => (
+            <ReviewCard key={`review-${review.id}`} review={review} />
+          ))}
+        </div>
       </div>
       <div className={s.metadata}>
         <div className={s.metadata__top}>

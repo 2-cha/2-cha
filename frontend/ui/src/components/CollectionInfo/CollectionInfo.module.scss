@@ -9,11 +9,20 @@
 
 .carousel {
   flex: 1;
-  @include mixins.flex(row);
+  width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
   scroll-snap-type: x mandatory;
+
+  &__inner {
+    width: fit-content;
+    height: 100%;
+    @include mixins.flex(row, flex-start, flex-start);
+  }
 }
 
 .metadata {
+  border-top: 1px solid black; // TODO: temp
   width: 100%;
   height: fit-content;
   @include mixins.padding(all, lg);
@@ -63,5 +72,9 @@
 
   &__title {
     @include mixins.text_lg;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
   }
 }
