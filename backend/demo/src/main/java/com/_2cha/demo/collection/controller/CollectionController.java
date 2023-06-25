@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -56,6 +57,14 @@ public class CollectionController {
                                                     @RequestBody @Valid CollectionCreateRequest dto) {
     return collectionService.createCollection(memberId, dto.getTitle(), dto.getDescription(),
                                               dto.getThumbnail(), dto.getReviewIds());
+  }
+
+  @Auth(MEMBER)
+  @GetMapping("/collections/nearby")
+  public List<CollectionBriefResponse> nbCollection(
+      @RequestParam Double lat,
+      @RequestParam Double lon) {
+    return collectionService.getNearbyCollections(lat, lon, 1000.0);
   }
 
   @Auth(GUEST)

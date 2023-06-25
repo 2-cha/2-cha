@@ -35,16 +35,20 @@ import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.dto.LikeStatus;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.service.ReviewService;
+import com._2cha.demo.util.GeomUtils;
 import jakarta.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -84,6 +88,7 @@ public class CollectionService {
     return collections;
   }
 
+  @Transactional(readOnly = true)
   public List<CollectionBriefResponse> getLatestCollections(Long memberId, Pageable pageParam) {
 
     List<CollectionBriefResponse> collections = collectionQueryRepository.getLatestCollections(
@@ -101,6 +106,24 @@ public class CollectionService {
     });
 
     return collections;
+  }
+
+  @Transactional(readOnly = true)
+  public List<CollectionBriefResponse> getNearbyCollections(Double lat, Double lon,
+                                                            Double distance) {
+    final double RATIO_THRESHOLD = 0.5;
+    Map<Long, Long> nearbyPlaceCount = collectionQueryRepository.getNearbyPlaceCount(
+        GeomUtils.createPoint(lat, lon), distance);
+    List<Long> collIds = new ArrayList<>(nearbyPlaceCount.keySet());
+    Map<Long, Long> totalPlaceCount = collectionQueryRepository.getPlaceCount(collIds);
+
+    collIds.removeIf(collId -> {
+      double nearbyCount = nearbyPlaceCount.get(collId);
+      double totalCount = totalPlaceCount.get(collId);
+      return ((nearbyCount / totalCount) < RATIO_THRESHOLD);
+    });
+
+    return collectionQueryRepository.getCollectionsByIdIn(collIds, fileStorageService.getBaseUrl());
   }
 
   @Transactional(readOnly = true)
