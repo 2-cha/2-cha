@@ -26,18 +26,13 @@
     background: none;
 
     & > svg {
-      width: 24px;
-      height: 24px;
-      color: var(--background-color);
+      width: 30px;
+      height: 30px;
+      color: var(--white);
     }
 
     &:hover {
       cursor: pointer;
-    }
-
-    &:first-child > svg {
-      width: 30px;
-      height: 30px;
     }
   }
 }

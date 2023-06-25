@@ -39,13 +39,13 @@
 
   &__name {
     @include mixins.text_lg;
-    color: white;
+    color: var(--white);
     opacity: 1;
   }
 
   &__address {
     @include mixins.text_sm;
-    color: white;
+    color: var(--white);
     opacity: 0.8;
   }
 
@@ -57,7 +57,7 @@
 
   &__tag {
     span {
-      color: white;
+      color: var(--white);
       opacity: 0.8;
     }
   }

@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import cn from 'classnames';
+import { useRouter } from 'next/router';
 
 import { Collection } from '@/types/collection';
 import ReviewCard from './ReviewCard';
@@ -8,10 +9,10 @@ import {
   FollowToggleButton,
   LikeToggleButton,
 } from '../Buttons';
+import { ShareButton } from '../Buttons';
+import { ArrowIcon } from '../Icons';
 
 import s from './CollectionInfo.module.scss';
-import { ArrowIcon, ShareIcon } from '../Icons';
-import { useRouter } from 'next/router';
 
 interface Props {
   collectionInfo: Collection;
@@ -35,9 +36,7 @@ export default function CollectionInfo({ collectionInfo }: Props) {
         >
           <ArrowIcon />
         </button>
-        <button type="button" className={s.root__button}>
-          <ShareIcon />
-        </button>
+        <ShareButton />
       </nav>
       <div className={s.carousel}>
         <div className={s.carousel__inner}>
