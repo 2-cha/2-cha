@@ -1,9 +1,9 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
+
 import { fetchClient } from '@/lib/fetchClient';
-import type { Coordinate } from '@/atoms/location';
+import type { Coordinate, PlacesQueryParams } from '@/atoms';
 import type { PlaceSearchResult } from '@/types';
-import { useCurrentLocation } from '@/hooks/useCurrentLocation';
-import { type PlacesQueryParams } from '@/atoms/placesQueryParams';
+import { useCurrentLocation } from '@/hooks';
 
 async function fetchPlaces({
   pageParam,

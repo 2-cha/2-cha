@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   useReviewImageMutation,
   type PostImageResponse,
-} from '@/hooks/mutation/useReviewImage';
+} from '@/hooks/mutation';
 
 function isSameFile(file1: File, file2: File) {
   return (

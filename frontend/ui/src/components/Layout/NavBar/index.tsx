@@ -2,17 +2,19 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import cn from 'classnames';
 
-import PlaceIcon from '@/components/Icons/PlaceIcon';
-import HashIcon from '@/components/Icons/HashIcon';
-import BookmarkIcon from '@/components/Icons/BookmarkIcon';
-import UserIcon from '@/components/Icons/UserIcon';
-import PlusSquareIcon from '@/components/Icons/PlusSquareIcon';
+import {
+  PlaceIcon,
+  HashIcon,
+  BookmarkIcon,
+  UserIcon,
+  PlusSquareIcon,
+} from '@/components/Icons';
 
 import s from './NavBar.module.scss';
 
 const sections = [
   { name: 'places', path: '/places', Icon: PlaceIcon },
-  { name: 'reviews', path: '/reviews', Icon: HashIcon },
+  { name: 'collections', path: '/collections', Icon: HashIcon },
   { name: 'add-review', path: '/write', Icon: PlusSquareIcon },
   { name: 'bookmark', path: '/bookmark', Icon: BookmarkIcon },
   { name: 'profile', path: '/profile', Icon: UserIcon },

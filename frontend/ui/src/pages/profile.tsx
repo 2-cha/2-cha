@@ -1,5 +1,5 @@
-import { useAuth } from '@/hooks/useAuth';
-import { useMemberQuery } from '@/hooks/query/useMember';
+import { useAuth } from '@/hooks';
+import { useMemberQuery } from '@/hooks/query';
 import {
   ProfileCollection,
   ProfileHeader,

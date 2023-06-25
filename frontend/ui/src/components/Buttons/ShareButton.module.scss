@@ -1,0 +1,37 @@
+@use 'mixins';
+@use 'var';
+
+.share {
+  background: none;
+  @include mixins.flex(row, center, center);
+
+  & > svg {
+    color: var(--background-color);
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:first-child > svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  &__text {
+    color: var(--white);
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  &__left {
+    @include mixins.margin(right, 10px);
+  }
+
+  &__right {
+    @include mixins.margin(left, 10px);
+  }
+}
+
+.hidden {
+  opacity: 0;
+}

@@ -1,6 +1,7 @@
-import { useRecoilState } from 'recoil';
-import { locationState } from '@/atoms/location';
 import { useCallback, useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
+
+import { locationState } from '@/atoms';
 
 const LOCATION_KEY = 'location';
 

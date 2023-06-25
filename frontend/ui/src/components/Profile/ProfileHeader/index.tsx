@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
+import { Member } from '@/types';
 import EditModeHeader from './EditModeHeader';
 import ViewModeHeader from './ViewModeHeader';
-import { Member } from '@/types';
 
 import s from './ProfileHeader.module.scss';
 

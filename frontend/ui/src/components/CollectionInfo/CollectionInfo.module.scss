@@ -1,0 +1,110 @@
+@use 'mixins';
+@use 'var';
+
+.root {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  @include mixins.flex(column, flex-start, flex-start);
+
+  &__nav {
+    background: linear-gradient(
+      to bottom,
+      var(--shadow-dark-color) 0%,
+      transparent 100%
+    );
+    position: absolute;
+    z-index: 11;
+    top: 0;
+    left: 0;
+    width: 100%;
+    @include mixins.flex(row, space-between, center);
+    @include mixins.padding(all, md);
+  }
+
+  &__button {
+    background: none;
+
+    & > svg {
+      width: 30px;
+      height: 30px;
+      color: var(--white);
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.carousel {
+  flex: 1;
+  width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+
+  &__inner {
+    width: fit-content;
+    height: 100%;
+    @include mixins.flex(row, flex-start, flex-start);
+  }
+}
+
+.metadata {
+  border-top: 1px solid black; // TODO: temp
+  width: 100%;
+  height: fit-content;
+  @include mixins.padding(all, lg);
+
+  &__top {
+    @include mixins.flex(row, space-between, center);
+    @include mixins.margin(bottom, md);
+  }
+
+  &__user {
+    @include mixins.flex(row, flex-start, center);
+
+    & > img {
+      width: 40px;
+      height: 40px;
+      border-radius: 30px;
+      @include mixins.margin(right, md);
+    }
+
+    & > h3 {
+      @include mixins.text_md;
+    }
+  }
+
+  &__buttons {
+    @include mixins.flex(row, flex-end, center);
+
+    & > svg {
+      width: 24px;
+      height: 24px;
+
+      &:not(:last-child) {
+        @include mixins.margin(right, md);
+      }
+    }
+
+    &__follow {
+      @include mixins.margin(right, 8px);
+    }
+
+    &__bookmark {
+      span {
+        color: var(--text-color) !important;
+      }
+    }
+  }
+
+  &__title {
+    @include mixins.text_lg;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+}

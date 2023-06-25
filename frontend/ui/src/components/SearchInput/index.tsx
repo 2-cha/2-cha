@@ -1,6 +1,8 @@
 import { forwardRef } from 'react';
-import SearchIcon from '@/components/Icons/SearchIcon';
 import cn from 'classnames';
+
+import { SearchIcon } from '@/components/Icons';
+
 import s from './SearchInput.module.scss';
 
 type SearchInputProps = React.ComponentProps<'input'> & { isError?: boolean };

@@ -1,9 +1,11 @@
-import * as React from 'react';
-import LocationIcon from '@/components/Icons/LocationIcon';
-import GlobeIcon from '@/components/Icons/GlobeIcon';
-import ExternalLinkIcon from '@/components/Icons/ExternalLinkIcon';
-import CopyIcon from '@/components/Icons/CopyIcon';
+import {
+  LocationIcon,
+  GlobeIcon,
+  ExternalLinkIcon,
+  CopyIcon,
+} from '@/components/Icons';
 import type { Place } from '@/types';
+
 import s from './PlaceDetailMenu.module.scss';
 
 export default function PlaceDetail({ placeInfo }: { placeInfo: Place }) {

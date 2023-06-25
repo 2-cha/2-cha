@@ -2,10 +2,11 @@ import { useCallback, useState } from 'react';
 
 import Tab from '@/components/Tab';
 
-import s from './ProfileReviewTab.module.scss';
-import { useMemberReviewsQuery } from '@/hooks/query/useMemberReviews';
+import { useMemberReviewsQuery } from '@/hooks/query';
+import { useIntersection } from '@/hooks';
 import ReviewList from './ReviewList';
-import { useIntersection } from '@/hooks/useIntersection';
+
+import s from './ProfileReviewTab.module.scss';
 
 const menuItems = ['리뷰', '지도'];
 
