@@ -14,7 +14,7 @@
 }
 
 .icon {
-  color: var(--background-inactive-color);
+  stroke: var(--background-color);
   transition: color 0.2s ease-in-out;
 
   &:hover {
