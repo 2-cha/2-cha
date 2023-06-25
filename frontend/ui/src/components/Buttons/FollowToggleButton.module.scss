@@ -1,0 +1,29 @@
+@use 'mixins';
+
+.container {
+  color: inherit;
+  background-color: var(--background-active-color);
+  @include mixins.flex(row, center, center);
+  @include mixins.padding(y, 3);
+  @include mixins.padding(x, 8);
+  border-radius: 100px;
+  transition: opacity 0.2s ease-in-out;
+
+  & > span {
+    // display: inline-block;
+    @include mixins.text-sm;
+    vertical-align: middle;
+
+    color: var(--background-color);
+    font-weight: 700;
+  }
+
+  svg {
+    color: var(--background-color);
+    @include mixins.margin(right, 5px);
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
