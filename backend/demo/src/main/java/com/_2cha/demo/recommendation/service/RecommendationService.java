@@ -6,6 +6,7 @@ import com._2cha.demo.collection.domain.Collection;
 import com._2cha.demo.collection.repository.CollectionRepository;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
+import com._2cha.demo.recommendation.config.LuceneConfig;
 import com._2cha.demo.recommendation.event.CollectionInteractionCancelEvent;
 import com._2cha.demo.recommendation.event.CollectionInteractionEvent;
 import com._2cha.demo.recommendation.repository.MemberCollectionPreference;
@@ -50,10 +51,11 @@ public class RecommendationService {
   /*-----------
    @ Lucene for bm25
    ----------*/
-  private final Directory directory = FSDirectory.open(Path.of("index2"));
+  private final LuceneConfig luceneConfig;
   private final Similarity similarity = new BM25Similarity(1.2f, 0);
   private final IndexWriterConfig indexWriterConfig = new IndexWriterConfig(new KoreanAnalyzer());
   private final IndexWriter writer;
+  private final Directory directory;
 
   /*-----------
    @ Mahout for CF
@@ -66,15 +68,17 @@ public class RecommendationService {
 
   public RecommendationService(DataSource dataSource, MemberService memberService,
                                CollectionRepository collectionRepository,
-                               MemberCollectionPreferenceRepository memberCollectionPreferenceRepository)
+                               MemberCollectionPreferenceRepository memberCollectionPreferenceRepository,
+                               LuceneConfig luceneConfig)
       throws IOException, TasteException {
-
+    // lucene
     this.dataSource = dataSource;
-    this.memberService = memberService;
-    this.collectionRepository = collectionRepository;
-    this.memberCollectionPreferenceRepository = memberCollectionPreferenceRepository;
+    this.luceneConfig = luceneConfig;
+    this.directory = FSDirectory.open(Path.of(this.luceneConfig.getIndexPath()));
     indexWriterConfig.setSimilarity(similarity);
     writer = new IndexWriter(directory, indexWriterConfig);
+
+    // mahout
     dataModel = new PostgreSQLJDBCDataModel(dataSource,
                                             "member_item_preference",
                                             "member_id",
@@ -83,6 +87,11 @@ public class RecommendationService {
                                             "created");
     itemSimilarity = new PearsonCorrelationSimilarity(dataModel);
     recommender = new GenericItemBasedRecommender(dataModel, itemSimilarity);
+
+    // spring
+    this.memberService = memberService;
+    this.collectionRepository = collectionRepository;
+    this.memberCollectionPreferenceRepository = memberCollectionPreferenceRepository;
   }
 
 //  @SneakyThrows
