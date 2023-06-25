@@ -1,0 +1,23 @@
+@use 'mixins';
+@use 'var';
+
+.tag {
+  border: 0.5px solid var(--border-color);
+  border-radius: 500px;
+
+  @include mixins.padding(x, md);
+  @include mixins.padding(y, sm);
+  @include mixins.text-sm;
+
+  & span {
+    color: var(--text-color);
+  }
+
+  & span:last-child {
+    margin-left: 5px;
+  }
+}
+
+.hidden {
+  display: none;
+}
