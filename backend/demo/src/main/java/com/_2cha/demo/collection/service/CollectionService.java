@@ -1,6 +1,7 @@
 package com._2cha.demo.collection.service;
 
 
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
 
 import com._2cha.demo.bookmark.dto.BookmarkCountProjection;
@@ -31,20 +32,34 @@ import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
+import com._2cha.demo.recommendation.Interaction;
+import com._2cha.demo.recommendation.event.CollectionInteractionCancelEvent;
+import com._2cha.demo.recommendation.event.CollectionInteractionEvent;
+import com._2cha.demo.recommendation.service.RecommendationService;
 import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.dto.LikeStatus;
 import com._2cha.demo.review.dto.ReviewResponse;
 import com._2cha.demo.review.service.ReviewService;
+import com._2cha.demo.util.GeomUtils;
 import jakarta.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.mahout.cf.taste.recommender.RecommendedItem;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -58,6 +73,9 @@ public class CollectionService {
   private final MemberService memberService;
   private final ReviewService reviewService;
   private final CollectionLikeService likeService;
+  private final RecommendationService recommendationService;
+
+  private final ApplicationEventPublisher eventPublisher;
 
   /*-----------
    @ Queries
@@ -84,6 +102,7 @@ public class CollectionService {
     return collections;
   }
 
+  @Transactional(readOnly = true)
   public List<CollectionBriefResponse> getLatestCollections(Long memberId, Pageable pageParam) {
 
     List<CollectionBriefResponse> collections = collectionQueryRepository.getLatestCollections(
@@ -103,6 +122,79 @@ public class CollectionService {
     return collections;
   }
 
+  @Transactional(readOnly = true)
+  public List<CollectionBriefResponse> getNearbyCollections(Double lat, Double lon,
+                                                            Double distance) {
+    final double RATIO_THRESHOLD = 0.5;
+    Map<Long, Long> nearbyPlaceCount = collectionQueryRepository.getNearbyPlaceCount(
+        GeomUtils.createPoint(lat, lon), distance);
+    List<Long> collIds = new ArrayList<>(nearbyPlaceCount.keySet());
+    Map<Long, Long> totalPlaceCount = collectionQueryRepository.getPlaceCount(collIds);
+
+    collIds.removeIf(collId -> {
+      double nearbyCount = nearbyPlaceCount.get(collId);
+      double totalCount = totalPlaceCount.get(collId);
+      return ((nearbyCount / totalCount) < RATIO_THRESHOLD);
+    });
+
+    return collectionQueryRepository.getCollectionsByIdIn(collIds, fileStorageService.getBaseUrl());
+  }
+
+  // Recommendation for list view
+  @Transactional(readOnly = true)
+  public List<CollectionBriefResponse> getRecommendations(Long memberId, Double lat, Double lon,
+                                                          Double distance) {
+    final int RECOMMENDATION_SIZE = 10;
+    int recommendedCount = 0, nearbyCount = 0, latestCount = 0;
+
+    Set<Long> collIds = new HashSet<>();
+    if (memberId != null) {
+      getBookmarkedCollections(memberId).forEach(coll -> collIds.add(coll.getId()));
+      getLikedCollections(memberId).forEach(coll -> collIds.add(coll.getId()));
+    }
+
+    List<Long> recommended = recommendationService.recommend(collIds.stream().toList(),
+                                                             RECOMMENDATION_SIZE)
+                                                  .stream()
+                                                  .map(RecommendedItem::getItemID)
+                                                  .toList();
+    recommendedCount = recommended.size();
+
+    Deque<CollectionBriefResponse> result = new LinkedList<>(
+        collectionQueryRepository.getCollectionsByIdIn(recommended,
+                                                       fileStorageService.getBaseUrl()));
+    // fill up with nearby / latest collections
+    if (result.size() < RECOMMENDATION_SIZE) {
+      getNearbyCollections(lat, lon, distance).stream()
+                                              .filter(not(result::contains))
+                                              .limit(RECOMMENDATION_SIZE - result.size())
+                                              .forEach(result::addLast);
+      nearbyCount = result.size() - recommendedCount;
+    }
+    if (result.size() < RECOMMENDATION_SIZE) {
+      getLatestCollections(memberId, Pageable.ofSize(RECOMMENDATION_SIZE))
+          .stream()
+          .filter(not(result::contains))
+          .limit(RECOMMENDATION_SIZE - result.size())
+          // NOTE: show the latest first, due to recommendation may not be changed frequently
+          .forEach(result::addFirst);
+      latestCount = result.size() - recommendedCount - nearbyCount;
+    }
+
+    List<Long> resultCollIds = result.stream().map(CollectionBriefResponse::getId).toList();
+    Map<Long, LikeStatus> likeStatus = likeService.getLikeStatus(memberId, resultCollIds);
+    Map<Long, BookmarkStatus> bookmarkStatus = getBookmarkStatus(memberId, resultCollIds);
+    result.forEach(collection -> {
+      collection.setLikeStatus(likeStatus.get(collection.getId()));
+      collection.setBookmarkStatus(bookmarkStatus.get(collection.getId()));
+    });
+    log.info("For member <{}>, Recommended: {}, Nearby: {}, Latest: {}",
+             memberId, recommendedCount, nearbyCount, latestCount);
+    return result.stream().toList();
+  }
+
+
+  // NOTE: the only api for view event
   @Transactional(readOnly = true)
   public CollectionDetailResponse getCollectionDetail(Long memberId, Long collId) {
     Collection collection = collectionRepository.findCollectionById(collId);
@@ -135,6 +227,8 @@ public class CollectionService {
                                                                    fileStorageService.getBaseUrl());
     detail.setBookmarkStatus(getBookmarkStatus(memberId, collId));
     detail.setLikeStatus(likeService.getLikeStatus(memberId, collId));
+    eventPublisher.publishEvent(
+        new CollectionInteractionEvent(this, memberId, collId, Interaction.VIEW));
     return detail;
   }
 
@@ -143,6 +237,12 @@ public class CollectionService {
     List<CollectionBookmark> bookmarks = bookmarkRepository.findAllByMemberId(memberId);
     List<Long> collIds = bookmarks.stream().map(b -> b.getCollection().getId()).toList();
     return collectionQueryRepository.getCollectionsByIdIn(collIds, fileStorageService.getBaseUrl());
+  }
+
+  @Transactional(readOnly = true)
+  public List<CollectionBriefResponse> getLikedCollections(Long memberId) {
+    return collectionQueryRepository.getCollectionsByIdIn(likeService.getLikedCollections(memberId),
+                                                          fileStorageService.getBaseUrl());
   }
 
   @Transactional(readOnly = true)
@@ -172,6 +272,13 @@ public class CollectionService {
     return new BookmarkStatus(bookmark != null, count);
   }
 
+  @Transactional(readOnly = true)
+  public Collection findById(Long collId) {
+    Collection collection = collectionRepository.findCollectionById(collId);
+    if (collection == null) throw new NoSuchCollectionException();
+
+    return collection;
+  }
 
   /*-----------
    @ Commands
@@ -260,6 +367,9 @@ public class CollectionService {
 
     CollectionBookmark bookmark = new CollectionBookmark(member, collection);
     bookmarkRepository.save(bookmark);
+
+    eventPublisher.publishEvent(
+        new CollectionInteractionEvent(this, memberId, collId, Interaction.BOOKMARK));
   }
 
   @Transactional
@@ -271,5 +381,7 @@ public class CollectionService {
     }
 
     bookmarkRepository.delete(bookmark);
+    eventPublisher.publishEvent(
+        new CollectionInteractionCancelEvent(this, memberId, collId, Interaction.BOOKMARK));
   }
 }

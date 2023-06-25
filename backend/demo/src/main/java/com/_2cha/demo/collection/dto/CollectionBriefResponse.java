@@ -5,8 +5,10 @@ import com._2cha.demo.review.dto.LikeStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(of = "id")
 public class CollectionBriefResponse {
 
   private Long id;
