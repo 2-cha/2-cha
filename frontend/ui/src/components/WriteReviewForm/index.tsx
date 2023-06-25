@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useModal } from '@/hooks/useModal';
 import { useTagPicker } from '@/hooks/useTagPicker';
 import { usePlaceQuery } from '@/hooks/query/usePlace';
+import { useReviewMutation } from '@/hooks/mutation/useReview';
+import { useQueryParamState } from '@/hooks/useQueryParamState';
 import { useRecoilValue } from 'recoil';
 import { suggestionsState } from '@/atoms/suggestions';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
@@ -12,7 +14,6 @@ import TagPicker from '@/components/TagPicker';
 import PlaceIcon from '@/components/Icons/PlaceIcon';
 import ImagesIcon from '@/components/Icons/ImagesIcon';
 import type { Tag } from '@/types';
-import { useReviewMutation } from '@/hooks/mutation/useReview';
 import cn from 'classnames';
 import s from './WriteReviewForm.module.scss';
 
@@ -24,17 +25,7 @@ export interface ReviewFormData {
 
 export default function WriteReviewForm() {
   const router = useRouter();
-  const { placeId: placeIdQuery } = router.query;
-  const initialPlaceId = Array.isArray(placeIdQuery)
-    ? placeIdQuery[0]
-    : placeIdQuery;
-
-  const [placeId, setPlaceId] = useState<string>(initialPlaceId || '');
-  useEffect(() => {
-    if (initialPlaceId) {
-      setPlaceId(initialPlaceId);
-    }
-  }, [initialPlaceId]);
+  const [placeId, setPlaceId] = useQueryParamState('placeId');
 
   const { isOpen, onOpen, onClose } = useModal({ id: 'placePicker' });
   const suggestions = useRecoilValue(suggestionsState);
