@@ -10,6 +10,8 @@ import {
 } from '../Buttons';
 
 import s from './CollectionInfo.module.scss';
+import { ArrowIcon, ShareIcon } from '../Icons';
+import { useRouter } from 'next/router';
 
 interface Props {
   collectionInfo: Collection;
@@ -17,9 +19,26 @@ interface Props {
 
 export default function CollectionInfo({ collectionInfo }: Props) {
   const { member, reviews } = collectionInfo;
+  const router = useRouter();
+
+  function handleClickBack() {
+    router.back();
+  }
 
   return (
     <div className={s.root}>
+      <nav className={s.root__nav}>
+        <button
+          type="button"
+          className={s.root__button}
+          onClick={handleClickBack}
+        >
+          <ArrowIcon />
+        </button>
+        <button type="button" className={s.root__button}>
+          <ShareIcon />
+        </button>
+      </nav>
       <div className={s.carousel}>
         <div className={s.carousel__inner}>
           {reviews.map((review) => (

@@ -2,9 +2,44 @@
 @use 'var';
 
 .root {
+  position: relative;
   width: 100%;
   flex: 1;
   @include mixins.flex(column, flex-start, flex-start);
+
+  &__nav {
+    background: linear-gradient(
+      to bottom,
+      var(--shadow-dark-color) 0%,
+      transparent 100%
+    );
+    position: absolute;
+    z-index: 11;
+    top: 0;
+    left: 0;
+    width: 100%;
+    @include mixins.flex(row, space-between, center);
+    @include mixins.padding(all, md);
+  }
+
+  &__button {
+    background: none;
+
+    & > svg {
+      width: 24px;
+      height: 24px;
+      color: var(--background-color);
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &:first-child > svg {
+      width: 30px;
+      height: 30px;
+    }
+  }
 }
 
 .carousel {
