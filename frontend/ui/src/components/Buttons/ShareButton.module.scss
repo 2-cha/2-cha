@@ -1,0 +1,19 @@
+@use 'mixins';
+@use 'var';
+
+.share {
+  background: none;
+
+  & > svg {
+    color: var(--background-color);
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:first-child > svg {
+    width: 30px;
+    height: 30px;
+  }
+}
