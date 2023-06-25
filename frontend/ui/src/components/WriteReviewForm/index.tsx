@@ -86,7 +86,7 @@ export default function WriteReviewForm() {
           </div>
         </form>
 
-        <div className={cn(s.full, s.label)}>
+        <div className={cn(s.full, s.paddingY)}>
           {errors.tags && (
             <div className={s.errorMessage}>태그를 선택해주세요</div>
           )}

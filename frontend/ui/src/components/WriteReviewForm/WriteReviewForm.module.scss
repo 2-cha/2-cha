@@ -48,6 +48,10 @@
   width: 100%;
 }
 
+.paddingTop {
+  @include mixins.padding(y, md);
+}
+
 .label {
   width: 100%;
   gap: 16px;
