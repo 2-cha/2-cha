@@ -9,3 +9,4 @@ export { usePlacesQuery } from './usePlaces';
 export { useRegionQuery, useRegion } from './useRegion';
 export { useSearchPlaceQuery } from './useSearchPlaceQuery';
 export { useTagsQuery } from './useTags';
+export { useCollectionsQuery } from './useCollections';

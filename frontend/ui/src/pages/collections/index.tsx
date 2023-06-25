@@ -1,7 +1,17 @@
+import { useCollectionsQuery } from '@/hooks/query';
+import Link from 'next/link';
+
+import { Collection } from '@/types/collection';
+
 export default function Collections() {
+  const { data, isLoading, isError } = useCollectionsQuery();
   return (
     <div>
-      <a href="collections/1">1번 컬렉션으로 이동</a>
+      {data.map((collection: Collection) => (
+        <Link href={`/collections/${collection.id}`} key={collection.id}>
+          {collection.title}
+        </Link>
+      ))}
     </div>
   );
 }
