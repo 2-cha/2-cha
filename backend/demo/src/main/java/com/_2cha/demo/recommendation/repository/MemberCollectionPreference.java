@@ -6,6 +6,7 @@ import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 import com._2cha.demo.collection.domain.Collection;
 import com._2cha.demo.member.domain.Member;
+import com._2cha.demo.recommendation.Interaction;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -39,9 +40,9 @@ public class MemberCollectionPreference {
 
   private LocalDateTime created = LocalDateTime.now();
 
-  public MemberCollectionPreference(Member member, Collection collection, float preference) {
+  public MemberCollectionPreference(Member member, Collection collection, Interaction interaction) {
     this.member = member;
     this.collection = collection;
-    this.preference = preference;
+    this.preference = interaction.value;
   }
 }

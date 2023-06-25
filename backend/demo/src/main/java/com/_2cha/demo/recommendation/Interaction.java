@@ -1,7 +1,7 @@
 package com._2cha.demo.recommendation;
 
 public enum Interaction {
-  VIEW(0.3f), LIKE(1.0f), SHARE(1.2f), BOOKMARK(2.0f);
+  VIEW(1), LIKE(3), SHARE(4), BOOKMARK(5);
 
   public final float value;
 

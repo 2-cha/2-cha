@@ -7,6 +7,9 @@ import com._2cha.demo.collection.repository.CollectionLikeRepository;
 import com._2cha.demo.collection.repository.CollectionRepository;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
+import com._2cha.demo.recommendation.Interaction;
+import com._2cha.demo.recommendation.event.CollectionInteractionCancelEvent;
+import com._2cha.demo.recommendation.event.CollectionInteractionEvent;
 import com._2cha.demo.review.dto.LikeStatus;
 import com._2cha.demo.review.exception.AlreadyLikedException;
 import com._2cha.demo.review.exception.NotLikedException;
@@ -16,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +32,7 @@ public class CollectionLikeService {
   private final CollectionLikeRepository likeRepository;
   private final CollectionRepository collectionRepository;
   private final MemberService memberService;
+  private final ApplicationEventPublisher eventPublisher;
 
   /*-----------
    @ Commands
@@ -44,6 +49,9 @@ public class CollectionLikeService {
     like = CollectionLike.createLike(member, collection);
 
     likeRepository.save(like);
+
+    eventPublisher.publishEvent(
+        new CollectionInteractionEvent(this, memberId, collId, Interaction.LIKE));
   }
 
   public void unlikeCollection(Long memberId, Long collId) {
@@ -51,6 +59,8 @@ public class CollectionLikeService {
     if (like == null) throw new NotLikedException();
 
     likeRepository.delete(like);
+    eventPublisher.publishEvent(
+        new CollectionInteractionCancelEvent(this, memberId, collId, Interaction.LIKE));
   }
 
   /*-----------

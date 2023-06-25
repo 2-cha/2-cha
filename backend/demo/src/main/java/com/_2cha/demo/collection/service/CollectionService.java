@@ -31,6 +31,9 @@ import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
+import com._2cha.demo.recommendation.Interaction;
+import com._2cha.demo.recommendation.event.CollectionInteractionCancelEvent;
+import com._2cha.demo.recommendation.event.CollectionInteractionEvent;
 import com._2cha.demo.recommendation.service.RecommendationService;
 import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.dto.LikeStatus;
@@ -49,6 +52,7 @@ import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +72,8 @@ public class CollectionService {
   private final ReviewService reviewService;
   private final CollectionLikeService likeService;
   private final RecommendationService recommendationService;
+
+  private final ApplicationEventPublisher eventPublisher;
 
   /*-----------
    @ Queries
@@ -170,6 +176,7 @@ public class CollectionService {
   }
 
 
+  // NOTE: the only api for view event
   @Transactional(readOnly = true)
   public CollectionDetailResponse getCollectionDetail(Long memberId, Long collId) {
     Collection collection = collectionRepository.findCollectionById(collId);
@@ -202,6 +209,8 @@ public class CollectionService {
                                                                    fileStorageService.getBaseUrl());
     detail.setBookmarkStatus(getBookmarkStatus(memberId, collId));
     detail.setLikeStatus(likeService.getLikeStatus(memberId, collId));
+    eventPublisher.publishEvent(
+        new CollectionInteractionEvent(this, memberId, collId, Interaction.VIEW));
     return detail;
   }
 
@@ -340,6 +349,9 @@ public class CollectionService {
 
     CollectionBookmark bookmark = new CollectionBookmark(member, collection);
     bookmarkRepository.save(bookmark);
+
+    eventPublisher.publishEvent(
+        new CollectionInteractionEvent(this, memberId, collId, Interaction.BOOKMARK));
   }
 
   @Transactional
@@ -351,5 +363,7 @@ public class CollectionService {
     }
 
     bookmarkRepository.delete(bookmark);
+    eventPublisher.publishEvent(
+        new CollectionInteractionCancelEvent(this, memberId, collId, Interaction.BOOKMARK));
   }
 }

@@ -1,12 +1,13 @@
 package com._2cha.demo.recommendation.service;
 
-import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
 import com._2cha.demo.collection.domain.Collection;
 import com._2cha.demo.collection.repository.CollectionRepository;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
-import com._2cha.demo.recommendation.Interaction;
+import com._2cha.demo.recommendation.event.CollectionInteractionCancelEvent;
+import com._2cha.demo.recommendation.event.CollectionInteractionEvent;
 import com._2cha.demo.recommendation.repository.MemberCollectionPreference;
 import com._2cha.demo.recommendation.repository.MemberCollectionPreferenceRepository;
 import jakarta.annotation.PreDestroy;
@@ -32,8 +33,10 @@ import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.recommender.ItemBasedRecommender;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 
 @Slf4j
@@ -132,16 +135,31 @@ public class RecommendationService {
 //  }
 
 
-  @Transactional(propagation = REQUIRES_NEW)
-  public void addPreference(Long userId, Long itemId, Interaction interaction) {
-    Member member = memberService.findById(userId);
-    Collection collection = collectionRepository.findCollectionById(itemId);
+  @Async("recommendationTaskExecutor")
+  @TransactionalEventListener(value = {CollectionInteractionEvent.class}, phase = AFTER_COMMIT)
+  @Transactional
+  public void addPreference(CollectionInteractionEvent event) {
+    Member member = memberService.findById(event.getMemberId());
+    Collection collection = collectionRepository.findCollectionById(event.getCollId());
     if (collection == null) return;
 
-    MemberCollectionPreference preference = new MemberCollectionPreference(member, collection,
-                                                                           interaction.value);
-
+    MemberCollectionPreference preference = new MemberCollectionPreference(member,
+                                                                           collection,
+                                                                           event.getInteraction());
     memberCollectionPreferenceRepository.save(preference);
+  }
+
+  @Async("recommendationTaskExecutor")
+  @TransactionalEventListener(value = {
+      CollectionInteractionCancelEvent.class}, phase = AFTER_COMMIT)
+  @Transactional
+  public void removePreference(CollectionInteractionCancelEvent event) {
+    MemberCollectionPreference preference = memberCollectionPreferenceRepository.findByMemberIdAndCollectionIdAndPreference(
+        event.getMemberId(),
+        event.getCollId(), event.getInteraction().value);
+
+    if (preference == null) return;
+    memberCollectionPreferenceRepository.delete(preference);
   }
 
 
