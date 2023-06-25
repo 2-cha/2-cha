@@ -2,12 +2,13 @@ import { useCallback, useState } from 'react';
 import cn from 'classnames';
 
 import { SimpleArrowIcon } from '@/components/Icons';
-import { Tag } from '@/types';
+import { Tag as TagType } from '@/types';
 
 import s from './Tags.module.scss';
+import Tag from './Tag';
 
 interface Props {
-  tagList: Tag[];
+  tagList: TagType[];
   keyID: string;
   limit?: number;
   className?: string;
@@ -16,8 +17,8 @@ interface Props {
 
 interface TagProperty {
   hasLimit: boolean;
-  topTags: Tag[];
-  bottomTags: Tag[];
+  topTags: TagType[];
+  bottomTags: TagType[];
 }
 
 export default function Tags({
@@ -68,27 +69,14 @@ export default function Tags({
       </button>
       <div className={s.tagWrapper}>
         {tagProperty.topTags.map((tag, index) => (
-          <div key={`tag-list-${keyID}-${index}`} className={s.tag}>
-            <span>
-              {tag.emoji} {tag.message}
-            </span>
-            <span className={cn({ [s.hidden]: !isNumberShown })}>
-              {tag.count}
-            </span>
-          </div>
+          <Tag key={`tag-list-${keyID}-${index}`} tag={tag} />
         ))}
         {tagProperty.bottomTags.map((tag, index) => (
-          <div
+          <Tag
             key={`tag-list-${keyID}-${index + limit}`}
-            className={cn({ [s.tag]: true, [s.hidden]: !isOpen })}
-          >
-            <span>
-              {tag.emoji} {tag.message}
-            </span>
-            <span className={cn({ [s.hidden]: !isNumberShown })}>
-              {tag.count}
-            </span>
-          </div>
+            tag={tag}
+            className={cn({ [s.hidden]: !isOpen })}
+          />
         ))}
       </div>
     </div>

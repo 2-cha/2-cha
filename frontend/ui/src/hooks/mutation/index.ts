@@ -11,3 +11,4 @@ export {
   type PostImageResponse,
 } from './useReviewImage';
 export { useSignInMutation } from './useSignin';
+export { useFollowMutation } from './useFollow';
