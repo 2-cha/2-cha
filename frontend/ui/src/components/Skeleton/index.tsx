@@ -1,5 +1,7 @@
-import SkeletonFeed from './SkeletonFeed';
 import cn from 'classnames';
+
+import SkeletonFeed from './SkeletonFeed';
+
 import s from './Skeleton.module.scss';
 
 interface SkeletonProps {

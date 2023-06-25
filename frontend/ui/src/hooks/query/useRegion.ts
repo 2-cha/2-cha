@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import type { Coordinate } from '@/atoms/location';
+import type { Coordinate } from '@/atoms';
 import type { Region } from '@/pages/api/region';
 
 async function fetchRegion(location: Coordinate) {

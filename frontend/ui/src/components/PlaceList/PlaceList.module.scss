@@ -102,30 +102,5 @@ $img-height: 360px;
     top: 0;
     left: 0;
     object-fit: cover;
-
-    &__skeleton {
-      background: var(--background-inactive-color);
-      width: 100%;
-      height: $img-height;
-      @include mixins.flex(column, flex-start, center);
-      @include mixins.padding(y, 70);
-
-      & > svg {
-        fill: var(--border-color);
-        @include mixins.margin(bottom, md);
-      }
-
-      &__title {
-        color: var(--text-color);
-        @include mixins.text-lg;
-        user-select: none;
-      }
-
-      &__subtitle {
-        color: var(--text-secondary-color);
-        @include mixins.text-sm;
-        user-select: none;
-      }
-    }
   }
 }

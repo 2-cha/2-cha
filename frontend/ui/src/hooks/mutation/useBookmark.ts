@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+
 import { fetchClient } from '@/lib/fetchClient';
 
 interface RequestBookmarkProps {
@@ -13,7 +14,7 @@ async function requestBookmark({ method, type, id }: RequestBookmarkProps) {
   return data;
 }
 
-export function useBookmakrMutation() {
+export function useBookmarkMutation() {
   const mutation = useMutation({
     mutationFn: (props: RequestBookmarkProps) => requestBookmark(props),
     // onSuccess

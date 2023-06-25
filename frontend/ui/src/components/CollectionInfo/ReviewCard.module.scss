@@ -1,0 +1,70 @@
+@use 'mixins';
+@use 'var';
+
+.wrapper {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  position: relative;
+  width: 480px;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+
+  &__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.metadata {
+  background: linear-gradient(
+    to top,
+    var(--shadow-dark-color) 0%,
+    var(--shadow-dark-color) 30%,
+    transparent 100%
+  );
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 10;
+  width: 100%;
+  @include mixins.padding(x, md);
+  @include mixins.padding(bottom, 24);
+  @include mixins.padding(top, 36);
+  @include mixins.flex(column, flex-start, flex-start);
+  user-select: none;
+
+  &__name {
+    @include mixins.text_lg;
+    color: var(--white);
+    opacity: 1;
+  }
+
+  &__address {
+    @include mixins.text_sm;
+    color: var(--white);
+    opacity: 0.8;
+  }
+
+  &__tags {
+    @include mixins.flex(row, flex-start, center);
+    gap: 10px;
+    @include mixins.margin(top, md);
+  }
+
+  &__tag {
+    background-color: var(--shadow-color);
+    span {
+      color: var(--white);
+      opacity: 0.8;
+    }
+  }
+}
+
+.noimage {
+  height: 100% !important;
+}

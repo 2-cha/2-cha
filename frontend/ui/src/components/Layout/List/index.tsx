@@ -1,4 +1,5 @@
 import cn from 'classnames';
+
 import s from './List.module.scss';
 
 function ListRoot(props: React.ComponentProps<'div'>) {

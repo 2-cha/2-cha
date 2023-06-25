@@ -7,7 +7,6 @@
 
   & > span {
     // display: inline-block;
-    @include mixins.margin(right, 10px);
     @include mixins.text-sm;
     color: var(--background-color);
     font-weight: 700;
@@ -16,6 +15,11 @@
 
 .icon {
   stroke: var(--background-color);
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    color: var(--background-active-color);
+  }
 }
 
 .fill {
