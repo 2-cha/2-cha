@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CollectionLikeRepository extends JpaRepository<CollectionLike, Long> {
 
+  List<CollectionLike> findAllByMemberId(Long memberId);
+
   CollectionLike findByMemberIdAndCollectionId(Long memberId, Long collId);
 
   List<CollectionLike> findAllByMemberIdAndCollectionIdIn(Long memberId, List<Long> collIds);

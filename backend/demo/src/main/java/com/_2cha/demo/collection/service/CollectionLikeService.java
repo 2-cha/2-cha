@@ -56,6 +56,14 @@ public class CollectionLikeService {
   /*-----------
    @ Queries
    ----------*/
+  public List<Long> getLikedCollections(@Nullable Long memberId) {
+    if (memberId == null) return Collections.emptyList();
+
+    return likeRepository.findAllByMemberId(memberId).stream()
+                         .map(like -> like.getCollection().getId())
+                         .toList();
+  }
+
   public LikeStatus getLikeStatus(@Nullable Long memberId, Long collId) {
     return new LikeStatus(isLikedCollection(memberId, collId), getCount(collId));
   }
