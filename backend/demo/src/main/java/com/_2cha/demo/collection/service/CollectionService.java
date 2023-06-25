@@ -1,6 +1,7 @@
 package com._2cha.demo.collection.service;
 
 
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
 
 import com._2cha.demo.bookmark.dto.BookmarkCountProjection;
@@ -43,12 +44,13 @@ import com._2cha.demo.util.GeomUtils;
 import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
@@ -138,41 +140,57 @@ public class CollectionService {
     return collectionQueryRepository.getCollectionsByIdIn(collIds, fileStorageService.getBaseUrl());
   }
 
+  // Recommendation for list view
   @Transactional(readOnly = true)
   public List<CollectionBriefResponse> getRecommendations(Long memberId, Double lat, Double lon,
                                                           Double distance) {
     final int RECOMMENDATION_SIZE = 10;
+    int recommendedCount = 0, nearbyCount = 0, latestCount = 0;
 
     Set<Long> collIds = new HashSet<>();
-    getBookmarkedCollections(memberId).forEach(coll -> collIds.add(coll.getId()));
-    getLikedCollections(memberId).forEach(coll -> collIds.add(coll.getId()));
+    if (memberId != null) {
+      getBookmarkedCollections(memberId).forEach(coll -> collIds.add(coll.getId()));
+      getLikedCollections(memberId).forEach(coll -> collIds.add(coll.getId()));
+    }
 
     List<Long> recommended = recommendationService.recommend(collIds.stream().toList(),
                                                              RECOMMENDATION_SIZE)
                                                   .stream()
                                                   .map(RecommendedItem::getItemID)
                                                   .toList();
+    recommendedCount = recommended.size();
 
-    List<CollectionBriefResponse> result = new ArrayList<>(
+    Deque<CollectionBriefResponse> result = new LinkedList<>(
         collectionQueryRepository.getCollectionsByIdIn(recommended,
                                                        fileStorageService.getBaseUrl()));
-
     // fill up with nearby / latest collections
     if (result.size() < RECOMMENDATION_SIZE) {
-      // add to result if not already recommended
       getNearbyCollections(lat, lon, distance).stream()
-                                              .filter(Predicate.not(result::contains))
+                                              .filter(not(result::contains))
                                               .limit(RECOMMENDATION_SIZE - result.size())
-                                              .forEach(result::add);
+                                              .forEach(result::addLast);
+      nearbyCount = result.size() - recommendedCount;
     }
     if (result.size() < RECOMMENDATION_SIZE) {
-      // add to result if not already recommended
-      getLatestCollections(memberId, Pageable.ofSize(RECOMMENDATION_SIZE - recommended.size()))
+      getLatestCollections(memberId, Pageable.ofSize(RECOMMENDATION_SIZE))
           .stream()
-          .filter(Predicate.not(result::contains))
-          .forEach(result::add);
+          .filter(not(result::contains))
+          .limit(RECOMMENDATION_SIZE - result.size())
+          // NOTE: show the latest first, due to recommendation may not be changed frequently
+          .forEach(result::addFirst);
+      latestCount = result.size() - recommendedCount - nearbyCount;
     }
-    return result;
+
+    List<Long> resultCollIds = result.stream().map(CollectionBriefResponse::getId).toList();
+    Map<Long, LikeStatus> likeStatus = likeService.getLikeStatus(memberId, resultCollIds);
+    Map<Long, BookmarkStatus> bookmarkStatus = getBookmarkStatus(memberId, resultCollIds);
+    result.forEach(collection -> {
+      collection.setLikeStatus(likeStatus.get(collection.getId()));
+      collection.setBookmarkStatus(bookmarkStatus.get(collection.getId()));
+    });
+    log.info("For member <{}>, Recommended: {}, Nearby: {}, Latest: {}",
+             memberId, recommendedCount, nearbyCount, latestCount);
+    return result.stream().toList();
   }
 
 

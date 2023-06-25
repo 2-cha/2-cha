@@ -19,7 +19,6 @@ import com._2cha.demo.global.annotation.Authed;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -46,9 +45,12 @@ public class CollectionController {
 
   @Auth(GUEST)
   @GetMapping("/collections")
-  public List<CollectionBriefResponse> getCollectionsIncludingPrivate(@Authed Long memberId,
-                                                                      Pageable pageParam) {
-    return collectionService.getLatestCollections(memberId, pageParam);
+  public List<CollectionBriefResponse> getCollections(@Authed Long memberId,
+                                                      @RequestParam Double lat,
+                                                      @RequestParam Double lon,
+                                                      @RequestParam Double distance
+                                                     ) {
+    return collectionService.getRecommendations(memberId, lat, lon, distance);
   }
 
   @Auth(MEMBER)
