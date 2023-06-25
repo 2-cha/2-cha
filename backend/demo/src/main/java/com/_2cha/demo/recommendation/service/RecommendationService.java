@@ -80,7 +80,7 @@ public class RecommendationService {
 
     // mahout
     dataModel = new PostgreSQLJDBCDataModel(dataSource,
-                                            "member_item_preference",
+                                            "member_collection_preference",
                                             "member_id",
                                             "coll_id",
                                             "preference",
