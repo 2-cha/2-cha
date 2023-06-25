@@ -36,6 +36,7 @@
   @include mixins.padding(bottom, 24);
   @include mixins.padding(top, 36);
   @include mixins.flex(column, flex-start, flex-start);
+  user-select: none;
 
   &__name {
     @include mixins.text_lg;
