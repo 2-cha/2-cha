@@ -31,6 +31,7 @@ import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
+import com._2cha.demo.recommendation.service.RecommendationService;
 import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.dto.LikeStatus;
 import com._2cha.demo.review.dto.ReviewResponse;
@@ -39,11 +40,15 @@ import com._2cha.demo.util.GeomUtils;
 import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +67,7 @@ public class CollectionService {
   private final MemberService memberService;
   private final ReviewService reviewService;
   private final CollectionLikeService likeService;
+  private final RecommendationService recommendationService;
 
   /*-----------
    @ Queries
@@ -127,6 +133,44 @@ public class CollectionService {
   }
 
   @Transactional(readOnly = true)
+  public List<CollectionBriefResponse> getRecommendations(Long memberId, Double lat, Double lon,
+                                                          Double distance) {
+    final int RECOMMENDATION_SIZE = 10;
+
+    Set<Long> collIds = new HashSet<>();
+    getBookmarkedCollections(memberId).forEach(coll -> collIds.add(coll.getId()));
+    getLikedCollections(memberId).forEach(coll -> collIds.add(coll.getId()));
+
+    List<Long> recommended = recommendationService.recommend(collIds.stream().toList(),
+                                                             RECOMMENDATION_SIZE)
+                                                  .stream()
+                                                  .map(RecommendedItem::getItemID)
+                                                  .toList();
+
+    List<CollectionBriefResponse> result = new ArrayList<>(
+        collectionQueryRepository.getCollectionsByIdIn(recommended,
+                                                       fileStorageService.getBaseUrl()));
+
+    // fill up with nearby / latest collections
+    if (result.size() < RECOMMENDATION_SIZE) {
+      // add to result if not already recommended
+      getNearbyCollections(lat, lon, distance).stream()
+                                              .filter(Predicate.not(result::contains))
+                                              .limit(RECOMMENDATION_SIZE - result.size())
+                                              .forEach(result::add);
+    }
+    if (result.size() < RECOMMENDATION_SIZE) {
+      // add to result if not already recommended
+      getLatestCollections(memberId, Pageable.ofSize(RECOMMENDATION_SIZE - recommended.size()))
+          .stream()
+          .filter(Predicate.not(result::contains))
+          .forEach(result::add);
+    }
+    return result;
+  }
+
+
+  @Transactional(readOnly = true)
   public CollectionDetailResponse getCollectionDetail(Long memberId, Long collId) {
     Collection collection = collectionRepository.findCollectionById(collId);
     if (collection == null) throw new NoSuchCollectionException();
@@ -169,6 +213,12 @@ public class CollectionService {
   }
 
   @Transactional(readOnly = true)
+  public List<CollectionBriefResponse> getLikedCollections(Long memberId) {
+    return collectionQueryRepository.getCollectionsByIdIn(likeService.getLikedCollections(memberId),
+                                                          fileStorageService.getBaseUrl());
+  }
+
+  @Transactional(readOnly = true)
   public Map<Long, BookmarkStatus> getBookmarkStatus(Long memberId, List<Long> collIds) {
     List<CollectionBookmark> bookmarks =
         (memberId != null) ? bookmarkRepository.findAllByMemberIdAndCollectionIdIn(memberId,
@@ -195,6 +245,13 @@ public class CollectionService {
     return new BookmarkStatus(bookmark != null, count);
   }
 
+  @Transactional(readOnly = true)
+  public Collection findById(Long collId) {
+    Collection collection = collectionRepository.findCollectionById(collId);
+    if (collection == null) throw new NoSuchCollectionException();
+
+    return collection;
+  }
 
   /*-----------
    @ Commands

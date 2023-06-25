@@ -2,6 +2,7 @@ package com._2cha.demo.recommendation.repository;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
+import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 import com._2cha.demo.collection.domain.Collection;
 import com._2cha.demo.member.domain.Member;
@@ -13,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
 
 @Entity
 @Getter
@@ -25,10 +27,12 @@ public class MemberCollectionPreference {
 
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "MEMBER_ID")
+  @OnDelete(action = CASCADE)
   private Member member;
 
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "COLL_ID")
+  @OnDelete(action = CASCADE)
   private Collection collection;
 
   private float preference;
