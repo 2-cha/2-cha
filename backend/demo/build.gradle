@@ -17,6 +17,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url 'https://mvnrepository.com/artifact/org.apache.mahout/mahout-core' }
 }
 
 
@@ -68,6 +69,9 @@ dependencies {
     implementation 'org.apache.lucene:lucene-core:9.6.0'
     implementation 'org.apache.lucene:lucene-queryparser:9.6.0'
     implementation 'org.apache.lucene:lucene-analyzers-nori:8.11.2'
+
+    //mahout
+    implementation 'org.apache.mahout:mahout-integration:0.13.0'
 
 
 }
