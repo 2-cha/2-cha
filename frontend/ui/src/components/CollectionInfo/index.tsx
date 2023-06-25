@@ -1,9 +1,13 @@
 import Image from 'next/image';
+import cn from 'classnames';
 
-import { PlusSquareIcon } from '@/components/Icons';
 import { Collection } from '@/types/collection';
 import ReviewCard from './ReviewCard';
-import { BookmarkToggleButton, LikeToggleButton } from '../Buttons';
+import {
+  BookmarkToggleButton,
+  FollowToggleButton,
+  LikeToggleButton,
+} from '../Buttons';
 
 import s from './CollectionInfo.module.scss';
 
@@ -13,7 +17,7 @@ interface Props {
 
 export default function CollectionInfo({ collectionInfo }: Props) {
   const { member, reviews } = collectionInfo;
-  console.log(collectionInfo);
+
   return (
     <div className={s.root}>
       <div className={s.carousel}>
@@ -33,13 +37,19 @@ export default function CollectionInfo({ collectionInfo }: Props) {
             <h3>{member.name}</h3>
           </div>
           <div className={s.metadata__buttons}>
-            <PlusSquareIcon withoutBorder />
+            <FollowToggleButton
+              userId={member.id}
+              className={s.metadata__buttons__follow}
+            />
             <LikeToggleButton
               itemType="collections"
               itemId={collectionInfo.id}
               isLiked={collectionInfo.like_status.is_liked}
               likeCount={collectionInfo.like_status.count}
-              className={s.metadata__buttons__bookmark}
+              className={cn(
+                s.metadata__buttons__bookmark,
+                s.metadata__buttons__follow
+              )}
             />
             <BookmarkToggleButton
               itemType="collection"

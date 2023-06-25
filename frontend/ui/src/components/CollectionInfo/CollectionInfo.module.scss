@@ -50,6 +50,10 @@
       }
     }
 
+    &__follow {
+      @include mixins.margin(right, 8px);
+    }
+
     &__bookmark {
       span {
         color: var(--text-color) !important;
