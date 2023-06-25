@@ -14,13 +14,18 @@
 }
 
 .icon {
-  stroke: var(--background-color);
+  color: var(--background-active-color);
+  transition: opacity 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 0.7;
+  }
 }
 
 .fill {
-  color: var(--background-active-color);
+  opacity: 1;
 }
 
 .empty {
-  color: var(--background-inactive-color);
+  opacity: 0.3;
 }
