@@ -8,8 +8,8 @@ import {
   BookmarkToggleButton,
   FollowToggleButton,
   LikeToggleButton,
+  ShareButton,
 } from '../Buttons';
-import { ShareButton } from '../Buttons';
 import { ArrowIcon } from '../Icons';
 
 import s from './CollectionInfo.module.scss';
@@ -36,7 +36,10 @@ export default function CollectionInfo({ collectionInfo }: Props) {
         >
           <ArrowIcon />
         </button>
-        <ShareButton />
+        <ShareButton
+          sharedTitle={collectionInfo.title}
+          sharedUrl={`${process.env.NEXT_PUBLIC_ORIGIN}/collections/${collectionInfo.id}`}
+        />
       </nav>
       <div className={s.carousel}>
         <div className={s.carousel__inner}>

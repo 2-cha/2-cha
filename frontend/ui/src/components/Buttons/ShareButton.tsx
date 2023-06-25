@@ -9,7 +9,7 @@ interface Props {
   sharedTitle: string;
   sharedUrl: string;
   sharedText?: string;
-  textAlign: 'left' | 'right';
+  textAlign?: 'left' | 'right';
   size?: number;
 }
 
