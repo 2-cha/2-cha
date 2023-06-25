@@ -48,7 +48,7 @@ public class CollectionController {
   public List<CollectionBriefResponse> getCollections(@Authed Long memberId,
                                                       @RequestParam Double lat,
                                                       @RequestParam Double lon,
-                                                      @RequestParam Double distance
+                                                      @RequestParam(defaultValue = "5000.0") Double distance
                                                      ) {
     return collectionService.getRecommendations(memberId, lat, lon, distance);
   }
