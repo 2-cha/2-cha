@@ -21,6 +21,7 @@ import UserIcon from './UserIcon';
 import WhiskeyIcon from './WhiskeyIcon';
 import WineIcon from './WineIcon';
 import XIcon from './XIcon';
+import ShareIcon from './ShareIcon';
 
 export {
   ArrowIcon,
@@ -46,4 +47,5 @@ export {
   WhiskeyIcon,
   WineIcon,
   XIcon,
+  ShareIcon,
 };
