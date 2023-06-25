@@ -38,6 +38,9 @@
   .noResult {
     margin-top: 40px;
     height: 80px;
+    gap: 8px;
+
+    @include mixins.flex(column, center, center);
   }
 
   .description {

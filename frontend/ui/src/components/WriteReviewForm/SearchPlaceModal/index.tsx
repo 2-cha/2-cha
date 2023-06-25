@@ -6,6 +6,7 @@ import { getCategoryLabel } from '@/lib/placeUtil';
 import Drawer from '@/components/Layout/Drawer';
 import SearchInput from '@/components/SearchInput';
 import List from '@/components/Layout/List';
+import Link from 'next/link';
 import type { Place, SuggestionPlace } from '@/types';
 import s from './SearchPlaceModal.module.scss';
 
@@ -116,12 +117,6 @@ function SearchPlaceResult({
 
   return (
     <List className={s.result}>
-      {!suggestions?.length && !result?.length ? (
-        <li className={s.noResult}>
-          <p>검색 결과가 없습니다</p>
-          <button>장소 추가하기</button>
-        </li>
-      ) : null}
       {suggestions?.length ? (
         <>
           <List.Subheader>
@@ -141,6 +136,12 @@ function SearchPlaceResult({
       <List.Subheader>
         <p className={s.description}>검색 결과</p>
       </List.Subheader>
+      {!result?.length ? (
+        <li className={s.noResult}>
+          <p>검색 결과가 없습니다</p>
+          <Link href="/write/place">장소 추가하기</Link>
+        </li>
+      ) : null}
       {result?.map((place) => (
         <List.Item
           key={place.id}
