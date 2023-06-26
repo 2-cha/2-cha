@@ -1,9 +1,12 @@
 import { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 
 import { useCurrentLocation, useModal } from '@/hooks';
+import { locationState } from '@/atoms';
 import { useRegion } from '@/hooks/query';
 import { LocationIcon } from '@/components/Icons';
 import SearchAddressModal from './SearchAddressModal';
+import { type Address } from '@/pages/api/address';
 
 import s from './Header.module.scss';
 
@@ -23,6 +26,14 @@ export default function Header() {
     region = '위치를 알 수 없어요';
   }
 
+  const setLocationState = useSetRecoilState(locationState);
+  const handleSelect = (address: Address) => {
+    setLocationState({
+      lat: Number(address.y),
+      lon: Number(address.x),
+    });
+  };
+
   return (
     <div className={s.root}>
       <header className={s.header}>
@@ -35,7 +46,11 @@ export default function Header() {
           </button>
         </div>
       </header>
-      <SearchAddressModal isOpen={isOpen} onClose={onClose} />
+      <SearchAddressModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onSelect={handleSelect}
+      />
     </div>
   );
 }
