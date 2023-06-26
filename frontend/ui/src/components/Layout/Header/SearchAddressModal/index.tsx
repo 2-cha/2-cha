@@ -12,6 +12,7 @@ interface SearchAddressModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelect?: (address: Address) => void;
+  type?: Address['address_type'];
 }
 
 interface SearchAddressForm {
@@ -22,9 +23,10 @@ export default function SearchAddressModal({
   isOpen,
   onClose,
   onSelect,
+  type,
 }: SearchAddressModalProps) {
   const [query, setQuery] = useState('');
-  const { data: addresses } = useAddressQuery(query);
+  const { data: addresses } = useAddressQuery(query, type);
 
   const {
     handleSubmit,
