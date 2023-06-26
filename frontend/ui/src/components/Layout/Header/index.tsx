@@ -5,7 +5,7 @@ import { useCurrentLocation, useModal } from '@/hooks';
 import { locationState } from '@/atoms';
 import { useRegion } from '@/hooks/query';
 import { LocationIcon } from '@/components/Icons';
-import SearchAddressModal from './SearchAddressModal';
+import SearchAddressModal from '@/components/SearchAddressModal';
 import { type Address } from '@/pages/api/address';
 
 import s from './Header.module.scss';
