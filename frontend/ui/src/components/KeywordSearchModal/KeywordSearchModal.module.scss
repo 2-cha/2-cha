@@ -1,0 +1,16 @@
+@use 'mixins';
+
+.item {
+  width: 100%;
+
+  @include mixins.flex(column, flex-start, flex-start);
+  @include mixins.padding(y, sm);
+
+  &__title {
+    @include mixins.text-md;
+  }
+
+  &__description {
+    @include mixins.text-sm;
+  }
+}

@@ -1,9 +1,12 @@
 import { useState } from 'react';
 
 import { useKeywordQuery } from '@/hooks/query/useKeyword';
+import Drawer from '@/components/Layout/Drawer';
+import List from '@/components/Layout/List';
+import SearchInput from '@/components/SearchInput';
 import type { Place } from '@/pages/api/keyword';
-import Drawer from '../Layout/Drawer';
-import SearchInput from '../SearchInput';
+
+import s from './KeywordSearchModal.module.scss';
 
 interface KeywordSearchModalProps {
   query?: string;
@@ -40,16 +43,16 @@ export default function KeywordSearchModal({
       <form onSubmit={handleSubmit}>
         <SearchInput name="query" />
       </form>
-      <ul>
+      <List>
         {data?.map((place) => (
-          <li key={place.id}>
-            <button onClick={() => handleSelect(place)}>
-              <p>{place.place_name}</p>
-              <p>{place.road_address_name}</p>
-            </button>
-          </li>
+          <List.Item key={place.id} onClick={() => handleSelect(place)}>
+            <div className={s.item}>
+              <p className={s.item__title}>{place.place_name}</p>
+              <p className={s.item__description}>{place.road_address_name}</p>
+            </div>
+          </List.Item>
         ))}
-      </ul>
+      </List>
     </Drawer>
   );
 }
