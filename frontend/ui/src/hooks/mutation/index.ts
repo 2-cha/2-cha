@@ -12,4 +12,4 @@ export {
 } from './useReviewImage';
 export { useSignInMutation } from './useSignin';
 export { useFollowMutation } from './useFollow';
-export { useRegistPlaceMutation } from './useRegistPlace';
+export { useAddPlaceMutation } from './useAddPlace';

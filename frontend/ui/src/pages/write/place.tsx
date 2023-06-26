@@ -1,6 +1,6 @@
 import NavStackHeader from '@/components/Layout/NavStackHeader';
 import MetaData from '@/components/MetaData';
-import RegisterPlaceForm from '@/components/RegistPlaceForm';
+import AddPlaceForm from '@/components/AddPlaceForm';
 
 export default function RegistPlace() {
   const title = '가게 등록';
@@ -9,7 +9,7 @@ export default function RegistPlace() {
     <>
       <MetaData title={title} />
       <NavStackHeader>{title}</NavStackHeader>
-      <RegisterPlaceForm />
+      <AddPlaceForm />
     </>
   );
 }

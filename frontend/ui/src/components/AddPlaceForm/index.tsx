@@ -1,13 +1,13 @@
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import { useRouter } from 'next/router';
 
 import KeywordSearchModal from '@/components/KeywordSearchModal';
 import { useModal } from '@/hooks';
 import { getCategoryLabel } from '@/lib/placeUtil';
+import { useAddPlaceMutation } from '@/hooks/mutation';
 import { type Place } from '@/pages/api/keyword';
-import { useRegistPlaceMutation } from '@/hooks/mutation';
-import { useRouter } from 'next/router';
 
-interface RegisterPlaceFormData {
+interface AddPlaceFormData {
   name: string;
   address: string;
   lot_address?: string;
@@ -16,9 +16,9 @@ interface RegisterPlaceFormData {
   lon: string;
 }
 
-export default function RegisterPlaceForm() {
+export default function AddPlace() {
   const { isOpen, onOpen, onClose } = useModal();
-  const method = useForm<RegisterPlaceFormData>();
+  const method = useForm<AddPlaceFormData>();
 
   const handleSelectPlace = (place: Place) => {
     method.setValue('name', place.place_name);
@@ -34,7 +34,7 @@ export default function RegisterPlaceForm() {
         <button onClick={onOpen}>이름으로 찾아보기</button>
         <p>혹은</p>
         <p>직접 추가하기</p>
-        <Form />
+        <AddPlaceForm />
       </div>
       <KeywordSearchModal
         isOpen={isOpen}
@@ -48,10 +48,10 @@ export default function RegisterPlaceForm() {
 // TODO: constants
 const category = ['COCKTAIL_BAR', 'WINE_BAR', 'BEER_BAR', 'WHISKEY_BAR'];
 
-function Form() {
-  const { register, handleSubmit } = useFormContext<RegisterPlaceFormData>();
+function AddPlaceForm() {
+  const { register, handleSubmit } = useFormContext<AddPlaceFormData>();
   const router = useRouter();
-  const mutate = useRegistPlaceMutation();
+  const mutate = useAddPlaceMutation();
 
   const onSubmit = handleSubmit((data) => {
     mutate.mutate(data, {

@@ -6,7 +6,7 @@ async function postPlace(props: any) {
   return data;
 }
 
-export function useRegistPlaceMutation() {
+export function useAddPlaceMutation() {
   const mutate = useMutation({
     mutationFn: (props: any) => postPlace(props),
   });
