@@ -1,54 +1,65 @@
+import { fetchKakao } from '@/lib/kakao';
 import { NextRequest } from 'next/server';
-
-const KAKAO_API_URL = 'https://dapi.kakao.com';
-
-export interface Address {
-  address_name: string;
-  address_type: string; // 'REGION' | 'ROAD' | 'REGION_ADDR' | 'ROAD_ADDR'
-  x: string;
-  y: string;
-  address: unknown;
-  road_address: unknown;
-}
-
-interface AddressResponse {
-  documents: Address[];
-  meta: {
-    is_end: boolean;
-    pageable_count: number;
-    total_count: number;
-  };
-}
 
 export const config = {
   runtime: 'edge',
 };
 
+interface AddressInfo {
+  address_name: string;
+  region_1depth_name: string;
+  region_2depth_name: string;
+  region_3depth_name: string;
+  region_3depth_h_name: string;
+  h_code: string;
+  b_code: string;
+  mountain_yn: string;
+  main_address_no: string;
+  sub_address_no: string;
+  x: string;
+  y: string;
+}
+
+interface RoadAddressInfo {
+  address_name: string;
+  region_1depth_name: string;
+  region_2depth_name: string;
+  region_3depth_name: string;
+  road_name: string;
+  underground_yn: string;
+  main_building_no: string;
+  sub_building_no: string;
+  building_name: string;
+  zone_no: string;
+  x: string;
+  y: string;
+}
+
+export interface Address {
+  address_name: string;
+  address_type: 'REGION' | 'ROAD' | 'REGION_ADDR' | 'ROAD_ADDR';
+  x: string;
+  y: string;
+  address: AddressInfo;
+  road_address: RoadAddressInfo;
+}
+
 export default async function handler(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const params = new URLSearchParams({
-      query: searchParams.get('query') || '',
-    });
-    const response = await fetch(
-      `${KAKAO_API_URL}/v2/local/search/address.json?${params.toString()}`,
-      {
-        headers: {
-          Authorization: `KakaoAK ${process.env.KAKAO_REST_API_KEY}`,
-        },
-      }
+    const data = await fetchKakao<Address>(
+      `/local/search/address.json?${searchParams.toString()}`
     );
 
-    if (!response.ok) {
-      return response;
-    }
-
-    const data: AddressResponse = await response.json();
     return new Response(JSON.stringify(data.documents), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (e) {
-    return new Response('Internal Server Error', { status: 500 });
+    if (e instanceof Response) {
+      return e;
+    } else {
+      return new Response('Internal Server Error', { status: 500 });
+    }
   }
 }

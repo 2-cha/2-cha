@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import cn from 'classnames';
 import { useRecoilValue } from 'recoil';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
-import { useModal, useTagPicker } from '@/hooks';
+import { useModal, useQueryParamState, useTagPicker } from '@/hooks';
 import { usePlaceQuery } from '@/hooks/query';
 import { useReviewMutation } from '@/hooks/mutation';
 import { suggestionsState } from '@/atoms';
@@ -24,17 +24,7 @@ export interface ReviewFormData {
 
 export default function WriteReviewForm() {
   const router = useRouter();
-  const { placeId: placeIdQuery } = router.query;
-  const initialPlaceId = Array.isArray(placeIdQuery)
-    ? placeIdQuery[0]
-    : placeIdQuery;
-
-  const [placeId, setPlaceId] = useState<string>(initialPlaceId || '');
-  useEffect(() => {
-    if (initialPlaceId) {
-      setPlaceId(initialPlaceId);
-    }
-  }, [initialPlaceId]);
+  const [placeId, setPlaceId] = useQueryParamState('placeId');
 
   const { isOpen, onOpen, onClose } = useModal({ id: 'placePicker' });
   const suggestions = useRecoilValue(suggestionsState);
@@ -86,7 +76,7 @@ export default function WriteReviewForm() {
           </div>
         </form>
 
-        <div className={cn(s.full, s.label)}>
+        <div className={cn(s.full, s.paddingY)}>
           {errors.tags && (
             <div className={s.errorMessage}>태그를 선택해주세요</div>
           )}
