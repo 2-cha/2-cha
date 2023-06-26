@@ -2,10 +2,14 @@ import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { useRouter } from 'next/router';
 
 import KeywordSearchModal from '@/components/KeywordSearchModal';
+import SearchAddressModal from '@/components/SearchAddressModal';
 import { useModal } from '@/hooks';
 import { getCategoryLabel } from '@/lib/placeUtil';
 import { useAddPlaceMutation } from '@/hooks/mutation';
 import { type Place } from '@/pages/api/keyword';
+import { type Address } from '@/pages/api/address';
+
+import s from './AddPlace.module.scss';
 
 interface AddPlaceFormData {
   name: string;
@@ -30,10 +34,10 @@ export default function AddPlace() {
 
   return (
     <FormProvider {...method}>
-      <div>
-        <button onClick={onOpen}>이름으로 찾아보기</button>
-        <p>혹은</p>
-        <p>직접 추가하기</p>
+      <div className={s.container}>
+        <button className={s.button} onClick={onOpen}>
+          장소 검색
+        </button>
         <AddPlaceForm />
       </div>
       <KeywordSearchModal
@@ -49,9 +53,20 @@ export default function AddPlace() {
 const category = ['COCKTAIL_BAR', 'WINE_BAR', 'BEER_BAR', 'WHISKEY_BAR'];
 
 function AddPlaceForm() {
-  const { register, handleSubmit } = useFormContext<AddPlaceFormData>();
+  const { register, handleSubmit, setValue, watch } =
+    useFormContext<AddPlaceFormData>();
   const router = useRouter();
   const mutate = useAddPlaceMutation();
+
+  const { isOpen, onOpen, onClose } = useModal();
+  const handleSelect = (address: Address) => {
+    setValue('address', address.road_address.address_name);
+    setValue('lot_address', address.address.address_name);
+    setValue('lat', address.road_address.y);
+    setValue('lon', address.road_address.x);
+  };
+
+  const address = watch('address');
 
   const onSubmit = handleSubmit((data) => {
     mutate.mutate(data, {
@@ -62,21 +77,45 @@ function AddPlaceForm() {
     });
   }, console.error);
 
-  // TODO: styles
   return (
-    <form onSubmit={onSubmit}>
-      <input type="text" {...register('name', { required: true })} />
-      {/* TODO: 주소 검색 모달로 변경 */}
-      <input type="text" {...register('address', { required: true })} />
-      <select {...register('category', { required: true })}>
-        <option value="">카테고리</option>
-        {category.map((item) => (
-          <option key={item} value={item}>
-            {getCategoryLabel(item)}
-          </option>
-        ))}
-      </select>
-      <button type="submit">등록</button>
-    </form>
+    <>
+      <form onSubmit={onSubmit} className={s.form}>
+        <div>
+          <label htmlFor="name">장소</label>
+          <input type="text" {...register('name', { required: true })} />
+        </div>
+        <div>
+          <label htmlFor="address">주소</label>
+          <input
+            type="text"
+            hidden
+            {...register('address', { required: true })}
+          />
+          <button className={s.fakeInput} type="button" onClick={onOpen}>
+            {address || <span>주소 검색</span>}
+          </button>
+        </div>
+        <div>
+          <label htmlFor="category">카테고리</label>
+          <select {...register('category', { required: true })}>
+            <option value="">선택</option>
+            {category.map((item) => (
+              <option key={item} value={item}>
+                {getCategoryLabel(item)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button type="submit" className={s.submit}>
+          등록
+        </button>
+      </form>
+      <SearchAddressModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onSelect={handleSelect}
+        type="ROAD_ADDR"
+      />
+    </>
   );
 }
