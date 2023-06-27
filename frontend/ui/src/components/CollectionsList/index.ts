@@ -1,3 +1,3 @@
-import CollectionsHeader from './CollectionsHeader';
+import CollectionsList from './CollectionsList';
 
-export { CollectionsHeader };
+export default CollectionsList;
