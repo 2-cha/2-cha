@@ -52,7 +52,6 @@
 }
 
 .metadata {
-  border-top: 1px solid black; // TODO: temp
   width: 100%;
   height: fit-content;
   @include mixins.padding(all, lg);
