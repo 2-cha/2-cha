@@ -1,32 +1,23 @@
 @use 'mixins';
 @use 'var';
 
-.header {
-  width: 100%;
-  @include mixins.padding(x, 20);
-  @include mixins.padding(y, 10);
-  @include mixins.flex(row, flex-start, center);
-
-  h1 {
-    @include mixins.text-lg;
-    color: var(--text-color);
-  }
-}
-
 .wrapper {
   width: 100%;
   flex: 1;
   @include mixins.flex(column, flex-start, center);
   overflow-y: scroll;
   overflow-x: hidden;
-}
 
-.element {
-  width: 360px;
-  height: 480px;
-  img {
+  &__header {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    @include mixins.padding(x, 20);
+    @include mixins.padding(y, 10);
+    @include mixins.flex(row, flex-start, center);
+    @include mixins.margin(bottom, 10px);
+
+    h1 {
+      @include mixins.text-lg;
+      color: var(--text-color);
+    }
   }
 }
