@@ -1,6 +1,7 @@
 package com._2cha.demo.recommendation.service;
 
 import static org.apache.lucene.document.TextField.TYPE_STORED;
+import static org.apache.lucene.index.IndexWriterConfig.OpenMode.CREATE_OR_APPEND;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
 import com._2cha.demo.collection.domain.Collection;
@@ -15,6 +16,7 @@ import com._2cha.demo.recommendation.event.CollectionInteractionEvent;
 import com._2cha.demo.recommendation.repository.MemberCollectionPreference;
 import com._2cha.demo.recommendation.repository.MemberCollectionPreferenceRepository;
 import jakarta.annotation.PreDestroy;
+import jakarta.persistence.EntityManager;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -24,16 +26,16 @@ import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.ko.KoreanAnalyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.StoredFields;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -49,6 +51,12 @@ import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.recommender.ItemBasedRecommender;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
+import org.hibernate.search.backend.lucene.LuceneExtension;
+import org.hibernate.search.backend.lucene.scope.LuceneIndexScope;
+import org.hibernate.search.backend.lucene.search.query.LuceneSearchQuery;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.mapping.SearchMapping;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,17 +89,23 @@ public class RecommendationService {
   private final ItemBasedRecommender recommender;
 
 
+  private final EntityManager em;
+
   public RecommendationService(DataSource dataSource, MemberService memberService,
                                CollectionRepository collectionRepository,
                                MemberCollectionPreferenceRepository memberCollectionPreferenceRepository,
-                               LuceneConfig luceneConfig)
+                               LuceneConfig luceneConfig, EntityManager em)
       throws IOException, TasteException {
     // lucene
     this.dataSource = dataSource;
     this.luceneConfig = luceneConfig;
-    this.directory = FSDirectory.open(Path.of(this.luceneConfig.getIndexPath()));
+    this.em = em;
+//    this.directory = FSDirectory.open(Path.of(this.luceneConfig.getIndexPath()));
+    this.directory = FSDirectory.open(Path.of("lucene/testindex/CollectionWithCorpus"));
     indexWriterConfig.setSimilarity(similarity);
-    writer = new IndexWriter(directory, indexWriterConfig);
+    indexWriterConfig.setOpenMode(CREATE_OR_APPEND);
+//    writer = new IndexWriter(directory, indexWriterConfig);
+    writer = null;
 
     // mahout
     dataModel = new PostgreSQLJDBCDataModel(dataSource,
@@ -114,7 +128,7 @@ public class RecommendationService {
   public void addCollectionCorpusDocument(CollectionCreatedEvent event) {
     this.addDocument(event.getDocSource());
   }
-  
+
   @SneakyThrows
   public void addDocument(DocumentSource src) {
     if (!writer.isOpen()) {
@@ -138,17 +152,42 @@ public class RecommendationService {
     // Parse a simple query that searches for "text":
 
     for (var field : src.getFields().entrySet()) {
-      QueryParser parser = new QueryParser(field.getKey(), new StandardAnalyzer());
+      QueryParser parser = new QueryParser(field.getKey(), new KoreanAnalyzer());
       Query query = parser.parse(field.getValue());
       ScoreDoc[] hits = searcher.search(query, 10).scoreDocs;
-      StoredFields fieldReader = searcher.storedFields();
+//      StoredFields fieldReader = searcher.
+//          storedFields();
 
       for (var hit : hits) {
-        Document hitDoc = fieldReader.document(hit.doc);
-        log.info("result: {} ({})", hitDoc.get(field.getKey()), hit.score);
+//        Document hitDoc = fieldReader.document(hit.doc);
+        Document hitDoc = searcher.doc(hit.doc);
+
+        log.info("ID = {}", hitDoc.get("id"));
+        List<IndexableField> fields = hitDoc.getFields();
+        fields.forEach(f -> log.info("{}", f.name()));
+        log.info("result ({}): {} ({})", field.getKey(), hitDoc.get(field.getKey()), hit.score);
       }
     }
+
     reader.close();
+    SearchSession searchSession = Search.session(em);
+    LuceneSearchQuery<Collection> searchResult = searchSession.search(Collection.class)
+                                                              .extension(LuceneExtension.get())
+                                                              .where(f -> f.match()
+                                                                           .field("title")
+                                                                           .matching("New"))
+                                                              .toQuery();
+    Explanation explain = searchResult.explain(src.getId());
+
+    log.info("{}", explain);
+    SearchMapping mapping = Search.mapping(em.getEntityManagerFactory());
+    LuceneIndexScope indexScope = mapping.scope(Collection.class).extension(LuceneExtension.get());
+    log.warn("==================================");
+    try (IndexReader indexReader = indexScope.openIndexReader()) {
+      Document document = indexReader.document(0);
+      document.getFields().forEach(f -> log.info("Field {} --> {}", f.name(), f.stringValue()));
+    }
+    log.warn("==================================");
   }
 
 

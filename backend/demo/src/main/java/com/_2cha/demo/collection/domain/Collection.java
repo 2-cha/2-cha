@@ -15,19 +15,27 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 
 @Entity
 @Getter
+@Indexed(index = "CollectionWithCorpus")
 public class Collection {
 
   @Id
+  @DocumentId
   @GeneratedValue
   private Long id;
 
   @Column(nullable = false)
+  @FullTextField(analyzer = "korean", projectable = Projectable.YES)
   private String title;
 
   @Column(nullable = false)
+  @FullTextField(analyzer = "korean", projectable = Projectable.YES)
   private String description;
 
   private boolean isExposed = true;

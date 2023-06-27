@@ -36,7 +36,6 @@ import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.recommendation.Interaction;
 import com._2cha.demo.recommendation.dto.CollectionCorpusDocumentSource;
-import com._2cha.demo.recommendation.event.CollectionCreatedEvent;
 import com._2cha.demo.recommendation.event.CollectionInteractionCancelEvent;
 import com._2cha.demo.recommendation.event.CollectionInteractionEvent;
 import com._2cha.demo.recommendation.service.RecommendationService;
@@ -308,15 +307,15 @@ public class CollectionService {
                                                         reviews);
     collectionRepository.save(collection);
 
-    List<String> topTagMessages = reviewService.getTopTagCounts(reviews, TOP_TAG_MESSAGE_SIZE)
-                                               .stream()
-                                               .map(TagCountResponse::getMessage)
-                                               .toList();
-    eventPublisher.publishEvent(new CollectionCreatedEvent(this,
-                                                           new CollectionCorpusDocumentSource(
-                                                               collection.getId(),
-                                                               collection.getTitle(),
-                                                               topTagMessages)));
+//    List<String> topTagMessages = reviewService.getTopTagCounts(reviews, TOP_TAG_MESSAGE_SIZE)
+//                                               .stream()
+//                                               .map(TagCountResponse::getMessage)
+//                                               .toList();
+//    eventPublisher.publishEvent(new CollectionCreatedEvent(this,
+//                                                           new CollectionCorpusDocumentSource(
+//                                                               collection.getId(),
+//                                                               collection.getTitle(),
+//                                                               topTagMessages)));
     return new CollectionCreatedResponse(collection);
   }
 
