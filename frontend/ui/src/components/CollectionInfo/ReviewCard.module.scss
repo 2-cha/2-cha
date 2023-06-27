@@ -5,7 +5,8 @@
   scroll-snap-align: start;
   scroll-snap-stop: always;
   position: relative;
-  width: 100vw;
+  min-width: 100%;
+  max-width: 480px;
   flex: 1;
   height: 100%;
   overflow: hidden;
