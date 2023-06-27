@@ -268,6 +268,23 @@ public class ReviewService {
     return placesTagCountMap;
   }
 
+  public List<TagCountResponse> getTopTagCountsByIdIn(List<Long> reviewIds, Integer tagSizeLimit) {
+    List<Review> allReviews = reviewRepository.findReviewsByIdIn(reviewIds);
+    if (allReviews.isEmpty()) return List.of();
+
+    return calcAndSortTagCount(allReviews, tagSizeLimit);
+  }
+
+  public List<TagCountResponse> getTopTagCounts(List<Review> reviews, Integer tagSizeLimit) {
+    for (Review review : reviews) {
+      if (review == null || review.getTags() == null) throw new IllegalArgumentException();
+      for (Tag tag : review.getTags()) {
+        if (tag == null) throw new IllegalArgumentException();
+      }
+    }
+    return calcAndSortTagCount(reviews, tagSizeLimit);
+  }
+
   private List<TagCountResponse> calcAndSortTagCount(List<Review> reviews, Integer size) {
     Map<Tag, Integer> tagCountMap = new HashMap<>();
     reviews.forEach(review -> review.getTags()
