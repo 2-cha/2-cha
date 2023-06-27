@@ -5,11 +5,13 @@
   gap: 16px;
 
   @include mixins.flex(column, flex-start, flex-start);
+  @include mixins.padding(x, lg);
+  @include mixins.padding(y, md);
 
   .button {
     width: 100%;
     padding: 0.75rem 1.25rem;
-    border-radius: 6px;
+    border-radius: 14px;
   }
 
   .form {
@@ -28,11 +30,10 @@
       gap: 4px;
 
       @include mixins.flex(column, flex-start, flex-start);
+      @include mixins.margin(bottom, sm);
 
       & > label {
-        color: var(--text-secondary-color);
-
-        @include mixins.text-md;
+        @include mixins.margin(bottom, sm);
       }
     }
 
@@ -58,10 +59,7 @@
     }
 
     .submit {
-      width: 100%;
       margin-top: 16px;
-      padding: 0.75rem 1.25rem;
-      border-radius: 6px;
       color: var(--background-color);
       background-color: var(--background-active-color);
     }

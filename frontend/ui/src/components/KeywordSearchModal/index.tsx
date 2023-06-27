@@ -40,19 +40,21 @@ export default function KeywordSearchModal({
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose} header="장소 검색">
-      <form onSubmit={handleSubmit}>
-        <SearchInput name="query" />
-      </form>
-      <List>
-        {data?.map((place) => (
-          <List.Item key={place.id} onClick={() => handleSelect(place)}>
-            <div className={s.item}>
-              <p className={s.item__title}>{place.place_name}</p>
-              <p className={s.item__description}>{place.road_address_name}</p>
-            </div>
-          </List.Item>
-        ))}
-      </List>
+      <div className={s.container}>
+        <form onSubmit={handleSubmit}>
+          <SearchInput name="query" />
+        </form>
+        <List className={s.list}>
+          {data?.map((place) => (
+            <List.Item key={place.id} onClick={() => handleSelect(place)}>
+              <div className={s.item}>
+                <p className={s.item__title}>{place.place_name}</p>
+                <p className={s.item__description}>{place.road_address_name}</p>
+              </div>
+            </List.Item>
+          ))}
+        </List>
+      </div>
     </Drawer>
   );
 }
