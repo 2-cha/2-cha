@@ -1,3 +1,4 @@
+import { useAuth } from '@/hooks';
 import { Collection } from '@/types/collection';
 import CollectionsElement from './CollectionsElement';
 
@@ -8,13 +9,12 @@ interface ListProps {
 }
 
 export default function CollectionsList({ collections }: ListProps) {
-  // const { user } = useAuth();
+  const { user } = useAuth();
 
   return (
     <div className={s.wrapper}>
       <div className={s.wrapper__header}>
-        {/* <h1>{user?.name}님을 위한 컬렉션.</h1> */}
-        <h1>유저님을 위한 컬렉션을 준비했어요.</h1>
+        <h1>{user?.name}님을 위한 컬렉션을 준비했어요.</h1>
       </div>
       <ul className={s.wrapper__inner}>
         {collections.map((collection) => (
