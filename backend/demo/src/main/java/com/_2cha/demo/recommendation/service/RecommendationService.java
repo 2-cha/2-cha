@@ -1,5 +1,6 @@
 package com._2cha.demo.recommendation.service;
 
+import static org.apache.lucene.document.TextField.TYPE_STORED;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
 import com._2cha.demo.collection.domain.Collection;
@@ -7,6 +8,7 @@ import com._2cha.demo.collection.repository.CollectionRepository;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.recommendation.config.LuceneConfig;
+import com._2cha.demo.recommendation.dto.DocumentSource;
 import com._2cha.demo.recommendation.event.CollectionInteractionCancelEvent;
 import com._2cha.demo.recommendation.event.CollectionInteractionEvent;
 import com._2cha.demo.recommendation.repository.MemberCollectionPreference;
@@ -18,10 +20,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.sql.DataSource;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.ko.KoreanAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.StoredFields;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
@@ -94,54 +108,41 @@ public class RecommendationService {
     this.memberCollectionPreferenceRepository = memberCollectionPreferenceRepository;
   }
 
-//  @SneakyThrows
-//  public void addIndex(Index index) {
-//    if (!writer.isOpen()) {
-//      throw new RuntimeException("IndexWriter is closed");
-//    }
-//    List<String> fields = Arrays.stream(index.getClass().getDeclaredFields()).map(f -> f.getName())
-//                                .toList();
-//
-//    Document doc = new Document();
-//    for (var field : fields) {
-//      doc.add(
-//          new Field(field, index.getClass().getDeclaredField(field).get(index).toString(),
-//                    TYPE_STORED));
-//    }
-//
-//    writer.addDocument(doc);
-//    writer.commit();
-//  }
+  @SneakyThrows
+  public void addDocument(DocumentSource src) {
+    if (!writer.isOpen()) {
+      throw new RuntimeException("IndexWriter is closed");
+    }
+    Document doc = new Document();
+    src.getFields()
+       .forEach((k, v) -> doc.add(new Field(k, v, TYPE_STORED)));
+
+    writer.addDocument(doc);
+    writer.commit();
+  }
 
   // Text Based Search
   // Query: User preference + Content Watching
-//  public void recommend(Index index)
-//      throws IOException, ParseException, NoSuchFieldException, IllegalAccessException {
-//    IndexReader reader = DirectoryReader.open(directory);
-//    IndexSearcher searcher = new IndexSearcher(reader);
-//    searcher.setSimilarity(similarity);
-//
-//    List<String> fields = Arrays.stream(index.getClass().getDeclaredFields()).map(f -> f.getName())
-//                                .toList();
-//    // Parse a simple query that searches for "text":
-//    for (var field : fields) {
-//      QueryParser parser = new QueryParser(field, new StandardAnalyzer());
-//      String queryText = index.getClass().getDeclaredField(field).get(index).toString();
-//      Query query = parser.parse(queryText);
-//      ScoreDoc[] hits = searcher.search(query, 10).scoreDocs;
-//      StoredFields storedFields = searcher.storedFields();
-//
-//      log.info("Search field: {}", field);
-//      log.info("Search query: {}", queryText);
-//
-//      for (int i = 0; i < hits.length; i++) {
-//
-//        Document hitDoc = storedFields.document(hits[i].doc);
-//        log.info("Search result: {} ({})", hitDoc.get(field), hits[i].score);
-//      }
-//    }
-//    reader.close();
-//  }
+  public void recommend(DocumentSource src) throws IOException, ParseException {
+    IndexReader reader = DirectoryReader.open(directory);
+    IndexSearcher searcher = new IndexSearcher(reader);
+    searcher.setSimilarity(similarity);
+
+    // Parse a simple query that searches for "text":
+
+    for (var field : src.getFields().entrySet()) {
+      QueryParser parser = new QueryParser(field.getKey(), new StandardAnalyzer());
+      Query query = parser.parse(field.getValue());
+      ScoreDoc[] hits = searcher.search(query, 10).scoreDocs;
+      StoredFields fieldReader = searcher.storedFields();
+
+      for (var hit : hits) {
+        Document hitDoc = fieldReader.document(hit.doc);
+        log.info("result: {} ({})", hitDoc.get(field.getKey()), hit.score);
+      }
+    }
+    reader.close();
+  }
 
 
   @Async("recommendationTaskExecutor")
