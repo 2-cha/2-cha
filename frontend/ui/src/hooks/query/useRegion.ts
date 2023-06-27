@@ -13,7 +13,7 @@ async function fetchRegion(location: Coordinate) {
 
 export function useRegionQuery(location: Coordinate | null) {
   const result = useQuery({
-    queryKey: ['region', location],
+    queryKey: ['kakao', 'region', location],
     queryFn: () => fetchRegion(location!),
     staleTime: 1000 * 60 * 60 * 24,
     enabled: !!location,

@@ -1,6 +1,9 @@
+import { fetchKakao } from '@/lib/kakao';
 import { NextRequest } from 'next/server';
 
-const KAKAO_API_URL = 'https://dapi.kakao.com';
+export const config = {
+  runtime: 'edge',
+};
 
 export interface Region {
   region_type: string;
@@ -14,17 +17,6 @@ export interface Region {
   y: number;
 }
 
-interface RegionResponse {
-  meta: {
-    total_count: number;
-  };
-  documents: Region[];
-}
-
-export const config = {
-  runtime: 'edge',
-};
-
 export default async function handler(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -32,20 +24,10 @@ export default async function handler(req: NextRequest) {
       x: searchParams.get('lon') as string,
       y: searchParams.get('lat') as string,
     });
-    const response = await fetch(
-      `${KAKAO_API_URL}/v2/local/geo/coord2regioncode.json?${params.toString()}`,
-      {
-        headers: {
-          Authorization: `KakaoAK ${process.env.KAKAO_REST_API_KEY}`,
-        },
-      }
+    const data = await fetchKakao<Region>(
+      `/local/geo/coord2regioncode.json?${params.toString()}`
     );
 
-    if (!response.ok) {
-      return response;
-    }
-
-    const data: RegionResponse = await response.json();
     if (data.meta.total_count === 0) {
       return new Response('No region found', { status: 404 });
     }
@@ -55,6 +37,10 @@ export default async function handler(req: NextRequest) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (e) {
-    return new Response('Internal Server Error', { status: 500 });
+    if (e instanceof Response) {
+      return e;
+    } else {
+      return new Response('Internal Server Error', { status: 500 });
+    }
   }
 }
