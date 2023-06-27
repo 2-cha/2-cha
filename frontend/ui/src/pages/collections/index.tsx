@@ -1,12 +1,18 @@
-import { useCollectionsQuery } from '@/hooks/query';
 import Link from 'next/link';
 
+import { useAuth } from '@/hooks';
+import { useCollectionsQuery } from '@/hooks/query';
 import { Collection } from '@/types/collection';
+import Header from '@/components/Layout/Header';
+import { CollectionsHeader } from '@/components/CollectionsList';
 
 export default function Collections() {
   const { data, isLoading, isError } = useCollectionsQuery();
+
   return (
-    <div>
+    <>
+      <Header />
+      <CollectionsHeader />
       {isLoading || isError ? null : (
         <>
           {data.map((collection: Collection) => (
@@ -16,6 +22,6 @@ export default function Collections() {
           ))}
         </>
       )}
-    </div>
+    </>
   );
 }
