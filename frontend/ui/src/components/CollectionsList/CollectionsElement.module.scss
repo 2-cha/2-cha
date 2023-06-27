@@ -37,6 +37,7 @@
     h2 {
       color: var(--white);
       @include mixins.text-xl;
+      @include mixins.margin(bottom, 5px);
     }
   }
 
