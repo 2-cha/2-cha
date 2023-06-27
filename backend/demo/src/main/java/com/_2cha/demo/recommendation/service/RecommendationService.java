@@ -9,6 +9,7 @@ import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.recommendation.config.LuceneConfig;
 import com._2cha.demo.recommendation.dto.DocumentSource;
+import com._2cha.demo.recommendation.event.CollectionCreatedEvent;
 import com._2cha.demo.recommendation.event.CollectionInteractionCancelEvent;
 import com._2cha.demo.recommendation.event.CollectionInteractionEvent;
 import com._2cha.demo.recommendation.repository.MemberCollectionPreference;
@@ -68,7 +69,7 @@ public class RecommendationService {
   private final LuceneConfig luceneConfig;
   private final Similarity similarity = new BM25Similarity(1.2f, 0);
   private final IndexWriterConfig indexWriterConfig = new IndexWriterConfig(new KoreanAnalyzer());
-  private final IndexWriter writer;
+  private final IndexWriter writer; // mt-safe
   private final Directory directory;
 
   /*-----------
@@ -108,6 +109,12 @@ public class RecommendationService {
     this.memberCollectionPreferenceRepository = memberCollectionPreferenceRepository;
   }
 
+  @Async("recommendationTaskExecutor")
+  @TransactionalEventListener(phase = AFTER_COMMIT, classes = CollectionCreatedEvent.class)
+  public void addCollectionCorpusDocument(CollectionCreatedEvent event) {
+    this.addDocument(event.getDocSource());
+  }
+  
   @SneakyThrows
   public void addDocument(DocumentSource src) {
     if (!writer.isOpen()) {

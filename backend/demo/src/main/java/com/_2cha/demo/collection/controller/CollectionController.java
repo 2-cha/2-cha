@@ -133,4 +133,11 @@ public class CollectionController {
   public void unlike(@Authed Long memberId, @PathVariable Long collId) {
     likeService.unlikeCollection(memberId, collId);
   }
+
+  //XXX: 추천 알고리즘 테스트용
+  @Auth(GUEST)
+  @GetMapping("/collections/{collId}/recommend")
+  public void recommend(@PathVariable Long collId) {
+    collectionService.recommend(collId);
+  }
 }

@@ -1,6 +1,7 @@
 package com._2cha.demo.collection.service;
 
 
+import static com._2cha.demo.recommendation.dto.CollectionCorpusDocumentSource.TOP_TAG_MESSAGE_SIZE;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
 
@@ -10,6 +11,7 @@ import com._2cha.demo.bookmark.exception.AlreadyBookmarkedException;
 import com._2cha.demo.bookmark.exception.NotBookmarkedException;
 import com._2cha.demo.collection.domain.Collection;
 import com._2cha.demo.collection.domain.CollectionBookmark;
+import com._2cha.demo.collection.domain.ReviewInCollection;
 import com._2cha.demo.collection.dto.CollectionBriefResponse;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
 import com._2cha.demo.collection.dto.CollectionDetailResponse;
@@ -33,15 +35,19 @@ import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
 import com._2cha.demo.recommendation.Interaction;
+import com._2cha.demo.recommendation.dto.CollectionCorpusDocumentSource;
+import com._2cha.demo.recommendation.event.CollectionCreatedEvent;
 import com._2cha.demo.recommendation.event.CollectionInteractionCancelEvent;
 import com._2cha.demo.recommendation.event.CollectionInteractionEvent;
 import com._2cha.demo.recommendation.service.RecommendationService;
 import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.dto.LikeStatus;
 import com._2cha.demo.review.dto.ReviewResponse;
+import com._2cha.demo.review.dto.TagCountResponse;
 import com._2cha.demo.review.service.ReviewService;
 import com._2cha.demo.util.GeomUtils;
 import jakarta.annotation.Nullable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
@@ -53,6 +59,7 @@ import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
@@ -301,6 +308,15 @@ public class CollectionService {
                                                         reviews);
     collectionRepository.save(collection);
 
+    List<String> topTagMessages = reviewService.getTopTagCounts(reviews, TOP_TAG_MESSAGE_SIZE)
+                                               .stream()
+                                               .map(TagCountResponse::getMessage)
+                                               .toList();
+    eventPublisher.publishEvent(new CollectionCreatedEvent(this,
+                                                           new CollectionCorpusDocumentSource(
+                                                               collection.getId(),
+                                                               collection.getTitle(),
+                                                               topTagMessages)));
     return new CollectionCreatedResponse(collection);
   }
 
@@ -383,5 +399,29 @@ public class CollectionService {
     bookmarkRepository.delete(bookmark);
     eventPublisher.publishEvent(
         new CollectionInteractionCancelEvent(this, memberId, collId, Interaction.BOOKMARK));
+  }
+
+  //XXX: 추천 알고리즘 테스트 임시 메서드
+  public List<CollectionBriefResponse> recommend(Long collId) {
+    Collection collection = collectionRepository.findCollectionById(collId);
+    if (collection == null) throw new NoSuchCollectionException();
+
+    CollectionCorpusDocumentSource docsrc = new CollectionCorpusDocumentSource(
+        collection.getId(), collection.getTitle(),
+        reviewService.getTopTagCounts(
+                         collection.getReviews().stream().map(
+                             ReviewInCollection::getReview).toList(),
+                         TOP_TAG_MESSAGE_SIZE)
+                     .stream()
+                     .map(TagCountResponse::getMessage)
+                     .toList());
+    try {
+      recommendationService.recommend(docsrc);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    } catch (ParseException e) {
+      throw new RuntimeException(e);
+    }
+    return List.of();
   }
 }
