@@ -35,7 +35,7 @@ export default function ProfileReviewTab({ memberId }: Props) {
       />
       <div className={s.review}>
         {selectedTabIndex === 0 ? (
-          <div className={s.review__section}>
+          <>
             {data?.pages[0]?.length ? (
               <>
                 <ReviewList pages={data.pages} />
@@ -45,9 +45,9 @@ export default function ProfileReviewTab({ memberId }: Props) {
             ) : (
               <p className={s.hasNoReview}>아직 리뷰가 없습니다</p>
             )}
-          </div>
+          </>
         ) : (
-          <span>지도</span>
+          <span>공사중</span>
         )}
       </div>
     </div>
