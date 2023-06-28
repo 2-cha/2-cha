@@ -16,6 +16,7 @@
   background-color: var(--background-color);
 
   .active {
+    background-color: var(--background-inactive-color);
     border-bottom: 2px solid var(--border-color);
   }
 
