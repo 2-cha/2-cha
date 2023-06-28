@@ -3,8 +3,9 @@
 .root {
   width: 100%;
   height: 100px; // TODO: 내용물 들어가면 height 지정 안해도 됨
+  min-height: 100px;
+  max-height: 100px;
   @include mixins.flex(row); // TODO: 내용물 들어가면 justify-content flex-start
-  padding: 10px 0;
   overflow-x: scroll;
   overflow-y: hidden;
   border-top: 2px solid var(--border-color);
