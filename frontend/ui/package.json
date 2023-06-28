@@ -41,6 +41,7 @@
     "recoil-nexus": "^0.5.0",
     "recoil-persist": "^4.2.0",
     "sass": "^1.60.0",
+    "swiper": "^9.4.1",
     "typescript": "5.0.2"
   },
   "devDependencies": {

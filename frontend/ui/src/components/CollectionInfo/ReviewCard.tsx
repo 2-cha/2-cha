@@ -2,9 +2,9 @@ import Image from 'next/image';
 
 import { Review } from '@/types';
 import { Tag } from '@/components/Tags';
+import NoImage from '@/components/NoImage';
 
 import s from './ReviewCard.module.scss';
-import NoImage from '@/components/NoImage';
 
 interface Props {
   review: Omit<Review, 'member'>;
@@ -14,7 +14,7 @@ export default function ReviewCard({ review }: Props) {
   const { place } = review;
 
   return (
-    <div className={s.wrapper}>
+    <>
       {review.images && review.images[0] ? (
         <Image
           src={review.images[0]}
@@ -32,10 +32,14 @@ export default function ReviewCard({ review }: Props) {
         <div className={s.metadata__tags}>
           {review.tags &&
             review.tags.map((tag) => (
-              <Tag key={tag.id} tag={tag} className={s.metadata__tag} />
+              <Tag
+                key={`${review.id}-${tag.message}`}
+                tag={tag}
+                className={s.metadata__tag}
+              />
             ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }
