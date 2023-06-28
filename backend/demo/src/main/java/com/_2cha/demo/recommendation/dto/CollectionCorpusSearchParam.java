@@ -11,15 +11,23 @@ import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Slf4j
-public class AbstractDocumentSource implements DocumentSource {
+public class CollectionCorpusSearchParam {
 
-  public final Long id;
+  public static final int TOP_TAG_MESSAGE_SIZE = 3;
 
-  public AbstractDocumentSource(Long id) {
+  public Long id;
+  public String title;
+  public String topTagMessagesCorpus;
+
+  public CollectionCorpusSearchParam(Long id, String title, List<String> topTagMessages) {
     this.id = id;
+    this.title = title;
+    if (topTagMessages.size() > TOP_TAG_MESSAGE_SIZE) {
+      topTagMessages = topTagMessages.subList(0, TOP_TAG_MESSAGE_SIZE);
+    }
+    this.topTagMessagesCorpus = String.join(" ", topTagMessages);
   }
 
-  @Override
   public Map<String, String> getFields() {
     Map<String, String> m = new HashMap<>();
     Field[] fields = this.getClass().getFields();

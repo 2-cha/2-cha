@@ -16,6 +16,7 @@ import com._2cha.demo.collection.service.CollectionLikeService;
 import com._2cha.demo.collection.service.CollectionService;
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
+import com._2cha.demo.recommendation.service.CollectionRecommendationService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class CollectionController {
 
   private final CollectionService collectionService;
   private final CollectionLikeService likeService;
+  private final CollectionRecommendationService recommendationService;
 
   @Auth(GUEST)
   @GetMapping("/members/{memberId}/collections")
@@ -134,10 +136,16 @@ public class CollectionController {
     likeService.unlikeCollection(memberId, collId);
   }
 
-  //XXX: 추천 알고리즘 테스트용
   @Auth(GUEST)
-  @GetMapping("/collections/{collId}/recommend")
-  public void recommend(@PathVariable Long collId) {
-    collectionService.recommend(collId);
+  @GetMapping("/collections/{collId}/recommendation")
+  public List<CollectionBriefResponse> recommend(@PathVariable Long collId) {
+    return collectionService.getSimilarCollections(collId);
+  }
+
+  //XXX
+  @Auth(MEMBER)
+  @GetMapping("/collections/mass")
+  public void massIndex() throws InterruptedException {
+    recommendationService.massIndex();
   }
 }

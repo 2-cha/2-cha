@@ -1,4 +1,4 @@
-package com._2cha.demo.recommendation.repository;
+package com._2cha.demo.recommendation.domain;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
@@ -6,7 +6,6 @@ import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 import com._2cha.demo.collection.domain.Collection;
 import com._2cha.demo.member.domain.Member;
-import com._2cha.demo.recommendation.Interaction;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
