@@ -4,15 +4,13 @@
 .root {
   width: 100%;
   flex: 1;
-  @include mixins.flex(column);
+  height: calc(100vh - var.$navbar-height - 260px);
+  @include mixins.flex(column, flex-start, center);
 }
 
 .review {
   flex: 1;
   width: 100%;
-  @include mixins.flex();
-
-  &__section {
-    width: 100%;
-  }
+  overflow: scroll;
+  @include mixins.flex(column, flex-start, center);
 }

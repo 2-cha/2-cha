@@ -14,8 +14,10 @@
   height: var.$header-height;
   @include mixins.flex(row, space-around, flex-start);
   background-color: var(--background-color);
+  color: var(--text-color);
 
   .active {
+    background-color: var(--background-inactive-color);
     border-bottom: 2px solid var(--border-color);
   }
 

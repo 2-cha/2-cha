@@ -40,15 +40,6 @@
 .carousel {
   flex: 1;
   width: 100%;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-
-  &__inner {
-    width: fit-content;
-    height: 100%;
-    @include mixins.flex(row, flex-start, flex-start);
-  }
 }
 
 .metadata {

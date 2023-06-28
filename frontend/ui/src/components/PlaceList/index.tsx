@@ -7,7 +7,6 @@ import { ShortTags } from '../Tags';
 import { BookmarkToggleButton } from '../Buttons';
 
 import {
-  SadIcon,
   CocktailIcon,
   WhiskeyIcon,
   WineIcon,
