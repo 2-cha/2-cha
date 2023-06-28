@@ -54,6 +54,7 @@
     @include mixins.flex(row, flex-start, center);
     gap: 10px;
     @include mixins.margin(top, md);
+    flex-wrap: wrap;
   }
 
   &__tag {
