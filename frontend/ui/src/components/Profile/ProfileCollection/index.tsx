@@ -1,5 +1,5 @@
-import { Swiper, SwiperSlide } from 'swiper/react';
 import Link from 'next/link';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import cn from 'classnames';
 
 import { PlusSquareIcon } from '@/components/Icons';
