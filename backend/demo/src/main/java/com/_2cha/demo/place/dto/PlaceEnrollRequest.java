@@ -15,9 +15,11 @@ public class PlaceEnrollRequest {
   @NotNull
   private Category category;
 
+  @NotNull
   @Range(min = -90, max = 90)
   private Double lat;
 
+  @NotNull
   @Range(min = -180, max = 180)
   private Double lon;
 

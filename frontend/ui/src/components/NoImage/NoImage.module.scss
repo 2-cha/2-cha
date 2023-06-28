@@ -1,0 +1,28 @@
+@use 'mixins';
+@use 'var';
+
+$img-height: 360px;
+
+.skeleton {
+  background: var(--background-skeleton-color);
+  width: 100%;
+  height: $img-height;
+  @include mixins.flex(column, center, center);
+
+  & > svg {
+    fill: var(--border-color);
+    @include mixins.margin(bottom, md);
+  }
+
+  &__title {
+    color: var(--text-color);
+    @include mixins.text-lg;
+    user-select: none;
+  }
+
+  &__subtitle {
+    color: var(--text-secondary-color);
+    @include mixins.text-sm;
+    user-select: none;
+  }
+}

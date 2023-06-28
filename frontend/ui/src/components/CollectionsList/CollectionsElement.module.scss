@@ -1,0 +1,64 @@
+@use 'mixins';
+@use 'var';
+
+.element {
+  min-width: 75%;
+  max-width: 360px;
+  aspect-ratio: 0.75;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  @include mixins.margin(bottom, 20px);
+
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    background-color: var(--shadow-dark-color);
+    @include mixins.padding(all, 20);
+    color: var(--text-color);
+    @include mixins.flex(column, flex-end, flex-start);
+  }
+
+  &__metadata {
+    @include mixins.flex(column, center, flex-start);
+
+    h2 {
+      color: var(--white);
+      @include mixins.text-xl;
+      @include mixins.margin(bottom, 5px);
+    }
+  }
+
+  &__icons {
+    @include mixins.flex(row, flex-start, center);
+    color: var(--white);
+
+    span {
+      @include mixins.text-sm;
+    }
+
+    span:first-of-type {
+      @include mixins.margin(right, 10px);
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+      color: var(--white);
+      @include mixins.margin(right, 5px);
+    }
+  }
+}

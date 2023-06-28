@@ -11,7 +11,7 @@ interface BookmarkButtonProps {
   itemType: string;
   itemId: string | number;
   size?: number;
-  nOfBookmarks: number;
+  bookmarkCount: number;
 }
 
 export default function BookmarkToggleButton({
@@ -19,7 +19,7 @@ export default function BookmarkToggleButton({
   itemType,
   itemId,
   size = 32,
-  nOfBookmarks,
+  bookmarkCount,
   className,
   ...props
 }: React.ComponentProps<'button'> & BookmarkButtonProps) {
@@ -53,7 +53,7 @@ export default function BookmarkToggleButton({
         isSingle
         isActive
       />
-      <span>{nOfBookmarks}</span>
+      <span>{bookmarkCount}</span>
     </button>
   );
 }

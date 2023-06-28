@@ -3,6 +3,8 @@
 
 .root {
   @include mixins.flex(column, flex-start, center);
+  // width: 100vw;
+  height: 100vh;
   position: relative;
 
   @include mixins.media('>small') {

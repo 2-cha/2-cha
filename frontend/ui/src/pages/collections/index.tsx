@@ -1,7 +1,14 @@
+import { useCollectionsQuery } from '@/hooks/query';
+import Header from '@/components/Layout/Header';
+import CollectionsList from '@/components/CollectionsList';
+
 export default function Collections() {
+  const { data, isLoading, isError } = useCollectionsQuery();
+
   return (
-    <div>
-      <a href="collections/1">1번 컬렉션으로 이동</a>
-    </div>
+    <>
+      <Header />
+      {isLoading || isError ? null : <CollectionsList collections={data} />}
+    </>
   );
 }

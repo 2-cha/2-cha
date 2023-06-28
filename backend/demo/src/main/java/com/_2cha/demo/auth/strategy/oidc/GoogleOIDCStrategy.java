@@ -47,6 +47,8 @@ public class GoogleOIDCStrategy implements OIDCStrategy {
 
   @Override
   public String getIdToken(String authCode) {
+    //XXX
+    boolean dev = authCode.endsWith("__dev");
 
     WebClient webClient = WebClient.builder()
                                    .baseUrl(config.getTokenEndpoint())
@@ -54,10 +56,14 @@ public class GoogleOIDCStrategy implements OIDCStrategy {
                                                   MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                                    .build();
 
-    FormInserter<String> inserter = BodyInserters.fromFormData("code", authCode)
+    FormInserter<String> inserter = BodyInserters.fromFormData("code",
+                                                               dev ? authCode.replace("__dev", "")
+                                                                   : authCode)
                                                  .with("client_id", config.getClientId())
                                                  .with("client_secret", config.getClientSecret())
-                                                 .with("redirect_uri", config.getRedirectUri())
+                                                 .with("redirect_uri",
+                                                       dev ? "http://localhost:3000/login/callback"
+                                                           : config.getRedirectUri())
                                                  .with("grant_type", config.getGrantType());
 
     Map<String, String> response = webClient.post()

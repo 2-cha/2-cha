@@ -13,6 +13,7 @@ import {
   WineIcon,
   PinIcon,
 } from '@/components/Icons';
+import NoImage from '../NoImage';
 
 import s from './PlaceList.module.scss';
 
@@ -96,7 +97,7 @@ export function PlaceItem({ place }: PlaceItemProps) {
         itemType="places"
         itemId={place.id}
         isBookmarked={place.bookmark_status.is_bookmarked}
-        nOfBookmarks={place.bookmark_status.count}
+        bookmarkCount={place.bookmark_status.count}
       />
       {place.image ? (
         <Image
@@ -108,15 +109,7 @@ export function PlaceItem({ place }: PlaceItemProps) {
           className={s.thumbnail}
         />
       ) : (
-        <div className={s.thumbnail__skeleton}>
-          <SadIcon width={100} height={100} />
-          <span className={s.thumbnail__skeleton__title}>
-            사진을 찾을 수 없어요
-          </span>
-          <span className={s.thumbnail__skeleton__subtitle}>
-            첫 리뷰어가 되어보세요
-          </span>
-        </div>
+        <NoImage />
       )}
     </li>
   );

@@ -12,7 +12,7 @@ interface Props {
   itemType: 'reviews' | 'collections';
   itemId: string | number;
   size?: number;
-  nOfLikes: number;
+  likeCount: number;
 }
 
 export default function LikeToggleButton({
@@ -20,7 +20,7 @@ export default function LikeToggleButton({
   itemType,
   itemId,
   size = 32,
-  nOfLikes,
+  likeCount,
   className,
   ...props
 }: React.ComponentProps<'button'> & Props) {
@@ -51,7 +51,7 @@ export default function LikeToggleButton({
         height={size}
         isFilled={isLiked}
       />
-      <span>{nOfLikes}</span>
+      <span>{likeCount}</span>
     </button>
   );
 }
