@@ -198,7 +198,7 @@ public class CollectionService {
   }
 
   @Transactional(readOnly = true)
-  public List<CollectionBriefResponse> getSimilarCollections(Long collId) {
+  public List<CollectionBriefResponse> getSimilarCollections(Long collId, Integer maxSize) {
     Collection collection = collectionRepository.findCollectionById(collId);
     if (collection == null) throw new NoSuchCollectionException();
 
@@ -211,7 +211,7 @@ public class CollectionService {
                      .stream()
                      .map(TagCountResponse::getMessage)
                      .toList());
-    return recommendationService.recommend(param, 0.3, 10)
+    return recommendationService.recommend(param, 0.3, maxSize)
                                 .stream()
                                 .map(c -> new CollectionBriefResponse(c,
                                                                       fileStorageService.getBaseUrl()
