@@ -71,7 +71,7 @@ public class CollectionRecommendationService {
     this.memberService = memberService;
     this.collectionRepository = collectionRepository;
     this.memberCollectionPreferenceRepository = memberCollectionPreferenceRepository;
-    this.corpusRepository = corpusRepository; // hibernate-search (lucene)
+    this.corpusRepository = corpusRepository; // hibernate-search (dev: lucene / prod: elasticsearch)
   }
 
 
