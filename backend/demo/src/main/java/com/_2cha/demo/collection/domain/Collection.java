@@ -38,11 +38,11 @@ public class Collection {
   private Long id;
 
   @Column(nullable = false)
-  @FullTextField(analyzer = "korean", projectable = Projectable.YES)
+  @FullTextField(analyzer = "nori", projectable = Projectable.YES)
   private String title;
 
   @Column(nullable = false)
-  @FullTextField(analyzer = "korean", projectable = Projectable.YES)
+  @FullTextField(analyzer = "nori", projectable = Projectable.YES)
   private String description;
 
   private boolean isExposed = true;
@@ -60,7 +60,7 @@ public class Collection {
 
   @Transient
   @FullTextField(
-      analyzer = "korean",
+      analyzer = "nori",
       name = "topTagMessagesCorpus",
       projectable = Projectable.YES,
       valueBridge = @ValueBridgeRef(type = TopTagFetcherBridge.class))
