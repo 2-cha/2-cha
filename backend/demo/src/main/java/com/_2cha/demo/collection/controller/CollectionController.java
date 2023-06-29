@@ -1,5 +1,6 @@
 package com._2cha.demo.collection.controller;
 
+import static com._2cha.demo.member.domain.Role.ADMIN;
 import static com._2cha.demo.member.domain.Role.GUEST;
 import static com._2cha.demo.member.domain.Role.MEMBER;
 
@@ -53,6 +54,12 @@ public class CollectionController {
                                                       @RequestParam(defaultValue = "5000.0") Double distance
                                                      ) {
     return collectionService.getRecommendations(memberId, lat, lon, distance);
+  }
+
+  @Auth(GUEST)
+  @GetMapping("/collections/{collId}/recommendation")
+  public List<CollectionBriefResponse> recommend(@PathVariable Long collId) {
+    return collectionService.getSimilarCollections(collId);
   }
 
   @Auth(MEMBER)
@@ -136,14 +143,8 @@ public class CollectionController {
     likeService.unlikeCollection(memberId, collId);
   }
 
-  @Auth(GUEST)
-  @GetMapping("/collections/{collId}/recommendation")
-  public List<CollectionBriefResponse> recommend(@PathVariable Long collId) {
-    return collectionService.getSimilarCollections(collId);
-  }
-
-  //XXX
-  @Auth(MEMBER)
+  //TODO: cron job
+  @Auth(ADMIN)
   @GetMapping("/collections/mass")
   public void massIndex() throws InterruptedException {
     recommendationService.massIndex();
