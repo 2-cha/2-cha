@@ -44,3 +44,11 @@ out/
 
 ### test csv ###
 **/*.csv
+
+
+### lucene index ###
+**/*.cfe
+**/*.cfs
+**/*.si
+**/segments_d*
+**/write.lock

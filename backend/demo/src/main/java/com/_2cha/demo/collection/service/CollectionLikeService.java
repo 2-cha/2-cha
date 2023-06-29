@@ -7,7 +7,7 @@ import com._2cha.demo.collection.repository.CollectionLikeRepository;
 import com._2cha.demo.collection.repository.CollectionRepository;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
-import com._2cha.demo.recommendation.Interaction;
+import com._2cha.demo.recommendation.domain.Interaction;
 import com._2cha.demo.recommendation.event.CollectionInteractionCancelEvent;
 import com._2cha.demo.recommendation.event.CollectionInteractionEvent;
 import com._2cha.demo.review.dto.LikeStatus;

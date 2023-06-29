@@ -1,6 +1,7 @@
 package com._2cha.demo.collection.service;
 
 
+import static com._2cha.demo.recommendation.dto.CollectionCorpusSearchParam.TOP_TAG_MESSAGE_SIZE;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
 
@@ -10,6 +11,7 @@ import com._2cha.demo.bookmark.exception.AlreadyBookmarkedException;
 import com._2cha.demo.bookmark.exception.NotBookmarkedException;
 import com._2cha.demo.collection.domain.Collection;
 import com._2cha.demo.collection.domain.CollectionBookmark;
+import com._2cha.demo.collection.domain.ReviewInCollection;
 import com._2cha.demo.collection.dto.CollectionBriefResponse;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
 import com._2cha.demo.collection.dto.CollectionDetailResponse;
@@ -32,13 +34,15 @@ import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.dto.MemberProfileResponse;
 import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.service.MemberService;
-import com._2cha.demo.recommendation.Interaction;
+import com._2cha.demo.recommendation.domain.Interaction;
+import com._2cha.demo.recommendation.dto.CollectionCorpusSearchParam;
 import com._2cha.demo.recommendation.event.CollectionInteractionCancelEvent;
 import com._2cha.demo.recommendation.event.CollectionInteractionEvent;
-import com._2cha.demo.recommendation.service.RecommendationService;
+import com._2cha.demo.recommendation.service.CollectionRecommendationService;
 import com._2cha.demo.review.domain.Review;
 import com._2cha.demo.review.dto.LikeStatus;
 import com._2cha.demo.review.dto.ReviewResponse;
+import com._2cha.demo.review.dto.TagCountResponse;
 import com._2cha.demo.review.service.ReviewService;
 import com._2cha.demo.util.GeomUtils;
 import jakarta.annotation.Nullable;
@@ -73,7 +77,7 @@ public class CollectionService {
   private final MemberService memberService;
   private final ReviewService reviewService;
   private final CollectionLikeService likeService;
-  private final RecommendationService recommendationService;
+  private final CollectionRecommendationService recommendationService;
 
   private final ApplicationEventPublisher eventPublisher;
 
@@ -193,6 +197,28 @@ public class CollectionService {
     return result.stream().toList();
   }
 
+  @Transactional(readOnly = true)
+  public List<CollectionBriefResponse> getSimilarCollections(Long collId, Integer maxSize) {
+    Collection collection = collectionRepository.findCollectionById(collId);
+    if (collection == null) throw new NoSuchCollectionException();
+
+    CollectionCorpusSearchParam param = new CollectionCorpusSearchParam(
+        collection.getId(), collection.getTitle(),
+        reviewService.getTopTagCounts(collection.getReviews()
+                                                .stream()
+                                                .map(ReviewInCollection::getReview)
+                                                .toList(), TOP_TAG_MESSAGE_SIZE)
+                     .stream()
+                     .map(TagCountResponse::getMessage)
+                     .toList());
+    return recommendationService.recommend(param, 0.3, maxSize)
+                                .stream()
+                                .map(c -> new CollectionBriefResponse(c,
+                                                                      fileStorageService.getBaseUrl()
+                                ))
+                                .toList();
+  }
+
 
   // NOTE: the only api for view event
   @Transactional(readOnly = true)
@@ -300,7 +326,6 @@ public class CollectionService {
                                                             thumbnailUrl),
                                                         reviews);
     collectionRepository.save(collection);
-
     return new CollectionCreatedResponse(collection);
   }
 

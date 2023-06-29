@@ -30,6 +30,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.hibernate.orm:hibernate-spatial:6.1.7.Final'
+    implementation 'org.hibernate.orm:hibernate-core:6.0.2.Final'
+    implementation 'org.hibernate.search:hibernate-search-mapper-orm-orm6:6.1.7.Final'
+    implementation 'org.hibernate.search:hibernate-search-backend-lucene:6.1.7.Final'
+    implementation 'org.hibernate.search:hibernate-search-backend-elasticsearch:6.1.7.Final'
     implementation 'org.postgresql:postgresql:42.5.4'
 
 
@@ -66,9 +70,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-admin:9.1.1'
     implementation 'net.logstash.logback:logstash-logback-encoder:7.3'
 
-    implementation 'org.apache.lucene:lucene-core:9.6.0'
-    implementation 'org.apache.lucene:lucene-queryparser:9.6.0'
-    implementation 'org.apache.lucene:lucene-analyzers-nori:8.11.2'
+    implementation 'org.apache.lucene:lucene-core:8.11.1'
+    implementation 'org.apache.lucene:lucene-queryparser:8.11.1'
+    implementation 'org.apache.lucene:lucene-analyzers-nori:8.11.1'
 
     //mahout
     implementation 'org.apache.mahout:mahout-integration:0.13.0'
