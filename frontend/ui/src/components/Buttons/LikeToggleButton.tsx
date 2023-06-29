@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import cn from 'classnames';
 
 import { useLikeMutation } from '@/hooks/mutation';
@@ -6,6 +5,7 @@ import { useLikeMutation } from '@/hooks/mutation';
 import { HeartIcon } from '@/components/Icons';
 
 import s from './Button.module.scss';
+import { useToggleButton } from './useToggleButton';
 
 interface Props {
   isLiked?: boolean;
@@ -17,25 +17,33 @@ interface Props {
 
 export default function LikeToggleButton({
   isLiked: initialIsLiked = false,
+  likeCount: initialLikeCount,
   itemType,
   itemId,
   size = 32,
-  likeCount,
   className,
   ...props
 }: React.ComponentProps<'button'> & Props) {
-  const [isLiked, setLiked] = useState(initialIsLiked);
+  const {
+    toggle,
+    count: likeCount,
+    enabled: isLiked,
+  } = useToggleButton({
+    enabled: initialIsLiked,
+    count: initialLikeCount,
+  });
   const mutation = useLikeMutation();
 
   const handleClick = () => {
-    setLiked((prev) => !prev);
+    const reset = toggle();
+
     mutation.mutate(
       {
         type: itemType,
         id: itemId,
         method: isLiked ? 'delete' : 'post',
       },
-      { onError: () => setLiked((prev) => !prev) }
+      { onError: reset }
     );
   };
 
