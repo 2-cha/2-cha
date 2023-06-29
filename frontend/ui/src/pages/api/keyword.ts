@@ -25,7 +25,7 @@ export default async function handler(req: NextRequest) {
       `/local/search/keyword.json?${searchParams.toString()}`
     );
 
-    return new Response(JSON.stringify(data.documents), {
+    return new Response(JSON.stringify(data), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });

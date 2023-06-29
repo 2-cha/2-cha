@@ -14,29 +14,15 @@
 
 .addressList {
   width: 100%;
+  height: calc(100% - 16px);
+  margin-top: 16px;
+  overflow-y: auto;
 
-  @include mixins.flex(column, flex-start, flex-start);
-
-  &__container {
-    width: 100%;
-    height: calc(100% - 16px);
-    margin-top: 16px;
-    overflow-y: auto;
-  }
-
-  & > li {
+  &__item {
     width: 100%;
 
-    @include mixins.padding(x, lg);
+    @include mixins.flex(column, flex-start, flex-start);
     @include mixins.padding(y, md);
-
-    & > button {
-      width: 100%;
-      background-color: inherit;
-      color: inherit;
-
-      @include mixins.flex(row, flex-start, center);
-    }
   }
 
   .noResult {

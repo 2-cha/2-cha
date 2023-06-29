@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { type KakaoResponse } from '@/lib/kakao';
 import { type Place } from '@/pages/api/keyword';
 
 enum CategoryCode {
@@ -7,13 +8,14 @@ enum CategoryCode {
   RESTAURANT = 'FD6',
 }
 
-async function fetchKeyword(query: string) {
-  const { data } = await axios.get<Place[]>('/api/keyword', {
+async function fetchKeyword(query: string, page: number) {
+  const { data } = await axios.get<KakaoResponse<Place>>('/api/keyword', {
     params: {
       query,
       category_group_code: [CategoryCode.CAFE, CategoryCode.RESTAURANT].join(
         ','
       ),
+      page,
     },
   });
 
@@ -21,9 +23,11 @@ async function fetchKeyword(query: string) {
 }
 
 export function useKeywordQuery(query: string) {
-  const result = useQuery({
+  const result = useInfiniteQuery({
     queryKey: ['kakao', 'keyword', query],
-    queryFn: () => fetchKeyword(query),
+    queryFn: ({ pageParam = 1 }) => fetchKeyword(query, pageParam),
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.meta.is_end ? undefined : pages.length + 1,
     staleTime: 1000 * 60 * 60 * 24,
     enabled: !!query,
   });
