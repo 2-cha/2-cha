@@ -28,4 +28,9 @@
       @include mixins.text-sm;
     }
   }
+
+  .noResult {
+    @include mixins.flex;
+    @include mixins.padding(y, xl);
+  }
 }

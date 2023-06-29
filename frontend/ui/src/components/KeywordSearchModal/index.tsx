@@ -45,6 +45,9 @@ export default function KeywordSearchModal({
           <SearchInput name="query" />
         </form>
         <List className={s.list}>
+          {data?.pages.at(-1)?.meta.total_count === 0 ? (
+            <span className={s.noResult}>검색 결과가 없습니다.</span>
+          ) : null}
           {data?.pages.map((page, idx) => (
             <Fragment key={idx}>
               {page.documents.map((place) => (
