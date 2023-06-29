@@ -79,8 +79,9 @@ export default function CollectionInfo({ collectionInfo }: Props) {
             <BookmarkToggleButton
               itemType="collections"
               itemId={collectionInfo.id}
+              isBookmarked={collectionInfo.bookmark_status.is_bookmarked}
+              bookmarkCount={collectionInfo.bookmark_status.count}
               className={s.metadata__buttons__bookmark}
-              bookmarkCount={0}
             />
           </div>
         </div>
