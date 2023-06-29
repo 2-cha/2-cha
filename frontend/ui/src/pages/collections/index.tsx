@@ -1,21 +1,14 @@
 import { useCollectionsQuery } from '@/hooks/query';
-import Link from 'next/link';
-
-import { Collection } from '@/types/collection';
+import Header from '@/components/Layout/Header';
+import CollectionsList from '@/components/CollectionsList';
 
 export default function Collections() {
   const { data, isLoading, isError } = useCollectionsQuery();
+
   return (
-    <div>
-      {isLoading || isError ? null : (
-        <>
-          {data.map((collection: Collection) => (
-            <Link href={`/collections/${collection.id}`} key={collection.id}>
-              {collection.title}
-            </Link>
-          ))}
-        </>
-      )}
-    </div>
+    <>
+      <Header />
+      {isLoading || isError ? null : <CollectionsList collections={data} />}
+    </>
   );
 }

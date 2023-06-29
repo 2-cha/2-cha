@@ -5,7 +5,7 @@
   scroll-snap-align: start;
   scroll-snap-stop: always;
   position: relative;
-  width: 480px;
+  width: 100%;
   flex: 1;
   height: 100%;
   overflow: hidden;
@@ -54,6 +54,7 @@
     @include mixins.flex(row, flex-start, center);
     gap: 10px;
     @include mixins.margin(top, md);
+    flex-wrap: wrap;
   }
 
   &__tag {

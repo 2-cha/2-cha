@@ -1,0 +1,28 @@
+@use 'mixins';
+@use 'var';
+
+.wrapper {
+  width: 100%;
+  flex: 1;
+  @include mixins.flex(column, flex-start, center);
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  &__header {
+    width: 100%;
+    @include mixins.padding(x, 20);
+    @include mixins.padding(y, 10);
+    @include mixins.flex(row, flex-start, center);
+    @include mixins.margin(bottom, 10px);
+
+    h1 {
+      @include mixins.text-lg;
+      color: var(--text-color);
+    }
+  }
+
+  &__inner {
+    width: 100%;
+    @include mixins.flex(column, flex-start, center);
+  }
+}

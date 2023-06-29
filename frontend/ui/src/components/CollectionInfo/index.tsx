@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import cn from 'classnames';
 import { useRouter } from 'next/router';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { Collection } from '@/types/collection';
 import ReviewCard from './ReviewCard';
@@ -12,6 +13,7 @@ import {
 } from '../Buttons';
 import { ArrowIcon } from '../Icons';
 
+import 'swiper/css';
 import s from './CollectionInfo.module.scss';
 
 interface Props {
@@ -41,13 +43,13 @@ export default function CollectionInfo({ collectionInfo }: Props) {
           sharedUrl={`${process.env.NEXT_PUBLIC_ORIGIN}/collections/${collectionInfo.id}`}
         />
       </nav>
-      <div className={s.carousel}>
-        <div className={s.carousel__inner}>
-          {reviews.map((review) => (
-            <ReviewCard key={`review-${review.id}`} review={review} />
-          ))}
-        </div>
-      </div>
+      <Swiper scrollbar className={s.carousel}>
+        {reviews.map((review) => (
+          <SwiperSlide key={`review-${review.id}`}>
+            <ReviewCard review={review} key={`review-${review.id}`} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
       <div className={s.metadata}>
         <div className={s.metadata__top}>
           <div className={s.metadata__user}>
@@ -75,7 +77,7 @@ export default function CollectionInfo({ collectionInfo }: Props) {
               )}
             />
             <BookmarkToggleButton
-              itemType="collection"
+              itemType="collections"
               itemId={collectionInfo.id}
               className={s.metadata__buttons__bookmark}
               bookmarkCount={0}
