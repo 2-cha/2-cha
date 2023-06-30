@@ -91,30 +91,40 @@ export default function AddReviews({
                 {page.map((review) => (
                   <li
                     key={review.id}
-                    className={cn(s.container__element, {
+                    className={cn(s.element, {
                       [s.selected]: selectedReviews.includes(review.id),
                     })}
                   >
-                    <Image
-                      src={review.images[0]}
-                      alt={`${review.place} review`}
-                      width={200}
-                      height={200}
-                    />
                     {selectedReviews.includes(review.id) ? (
                       <button
                         type="button"
-                        className={s.container__removeButton}
                         onClick={handleClickRemoveButton(review.id)}
+                        className={s.element__button}
                       >
-                        <span>{selectedReviews.indexOf(review.id)}</span>
+                        <Image
+                          src={review.images[0]}
+                          alt={`${review.place} review`}
+                          width={200}
+                          height={200}
+                        />
+                        <div className={s.element__removeIcon}>
+                          <span>{selectedReviews.indexOf(review.id) + 1}</span>
+                        </div>
                       </button>
                     ) : (
                       <button
                         type="button"
-                        className={s.container__addButton}
                         onClick={handleClickAddButton(review.id)}
-                      />
+                        className={s.element__button}
+                      >
+                        <Image
+                          src={review.images[0]}
+                          alt={`${review.place} review`}
+                          width={200}
+                          height={200}
+                        />
+                        <div className={s.element__addIcon} />
+                      </button>
                     )}
                   </li>
                 ))}

@@ -29,38 +29,43 @@
 .container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+}
 
-  &__element {
+.element {
+  height: 100%;
+  overflow: hidden;
+  aspect-ratio: 1;
+  position: relative;
+
+  &__button {
+    width: 100%;
     height: 100%;
-    overflow: hidden;
-    aspect-ratio: 1;
-    position: relative;
-
-    &.selected::after {
-      position: absolute;
-      top: 0;
-      left: 0;
-      content: '';
-      width: 100%;
-      height: 100%;
-      background-color: var(--black);
-      opacity: 0.3;
-      z-index: 5;
-    }
-
-    &.selected::before {
-      position: absolute;
-      top: 0;
-      left: 0;
-      content: '';
-      width: 100%;
-      height: 100%;
-      z-index: 6;
-      border: 5px solid var(--border-color);
-    }
   }
 
-  &__removeButton {
+  &.selected::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+    width: 100%;
+    height: 100%;
+    background-color: var(--black);
+    opacity: 0.3;
+    z-index: 5;
+  }
+
+  &.selected::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+    width: 100%;
+    height: 100%;
+    z-index: 6;
+    border: 5px solid var(--border-color);
+  }
+
+  &__removeIcon {
     position: absolute;
     z-index: 10;
     top: 10px;
@@ -81,7 +86,7 @@
     }
   }
 
-  &__addButton {
+  &__addIcon {
     position: absolute;
     z-index: 10;
     top: 10px;
