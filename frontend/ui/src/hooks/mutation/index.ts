@@ -13,3 +13,4 @@ export {
 export { useSignInMutation } from './useSignin';
 export { useFollowMutation } from './useFollow';
 export { useAddPlaceMutation } from './useAddPlace';
+export { useCollectionMutation } from './useCollection';
