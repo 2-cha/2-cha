@@ -1,0 +1,24 @@
+@use 'mixins';
+
+.swiper {
+  --swiper-navigation-size: 24px;
+  --swiper-navigation-color: var(--background-active-color);
+  --swiper-pagination-color: var(--background-active-color);
+  --swiper-pagination-bullet-inactive-color: var(--text-color);
+
+  @include mixins.flex(column, center, center);
+
+  .wrapper {
+    align-items: center;
+  }
+
+  .disabled {
+    opacity: 0.1;
+  }
+
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
