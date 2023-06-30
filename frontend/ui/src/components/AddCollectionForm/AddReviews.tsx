@@ -40,6 +40,11 @@ export default function AddReviews({
   );
   const { ref } = useIntersection({ onChange: handleNextPage });
 
+  const handleClickNextButton = useCallback(() => {
+    if (!selectedReviews.length) return;
+    onClose?.();
+  }, [selectedReviews, onClose]);
+
   const handleClickAddButton = useCallback(
     (reviewId: number) => {
       return function () {
@@ -68,6 +73,16 @@ export default function AddReviews({
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose}>
+      <div className={s.top}>
+        <h2>리뷰 추가하기</h2>
+        <button
+          type="button"
+          onClick={handleClickNextButton}
+          className={cn(s.next, { [s.disabled]: !selectedReviews.length })}
+        >
+          <span>확인</span>
+        </button>
+      </div>
       {data?.pages[0]?.length ? (
         <>
           <ul className={s.container}>

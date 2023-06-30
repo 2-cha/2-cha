@@ -1,6 +1,31 @@
 @use 'mixins';
 @use 'var';
 
+.top {
+  @include mixins.flex(row, space-between, center);
+  margin-bottom: 20px;
+
+  h2 {
+    @include mixins.text-lg;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+}
+
+.next {
+  background: none;
+  span {
+    @include mixins.text-lg;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: initial;
+  }
+}
+
 .container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
