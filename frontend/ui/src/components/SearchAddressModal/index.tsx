@@ -3,8 +3,9 @@ import { useForm } from 'react-hook-form';
 
 import { useAddressQuery } from '@/hooks/query';
 import Drawer from '@/components/Layout/Drawer';
-import { type Address } from '@/pages/api/address';
+import List from '@/components/Layout/List';
 import SearchInput from '@/components/SearchInput';
+import { type Address } from '@/pages/api/address';
 
 import s from './SearchAddressModal.module.scss';
 
@@ -73,19 +74,18 @@ interface AddressListProps {
 
 function AddressList({ addresses, onSelect }: AddressListProps) {
   return (
-    <div className={s.addressList__container}>
-      <ul className={s.addressList}>
-        {addresses.length === 0 && (
-          <li className={s.noResult}>검색 결과가 없습니다.</li>
-        )}
-        {addresses.map((address) => (
-          <li key={address.address_name}>
-            <button onClick={() => onSelect?.(address)}>
-              {address.address_name}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <List className={s.addressList}>
+      {addresses.length === 0 && (
+        <li className={s.noResult}>검색 결과가 없습니다.</li>
+      )}
+      {addresses.map((address) => (
+        <List.Item
+          key={address.address_name}
+          onClick={() => onSelect?.(address)}
+        >
+          <span className={s.addressList__item}>{address.address_name}</span>
+        </List.Item>
+      ))}
+    </List>
   );
 }

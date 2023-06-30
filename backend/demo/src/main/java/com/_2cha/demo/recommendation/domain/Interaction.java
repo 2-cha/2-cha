@@ -1,4 +1,4 @@
-package com._2cha.demo.recommendation;
+package com._2cha.demo.recommendation.domain;
 
 public enum Interaction {
   VIEW(1), LIKE(3), SHARE(4), BOOKMARK(5);

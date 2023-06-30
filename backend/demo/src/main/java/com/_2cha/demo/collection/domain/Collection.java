@@ -1,5 +1,7 @@
 package com._2cha.demo.collection.domain;
 
+import static org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate.SHALLOW;
+
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.review.domain.Review;
 import jakarta.persistence.CascadeType;
@@ -11,23 +13,36 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.mapper.pojo.bridge.mapping.annotation.ValueBridgeRef;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.ObjectPath;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.PropertyValue;
 
 @Entity
 @Getter
+@Indexed(index = "CollectionWithCorpus")
 public class Collection {
 
   @Id
+  @DocumentId
   @GeneratedValue
   private Long id;
 
   @Column(nullable = false)
+  @FullTextField(analyzer = "nori", projectable = Projectable.YES)
   private String title;
 
   @Column(nullable = false)
+  @FullTextField(analyzer = "nori", projectable = Projectable.YES)
   private String description;
 
   private boolean isExposed = true;
@@ -42,6 +57,22 @@ public class Collection {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "MEMBER_ID")
   private Member member;
+
+  @Transient
+  @FullTextField(
+      analyzer = "nori",
+      name = "topTagMessagesCorpus",
+      projectable = Projectable.YES,
+      valueBridge = @ValueBridgeRef(type = TopTagFetcherBridge.class))
+  @IndexingDependency(
+      derivedFrom = {@ObjectPath(@PropertyValue(propertyName = "reviews"))},
+      reindexOnUpdate = SHALLOW
+  )
+  private IdListWrapper getTopTagMessages() {
+    return new IdListWrapper(this.reviews.stream()
+                                         .map(ric -> ric.getReview().getId())
+                                         .toList());
+  }
 
   public static Collection createCollection(Member member, String title,
                                             String description, String thumbnailUrlPath,

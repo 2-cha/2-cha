@@ -1,31 +1,26 @@
 package com._2cha.demo.recommendation.service;
 
+import static java.util.Collections.reverseOrder;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
 import com._2cha.demo.collection.domain.Collection;
 import com._2cha.demo.collection.repository.CollectionRepository;
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.member.service.MemberService;
-import com._2cha.demo.recommendation.config.LuceneConfig;
+import com._2cha.demo.recommendation.domain.MemberCollectionPreference;
+import com._2cha.demo.recommendation.dto.CollectionCorpusSearchParam;
 import com._2cha.demo.recommendation.event.CollectionInteractionCancelEvent;
 import com._2cha.demo.recommendation.event.CollectionInteractionEvent;
-import com._2cha.demo.recommendation.repository.MemberCollectionPreference;
+import com._2cha.demo.recommendation.repository.CollectionCorpusRepository;
 import com._2cha.demo.recommendation.repository.MemberCollectionPreferenceRepository;
-import jakarta.annotation.PreDestroy;
-import java.io.IOException;
-import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.lucene.analysis.ko.KoreanAnalyzer;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.similarities.BM25Similarity;
-import org.apache.lucene.search.similarities.Similarity;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.model.jdbc.PostgreSQLJDBCDataModel;
 import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
@@ -42,42 +37,26 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @Service
-public class RecommendationService {
+public class CollectionRecommendationService {
 
   private final MemberService memberService;
   private final CollectionRepository collectionRepository;
   private final MemberCollectionPreferenceRepository memberCollectionPreferenceRepository;
-
-  /*-----------
-   @ Lucene for bm25
-   ----------*/
-  private final LuceneConfig luceneConfig;
-  private final Similarity similarity = new BM25Similarity(1.2f, 0);
-  private final IndexWriterConfig indexWriterConfig = new IndexWriterConfig(new KoreanAnalyzer());
-  private final IndexWriter writer;
-  private final Directory directory;
+  private final CollectionCorpusRepository corpusRepository;
 
   /*-----------
    @ Mahout for CF
    ----------*/
-  private final DataSource dataSource;
   private final DataModel dataModel;
   private final ItemSimilarity itemSimilarity;
   private final ItemBasedRecommender recommender;
 
 
-  public RecommendationService(DataSource dataSource, MemberService memberService,
-                               CollectionRepository collectionRepository,
-                               MemberCollectionPreferenceRepository memberCollectionPreferenceRepository,
-                               LuceneConfig luceneConfig)
-      throws IOException, TasteException {
-    // lucene
-    this.dataSource = dataSource;
-    this.luceneConfig = luceneConfig;
-    this.directory = FSDirectory.open(Path.of(this.luceneConfig.getIndexPath()));
-    indexWriterConfig.setSimilarity(similarity);
-    writer = new IndexWriter(directory, indexWriterConfig);
-
+  public CollectionRecommendationService(DataSource dataSource, MemberService memberService,
+                                         CollectionRepository collectionRepository,
+                                         MemberCollectionPreferenceRepository memberCollectionPreferenceRepository,
+                                         CollectionCorpusRepository corpusRepository)
+      throws TasteException {
     // mahout
     dataModel = new PostgreSQLJDBCDataModel(dataSource,
                                             "member_collection_preference",
@@ -92,57 +71,38 @@ public class RecommendationService {
     this.memberService = memberService;
     this.collectionRepository = collectionRepository;
     this.memberCollectionPreferenceRepository = memberCollectionPreferenceRepository;
+    this.corpusRepository = corpusRepository; // hibernate-search (dev: lucene / prod: elasticsearch)
   }
 
-//  @SneakyThrows
-//  public void addIndex(Index index) {
-//    if (!writer.isOpen()) {
-//      throw new RuntimeException("IndexWriter is closed");
-//    }
-//    List<String> fields = Arrays.stream(index.getClass().getDeclaredFields()).map(f -> f.getName())
-//                                .toList();
-//
-//    Document doc = new Document();
-//    for (var field : fields) {
-//      doc.add(
-//          new Field(field, index.getClass().getDeclaredField(field).get(index).toString(),
-//                    TYPE_STORED));
-//    }
-//
-//    writer.addDocument(doc);
-//    writer.commit();
-//  }
 
   // Text Based Search
   // Query: User preference + Content Watching
-//  public void recommend(Index index)
-//      throws IOException, ParseException, NoSuchFieldException, IllegalAccessException {
-//    IndexReader reader = DirectoryReader.open(directory);
-//    IndexSearcher searcher = new IndexSearcher(reader);
-//    searcher.setSimilarity(similarity);
-//
-//    List<String> fields = Arrays.stream(index.getClass().getDeclaredFields()).map(f -> f.getName())
-//                                .toList();
-//    // Parse a simple query that searches for "text":
-//    for (var field : fields) {
-//      QueryParser parser = new QueryParser(field, new StandardAnalyzer());
-//      String queryText = index.getClass().getDeclaredField(field).get(index).toString();
-//      Query query = parser.parse(queryText);
-//      ScoreDoc[] hits = searcher.search(query, 10).scoreDocs;
-//      StoredFields storedFields = searcher.storedFields();
-//
-//      log.info("Search field: {}", field);
-//      log.info("Search query: {}", queryText);
-//
-//      for (int i = 0; i < hits.length; i++) {
-//
-//        Document hitDoc = storedFields.document(hits[i].doc);
-//        log.info("Search result: {} ({})", hitDoc.get(field), hits[i].score);
-//      }
-//    }
-//    reader.close();
-//  }
+  @Transactional
+  public List<Collection> recommend(CollectionCorpusSearchParam param, double minScore,
+                                    int maxSize) {
 
+    Map<Double, List<Collection>> scoreMap = new TreeMap<>(reverseOrder());
+    List<Collection> recommended = new ArrayList<>();
+    param.getFields().forEach((field, value) -> {
+      if (field.equals("id")) return;
+      scoreMap.putAll(corpusRepository.searchWithScore(field, value, maxSize));
+    });
+
+    scoreMap.entrySet().stream()
+            .filter(e -> e.getKey() >= minScore)
+            .forEach(e -> {
+              List<Collection> list = e.getValue();
+
+              list.stream()
+                  .filter(c -> !recommended.contains(c))
+                  .forEach(recommended::add);
+            });
+
+    recommended.removeIf(c -> c.getId().equals(param.getId()));
+    return recommended.stream()
+                      .limit(maxSize)
+                      .toList();
+  }
 
   @Async("recommendationTaskExecutor")
   @TransactionalEventListener(value = {CollectionInteractionEvent.class}, phase = AFTER_COMMIT)
@@ -197,9 +157,8 @@ public class RecommendationService {
   }
 
 
-  @PreDestroy
-  public void destroy() throws IOException {
-    directory.close();
-    writer.close();
+  @Transactional
+  public void massIndex() throws InterruptedException {
+    corpusRepository.massIndex();
   }
 }

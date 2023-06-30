@@ -1,6 +1,7 @@
 package com._2cha.demo.collection.dto;
 
 import com._2cha.demo.bookmark.dto.BookmarkStatus;
+import com._2cha.demo.collection.domain.Collection;
 import com._2cha.demo.review.dto.LikeStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -27,5 +28,12 @@ public class CollectionBriefResponse {
     this.title = title;
     this.description = description;
     this.thumbnail = thumbnail;
+  }
+
+  public CollectionBriefResponse(Collection collection, String thumbnailBaseUrl) {
+    this.id = collection.getId();
+    this.title = collection.getTitle();
+    this.description = collection.getDescription();
+    this.thumbnail = thumbnailBaseUrl + collection.getThumbnailUrlPath();
   }
 }

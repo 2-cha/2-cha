@@ -1,6 +1,6 @@
 package com._2cha.demo.recommendation.event;
 
-import com._2cha.demo.recommendation.Interaction;
+import com._2cha.demo.recommendation.domain.Interaction;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 

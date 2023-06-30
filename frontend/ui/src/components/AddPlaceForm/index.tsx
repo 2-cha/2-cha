@@ -1,5 +1,6 @@
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { useRouter } from 'next/router';
+import cn from 'classnames';
 
 import KeywordSearchModal from '@/components/KeywordSearchModal';
 import SearchAddressModal from '@/components/SearchAddressModal';
@@ -106,7 +107,7 @@ function AddPlaceForm() {
             ))}
           </select>
         </div>
-        <button type="submit" className={s.submit}>
+        <button type="submit" className={cn(s.button, s.submit)}>
           등록
         </button>
       </form>

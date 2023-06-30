@@ -1,5 +1,6 @@
 package com._2cha.demo.collection.controller;
 
+import static com._2cha.demo.member.domain.Role.ADMIN;
 import static com._2cha.demo.member.domain.Role.GUEST;
 import static com._2cha.demo.member.domain.Role.MEMBER;
 
@@ -16,6 +17,7 @@ import com._2cha.demo.collection.service.CollectionLikeService;
 import com._2cha.demo.collection.service.CollectionService;
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
+import com._2cha.demo.recommendation.service.CollectionRecommendationService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class CollectionController {
 
   private final CollectionService collectionService;
   private final CollectionLikeService likeService;
+  private final CollectionRecommendationService recommendationService;
 
   @Auth(GUEST)
   @GetMapping("/members/{memberId}/collections")
@@ -51,6 +54,13 @@ public class CollectionController {
                                                       @RequestParam(defaultValue = "5000.0") Double distance
                                                      ) {
     return collectionService.getRecommendations(memberId, lat, lon, distance);
+  }
+
+  @Auth(GUEST)
+  @GetMapping("/collections/{collId}/recommendation")
+  public List<CollectionBriefResponse> recommend(@PathVariable Long collId,
+                                                 @RequestParam(name = "max_size", defaultValue = "10") Integer maxSize) {
+    return collectionService.getSimilarCollections(collId, maxSize);
   }
 
   @Auth(MEMBER)
@@ -132,5 +142,12 @@ public class CollectionController {
   @DeleteMapping("/collections/{collId}/like")
   public void unlike(@Authed Long memberId, @PathVariable Long collId) {
     likeService.unlikeCollection(memberId, collId);
+  }
+
+  //TODO: cron job
+  @Auth(ADMIN)
+  @GetMapping("/collections/mass")
+  public void massIndex() throws InterruptedException {
+    recommendationService.massIndex();
   }
 }
