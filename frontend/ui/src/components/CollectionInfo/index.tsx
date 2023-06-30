@@ -43,7 +43,7 @@ export default function CollectionInfo({ collectionInfo }: Props) {
           sharedUrl={`${process.env.NEXT_PUBLIC_ORIGIN}/collections/${collectionInfo.id}`}
         />
       </nav>
-      <Swiper scrollbar className={s.carousel}>
+      <Swiper scrollbar className={s.carousel} wrapperClass={s.wrapper}>
         {reviews.map((review) => (
           <SwiperSlide key={`review-${review.id}`}>
             <ReviewCard review={review} key={`review-${review.id}`} />
