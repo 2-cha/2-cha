@@ -27,15 +27,10 @@ export default function AddCollectionForm() {
 
   return (
     <FormProvider {...method}>
-      <button type="button" onClick={() => setIsOpen(true)}>
-        리뷰 추가하기
-      </button>
       <AddReviews
         selectedReviews={selectedReview}
         setSelectedReviews={setSelectedReview}
         memberId={memberId}
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
       />
     </FormProvider>
   );

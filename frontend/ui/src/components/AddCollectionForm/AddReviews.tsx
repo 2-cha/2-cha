@@ -6,13 +6,10 @@ import {
   useEffect,
 } from 'react';
 import cn from 'classnames';
-import Link from 'next/link';
 import Image from 'next/image';
 
-import { Review } from '@/types';
 import { useIntersection } from '@/hooks';
 import { useMemberReviewsQuery } from '@/hooks/query';
-import Drawer from '../Layout/Drawer';
 
 import s from './AddReviews.module.scss';
 
@@ -20,16 +17,12 @@ interface Props {
   memberId: number;
   selectedReviews: number[];
   setSelectedReviews: Dispatch<SetStateAction<number[]>>;
-  isOpen?: boolean;
-  onClose?: () => void;
 }
 
 export default function AddReviews({
   memberId,
   selectedReviews,
   setSelectedReviews,
-  isOpen = false,
-  onClose,
 }: Props) {
   const { data, fetchNextPage, isFetching, isLoading, isError } =
     useMemberReviewsQuery(memberId);
@@ -39,11 +32,6 @@ export default function AddReviews({
     [fetchNextPage]
   );
   const { ref } = useIntersection({ onChange: handleNextPage });
-
-  const handleClickNextButton = useCallback(() => {
-    if (!selectedReviews.length) return;
-    onClose?.();
-  }, [selectedReviews, onClose]);
 
   const handleClickAddButton = useCallback(
     (reviewId: number) => {
@@ -72,17 +60,7 @@ export default function AddReviews({
   }, [selectedReviews]);
 
   return (
-    <Drawer isOpen={isOpen} onClose={onClose}>
-      <div className={s.top}>
-        <h2>리뷰 추가하기</h2>
-        <button
-          type="button"
-          onClick={handleClickNextButton}
-          className={cn(s.next, { [s.disabled]: !selectedReviews.length })}
-        >
-          <span>확인</span>
-        </button>
-      </div>
+    <div>
       {data?.pages[0]?.length ? (
         <>
           <ul className={s.container}>
@@ -132,6 +110,6 @@ export default function AddReviews({
       ) : (
         <p className={s.hasNoReview}>아직 리뷰가 없습니다</p>
       )}
-    </Drawer>
+    </div>
   );
 }

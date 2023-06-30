@@ -12,20 +12,6 @@
   }
 }
 
-.next {
-  background: none;
-  span {
-    @include mixins.text-lg;
-    font-weight: 600;
-    color: var(--text-color);
-  }
-
-  &.disabled {
-    opacity: 0.5;
-    cursor: initial;
-  }
-}
-
 .container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
