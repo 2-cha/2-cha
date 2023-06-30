@@ -4,14 +4,14 @@ import { useCallback, Fragment } from 'react';
 
 import { useIntersection } from '@/hooks';
 import { usePlaceReviewsQuery } from '@/hooks/query';
-import type { Review } from '@/types';
+import ImageSlide from '@/components/ImageSlide';
 import { Tags } from '@/components/Tags';
+import type { Review } from '@/types';
 
 import s from './PlaceReviewsMenu.module.scss';
 
 export default function PlaceReviews({ placeId }: { placeId: number }) {
-  const { data, fetchNextPage, isFetching, isLoading, isError } =
-    usePlaceReviewsQuery(placeId);
+  const { data, fetchNextPage, isFetching } = usePlaceReviewsQuery(placeId);
 
   const handleNextPage = useCallback(
     (isIntersecting: boolean) => isIntersecting && fetchNextPage(),
@@ -19,7 +19,6 @@ export default function PlaceReviews({ placeId }: { placeId: number }) {
   );
   const { ref } = useIntersection({ onChange: handleNextPage });
 
-  // TODO: 이미지 슬라이드
   return (
     <div className={s.root}>
       {data?.pages[0]?.length ? (
@@ -67,14 +66,11 @@ function PlaceReviewItem({ review }: { review: Review }) {
           <p className={s.review__title}>{review.member.name}</p>
         </Link>
       </div>
-      <div className={s.image}>
-        <Image
-          width={480}
-          height={480}
-          src={review.images[0]}
-          alt={`${review.place.name}-${review.id}`}
-        />
-      </div>
+      <ImageSlide
+        className={s.image}
+        images={review.images}
+        alt={`${review.place.name}-${review.member.name}`}
+      />
       <Tags limit={3} keyID={review.id.toString()} tagList={review.tags} />
     </div>
   );
