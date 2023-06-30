@@ -89,17 +89,12 @@ export default function AddReviews({
             {data.pages.map((page, index) => (
               <Fragment key={index}>
                 {page.map((review) => (
-                  <li
-                    key={review.id}
-                    className={cn(s.element, {
-                      [s.selected]: selectedReviews.includes(review.id),
-                    })}
-                  >
+                  <li key={review.id} className={cn(s.element)}>
                     {selectedReviews.includes(review.id) ? (
                       <button
                         type="button"
                         onClick={handleClickRemoveButton(review.id)}
-                        className={s.element__button}
+                        className={cn(s.element__button, s.selected)}
                       >
                         <Image
                           src={review.images[0]}
