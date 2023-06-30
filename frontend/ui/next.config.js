@@ -9,6 +9,8 @@ const nextConfig = {
   },
   images: {
     domains: ['static.2chaproj.com', 'picsum.photos'],
+    loader: 'custom',
+    loaderFile: './src/imageLoader.js',
   },
   experimental: {
     scrollRestoration: true,
