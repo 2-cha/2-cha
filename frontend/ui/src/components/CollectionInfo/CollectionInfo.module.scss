@@ -40,6 +40,12 @@
 .carousel {
   flex: 1;
   width: 100%;
+
+  @include mixins.flex(row, flex-start, stretch);
+
+  .wrapper {
+    height: auto;
+  }
 }
 
 .metadata {
