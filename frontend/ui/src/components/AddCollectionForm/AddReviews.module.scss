@@ -1,0 +1,71 @@
+@use 'mixins';
+@use 'var';
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  &__element {
+    height: 100%;
+    overflow: hidden;
+    aspect-ratio: 1;
+    position: relative;
+
+    &.selected::after {
+      position: absolute;
+      top: 0;
+      left: 0;
+      content: '';
+      width: 100%;
+      height: 100%;
+      background-color: var(--black);
+      opacity: 0.3;
+      z-index: 5;
+    }
+
+    &.selected::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      content: '';
+      width: 100%;
+      height: 100%;
+      z-index: 6;
+      border: 5px solid var(--border-color);
+    }
+  }
+
+  &__removeButton {
+    position: absolute;
+    z-index: 10;
+    top: 10px;
+    left: 10px;
+    width: 25px;
+    height: 25px;
+    border-radius: 15px;
+    border: 2px solid var(--border-color);
+    background-color: var(--white);
+    cursor: pointer;
+    @include mixins.flex(row, center, center);
+
+    span {
+      margin-top: 3px;
+      font-weight: 600;
+      @include mixins.text-sm;
+      color: var(--text-color);
+    }
+  }
+
+  &__addButton {
+    position: absolute;
+    z-index: 10;
+    top: 10px;
+    left: 10px;
+    width: 25px;
+    height: 25px;
+    border-radius: 15px;
+    border: 2px solid var(--border-color);
+    background-color: var(--white);
+    cursor: pointer;
+  }
+}

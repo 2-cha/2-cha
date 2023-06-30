@@ -1,3 +1,4 @@
+import AddCollectionForm from '@/components/AddCollectionForm';
 import NavStackHeader from '@/components/Layout/NavStackHeader';
 import MetaData from '@/components/MetaData';
 
@@ -8,7 +9,7 @@ export default function AddCollection() {
     <>
       <MetaData title={title} />
       <NavStackHeader>{title}</NavStackHeader>
-      {/* Write Collection */}
+      <AddCollectionForm />
     </>
   );
 }
