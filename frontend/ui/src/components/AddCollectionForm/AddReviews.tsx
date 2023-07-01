@@ -60,7 +60,7 @@ export default function AddReviews({
   }, [selectedReviews]);
 
   return (
-    <div>
+    <div className={s.root}>
       {data?.pages[0]?.length ? (
         <>
           <ul className={s.container}>
