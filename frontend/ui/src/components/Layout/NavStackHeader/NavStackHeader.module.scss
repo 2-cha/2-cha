@@ -14,10 +14,13 @@
 
   &__title {
     flex-shrink: 1;
-    padding-right: $button-width;
     margin: 0 auto;
 
     @include mixins.text-lg;
+
+    &.paddingRight {
+      padding-right: $button-width;
+    }
   }
 
   &__backButton {
