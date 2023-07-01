@@ -9,10 +9,6 @@
   @include mixins.margin(y, 16px);
   height: 42px;
   border-radius: 14px;
-
-  svg {
-    @include mixins.margin(right, 10px);
-  }
 }
 
 .submit {

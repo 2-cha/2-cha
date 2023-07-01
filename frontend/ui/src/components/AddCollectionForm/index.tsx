@@ -40,8 +40,7 @@ export default function AddCollectionForm() {
         onClick={handleClickModifyCover}
         className={s.openCover}
       >
-        <ArrowIcon />
-        <span>표지 편집으로 돌아가기</span>
+        <span>표지 편집하기</span>
       </button>
       <AddReviews
         selectedReviews={selectedReview}
