@@ -21,4 +21,6 @@ export function useCollectionImageMutation() {
   const mutation = useMutation({
     mutationFn: async (image: File) => postImage(image),
   });
+
+  return mutation;
 }

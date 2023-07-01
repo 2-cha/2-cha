@@ -25,3 +25,73 @@
     color: var(--text-secondary-color);
   }
 }
+
+.drawer {
+  &__inner {
+    @include mixins.flex(column, flex-start, center);
+    width: 100%;
+    height: 100%;
+  }
+
+  &__card {
+    position: relative;
+    min-width: 75%;
+    max-width: 360px;
+    aspect-ratio: 0.75;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+
+  &__label {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    @include mixins.flex(row, center, center);
+
+    & > img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &__noimage {
+      width: 100%;
+      height: 100%;
+      @include mixins.flex(row, center, center);
+
+      svg {
+        width: 80px;
+        height: 80px;
+      }
+    }
+
+    :before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--black);
+      opacity: 0.3;
+      z-index: 3;
+    }
+
+    :hover {
+      cursor: pointer;
+    }
+  }
+
+  &__title {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    border-radius: 5px;
+    border: 1px solid black;
+    width: 80%;
+    height: 50px;
+    z-index: 4;
+    @include mixins.text-lg;
+  }
+}

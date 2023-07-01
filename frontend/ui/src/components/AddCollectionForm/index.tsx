@@ -126,13 +126,14 @@ export default function AddCollectionForm() {
               />
               <input
                 type="text"
+                maxLength={15}
                 {...register('title', { required: true })}
                 className={s.drawer__title}
               />
-              <input
+              {/* <input
                 type="text"
                 {...register('description', { required: true })}
-              />
+              /> */}
             </div>
             <button type="button" className={s.submit}>
               <span>리뷰 선택하기</span>
