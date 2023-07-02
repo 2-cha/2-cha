@@ -10,7 +10,7 @@ async function postImage(image: File) {
   formData.append('file', image);
 
   const { data } = await fetchClient.post<PostImageResponse>(
-    '/collections/image',
+    '/members/image',
     formData
   );
 
