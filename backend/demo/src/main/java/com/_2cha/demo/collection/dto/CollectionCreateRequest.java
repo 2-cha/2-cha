@@ -6,15 +6,18 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 @Data
 public class CollectionCreateRequest {
 
   @NotEmpty
   @NotBlank
+  @Length(max = 15)
   String title;
 
   @NotNull
+  @Length(max = 15)
   String description;
 
   @NotEmpty
