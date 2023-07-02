@@ -18,7 +18,7 @@ export default memo(function CocktailIcon({
           strokeWidth: 5,
           strokeDasharray: 'none',
         }}
-        transform="translate(106.481 -79.469)"
+        transform="matrix(.85484 0 0 .77986 107.548 -46.602)"
       >
         <circle
           cx={105}
@@ -49,170 +49,84 @@ export default memo(function CocktailIcon({
         />
       </g>
       <path
-        d="M90.161 262.693a414.193 414.193 0 0 1-7.45-.053c-1.385-.026-1.705-.675-.723-1.39A3441.868 3441.868 0 0 0 105 244.34a3441.922 3441.922 0 0 0 23.012 16.912c.982.714.662 1.363-.723 1.39a416.25 416.25 0 0 1-7.45.052c-4.475.006-10.242-.022-14.84-.019-4.596-.003-10.363.026-14.838.02z"
+        d="M24.746 108.564c48.658.01 145.91 0 145.91 0-2.544 4.682-7.651 14.025-7.651 14.025-39.139 2.735-117.43 8.188-117.43 8.188l-20.83-22.213z"
         style={{
-          fill: 'none',
+          fill: '#fff',
+          fillOpacity: 0.990826,
+          strokeWidth: 2.31403,
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round',
+        }}
+        transform="matrix(.99209 0 0 1.08546 26.09 -47.823)"
+      />
+      <path
+        d="M98.546 161.443h1.248v73.251h-1.248z"
+        style={{
+          fill: '#000',
+          fillOpacity: 1,
           stroke: '#000',
-          strokeWidth: 7.074,
-          strokeLinecap: 'butt',
-          strokeLinejoin: 'miter',
-          strokeDasharray: 'none',
-          strokeOpacity: 1,
-        }}
-        transform="translate(21.062 -32.657)"
-      />
-      <path
-        d="M25.155 113.224c-3.107-4.435-5.649-8.538-5.649-9.119 0-.58.344-1.241.764-1.469.995-.538 167.201-.522 168.627.016.597.226 1.086.762 1.086 1.192 0 .43-2.665 4.531-5.923 9.113l-5.923 8.33H30.804z"
-        style={{
-          fill: '#fff',
-          fillOpacity: 0.990826,
-          stroke: 'none',
-          strokeWidth: 8.66901,
+          strokeWidth: 5.73147,
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
           strokeDasharray: 'none',
           strokeOpacity: 1,
         }}
-        transform="translate(21.062 -32.657)"
+        transform="matrix(.91008 0 0 .93856 32.833 -31.874)"
       />
       <path
-        d="M24.667 112.876c-3.133-3.855-5.697-7.423-5.697-7.928 0-.505.347-1.08.77-1.277 1.004-.468 168.61-.454 170.047.014.602.196 1.095.663 1.095 1.037 0 .374-2.687 3.939-5.972 7.922l-5.973 7.243H30.363Z"
-        style={{
-          fill: '#fff',
-          fillOpacity: 0.990826,
-          stroke: 'none',
-          strokeWidth: 8.11723,
-          strokeLinecap: 'round',
-          strokeLinejoin: 'round',
-          strokeDasharray: 'none',
-          strokeOpacity: 1,
-        }}
-        transform="translate(21.062 -32.657)"
-      />
-      <path
-        d="M24.96 112.103c-3.127-3.5-5.686-6.737-5.686-7.196 0-.458.346-.98.77-1.159 1.004-.426 169.044-.426 170.05 0 .422.18.768.606.768.949 0 .342-2.682 3.58-5.961 7.196l-5.962 6.573H30.646Z"
-        style={{
-          fill: '#fff',
-          fillOpacity: 0.990826,
-          stroke: 'none',
-          strokeWidth: 7.72606,
-          strokeLinecap: 'round',
-          strokeLinejoin: 'round',
-          strokeDasharray: 'none',
-          strokeOpacity: 1,
-        }}
-        transform="translate(21.062 -32.657)"
-      />
-      <path
-        d="m67.082 154.664-39.107-36.08h156.432l-39.107 36.08a403865.47 403865.47 0 0 1-39.109 36.08c-.001 0-17.6-16.235-39.11-36.08z"
+        d="m66.056 142.566-32.423-25.704h129.7l-32.424 25.704a321770.247 321770.247 0 0 1-32.426 25.703l-32.427-25.703z"
         style={{
           fill: '#ffb600',
           fillOpacity: 0.990826,
           stroke: 'none',
-          strokeWidth: 7.57202,
+          strokeWidth: 5.8194,
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
           strokeDasharray: 'none',
           strokeOpacity: 1,
         }}
-        transform="translate(21.062 -32.657)"
+        transform="matrix(.98896 0 0 .91857 25.69 -22.247)"
       />
       <path
-        d="M105.622 427.955c-20.567-20.097-24.463-25.6-20.083-28.376 2.686-1.702 614.847-2.157 621.172-.462 2.199.589 3.998 1.99 3.998 3.112s-9.806 11.822-21.791 23.779l-21.792 21.738h-541.25Z"
-        style={{
-          fill: '#fff',
-          fillOpacity: 0.990826,
-          stroke: 'none',
-          strokeWidth: 26.8614,
-          strokeLinecap: 'round',
-          strokeLinejoin: 'round',
-          strokeDasharray: 'none',
-          strokeOpacity: 1,
-        }}
-        transform="matrix(.26458 0 0 .26458 21.062 -32.657)"
-      />
-      <path
-        d="M104.29 426.705c-11.43-11.573-20.782-22.282-20.782-23.797 0-1.515 1.265-3.24 2.81-3.833 3.662-1.404 615.149-1.364 620.393.042 2.199.589 3.998 1.99 3.998 3.112s-9.806 11.822-21.791 23.779l-21.792 21.739H125.073Z"
-        style={{
-          fill: '#fff',
-          fillOpacity: 0.990826,
-          stroke: 'none',
-          strokeWidth: 26.8614,
-          strokeLinecap: 'round',
-          strokeLinejoin: 'round',
-          strokeDasharray: 'none',
-          strokeOpacity: 1,
-        }}
-        transform="matrix(.26458 0 0 .26458 21.062 -32.657)"
-      />
-      <path
-        d="M104.29 426.705c-11.43-11.573-20.782-22.282-20.782-23.797 0-1.515 1.265-3.24 2.81-3.833 3.662-1.404 615.149-1.364 620.393.042 2.199.589 3.998 1.99 3.998 3.112s-9.806 11.822-21.791 23.779l-21.792 21.739H125.073Z"
-        style={{
-          fill: '#fff',
-          fillOpacity: 0.990826,
-          stroke: 'none',
-          strokeWidth: 26.8614,
-          strokeLinecap: 'round',
-          strokeLinejoin: 'round',
-          strokeDasharray: 'none',
-          strokeOpacity: 1,
-        }}
-        transform="matrix(.26458 0 0 .26458 21.062 -32.657)"
-      />
-      <path
-        d="m98.885 188.469-3.63-3.521 5.233-4.655c8.618-7.665 23.427-25.65 25.972-28.935 3.93-5.073 11.327-15.348 14.988-25.144l1.721-4.604 14.012-.116 14.011-.116 1.298 1.198 1.297 1.197-35.397 34.108c-19.468 18.76-35.504 34.108-35.636 34.108-.131 0-1.873-1.584-3.87-3.52z"
+        d="m83.986 172.252-3.751-3.007 5.408-3.975c8.905-6.545 24.208-21.902 26.838-24.708 4.061-4.332 11.705-13.106 15.488-21.47l-2.66-4.07 18.917.038 14.48-.099 1.34 1.023 1.34 1.023-33.331 32.367c-14.03 13.623-32.322 31.953-32.458 31.953-.136 0-9.548-7.422-11.611-9.076z"
         style={{
           fill: '#ef9320',
           fillOpacity: 0.926606,
           stroke: 'none',
-          strokeWidth: 10.7283,
+          strokeWidth: 10.0778,
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
           strokeDasharray: 'none',
           strokeOpacity: 1,
         }}
-        transform="translate(21.062 -32.657)"
+        transform="matrix(.97946 -.02497 .02612 .80794 23.408 -6.628)"
       />
       <path
-        d="M51.228 102.93c-13.418.01-21.542.12-26.998.262-5.018.13-6.179 3.322-2.62 6.837 15.046 14.86 34.854 34.583 53.35 53.073A12233.017 12233.017 0 0 1 105 193.236c4.365-4.395 16.092-16.193 30.038-30.134 18.497-18.49 38.305-38.212 53.35-53.073 3.56-3.515 2.402-6.707-2.617-6.837-5.456-.142-13.582-.251-27-.262-16.215-.03-37.113.109-53.771.095-16.66.014-37.557-.125-53.772-.095z"
+        d="M51.698 98.833c-11.632.009-18.675.1-23.404.217-4.35.108-5.356 2.754-2.27 5.67 13.041 12.32 30.213 28.67 46.247 44 12.09 11.558 22.256 21.34 26.04 24.984 3.784-3.645 13.95-13.426 26.04-24.984 16.034-15.33 33.205-31.68 46.248-44 3.085-2.916 2.082-5.562-2.269-5.67-4.73-.117-11.774-.208-23.406-.217-14.056-.025-32.172.09-46.613.08-14.441.01-32.557-.105-46.613-.08z"
         style={{
           fill: 'none',
           stroke: '#000',
-          strokeWidth: 7.5,
+          strokeWidth: 8.12681,
           strokeLinecap: 'butt',
           strokeLinejoin: 'miter',
           strokeDasharray: 'none',
           strokeOpacity: 1,
         }}
-        transform="translate(21.062 -32.657)"
+        transform="matrix(.98896 0 0 .91857 25.69 -22.247)"
       />
       <path
-        d="M103.883 194.451h2.234v50.691h-2.234z"
+        d="M-62.509 179.45h3.445v83.606h-3.445z"
         style={{
           fill: '#000',
           fillOpacity: 1,
           stroke: '#000',
-          strokeWidth: 6.379,
+          strokeWidth: 4.86091,
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
           strokeDasharray: 'none',
           strokeOpacity: 1,
         }}
-        transform="translate(21.062 -32.657)"
-      />
-      <path
-        d="M-45.504 175.65h3.621v100.705h-3.621z"
-        style={{
-          fill: '#000',
-          fillOpacity: 1,
-          stroke: '#000',
-          strokeWidth: 5.46967,
-          strokeLinecap: 'round',
-          strokeLinejoin: 'round',
-          strokeDasharray: 'none',
-          strokeOpacity: 1,
-        }}
-        transform="matrix(.83413 -.55157 .39841 .9172 43.207 -154.894)"
+        transform="matrix(.7011 -.3568 .38373 .67989 52.67 -106.96)"
       />
       <path
         d="M-8.897 184.73h43.264v1.858H-8.897z"
@@ -226,21 +140,34 @@ export default memo(function CocktailIcon({
           strokeDasharray: 'none',
           strokeOpacity: 1,
         }}
-        transform="translate(43.207 -154.894)"
+        transform="matrix(.78893 0 0 .77813 52.67 -106.96)"
       />
       <path
-        d="M82.885 243.513h69.659v.526H82.885z"
+        d="M87.541 246.119h71.195v.512H87.541z"
         style={{
           fill: '#000',
           fillOpacity: 1,
           stroke: '#000',
-          strokeWidth: 6.6645,
+          strokeWidth: 6.64392,
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
           strokeDasharray: 'none',
           strokeOpacity: 1,
         }}
-        transform="translate(43.207 -154.894)"
+        transform="matrix(.78893 0 0 .77813 52.67 -106.96)"
+      />
+      <path
+        d="M82.816 251.562c-3.906 0-6.27-.02-7.859-.042-1.46-.022-1.799-.543-.762-1.117a3759.413 3759.413 0 0 0 24.274-13.583 3760.652 3760.652 0 0 0 24.275 13.583c1.036.574.7 1.095-.762 1.117-1.588.023-3.953.04-7.86.042-4.72.004-10.803-.017-15.653-.015-4.849-.001-10.932.02-15.653.015z"
+        style={{
+          fill: 'none',
+          stroke: '#000',
+          strokeWidth: 6.51137,
+          strokeLinecap: 'butt',
+          strokeLinejoin: 'miter',
+          strokeDasharray: 'none',
+          strokeOpacity: 1,
+        }}
+        transform="matrix(.91008 0 0 .93856 32.833 -31.874)"
       />
     </svg>
   );
