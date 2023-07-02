@@ -45,7 +45,7 @@ export default function AddCollectionForm() {
         {
           title: data.title,
           description: data.description,
-          thumbnail: data.thumbnail,
+          thumbnail,
           reviewIds: selectedReview,
         },
         {
@@ -62,6 +62,10 @@ export default function AddCollectionForm() {
 
   const handleClickModifyCover = useCallback(() => {
     setIsOpen(true);
+  }, [setIsOpen]);
+
+  const handleClickSelectReview = useCallback(() => {
+    setIsOpen(false);
   }, [setIsOpen]);
 
   function handleChangeImage(e: ChangeEvent<HTMLInputElement>) {
@@ -127,15 +131,22 @@ export default function AddCollectionForm() {
               <input
                 type="text"
                 maxLength={15}
+                placeholder="컬렉션 제목을 입력해주세요"
                 {...register('title', { required: true })}
                 className={s.drawer__title}
               />
-              {/* <input
+              <input // TODO: description 삭제
                 type="text"
+                hidden
+                defaultValue={'test'}
                 {...register('description', { required: true })}
-              /> */}
+              />
             </div>
-            <button type="button" className={s.submit}>
+            <button
+              type="button"
+              className={s.submit}
+              onClick={handleClickSelectReview}
+            >
               <span>리뷰 선택하기</span>
             </button>
           </div>
