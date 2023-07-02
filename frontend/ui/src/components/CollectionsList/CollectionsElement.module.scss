@@ -7,8 +7,13 @@
   aspect-ratio: 0.75;
   border-radius: 15px;
   overflow: hidden;
-  position: relative;
-  @include mixins.margin(bottom, 20px);
+  margin-top: 50px;
+  margin-bottom: 130px;
+  padding: 0;
+  top: 100px;
+  box-sizing: border-box;
+  display: flex;
+  position: sticky;
 
   img {
     position: absolute;

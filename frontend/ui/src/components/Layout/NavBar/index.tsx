@@ -3,18 +3,19 @@ import { useRouter } from 'next/router';
 import cn from 'classnames';
 
 import {
-  PlaceIcon,
-  HashIcon,
   BookmarkIcon,
-  UserIcon,
+  FeedIcon,
+  PlaceIcon,
   PlusSquareIcon,
+  UserIcon,
 } from '@/components/Icons';
 
 import s from './NavBar.module.scss';
 
 const sections = [
   { name: 'places', path: '/places', Icon: PlaceIcon },
-  { name: 'collections', path: '/collections', Icon: HashIcon },
+  // { name: 'collections', path: '/collections', Icon: HashIcon },
+  { name: 'collections', path: '/collections', Icon: FeedIcon },
   { name: 'add-review', path: '/write', Icon: PlusSquareIcon },
   { name: 'bookmark', path: '/bookmark', Icon: BookmarkIcon },
   { name: 'profile', path: '/profile', Icon: UserIcon },

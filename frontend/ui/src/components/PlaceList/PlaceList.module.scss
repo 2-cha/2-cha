@@ -52,19 +52,21 @@ $img-height: 360px;
     @include mixins.flex(row, flex-start, center);
 
     & > div {
-      @include mixins.margin(right, 10px);
+      @include mixins.margin(right, 3px);
     }
   }
 
   &__headerRight {
     position: relative;
     width: 60px;
+    padding-top: 10px;
     @include mixins.flex(column, center, flex-end);
     color: var(--background-active-color);
 
     & > span {
       @include mixins.text-sm;
       color: var(--text-color);
+      font-weight: bold;
     }
   }
 

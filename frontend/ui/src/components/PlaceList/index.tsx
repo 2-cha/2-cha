@@ -41,10 +41,11 @@ interface PlaceItemProps {
 export function PlaceItem({ place }: PlaceItemProps) {
   const [isTooltipShown, setIsTooltipShown] = useState(false);
 
+  const width = 48;
   const icon = {
-    COCKTAIL_BAR: <CocktailIcon />,
-    WINE_BAR: <WineIcon />,
-    WHISKEY_BAR: <WhiskeyIcon />,
+    COCKTAIL_BAR: <CocktailIcon width={width} />,
+    WINE_BAR: <WineIcon width={width} />,
+    WHISKEY_BAR: <WhiskeyIcon width={width} />,
     BEER_BAR: '🍺',
   }[place.category];
 
@@ -81,7 +82,9 @@ export function PlaceItem({ place }: PlaceItemProps) {
               onMouseOut={handleOnBlur()}
             >
               <PinIcon />
-              <span>{place.distance.toFixed(2)}m</span>
+              <span className={s.placeItem__distance}>
+                {place.distance.toFixed(0)}m
+              </span>
               {isTooltipShown && (
                 <div className={s.placeItem__tooltip}>
                   <span>{place.address}</span>
