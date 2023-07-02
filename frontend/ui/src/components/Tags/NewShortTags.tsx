@@ -3,7 +3,7 @@ import cn from 'classnames';
 
 import { Tag } from '@/types';
 
-import s from './NewTags.module.scss';
+import s from './NewShortTags.module.scss';
 
 interface Props {
   tagList: Tag[];
@@ -12,7 +12,7 @@ interface Props {
   className?: string;
 }
 
-export default function NewTags({ tagList, keyID, className }: Props) {
+export default function NewShortTags({ tagList, keyID, className }: Props) {
   const [shownTooltipIndex, setShownTooltipIndex] = useState<number>(-1);
 
   const handleOnHover = useCallback(function (index: number) {

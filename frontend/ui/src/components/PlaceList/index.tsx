@@ -3,14 +3,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { PlaceSearchResult } from '@/types';
-import { NewTags } from '../Tags';
+import { NewShortTags } from '../Tags';
 import { BookmarkToggleButton } from '../Buttons';
 
 import {
   CocktailIcon,
+  PinIcon,
   WhiskeyIcon,
   WineIcon,
-  PinIcon,
 } from '@/components/Icons';
 import NoImage from '../NoImage';
 
@@ -60,7 +60,7 @@ export function PlaceItem({ place }: PlaceItemProps) {
     <li className={s.placeItem}>
       <div className={s.placeItem__inner}>
         {place.tag_summary && (
-          <NewTags
+          <NewShortTags
             className={s.placeItem__tags}
             tagList={place.tag_summary}
             keyID={place.id.toString()}
@@ -69,7 +69,8 @@ export function PlaceItem({ place }: PlaceItemProps) {
         <Link href={`/places/${place.id}`}>
           <div className={s.placeItem__header}>
             <div className={s.placeItem__headerLeft}>
-              <div>{icon}</div> {/* TODO: 아이콘 수정 */}
+              <div>{icon}</div>
+              {/* TODO: 아이콘 수정 */}
               <p className={s.placeItem__title}>{place.name}</p>
             </div>
             <div
