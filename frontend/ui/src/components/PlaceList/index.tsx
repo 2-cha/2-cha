@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { PlaceSearchResult } from '@/types';
-import { ShortTags } from '../Tags';
+import { NewTags } from '../Tags';
 import { BookmarkToggleButton } from '../Buttons';
 
 import {
@@ -60,7 +60,7 @@ export function PlaceItem({ place }: PlaceItemProps) {
     <li className={s.placeItem}>
       <div className={s.placeItem__inner}>
         {place.tag_summary && (
-          <ShortTags
+          <NewTags
             className={s.placeItem__tags}
             tagList={place.tag_summary}
             keyID={place.id.toString()}

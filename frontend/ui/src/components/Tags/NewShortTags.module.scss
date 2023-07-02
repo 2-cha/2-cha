@@ -1,0 +1,47 @@
+@use 'mixins';
+@use 'var';
+
+.tagWrapper {
+  @include mixins.flex(row, flex-start);
+  flex-wrap: wrap;
+}
+
+.tag {
+  position: relative;
+
+  &:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+
+.tagInner {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+
+  @include mixins.padding(x, md);
+  @include mixins.padding(y, sm);
+  @include mixins.text-sm;
+  //background-color: rgba(var(--border-color), 0.70);
+  background-color: rgba(237, 199, 195, 0.85);
+
+  & span {
+    color: var(--text-color);
+    font-weight: bolder;
+  }
+}
+
+.tooltip {
+  position: absolute;
+  border: 0.5px solid var(--border-color);
+  top: -30px;
+  left: 0;
+  width: max-content;
+  padding: 3px 8px;
+  max-width: 480px;
+  border-radius: 3px;
+  background-color: var(--background-color);
+
+  & span {
+    color: var(--text-color);
+  }
+}
