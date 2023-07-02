@@ -66,7 +66,7 @@
       }
     }
 
-    :before {
+    &:before {
       content: '';
       position: absolute;
       top: 0;
@@ -89,11 +89,16 @@
     left: 20px;
     border-radius: 5px;
     border: 2px solid var(--black);
-    background: none;
+    background-color: var(--shadow-color);
     width: 80%;
     height: 50px;
     z-index: 4;
     @include mixins.text-lg;
     color: var(--white);
+
+    &::placeholder {
+      color: var(--white);
+      opacity: 0.5;
+    }
   }
 }
