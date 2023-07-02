@@ -3,19 +3,17 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import cn from 'classnames';
 
 import { PlusSquareIcon } from '@/components/Icons';
+import { CollectionType } from '@/hooks/query';
 
 import s from './ProfileCollection.module.scss';
 import 'swiper/css';
+import Image from 'next/image';
 
-export default function ProfileCollection() {
-  const collection = [
-    '컬렉션1',
-    '컬렉션2',
-    '컬렉션3',
-    '컬렉션4',
-    '컬렉션5',
-    '컬렉션6',
-  ];
+interface Props {
+  collections: CollectionType[];
+}
+
+export default function ProfileCollection({ collections }: Props) {
   const width = window.innerWidth;
 
   return (
@@ -34,15 +32,22 @@ export default function ProfileCollection() {
             <PlusSquareIcon withoutBorder />
           </Link>
         </SwiperSlide>
-        {collection.map((item) => (
-          <SwiperSlide key={item} className={s.wrapper__element}>
-            <Link href={`/collection/${item}`} className={s.element}>
-              {/* TODO: collection link */}
-              {item}
-              <img src={item} alt={`${item} collection thumbnail`} />
-            </Link>
-          </SwiperSlide>
-        ))}
+        {collections &&
+          collections.map((collection) => (
+            <SwiperSlide key={collection.id} className={s.wrapper__element}>
+              <Link
+                href={`/collections/${collection.id}`}
+                className={s.element}
+              >
+                <Image
+                  src={collection.thumbnail}
+                  alt={`${collection.id} collection thumbnail`}
+                  width={100}
+                  height={100}
+                />
+              </Link>
+            </SwiperSlide>
+          ))}
       </Swiper>
     </div>
   );

@@ -1,15 +1,10 @@
 @use 'mixins';
 @use 'var';
 
-.top {
-  @include mixins.flex(row, space-between, center);
-  margin-bottom: 20px;
-
-  h2 {
-    @include mixins.text-lg;
-    font-weight: 600;
-    color: var(--text-color);
-  }
+.root {
+  width: 100%;
+  flex: 1;
+  overflow: scroll;
 }
 
 .container {
@@ -26,6 +21,7 @@
   &__button {
     width: 100%;
     height: 100%;
+    background: none;
 
     &.selected::after {
       position: absolute;
