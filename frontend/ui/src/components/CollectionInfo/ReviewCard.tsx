@@ -7,7 +7,7 @@ import NoImage from '@/components/NoImage';
 import s from './ReviewCard.module.scss';
 
 interface Props {
-  review: Omit<Review, 'member'>;
+  review: Omit<Review, 'member' | 'images'> & { image: string };
 }
 
 export default function ReviewCard({ review }: Props) {
@@ -15,9 +15,9 @@ export default function ReviewCard({ review }: Props) {
 
   return (
     <>
-      {review.images && review.images[0] ? (
+      {review.image ? (
         <Image
-          src={review.images[0]}
+          src={review.image}
           alt="collection image"
           width={480}
           height={480}
