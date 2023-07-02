@@ -1,0 +1,36 @@
+@use 'mixins';
+
+.item {
+  &__link {
+    width: 100%;
+    height: 100%;
+
+    @include mixins.flex;
+  }
+
+  &__noImage {
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-inactive-color);
+
+    @include mixins.flex;
+  }
+
+  &__empty {
+    margin: auto 0;
+    gap: 24px;
+
+    @include mixins.flex(column);
+
+    span {
+      @include mixins.text-md;
+    }
+
+    a {
+      padding: 12px 24px;
+      border-radius: 4px;
+      background-color: var(--background-active-color);
+      color: var(--background-color);
+    }
+  }
+}
