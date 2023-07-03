@@ -1,0 +1,58 @@
+@use 'mixins';
+@use 'var';
+
+.review {
+  &__list {
+    width: 100%;
+
+    @include mixins.flex(column, flex-start, center);
+  }
+
+  &__item {
+    scroll-snap-align: center;
+    width: 100%;
+    border-bottom: 0.5px solid var(--border-color);
+
+    @include mixins.flex(column);
+  }
+
+  &__writeButton {
+    height: 62px;
+  }
+}
+
+.reviewItem {
+  width: 100%;
+
+  .image {
+    min-height: 320px;
+  }
+
+  .header {
+    width: 100%;
+    height: 52px;
+
+    @include mixins.flex(row, flex-start, center);
+    @include mixins.padding(x, md);
+
+    &__profile {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 12px;
+      background-color: var(--background-inactive-color);
+
+      @include mixins.flex;
+
+      img {
+        width: 100%;
+        object-fit: cover;
+      }
+    }
+
+    &__title {
+      @include mixins.text-md;
+    }
+  }
+}
