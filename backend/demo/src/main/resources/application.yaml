@@ -17,3 +17,7 @@ spring:
     web.pageable:
       page-parameter: page_number
       size-parameter: page_size
+  autoconfigure:
+    # https://github.com/hibernate/hibernate-search/pull/3199/commits/a06b2bac040c5fead412213bf67081d420067e0c
+    # Spring Boot includes "auto-configuration" that triggers as soon as a dependency is detected in the classpath.
+    exclude: org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration
