@@ -1,16 +1,19 @@
 import Link from 'next/link';
-import { useState } from 'react';
 
 import Tab from '@/components/Tab';
 import { Grid, GridItem } from '@/components/Layout/Grid';
 import { useBookmarkQuery } from '@/hooks/query/useBookmark';
+import { useQueryParam } from '@/hooks/useQueryParam';
 
 import s from './Bookmark.module.scss';
 
 const menuItems = ['장소', '컬렉션'];
 
 export default function Bookmark() {
-  const [currentTab, setCurrentTab] = useState(0);
+  const [currentTab, setCurrentTab] = useQueryParam({
+    key: 'tab',
+    defaultValue: '0',
+  });
 
   return (
     <>
@@ -19,9 +22,9 @@ export default function Bookmark() {
         currentIndex={currentTab}
         setCurrentIndex={setCurrentTab}
       />
-      {currentTab === 0 ? (
+      {currentTab === '0' ? (
         <BookmarkedItems type="places" />
-      ) : currentTab === 1 ? (
+      ) : currentTab === '1' ? (
         <BookmarkedItems type="collections" />
       ) : null}
     </>
