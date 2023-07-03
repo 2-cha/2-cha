@@ -198,7 +198,8 @@ public class CollectionService {
   }
 
   @Transactional(readOnly = true)
-  public List<CollectionBriefResponse> getSimilarCollections(Long collId, Integer maxSize) {
+  public List<CollectionBriefResponse> getSimilarCollections(@Nullable Long memberId, Long collId,
+                                                             Integer maxSize) {
     Collection collection = collectionRepository.findCollectionById(collId);
     if (collection == null) throw new NoSuchCollectionException();
 
@@ -211,12 +212,26 @@ public class CollectionService {
                      .stream()
                      .map(TagCountResponse::getMessage)
                      .toList());
-    return recommendationService.recommend(param, 0.3, maxSize)
-                                .stream()
-                                .map(c -> new CollectionBriefResponse(c,
-                                                                      fileStorageService.getBaseUrl()
-                                ))
-                                .toList();
+    List<CollectionBriefResponse> result = recommendationService.recommend(param,
+                                                                           0.3,
+                                                                           maxSize)
+                                                                .stream()
+                                                                .map(
+                                                                    c -> new CollectionBriefResponse(
+                                                                        c,
+                                                                        fileStorageService.getBaseUrl()
+                                                                    ))
+                                                                .toList();
+
+    List<Long> resultCollIds = result.stream().map(CollectionBriefResponse::getId).toList();
+    Map<Long, LikeStatus> likeStatus = likeService.getLikeStatus(memberId, resultCollIds);
+    Map<Long, BookmarkStatus> bookmarkStatus = getBookmarkStatus(memberId, resultCollIds);
+    result.forEach(r -> {
+      r.setLikeStatus(likeStatus.get(r.getId()));
+      r.setBookmarkStatus(bookmarkStatus.get(r.getId()));
+    });
+
+    return result;
   }
 
 

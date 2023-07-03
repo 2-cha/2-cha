@@ -58,9 +58,10 @@ public class CollectionController {
 
   @Auth(GUEST)
   @GetMapping("/collections/{collId}/recommendation")
-  public List<CollectionBriefResponse> recommend(@PathVariable Long collId,
+  public List<CollectionBriefResponse> recommend(@Authed Long memberId,
+                                                 @PathVariable Long collId,
                                                  @RequestParam(name = "max_size", defaultValue = "10") Integer maxSize) {
-    return collectionService.getSimilarCollections(collId, maxSize);
+    return collectionService.getSimilarCollections(memberId, collId, maxSize);
   }
 
   @Auth(MEMBER)

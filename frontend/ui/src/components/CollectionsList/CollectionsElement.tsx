@@ -15,7 +15,12 @@ export default function CollectionsElement({ collection }: CollectionProps) {
 
   return (
     <li className={s.element}>
-      <img src={collection.thumbnail} alt={`${collection.title} thumbnail`} />
+      <Image
+        src={collection.thumbnail}
+        width={480}
+        height={480}
+        alt={`${collection.title} thumbnail`}
+      />
       <Link href={`/collections/${collection.id}`} className={s.element__cover}>
         <div className={s.element__metadata}>
           <h2>{collection.title}</h2>
