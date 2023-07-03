@@ -8,10 +8,10 @@ import { useToggleButton } from './useToggleButton';
 
 interface BookmarkButtonProps {
   isBookmarked?: boolean;
+  bookmarkCount?: number;
   itemType: string;
   itemId: string | number;
   size?: number;
-  bookmarkCount: number;
 }
 
 export default function BookmarkToggleButton({
@@ -59,7 +59,7 @@ export default function BookmarkToggleButton({
         isSingle
         isActive
       />
-      <span>{bookmarkCount}</span>
+      {initialBookmarkCount != null && <span>{bookmarkCount}</span>}
     </button>
   );
 }

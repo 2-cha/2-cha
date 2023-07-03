@@ -25,10 +25,18 @@ export default function CollectionsElement({ collection }: CollectionProps) {
         <div className={s.element__metadata}>
           <h2>{collection.title}</h2>
           <div className={s.element__icons}>
-            <HeartIcon isFilled />
-            <span>{like_status.count}</span>
-            <BookmarkIcon isSingle isActive />
-            <span>{bookmark_status.count}</span>
+            {like_status != null && (
+              <>
+                <HeartIcon isFilled />
+                <span>{like_status.count}</span>
+              </>
+            )}
+            {bookmark_status != null && (
+              <>
+                <BookmarkIcon isSingle isActive />
+                <span>{bookmark_status.count}</span>
+              </>
+            )}
           </div>
         </div>
       </Link>

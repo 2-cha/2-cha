@@ -2,9 +2,9 @@ import { Fragment, useCallback, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { PlaceSearchResult } from '@/types';
 import { ShortTags } from '../Tags';
 import { BookmarkToggleButton } from '../Buttons';
+import type { PlaceSearchResult } from '@/types';
 
 import {
   CocktailIcon,
@@ -48,13 +48,8 @@ export function PlaceItem({ place }: PlaceItemProps) {
     BEER_BAR: '🍺',
   }[place.category];
 
-  const handleOnHover = useCallback(function () {
-    return () => setIsTooltipShown(true);
-  }, []);
-
-  const handleOnBlur = useCallback(function () {
-    return () => setIsTooltipShown(false);
-  }, []);
+  const handleOnHover = useCallback(() => setIsTooltipShown(true), []);
+  const handleOnBlur = useCallback(() => setIsTooltipShown(false), []);
 
   return (
     <li className={s.placeItem}>
@@ -74,13 +69,15 @@ export function PlaceItem({ place }: PlaceItemProps) {
             </div>
             <div
               className={s.placeItem__headerRight}
-              onFocus={handleOnHover()}
-              onMouseOver={handleOnHover()}
-              onBlur={handleOnBlur()}
-              onMouseOut={handleOnBlur()}
+              onFocus={handleOnHover}
+              onMouseOver={handleOnHover}
+              onBlur={handleOnBlur}
+              onMouseOut={handleOnBlur}
             >
               <PinIcon />
-              <span>{place.distance.toFixed(2)}m</span>
+              {place.distance != null && (
+                <span>{place.distance.toFixed(2)}m</span>
+              )}
               {isTooltipShown && (
                 <div className={s.placeItem__tooltip}>
                   <span>{place.address}</span>
@@ -90,14 +87,16 @@ export function PlaceItem({ place }: PlaceItemProps) {
           </div>
         </Link>
       </div>
-      <BookmarkToggleButton
-        size={48}
-        className={s.placeItem__bookmark}
-        itemType="places"
-        itemId={place.id}
-        isBookmarked={place.bookmark_status.is_bookmarked}
-        bookmarkCount={place.bookmark_status.count}
-      />
+      {place.bookmark_status != null && (
+        <BookmarkToggleButton
+          size={48}
+          className={s.placeItem__bookmark}
+          itemType="places"
+          itemId={place.id}
+          isBookmarked={place.bookmark_status.is_bookmarked}
+          bookmarkCount={place.bookmark_status.count}
+        />
+      )}
       {place.image ? (
         <Image
           src={place.image}

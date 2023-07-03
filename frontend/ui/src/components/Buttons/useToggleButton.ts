@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type UseToggleButtonProps = {
   enabled: boolean;
@@ -8,9 +8,9 @@ type UseToggleButtonProps = {
 export function useToggleButton({ enabled, count = 0 }: UseToggleButtonProps) {
   const [state, setState] = useState({ enabled, count });
 
-  function reset() {
+  const reset = useCallback(() => {
     setState({ enabled, count });
-  }
+  }, [enabled, count]);
 
   function toggle() {
     setState((prev) => ({
@@ -21,9 +21,10 @@ export function useToggleButton({ enabled, count = 0 }: UseToggleButtonProps) {
     return reset;
   }
 
+  // 초기값의 변경과 동기화
   useEffect(() => {
     reset();
-  }, [enabled, count]);
+  }, [reset]);
 
   return { toggle, ...state };
 }

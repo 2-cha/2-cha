@@ -1,0 +1,16 @@
+.grid {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.gridItem {
+  height: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+
+  & img {
+    height: 100%;
+    object-fit: cover;
+  }
+}

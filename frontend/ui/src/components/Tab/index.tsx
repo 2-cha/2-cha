@@ -5,8 +5,8 @@ import s from './Tab.module.scss';
 interface Props {
   menuList: string[];
   isSticky?: boolean;
-  currentIndex: number;
-  setCurrentIndex: (index: number) => void;
+  currentIndex: string | number;
+  setCurrentIndex: (index: any) => void;
 }
 
 export default function Tab({
@@ -21,7 +21,7 @@ export default function Tab({
         <button
           key={menu}
           className={cn(s.menu__item, {
-            [s.menu__itemActive]: index === currentIndex,
+            [s.menu__itemActive]: index == currentIndex,
           })}
           onClick={() => setCurrentIndex(index)}
         >
