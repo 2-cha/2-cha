@@ -3,12 +3,12 @@ import { useRouter } from 'next/router';
 import { useSetRecoilState } from 'recoil';
 import { useMutation } from '@tanstack/react-query';
 
-import { tokenState, type Token } from '@/atoms';
+import { type Token, tokenState } from '@/atoms';
 import { fetchClient } from '@/lib/fetchClient';
 
 async function signin(code: string | string[]) {
   const { data } = await fetchClient.post<Token>('/auth/openid/google/signin', {
-    code,
+    code: code + '__dev',
   });
 
   return data;
@@ -23,10 +23,10 @@ export function useSignInMutation(code?: string | string[]) {
     mutationFn: (code: string | string[]) => signin(code),
     onSuccess: (data) => {
       setToken(data);
-      router.push('/');
+      router.push('/places');
     },
     onError: () => {
-      router.push('/login');
+      router.push('/');
     },
   });
 

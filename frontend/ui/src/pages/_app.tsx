@@ -7,6 +7,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Layout from '@/components/Layout';
 
 import '@/styles/globals.scss';
+import { useRouter } from 'next/router';
 
 if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
   require('@/mocks');
@@ -21,7 +22,8 @@ const queryClient = new QueryClient({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-  return (
+  const router = useRouter();
+  return router.pathname !== '/' ? (
     <QueryClientProvider client={queryClient}>
       <RecoilRoot>
         <RecoilNexus />
@@ -31,5 +33,7 @@ export default function App({ Component, pageProps }: AppProps) {
       </RecoilRoot>
       <ReactQueryDevtools />
     </QueryClientProvider>
+  ) : (
+    <Component {...pageProps} />
   );
 }

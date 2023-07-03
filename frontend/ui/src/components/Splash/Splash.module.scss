@@ -1,0 +1,26 @@
+@use 'mixins';
+@use 'var';
+
+.root {
+  width: 100%;
+  height: calc(100vh - 64px);
+  @include mixins.flex(column, center, center);
+
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+}
+
+.oauth {
+  position: absolute;
+  bottom: 30px;
+  display: block;
+  font-size: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
