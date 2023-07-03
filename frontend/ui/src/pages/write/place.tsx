@@ -1,8 +1,9 @@
 import NavStackHeader from '@/components/Layout/NavStackHeader';
 import MetaData from '@/components/MetaData';
 import AddPlaceForm from '@/components/AddPlaceForm';
+import { requireAuth } from '@/hooks';
 
-export default function RegistPlace() {
+export default requireAuth(function RegistPlace() {
   const title = '가게 등록';
 
   return (
@@ -12,4 +13,4 @@ export default function RegistPlace() {
       <AddPlaceForm />
     </>
   );
-}
+});

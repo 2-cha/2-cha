@@ -1,8 +1,9 @@
 import Bookmark from '@/components/Bookmark';
 import NavStackHeader from '@/components/Layout/NavStackHeader';
 import MetaData from '@/components/MetaData';
+import { requireAuth } from '@/hooks';
 
-export default function BookmarkPage() {
+export default requireAuth(function BookmarkPage() {
   const title = '내 북마크';
 
   return (
@@ -12,4 +13,4 @@ export default function BookmarkPage() {
       <Bookmark />
     </>
   );
-}
+});

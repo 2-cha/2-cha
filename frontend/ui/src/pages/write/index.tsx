@@ -1,10 +1,10 @@
 import NavStackHeader from '@/components/Layout/NavStackHeader';
 import MetaData from '@/components/MetaData';
 import WriteReviewForm from '@/components/WriteReviewForm';
+import { requireAuth } from '@/hooks';
 
-export default function WriteReview() {
+export default requireAuth(function WriteReview() {
   const title = '리뷰 작성';
-  // TODO: require login
 
   return (
     <>
@@ -13,4 +13,4 @@ export default function WriteReview() {
       <WriteReviewForm />
     </>
   );
-}
+});

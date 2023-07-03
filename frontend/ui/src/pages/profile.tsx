@@ -1,16 +1,13 @@
-import { useAuth } from '@/hooks';
-import {
-  useCollectionQuery,
-  useMemberCollectionsQuery,
-  useMemberQuery,
-} from '@/hooks/query';
+import { useAuth, requireAuth } from '@/hooks';
+import { useMemberCollectionsQuery, useMemberQuery } from '@/hooks/query';
 import {
   ProfileCollection,
   ProfileHeader,
   ProfileReviewTab,
 } from '@/components/Profile';
+import MetaData from '@/components/MetaData';
 
-export default function ProfilePage() {
+export default requireAuth(function ProfilePage() {
   const { user } = useAuth();
   const memberId = user?.sub;
   const { data: member } = useMemberQuery(memberId);
@@ -20,15 +17,17 @@ export default function ProfilePage() {
     isError,
   } = useMemberCollectionsQuery(member?.id);
 
-  return member ? (
+  return (
     <>
-      <ProfileHeader member={member} isMe />
-      {isLoading || isError ? null : (
-        <ProfileCollection collections={collections} />
-      )}
-      <ProfileReviewTab memberId={member.id} />
+      {member ? (
+        <>
+          <ProfileHeader member={member} isMe />
+          {isLoading || isError ? null : (
+            <ProfileCollection collections={collections} />
+          )}
+          <ProfileReviewTab memberId={member.id} />
+        </>
+      ) : null}
     </>
-  ) : (
-    <div>member not found</div>
   );
-}
+});
