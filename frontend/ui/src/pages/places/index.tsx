@@ -22,7 +22,7 @@ export default function Places() {
 
   return (
     <>
-      <MetaData title="Places" />
+      <MetaData />
       <Header />
       <PlaceListQueryParamsMenu />
       {isLoading ? (

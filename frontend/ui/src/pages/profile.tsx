@@ -19,6 +19,7 @@ export default requireAuth(function ProfilePage() {
 
   return (
     <>
+      <MetaData title="내 프로필" />
       {member ? (
         <>
           <ProfileHeader member={member} isMe />
