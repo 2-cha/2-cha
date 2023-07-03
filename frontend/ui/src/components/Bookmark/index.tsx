@@ -6,6 +6,7 @@ import { useBookmarkQuery } from '@/hooks/query/useBookmark';
 import { useQueryParam } from '@/hooks/useQueryParam';
 
 import s from './Bookmark.module.scss';
+import { BookmarkToggleButton } from '../Buttons';
 
 const menuItems = ['장소', '컬렉션'];
 
@@ -39,7 +40,7 @@ function BookmarkedItems({ type }: { type: string }) {
       {items && items.length ? (
         <Grid>
           {items.map((item: any) => (
-            <GridItem key={item.id}>
+            <GridItem key={item.id} className={s.item}>
               <Link href={type + '/' + item.id} className={s.item__link}>
                 {item.image || item.thumbnail ? (
                   <img src={item.image ?? item.thumbnail} alt={item.name} />
@@ -49,6 +50,12 @@ function BookmarkedItems({ type }: { type: string }) {
                   </div>
                 )}
               </Link>
+              <BookmarkToggleButton
+                className={s.item__bookmarkButton}
+                itemType={type}
+                itemId={item.id}
+                isBookmarked
+              />
             </GridItem>
           ))}
         </Grid>
