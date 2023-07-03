@@ -20,3 +20,22 @@ export function useCollectionQuery(collectionId?: string | string[]) {
 
   return result;
 }
+
+async function fetchCollectionRecommendations(collectionId: string) {
+  const { data } = await fetchClient.get<Collection[]>(
+    `/collections/${collectionId}/recommendation`
+  );
+
+  return data;
+}
+
+export function useCollectionRecommendations(collectionId?: string | string[]) {
+  const res = useQuery({
+    queryKey: ['collections', collectionId, 'recommendation'],
+    queryFn: () => fetchCollectionRecommendations(collectionId as string),
+    refetchOnWindowFocus: false,
+    enabled: !!collectionId,
+  });
+
+  return res;
+}

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import CollectionInfo from '@/components/CollectionInfo';
 import MetaData from '@/components/MetaData';
 import { useCollectionQuery } from '@/hooks/query';
+import { useCollectionRecommendations } from '@/hooks/query/useCollection';
 
 export default function CollectionInfoPage() {
   const { query } = useRouter();
@@ -12,11 +13,18 @@ export default function CollectionInfoPage() {
     isError,
   } = useCollectionQuery(query.collectionId);
 
+  const { data: collectionRecommendations } = useCollectionRecommendations(
+    query.collectionId
+  );
+
   return (
     <>
       <MetaData title={collectionInfo?.title} />
       {isLoading || isError ? null : (
-        <CollectionInfo collectionInfo={collectionInfo} />
+        <CollectionInfo
+          collectionInfo={collectionInfo}
+          collectionRecommendations={collectionRecommendations}
+        />
       )}
     </>
   );
