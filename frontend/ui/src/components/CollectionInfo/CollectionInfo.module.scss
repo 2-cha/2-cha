@@ -61,6 +61,21 @@
   }
 }
 
+.carousel-recommendation {
+  width: 100%;
+  min-width: 100%;
+  max-height: 70vh;
+  flex: 1;
+
+  @include mixins.flex(row, flex-start, stretch);
+
+  .wrapper-recommendation {
+    min-height: 70vh;
+    height: 70vh;
+    @include mixins.flex(row, flex-start, stretch);
+  }
+}
+
 .metadata {
   width: 100%;
   height: fit-content;
@@ -124,5 +139,33 @@
   width: 100%;
   height: calc(100vh - 0px);
   top: 100%;
-  @include mixins.flex(column, flex-start, flex-start);
+  align-content: center;
+  justify-content: center;
+  text-align: center;
+  @include mixins.padding(all, md);
+
+  &__recommendation {
+    @include mixins.margin(left, xl);
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+    width: 70%;
+  }
+}
+
+.footer {
+  @include mixins.text-lg;
+  color: var(--text-color);
+  animation: motion 0.8s ease-in 0s infinite alternate;
+  margin-top: 0;
+  text-align: center;
+
+  @keyframes motion {
+    0% {
+      margin-top: 0;
+    }
+    100% {
+      margin-top: 10px;
+    }
+  }
 }

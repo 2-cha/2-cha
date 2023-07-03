@@ -13,5 +13,5 @@ export interface CollectionMetadata {
 }
 
 export interface Collection extends CollectionMetadata {
-  reviews: Omit<Review, 'member'>[];
+  reviews: (Omit<Review, 'member' | 'images'> & { image: string })[];
 }

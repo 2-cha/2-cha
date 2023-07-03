@@ -11,17 +11,18 @@ import {
   LikeToggleButton,
   ShareButton,
 } from '../Buttons';
-import { ArrowIcon } from '../Icons';
+import { ArrowIcon, SimpleArrowIcon } from '../Icons';
 
 import 'swiper/css';
+import 'swiper/css/effect-cards';
+import 'swiper/css/navigation';
 import s from './CollectionInfo.module.scss';
 import CollectionsElement from '@/components/CollectionsList/CollectionsElement';
+import { EffectCards, Navigation } from 'swiper';
 
 interface Props {
   collectionInfo: Collection;
-  collectionRecommendations:
-    | Omit<Collection, 'like_status' | 'bookmark_status'>[]
-    | undefined;
+  collectionRecommendations: Collection[] | undefined;
 }
 
 export default function CollectionInfo({
@@ -37,21 +38,27 @@ export default function CollectionInfo({
 
   return (
     <>
-      <Swiper className={s.root} direction={'vertical'} autoHeight={true}>
+      <Swiper
+        className={s.root}
+        direction={'vertical'}
+        autoHeight={true}
+        modules={[Navigation]}
+        navigation={{ enabled: true, nextEl: '.next' }}
+      >
+        <nav className={s.top__nav}>
+          <button
+            type="button"
+            className={s.top__button}
+            onClick={handleClickBack}
+          >
+            <ArrowIcon />
+          </button>
+          <ShareButton
+            sharedTitle={collectionInfo.title}
+            sharedUrl={`${process.env.NEXT_PUBLIC_ORIGIN}/collections/${collectionInfo.id}`}
+          />
+        </nav>
         <SwiperSlide className={s.top}>
-          <nav className={s.top__nav}>
-            <button
-              type="button"
-              className={s.top__button}
-              onClick={handleClickBack}
-            >
-              <ArrowIcon />
-            </button>
-            <ShareButton
-              sharedTitle={collectionInfo.title}
-              sharedUrl={`${process.env.NEXT_PUBLIC_ORIGIN}/collections/${collectionInfo.id}`}
-            />
-          </nav>
           <Swiper
             scrollbar
             className={s.carousel}
@@ -99,25 +106,39 @@ export default function CollectionInfo({
                 />
               </div>
             </div>
+            {/*<h1 className={s.metadata__title}>{collectionInfo.title}</h1>*/}
             <h1 className={s.metadata__title}>{collectionInfo.title}</h1>
+            <div className={s.footer}>
+              <button
+                className={'next'}
+                style={{
+                  transform: 'rotate(180deg)',
+                  color: 'var(--border-color)',
+                  background: 'none',
+                }}
+              >
+                <SimpleArrowIcon />
+              </button>
+            </div>
           </div>
         </SwiperSlide>
         <SwiperSlide className={s.bottom}>
-          <nav className={s.top__nav}>
-            <button
-              type="button"
-              className={s.top__button}
-              onClick={handleClickBack}
-            >
-              <ArrowIcon />
-            </button>
-          </nav>
-          <Swiper scrollbar className={s.carousel} wrapperClass={s.wrapper}>
-            {collectionRecommendations?.map((collection) => (
-              <SwiperSlide key={`collection-recommendation-${collection.id}`}>
+          <h1 className={s.metadata__title}>추천 컬렉션</h1>
+          <Swiper
+            scrollbar
+            className={s.carouselRecommendation}
+            wrapperClass={s.wrapperRecommendation}
+            modules={[EffectCards]}
+            effect={'cards'}
+            cardsEffect={{ slideShadows: false }}
+            loop={true}
+          >
+            {collectionRecommendations?.map((c) => (
+              <SwiperSlide key={`collection-recommendation-${c.id}`}>
                 <CollectionsElement
-                  collection={collection}
-                  key={`collection-recommendation-${collection.id}`}
+                  className={s.bottom__recommendation}
+                  collection={c}
+                  key={`collection-recommendation-${c.id}`}
                   style={{}}
                 />
               </SwiperSlide>

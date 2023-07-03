@@ -6,20 +6,23 @@ import { Collection } from '@/types/collection';
 import s from './CollectionsElement.module.scss';
 import { BookmarkIcon, HeartIcon } from '../Icons';
 import { CSSProperties } from 'react';
+import classNames from 'classnames';
 
 interface CollectionProps {
   collection: Collection;
-  style: CSSProperties;
+  style?: CSSProperties;
+  className?: string;
 }
 
 export default function CollectionsElement({
   style,
+  className,
   collection,
 }: CollectionProps) {
   const { like_status, bookmark_status } = collection;
 
   return (
-    <div className={s.element} style={style}>
+    <div className={classNames(className, s.element)} style={style}>
       <Image
         src={collection.thumbnail}
         width={480}

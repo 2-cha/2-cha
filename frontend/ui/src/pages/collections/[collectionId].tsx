@@ -13,9 +13,11 @@ export default function CollectionInfoPage() {
     isError,
   } = useCollectionQuery(query.collectionId);
 
-  const { data: collectionRecommendations } = useCollectionRecommendations(
-    query.collectionId
-  );
+  const {
+    data: collectionRecommendations,
+    isError: wasError,
+    isLoading: wasLoading,
+  } = useCollectionRecommendations(query.collectionId);
 
   return (
     <>
