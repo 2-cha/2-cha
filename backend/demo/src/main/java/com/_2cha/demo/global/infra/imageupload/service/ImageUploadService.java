@@ -51,6 +51,21 @@ public class ImageUploadService {
     return CompletableFuture.completedFuture(new ImageSavedResponse(url));
   }
 
+  @Async("imageUploadTaskExecutor")
+  public CompletableFuture<ImageSavedResponse> saveThumbnail(byte[] imageBytes)
+      throws IOException {
+    String actualExt = ImageUtils.getActualExtension(imageBytes);
+    if (actualExt == null) throw new NoDetectedExtensionException();
+    String filename = UUID.randomUUID() + actualExt;
+
+    byte[] thumbnailBytes = ImageUtils.resize(imageBytes, THUMB_SIZE, THUMB_SIZE);
+    if (thumbnailBytes == null) throw new UnsupportedImageFormatException();
+    String url = fileStorageService.uploadFile(IMAGE_PATH + THUMB_PREFIX + filename,
+                                               thumbnailBytes);
+
+    return CompletableFuture.completedFuture(new ImageSavedResponse(url));
+  }
+
   public String getThumbnailPath(String imagePath) {
     if (StringUtils.isEmpty(imagePath) || !imagePath.startsWith(IMAGE_PATH)) {
       throw new InvalidImageUrlPathException();
