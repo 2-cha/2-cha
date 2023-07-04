@@ -1,6 +1,7 @@
 package com._2cha.demo.auth.repository;
 
 import com._2cha.demo.auth.config.JwtConfig;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -15,13 +16,17 @@ public class RefreshToken {
   @Id
   private Long id;
 
-  private String value;
+  private List<String> values;
 
   @TimeToLive
   private Long ttl = JwtConfig.REFRESH_LIFETIME.longValue() * 60;
 
-  public RefreshToken(Long id, String value) {
+  public RefreshToken(Long id, List<String> values) {
     this.id = id;
-    this.value = value;
+    this.values = values;
+  }
+
+  public void addToken(String value) {
+    this.values.add(value);
   }
 }

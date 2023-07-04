@@ -29,6 +29,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -82,11 +83,11 @@ public class AuthService {
   public TokenResponse refreshJwt(String refreshToken) {
     JwtTokenPayload payload = verifyJwt(refreshToken, JwtRefreshTokenPayload.class);
     Long memberId = payload.getSub();
-    RefreshToken storedToken = tokenRepository.findById(memberId);
-    if (storedToken == null) throw new UnauthorizedException("Cannot find such token");
+    RefreshToken stored = tokenRepository.findById(memberId);
+    if (stored == null) throw new UnauthorizedException("Cannot find such token");
 
-    String storedTokenValue = storedToken.getValue();
-    if (!refreshToken.equals(storedTokenValue)) {
+    List<String> storedValues = stored.getValues();
+    if (!storedValues.contains(refreshToken)) {
       throw new UnauthorizedException("Token not matched");
     }
 
@@ -94,7 +95,7 @@ public class AuthService {
     return new TokenResponse(issueJwt(info2AccessTokenPayload(memberInfo),
                                       jwtConfig.getAccessKey(),
                                       jwtConfig.getAccessLifetime()),
-                             storedTokenValue
+                             refreshToken
     );
   }
 
@@ -163,7 +164,13 @@ public class AuthService {
     String refreshToken = issueJwt(refreshTokenPayload, jwtConfig.getRefreshKey(),
                                    jwtConfig.getRefreshLifetime());
 
-    tokenRepository.save(new RefreshToken(payload.getSub(), refreshToken));
+    RefreshToken stored = tokenRepository.findById(payload.getSub());
+    if (stored != null) {
+      stored.addToken(refreshToken);
+      tokenRepository.save(stored);
+    } else {
+      tokenRepository.save(new RefreshToken(payload.getSub(), List.of(refreshToken)));
+    }
 
     return new TokenResponse(accessToken, refreshToken);
   }
