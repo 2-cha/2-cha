@@ -26,6 +26,7 @@ public class ImageUploadService {
 
   /**
    * @param imageBytes
+   * @param genThumbnail
    * @return uploaded url
    * <p>
    * check actual image extension, and save image as (uuid+detected extension).
@@ -34,20 +35,38 @@ public class ImageUploadService {
    */
   //TODO: return pair of img and thumbnail
   @Async("imageUploadTaskExecutor")
-  public CompletableFuture<ImageSavedResponse> save(byte[] imageBytes) throws IOException {
+  public CompletableFuture<ImageSavedResponse> save(byte[] imageBytes, boolean genThumbnail)
+      throws IOException {
     String actualExt = ImageUtils.getActualExtension(imageBytes);
     if (actualExt == null) throw new NoDetectedExtensionException();
-
-    byte[] thumbnailBytes = ImageUtils.resize(imageBytes, THUMB_SIZE, THUMB_SIZE);
-    if (thumbnailBytes == null) throw new UnsupportedImageFormatException();
-
     String filename = UUID.randomUUID() + actualExt;
-    fileStorageService.uploadFile(IMAGE_PATH + THUMB_PREFIX + filename, thumbnailBytes);
+
+    if (genThumbnail) {
+      byte[] thumbnailBytes = ImageUtils.resize(imageBytes, THUMB_SIZE, THUMB_SIZE);
+      if (thumbnailBytes == null) throw new UnsupportedImageFormatException();
+      fileStorageService.uploadFile(IMAGE_PATH + THUMB_PREFIX + filename, thumbnailBytes);
+    }
+
     String url = fileStorageService.uploadFile(IMAGE_PATH + filename, imageBytes);
     return CompletableFuture.completedFuture(new ImageSavedResponse(url));
   }
 
-  public String getThumbnailPath(String imagePath) {
+  @Async("imageUploadTaskExecutor")
+  public CompletableFuture<ImageSavedResponse> saveThumbnail(byte[] imageBytes)
+      throws IOException {
+    String actualExt = ImageUtils.getActualExtension(imageBytes);
+    if (actualExt == null) throw new NoDetectedExtensionException();
+    String filename = UUID.randomUUID() + actualExt;
+
+    byte[] thumbnailBytes = ImageUtils.resize(imageBytes, THUMB_SIZE, THUMB_SIZE);
+    if (thumbnailBytes == null) throw new UnsupportedImageFormatException();
+    String url = fileStorageService.uploadFile(IMAGE_PATH + THUMB_PREFIX + filename,
+                                               thumbnailBytes);
+
+    return CompletableFuture.completedFuture(new ImageSavedResponse(url));
+  }
+
+  public String generateThumbnailPathFromImagePath(String imagePath) {
     if (StringUtils.isEmpty(imagePath) || !imagePath.startsWith(IMAGE_PATH)) {
       throw new InvalidImageUrlPathException();
     }

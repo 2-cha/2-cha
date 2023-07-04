@@ -96,7 +96,7 @@ public class ReviewController {
       throws IOException {
     Point point;
     byte[] imageBytes = file.getBytes();
-    CompletableFuture<ImageSavedResponse> save = imageUploadService.save(imageBytes);
+    CompletableFuture<ImageSavedResponse> save = imageUploadService.save(imageBytes, true);
     CompletableFuture<List<PlaceSuggestionResponse>> suggestion = completedFuture(
         new ArrayList<>());
     if ((point = ImageUtils.getGeoPoint(imageBytes)) != null) {
