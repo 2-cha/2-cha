@@ -34,6 +34,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -80,6 +81,7 @@ public class AuthService {
     }
   }
 
+  @Transactional(readOnly = true)
   public TokenResponse refreshJwt(String refreshToken) {
     JwtTokenPayload payload = verifyJwt(refreshToken, JwtRefreshTokenPayload.class);
     Long memberId = payload.getSub();
@@ -99,6 +101,7 @@ public class AuthService {
     );
   }
 
+  @Transactional
   public TokenResponse signInWithAccount(String email, String password) {
     MemberCredResponse response;
     try {
@@ -124,6 +127,7 @@ public class AuthService {
     return issueAccessTokenAndRefreshToken(info2AccessTokenPayload(memberInfo));
   }
 
+  @Transactional
   public TokenResponse signInWithOIDC(OIDCProvider provider, String authCode) {
     OIDCStrategy strategy = oidcStrategyMap.get(provider.value);
     OIDCUserProfile oidcProfile = strategy.authenticate(authCode);
