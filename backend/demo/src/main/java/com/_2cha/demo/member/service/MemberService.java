@@ -84,12 +84,10 @@ public class MemberService {
     if (srcImgUrl != null) {
       try (var in = new URL(srcImgUrl).openStream()) {
         byte[] imageBytes = in.readAllBytes();
-        String savedUrl = imageUploadService.save(imageBytes, false).get().getUrl();
-        String savedImageUrlPath = fileStorageService.extractPath(savedUrl);
-        String savedThumbUrlPath = imageUploadService.getThumbnailPath(savedImageUrlPath);
+        String savedThumbnailUrl = imageUploadService.saveThumbnail(imageBytes).get().getUrl();
+        String savedThumbUrlPath = fileStorageService.extractPath(savedThumbnailUrl);
         eventPublisher.publishEvent(new ProfileImageUpdateRequiredEvent(this,
                                                                         event.getMemberId(),
-                                                                        savedImageUrlPath,
                                                                         savedThumbUrlPath));
       } catch (IOException e) {
         //TODO: handle in SimpleAsyncUncaughtExceptionHandler (Not in request lifecycle)
@@ -103,17 +101,16 @@ public class MemberService {
   @EventListener(value = ProfileImageUpdateRequiredEvent.class)
   public void updateProfileImage(ProfileImageUpdateRequiredEvent event) {
     Member member = memberRepository.findById(event.getMemberId());
-    member.updateProfileImage(event.getImageUrlPath(), event.getThumbUrlPath());
+    member.updateProfileImage(event.getThumbUrlPath());
     memberRepository.save(member);
   }
 
   @Transactional
   public MemberProfileResponse updateProfileImage(Long memberId, String url) {
     Member member = memberRepository.findById(memberId);
-    String imageUrlPath = fileStorageService.extractPath(url);
-    String thumbUrlPath = imageUploadService.getThumbnailPath(imageUrlPath);
+    String thumbUrlPath = fileStorageService.extractPath(url);
 
-    member.updateProfileImage(imageUrlPath, thumbUrlPath);
+    member.updateProfileImage(thumbUrlPath);
     memberRepository.save(member);
 
     return new MemberProfileResponse(member.getId(),
@@ -144,7 +141,7 @@ public class MemberService {
       }
     }
 
-    Member member = Member.createMemberWithOIDC(oidcProvider, oidcId, email, nickname, null, null);
+    Member member = Member.createMemberWithOIDC(oidcProvider, oidcId, email, nickname, null);
     memberRepository.save(member);
     eventPublisher.publishEvent(
         new ProfileImageUploadRequiredEvent(this, member.getId(), srcImgUrl));

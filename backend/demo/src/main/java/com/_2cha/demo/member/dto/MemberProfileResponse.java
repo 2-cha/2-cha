@@ -12,11 +12,11 @@ public class MemberProfileResponse {
   private String profImg;
   private String profMsg;
 
-  public MemberProfileResponse(Long id, String name, String profImgUrlPath, String profMsg,
+  public MemberProfileResponse(Long id, String name, String profThumbUrlPath, String profMsg,
                                String baseUrl) {
     this.id = id;
     this.name = name;
-    this.profImg = profImgUrlPath != null ? baseUrl + profImgUrlPath : null;
+    this.profImg = profThumbUrlPath != null ? baseUrl + profThumbUrlPath : null;
     this.profMsg = profMsg;
   }
 }
