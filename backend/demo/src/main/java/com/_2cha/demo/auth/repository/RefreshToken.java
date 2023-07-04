@@ -13,6 +13,8 @@ import org.springframework.data.redis.core.TimeToLive;
 @Setter
 public class RefreshToken {
 
+  private static final int MAX_REFRESH_TOKEN_SIZE = 5;
+
   @Id
   private Long id;
 
@@ -27,6 +29,9 @@ public class RefreshToken {
   }
 
   public void addToken(String value) {
+    if (this.values.size() == MAX_REFRESH_TOKEN_SIZE) {
+      this.values.remove(0);
+    }
     this.values.add(value);
   }
 }
