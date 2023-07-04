@@ -58,7 +58,7 @@ public class MemberController {
   public CompletableFuture<ImageSavedResponse> uploadMemberImage(@Authed Long memberId,
                                                                  @ImageMime MultipartFile file)
       throws IOException {
-    return imageUploadService.save(file.getBytes(), false);
+    return imageUploadService.saveThumbnail(file.getBytes());
   }
 
   @Auth
