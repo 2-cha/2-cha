@@ -1,10 +1,10 @@
-import React, { CSSProperties } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Importing loader
-import { CircleLoader } from 'react-spinners';
 import GoogleButton from 'react-google-button';
 import { GOOGLE_AUTH_URL } from '@/lib/auth';
 import s from './Splash.module.scss';
+import Background from '@/components/Splash/Background';
 // import './Splash.css';
 
 export default function Splash() {
@@ -12,16 +12,26 @@ export default function Splash() {
     window.location.href = url;
   };
 
-  // Custom css for loader
-  const override: CSSProperties = {
-    display: 'block',
-    margin: '0 auto',
-    borderColor: 'red',
-  };
+  const [windowSize, setWindowSize] = useState([
+    global?.window ? window.innerWidth : 720,
+    global?.window ? window.innerHeight : 1080,
+  ]);
+
+  useEffect(() => {
+    const handleWindowResize = () => {
+      setWindowSize([window.innerWidth, window.innerHeight]);
+    };
+
+    window.addEventListener('resize', handleWindowResize);
+
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, []);
 
   return (
     <div className={s.root}>
-      <CircleLoader color={'#36D7B7'} cssOverride={override} size={150} />
+      <Background width={windowSize[0]} height={windowSize[1]} />
       <GoogleButton
         className={s.oauth}
         type={'light'}
