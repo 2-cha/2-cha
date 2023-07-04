@@ -1,3 +1,10 @@
+import MetaData from '@/components/MetaData';
+
 export default function NotFound() {
-  return <div>Not Found</div>;
+  return (
+    <>
+      <MetaData title="404" />
+      <div>Not Found</div>
+    </>
+  );
 }

@@ -16,3 +16,11 @@ export function useAuth() {
 
   return { user: jwtPayload };
 }
+
+export function requireAuth<P extends {}>(Component: React.ComponentType<P>) {
+  return function AuthenticateWrapper(props: P) {
+    useAuth();
+
+    return <Component {...props} />;
+  };
+}

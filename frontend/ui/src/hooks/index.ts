@@ -1,4 +1,4 @@
-export { useAuth } from './useAuth';
+export { useAuth, requireAuth } from './useAuth';
 export { useCurrentLocation } from './useCurrentLocation';
 export { useImagePicker } from './useImagePicker';
 export { useIntersection } from './useIntersection';

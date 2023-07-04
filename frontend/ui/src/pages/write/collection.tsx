@@ -1,8 +1,9 @@
 import AddCollectionForm from '@/components/AddCollectionForm';
 import NavStackHeader from '@/components/Layout/NavStackHeader';
 import MetaData from '@/components/MetaData';
+import { requireAuth } from '@/hooks';
 
-export default function AddCollection() {
+export default requireAuth(function AddCollection() {
   const title = '컬렉션 추가';
 
   return (
@@ -12,4 +13,4 @@ export default function AddCollection() {
       <AddCollectionForm />
     </>
   );
-}
+});
