@@ -107,7 +107,8 @@ public class ReviewService {
                                              .toList();
 
     List<String> thumbnailUrlPaths = imageUrlPaths.stream()
-                                                  .map(imageUploadService::getThumbnailPath)
+                                                  .map(
+                                                      imageUploadService::generateThumbnailPathFromImagePath)
                                                   .toList();
     if (reviewRepository.findReviewsByPlaceId(placeId).isEmpty() && !imageUrlPaths.isEmpty()) {
       eventPublisher.publishEvent(new FirstReviewCreatedEvent(this, placeId,

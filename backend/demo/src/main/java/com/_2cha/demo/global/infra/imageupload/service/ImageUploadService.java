@@ -66,7 +66,7 @@ public class ImageUploadService {
     return CompletableFuture.completedFuture(new ImageSavedResponse(url));
   }
 
-  public String getThumbnailPath(String imagePath) {
+  public String generateThumbnailPathFromImagePath(String imagePath) {
     if (StringUtils.isEmpty(imagePath) || !imagePath.startsWith(IMAGE_PATH)) {
       throw new InvalidImageUrlPathException();
     }
