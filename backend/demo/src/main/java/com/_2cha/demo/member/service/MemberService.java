@@ -84,7 +84,7 @@ public class MemberService {
     if (srcImgUrl != null) {
       try (var in = new URL(srcImgUrl).openStream()) {
         byte[] imageBytes = in.readAllBytes();
-        String savedUrl = imageUploadService.save(imageBytes).get().getUrl();
+        String savedUrl = imageUploadService.save(imageBytes, false).get().getUrl();
         String savedImageUrlPath = fileStorageService.extractPath(savedUrl);
         String savedThumbUrlPath = imageUploadService.getThumbnailPath(savedImageUrlPath);
         eventPublisher.publishEvent(new ProfileImageUpdateRequiredEvent(this,
