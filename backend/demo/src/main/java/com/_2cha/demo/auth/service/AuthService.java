@@ -127,7 +127,7 @@ public class AuthService {
     return issueAccessTokenAndRefreshToken(info2AccessTokenPayload(memberInfo));
   }
 
-  @Transactional
+  @Transactional(noRollbackFor = NoSuchMemberException.class)
   public TokenResponse signInWithOIDC(OIDCProvider provider, String authCode) {
     OIDCStrategy strategy = oidcStrategyMap.get(provider.value);
     OIDCUserProfile oidcProfile = strategy.authenticate(authCode);
