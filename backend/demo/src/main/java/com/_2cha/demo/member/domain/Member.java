@@ -9,6 +9,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -19,7 +20,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "deleted = false")
+@Where(clause = "deleted_at is null")
 public class Member {
 
   /*-----------
@@ -50,7 +51,7 @@ public class Member {
   private OIDCProvider oidcProvider;
   private String oidcId;
 
-  private boolean deleted = false;
+  private LocalDateTime deletedAt = null;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Relationship> followings = new ArrayList<>();
@@ -130,6 +131,6 @@ public class Member {
   }
 
   public void softDelete() {
-    this.deleted = true;
+    this.deletedAt = LocalDateTime.now();
   }
 }
