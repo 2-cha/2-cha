@@ -14,10 +14,12 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Where(clause = "deleted = false")
 public class Member {
 
   /*-----------
@@ -48,6 +50,7 @@ public class Member {
   private OIDCProvider oidcProvider;
   private String oidcId;
 
+  private boolean deleted = false;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Relationship> followings = new ArrayList<>();
@@ -111,5 +114,9 @@ public class Member {
   public void updateProfile(String name, String profMsg) {
     this.name = name;
     this.profMsg = profMsg;
+  }
+
+  public void softDelete() {
+    this.deleted = true;
   }
 }
