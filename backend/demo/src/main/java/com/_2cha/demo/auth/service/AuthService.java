@@ -35,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +50,7 @@ public class AuthService {
 
   private final Map<String, OIDCStrategy> oidcStrategyMap;
   private final TokenRepository tokenRepository;
+  private final TransactionTemplate tx;
 
   public <T extends JwtTokenPayload> T verifyJwt(String token, Class<T> payloadType) {
     String key;
@@ -101,7 +103,6 @@ public class AuthService {
     );
   }
 
-  @Transactional
   public TokenResponse signInWithAccount(String email, String password) {
     MemberCredResponse response;
     try {
@@ -127,7 +128,6 @@ public class AuthService {
     return issueAccessTokenAndRefreshToken(info2AccessTokenPayload(memberInfo));
   }
 
-  @Transactional(noRollbackFor = NoSuchMemberException.class)
   public TokenResponse signInWithOIDC(OIDCProvider provider, String authCode) {
     OIDCStrategy strategy = oidcStrategyMap.get(provider.value);
     OIDCUserProfile oidcProfile = strategy.authenticate(authCode);
@@ -168,13 +168,15 @@ public class AuthService {
     String refreshToken = issueJwt(refreshTokenPayload, jwtConfig.getRefreshKey(),
                                    jwtConfig.getRefreshLifetime());
 
-    RefreshToken stored = tokenRepository.findById(payload.getSub());
-    if (stored != null) {
-      stored.addToken(refreshToken);
-      tokenRepository.save(stored);
-    } else {
-      tokenRepository.save(new RefreshToken(payload.getSub(), List.of(refreshToken)));
-    }
+    tx.executeWithoutResult(status -> {
+      RefreshToken stored = tokenRepository.findById(payload.getSub());
+      if (stored != null) {
+        stored.addToken(refreshToken);
+        tokenRepository.save(stored);
+      } else {
+        tokenRepository.save(new RefreshToken(payload.getSub(), List.of(refreshToken)));
+      }
+    });
 
     return new TokenResponse(accessToken, refreshToken);
   }
