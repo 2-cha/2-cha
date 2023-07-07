@@ -101,7 +101,6 @@ public class AuthService {
     );
   }
 
-  @Transactional
   public TokenResponse signInWithAccount(String email, String password) {
     MemberCredResponse response;
     try {
@@ -127,7 +126,6 @@ public class AuthService {
     return issueAccessTokenAndRefreshToken(info2AccessTokenPayload(memberInfo));
   }
 
-  @Transactional(noRollbackFor = NoSuchMemberException.class)
   public TokenResponse signInWithOIDC(OIDCProvider provider, String authCode) {
     OIDCStrategy strategy = oidcStrategyMap.get(provider.value);
     OIDCUserProfile oidcProfile = strategy.authenticate(authCode);
