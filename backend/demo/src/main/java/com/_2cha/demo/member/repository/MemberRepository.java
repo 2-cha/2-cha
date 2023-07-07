@@ -19,4 +19,6 @@ public interface MemberRepository extends Repository<Member, Long> {
   Member findByEmail(String email);
 
   List<Member> findAllByNameIn(List<String> names);
+
+  void delete(Member member);
 }
