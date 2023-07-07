@@ -20,6 +20,7 @@ import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.repository.AchievementRepository;
 import com._2cha.demo.member.repository.MemberQueryRepository;
 import com._2cha.demo.member.repository.MemberRepository;
+import com._2cha.demo.push.service.PushService;
 import com._2cha.demo.util.BCryptHashingUtils;
 import java.io.IOException;
 import java.net.URL;
@@ -53,6 +54,7 @@ public class MemberService {
   private final ImageUploadService imageUploadService;
   private final ApplicationEventPublisher eventPublisher;
   private final NicknameGeneratorService nicknameGeneratorService;
+  private final PushService pushService;
 
 
   public Member findById(Long id) {
@@ -219,6 +221,24 @@ public class MemberService {
           }
         });
     return response;
+  }
+
+  @Transactional
+  public void deleteMember(Long memberId) {
+    Member member = memberRepository.findById(memberId);
+    if (member == null) throw new NoSuchMemberException();
+
+    pushService.unregisterAll(memberId);
+    member.getAchievements().forEach(member::removeAchievement);
+    member.getFollowings().forEach(rel -> member.unfollow(rel.getFollowing()));
+    member.getFollowers().forEach(rel -> rel.getFollower().unfollow(member));
+    member.softDelete();
+
+    // TODO: sign out all sessions
+    // TODO: unique constraints with deleted
+    // TODO: prohibit sign in
+    // TODO: sign up again with same oidc id
+    memberRepository.save(member);
   }
 
 

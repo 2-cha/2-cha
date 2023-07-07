@@ -107,6 +107,19 @@ public class Member {
     this.achievements.add(memberAchievement);
   }
 
+  public void removeAchievement(Achievement achievement) {
+    for (MemberAchievement memberAchievement : this.achievements) {
+      if (memberAchievement.getAchievement().equals(achievement)) {
+        this.achievements.remove(memberAchievement);
+        break;
+      }
+    }
+  }
+
+  public void removeAchievement(MemberAchievement achievement) {
+    this.achievements.remove(achievement);
+  }
+
   public void updateProfileImage(String profImgThumbPath) {
     this.profImgThumbPath = profImgThumbPath;
   }
