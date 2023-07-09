@@ -9,6 +9,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -21,7 +23,15 @@ import org.hibernate.annotations.Where;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "deleted_at is null")
+@Where(clause = "deleted_at = '1970-01-01 00:00:00'")
+@Table(uniqueConstraints = {
+    @UniqueConstraint(name = "uk_member_email_deleted_at", columnNames = {"email", "deletedAt"}),
+    @UniqueConstraint(name = "uk_member_name_deleted_at", columnNames = {"name", "deletedAt"}),
+    @UniqueConstraint(
+        name = "uk_member_oidc_provider_oidc_id_deleted_at",
+        columnNames = {"oidcProvider", "oidcId", "deletedAt"}
+    )
+})
 public class Member {
 
   /*-----------
@@ -32,10 +42,10 @@ public class Member {
   @Column(name = "MEMBER_ID")
   private Long id;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   private String email;
 
   @Column
