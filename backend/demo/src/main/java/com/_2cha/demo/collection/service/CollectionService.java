@@ -259,8 +259,10 @@ public class CollectionService {
                                                                                  review.getPlace(),
                                                                                  review.getTags()))
                                                                          .toList();
-    MemberProfileResponse member = memberService.getMemberProfileById(
-        collection.getMember().getId());
+    MemberProfileResponse member = null;
+    try {
+      member = memberService.getMemberProfileById(collection.getMember().getId());
+    } catch (NoSuchMemberException ignored) {}
 
     CollectionDetailResponse detail = new CollectionDetailResponse(collection,
                                                                    member,
