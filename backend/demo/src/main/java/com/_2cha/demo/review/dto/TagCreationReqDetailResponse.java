@@ -24,8 +24,10 @@ public class TagCreationReqDetailResponse {
     this.acceptedMessage = tagReq.getAcceptedMessage();
     this.requestedEmoji = tagReq.getRequestedEmoji();
     this.requestedMessage = tagReq.getRequestedMessage();
-    this.requesterId = tagReq.getRequester().getId();
-    this.requesterName = tagReq.getRequester().getName();
+    if (tagReq.getRequester() != null) {
+      this.requesterId = tagReq.getRequester().getId();
+      this.requesterName = tagReq.getRequester().getName();
+    }
     this.requestedAt = tagReq.getRequestedAt();
     this.category = tagReq.getCategory();
   }

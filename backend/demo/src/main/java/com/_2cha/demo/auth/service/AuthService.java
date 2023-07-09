@@ -10,6 +10,7 @@ import com._2cha.demo.auth.dto.TokenResponse;
 import com._2cha.demo.auth.repository.RefreshToken;
 import com._2cha.demo.auth.repository.TokenRepository;
 import com._2cha.demo.auth.strategy.oidc.OIDCStrategy;
+import com._2cha.demo.global.event.MemberDeletedEvent;
 import com._2cha.demo.global.exception.UnauthorizedException;
 import com._2cha.demo.member.domain.OIDCProvider;
 import com._2cha.demo.member.dto.MemberCredResponse;
@@ -33,8 +34,11 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
@@ -126,6 +130,41 @@ public class AuthService {
                                                            response.getRole());
 
     return issueAccessTokenAndRefreshToken(info2AccessTokenPayload(memberInfo));
+  }
+
+  @Transactional
+  public void signOut(String refreshToken) {
+    JwtTokenPayload payload = verifyJwt(refreshToken, JwtRefreshTokenPayload.class);
+    Long memberId = payload.getSub();
+    RefreshToken stored = tokenRepository.findById(memberId);
+    if (stored == null) throw new UnauthorizedException("Cannot find such token");
+
+    List<String> storedValues = stored.getValues();
+    if (!storedValues.contains(refreshToken)) {
+      throw new UnauthorizedException("Token not matched");
+    }
+
+    if (storedValues.size() == 1) {
+      tokenRepository.delete(stored);
+    } else {
+      storedValues.remove(refreshToken);
+      tokenRepository.save(stored);
+    }
+  }
+
+  @Transactional
+  public void signOutAll(Long memberId) {
+    RefreshToken stored = tokenRepository.findById(memberId);
+    if (stored == null) throw new UnauthorizedException("Cannot find any token");
+
+    tokenRepository.delete(stored);
+  }
+
+  @Async("signOutTaskExecutor")
+  @TransactionalEventListener(value = MemberDeletedEvent.class, phase = TransactionPhase.AFTER_COMMIT)
+  @Transactional
+  public void signOutAllAsync(MemberDeletedEvent event) {
+    signOutAll(event.getMemberId());
   }
 
   public TokenResponse signInWithOIDC(OIDCProvider provider, String authCode) {

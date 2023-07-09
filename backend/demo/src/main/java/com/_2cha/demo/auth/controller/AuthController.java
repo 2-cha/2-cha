@@ -6,6 +6,8 @@ import com._2cha.demo.auth.dto.OIDCRequest;
 import com._2cha.demo.auth.dto.SignInWithAccountRequest;
 import com._2cha.demo.auth.dto.TokenResponse;
 import com._2cha.demo.auth.service.AuthService;
+import com._2cha.demo.global.annotation.Auth;
+import com._2cha.demo.global.annotation.Authed;
 import com._2cha.demo.member.domain.OIDCProvider;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +41,17 @@ public class AuthController {
                                       @Valid @RequestBody OIDCRequest dto) {
 
     return authService.signInWithOIDC(provider, dto.getCode());
+  }
+
+  @Auth
+  @PostMapping(value = "/signout")
+  public void signOut(@Valid @RequestBody JwtRefreshRequest dto) {
+    authService.signOut(dto.getRefreshToken());
+  }
+
+  @Auth
+  @PostMapping(value = "/signout/all")
+  public void signOutAll(@Authed Long memberId) {
+    authService.signOutAll(memberId);
   }
 }

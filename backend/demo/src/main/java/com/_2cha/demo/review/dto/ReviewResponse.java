@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@JsonInclude(Include.NON_NULL)
 public class ReviewResponse {
 
   private Long id;

@@ -9,15 +9,29 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Where(clause = "deleted_at = '1970-01-01 00:00:00'")
+@Table(uniqueConstraints = {
+    @UniqueConstraint(name = "uk_member_email_deleted_at", columnNames = {"email", "deletedAt"}),
+    @UniqueConstraint(name = "uk_member_name_deleted_at", columnNames = {"name", "deletedAt"}),
+    @UniqueConstraint(
+        name = "uk_member_oidc_provider_oidc_id_deleted_at",
+        columnNames = {"oidcProvider", "oidcId", "deletedAt"}
+    )
+})
 public class Member {
 
   /*-----------
@@ -28,10 +42,10 @@ public class Member {
   @Column(name = "MEMBER_ID")
   private Long id;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   private String email;
 
   @Column
@@ -48,6 +62,7 @@ public class Member {
   private OIDCProvider oidcProvider;
   private String oidcId;
 
+  private LocalDateTime deletedAt = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Relationship> followings = new ArrayList<>();
@@ -104,6 +119,19 @@ public class Member {
     this.achievements.add(memberAchievement);
   }
 
+  public void removeAchievement(Achievement achievement) {
+    for (MemberAchievement memberAchievement : this.achievements) {
+      if (memberAchievement.getAchievement().equals(achievement)) {
+        this.achievements.remove(memberAchievement);
+        break;
+      }
+    }
+  }
+
+  public void removeAchievement(MemberAchievement achievement) {
+    this.achievements.remove(achievement);
+  }
+
   public void updateProfileImage(String profImgThumbPath) {
     this.profImgThumbPath = profImgThumbPath;
   }
@@ -111,5 +139,9 @@ public class Member {
   public void updateProfile(String name, String profMsg) {
     this.name = name;
     this.profMsg = profMsg;
+  }
+
+  public void softDelete() {
+    this.deletedAt = LocalDateTime.now();
   }
 }

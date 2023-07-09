@@ -311,7 +311,10 @@ public class ReviewService {
     Review review = reviewRepository.findReviewById(reviewId);
     if (review == null) throw new NoSuchReviewException(reviewId);
 
-    MemberProfileResponse member = memberService.getMemberProfileById(review.getMember().getId());
+    MemberProfileResponse member = null;
+    try {
+      member = memberService.getMemberProfileById(review.getMember().getId());
+    } catch (NoSuchMemberException ignored) {}
     PlaceBriefResponse place = placeService.getPlaceBriefById(review.getPlace().getId(),
                                                               SUMMARY_SIZE);
 

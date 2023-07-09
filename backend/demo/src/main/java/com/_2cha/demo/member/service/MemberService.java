@@ -1,5 +1,6 @@
 package com._2cha.demo.member.service;
 
+import com._2cha.demo.global.event.MemberDeletedEvent;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Achievement;
@@ -20,6 +21,7 @@ import com._2cha.demo.member.exception.NoSuchMemberException;
 import com._2cha.demo.member.repository.AchievementRepository;
 import com._2cha.demo.member.repository.MemberQueryRepository;
 import com._2cha.demo.member.repository.MemberRepository;
+import com._2cha.demo.push.service.PushService;
 import com._2cha.demo.util.BCryptHashingUtils;
 import java.io.IOException;
 import java.net.URL;
@@ -53,6 +55,7 @@ public class MemberService {
   private final ImageUploadService imageUploadService;
   private final ApplicationEventPublisher eventPublisher;
   private final NicknameGeneratorService nicknameGeneratorService;
+  private final PushService pushService;
 
 
   public Member findById(Long id) {
@@ -221,10 +224,26 @@ public class MemberService {
     return response;
   }
 
+  @Transactional
+  public void deleteMember(Long memberId) {
+    Member member = memberRepository.findById(memberId);
+    if (member == null) throw new NoSuchMemberException();
+
+    pushService.unregisterAll(memberId);
+    member.getAchievements().forEach(member::removeAchievement);
+    member.getFollowings().forEach(rel -> member.unfollow(rel.getFollowing()));
+    member.getFollowers().forEach(rel -> rel.getFollower().unfollow(member));
+    member.softDelete();
+
+    memberRepository.save(member);
+    eventPublisher.publishEvent(new MemberDeletedEvent(this, memberId));
+  }
+
 
   /*------------
    @ Queries
    ------------*/
+  @Transactional(readOnly = true, noRollbackFor = {NoSuchMemberException.class})
   public MemberProfileResponse getMemberProfileById(Long id) {
 
     MemberProfileResponse profile = memberQueryRepository.getMemberProfileById(id,
@@ -238,6 +257,7 @@ public class MemberService {
     return memberQueryRepository.getMemberProfileByIdIn(ids, fileStorageService.getBaseUrl());
   }
 
+  @Transactional(readOnly = true, noRollbackFor = {NoSuchMemberException.class})
   public MemberInfoResponse getMemberInfoById(Long id) {
     MemberInfoResponse memberInfo = memberQueryRepository.getMemberInfoById(id,
                                                                             fileStorageService.getBaseUrl());
@@ -246,6 +266,7 @@ public class MemberService {
     return memberInfo;
   }
 
+  @Transactional(readOnly = true, noRollbackFor = {NoSuchMemberException.class})
   public MemberInfoResponse getMemberInfoByOidcId(OIDCProvider oidcProvider,
                                                   String oidcId) {
     MemberInfoResponse memberInfo = memberQueryRepository.getMemberInfoByOidcId(
@@ -255,6 +276,7 @@ public class MemberService {
     return memberInfo;
   }
 
+  @Transactional(readOnly = true, noRollbackFor = {NoSuchMemberException.class})
   public MemberCredResponse getMemberCredByEmail(String email) {
     MemberCredResponse memberCred = memberQueryRepository.getMemberCredByEmail(email);
     if (memberCred == null) throw new NoSuchMemberException();
