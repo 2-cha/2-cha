@@ -235,9 +235,6 @@ public class MemberService {
     member.softDelete();
 
     // TODO: sign out all sessions
-    // TODO: unique constraints with deleted
-    // TODO: prohibit sign in
-    // TODO: sign up again with same oidc id
     memberRepository.save(member);
   }
 
