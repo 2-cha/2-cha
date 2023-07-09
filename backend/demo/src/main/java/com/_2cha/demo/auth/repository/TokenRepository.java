@@ -7,4 +7,6 @@ public interface TokenRepository extends Repository<RefreshToken, Long> {
   void save(RefreshToken token);
 
   RefreshToken findById(Long id);
+
+  void delete(RefreshToken token);
 }

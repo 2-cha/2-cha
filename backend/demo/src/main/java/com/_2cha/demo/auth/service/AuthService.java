@@ -128,6 +128,34 @@ public class AuthService {
     return issueAccessTokenAndRefreshToken(info2AccessTokenPayload(memberInfo));
   }
 
+  public void signOut(String refreshToken) {
+    JwtTokenPayload payload = verifyJwt(refreshToken, JwtRefreshTokenPayload.class);
+    Long memberId = payload.getSub();
+    RefreshToken stored = tokenRepository.findById(memberId);
+    if (stored == null) throw new UnauthorizedException("Cannot find such token");
+
+    List<String> storedValues = stored.getValues();
+    if (!storedValues.contains(refreshToken)) {
+      throw new UnauthorizedException("Token not matched");
+    }
+
+    tx.executeWithoutResult(status -> {
+      if (storedValues.size() == 1) {
+        tokenRepository.delete(stored);
+      } else {
+        storedValues.remove(refreshToken);
+        tokenRepository.save(stored);
+      }
+    });
+  }
+
+  public void signOutAll(Long memberId) {
+    RefreshToken stored = tokenRepository.findById(memberId);
+    if (stored == null) throw new UnauthorizedException("Cannot find any token");
+
+    tx.executeWithoutResult(status -> tokenRepository.delete(stored));
+  }
+
   public TokenResponse signInWithOIDC(OIDCProvider provider, String authCode) {
     OIDCStrategy strategy = oidcStrategyMap.get(provider.value);
     OIDCUserProfile oidcProfile = strategy.authenticate(authCode);
