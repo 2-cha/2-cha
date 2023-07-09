@@ -10,6 +10,7 @@ import com._2cha.demo.auth.dto.TokenResponse;
 import com._2cha.demo.auth.repository.RefreshToken;
 import com._2cha.demo.auth.repository.TokenRepository;
 import com._2cha.demo.auth.strategy.oidc.OIDCStrategy;
+import com._2cha.demo.global.event.MemberDeletedEvent;
 import com._2cha.demo.global.exception.UnauthorizedException;
 import com._2cha.demo.member.domain.OIDCProvider;
 import com._2cha.demo.member.dto.MemberCredResponse;
@@ -33,8 +34,11 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
@@ -154,6 +158,13 @@ public class AuthService {
     if (stored == null) throw new UnauthorizedException("Cannot find any token");
 
     tokenRepository.delete(stored);
+  }
+
+  @Async("signOutTaskExecutor")
+  @TransactionalEventListener(value = MemberDeletedEvent.class, phase = TransactionPhase.AFTER_COMMIT)
+  @Transactional
+  public void signOutAllAsync(MemberDeletedEvent event) {
+    signOutAll(event.getMemberId());
   }
 
   public TokenResponse signInWithOIDC(OIDCProvider provider, String authCode) {
