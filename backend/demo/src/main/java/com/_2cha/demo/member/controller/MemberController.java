@@ -1,5 +1,7 @@
 package com._2cha.demo.member.controller;
 
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
 import com._2cha.demo.global.infra.imageupload.dto.ImageSavedResponse;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,6 +54,13 @@ public class MemberController {
   public MemberProfileResponse updateMemberProfile(@Authed Long memberId,
                                                    @Valid @RequestBody MemberProfileUpdateRequest dto) {
     return memberService.updateProfile(memberId, dto.getName(), dto.getProfMsg());
+  }
+
+  @Auth
+  @DeleteMapping("")
+  @ResponseStatus(NO_CONTENT)
+  public void deleteMember(@Authed Long memberId) {
+    memberService.deleteMember(memberId);
   }
 
   @Auth

@@ -1,5 +1,6 @@
 package com._2cha.demo.member.service;
 
+import com._2cha.demo.global.event.MemberDeletedEvent;
 import com._2cha.demo.global.infra.imageupload.service.ImageUploadService;
 import com._2cha.demo.global.infra.storage.service.FileStorageService;
 import com._2cha.demo.member.domain.Achievement;
@@ -234,8 +235,8 @@ public class MemberService {
     member.getFollowers().forEach(rel -> rel.getFollower().unfollow(member));
     member.softDelete();
 
-    // TODO: sign out all sessions
     memberRepository.save(member);
+    eventPublisher.publishEvent(new MemberDeletedEvent(this, memberId));
   }
 
 
