@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -51,7 +52,7 @@ public class Member {
   private OIDCProvider oidcProvider;
   private String oidcId;
 
-  private LocalDateTime deletedAt = null;
+  private LocalDateTime deletedAt = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Relationship> followings = new ArrayList<>();
