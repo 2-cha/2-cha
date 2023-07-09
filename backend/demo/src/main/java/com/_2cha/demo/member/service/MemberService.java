@@ -243,6 +243,7 @@ public class MemberService {
   /*------------
    @ Queries
    ------------*/
+  @Transactional(readOnly = true, noRollbackFor = {NoSuchMemberException.class})
   public MemberProfileResponse getMemberProfileById(Long id) {
 
     MemberProfileResponse profile = memberQueryRepository.getMemberProfileById(id,
@@ -256,6 +257,7 @@ public class MemberService {
     return memberQueryRepository.getMemberProfileByIdIn(ids, fileStorageService.getBaseUrl());
   }
 
+  @Transactional(readOnly = true, noRollbackFor = {NoSuchMemberException.class})
   public MemberInfoResponse getMemberInfoById(Long id) {
     MemberInfoResponse memberInfo = memberQueryRepository.getMemberInfoById(id,
                                                                             fileStorageService.getBaseUrl());
@@ -264,6 +266,7 @@ public class MemberService {
     return memberInfo;
   }
 
+  @Transactional(readOnly = true, noRollbackFor = {NoSuchMemberException.class})
   public MemberInfoResponse getMemberInfoByOidcId(OIDCProvider oidcProvider,
                                                   String oidcId) {
     MemberInfoResponse memberInfo = memberQueryRepository.getMemberInfoByOidcId(
@@ -273,6 +276,7 @@ public class MemberService {
     return memberInfo;
   }
 
+  @Transactional(readOnly = true, noRollbackFor = {NoSuchMemberException.class})
   public MemberCredResponse getMemberCredByEmail(String email) {
     MemberCredResponse memberCred = memberQueryRepository.getMemberCredByEmail(email);
     if (memberCred == null) throw new NoSuchMemberException();
