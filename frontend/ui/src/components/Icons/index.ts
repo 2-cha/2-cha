@@ -23,6 +23,7 @@ import WineIcon from './WineIcon';
 import XIcon from './XIcon';
 import ShareIcon from './ShareIcon';
 import TrashIcon from './TrashIcon';
+import SettingsIcon from './SettingsIcon';
 
 export {
   ArrowIcon,
@@ -50,4 +51,5 @@ export {
   XIcon,
   ShareIcon,
   TrashIcon,
+  SettingsIcon,
 };

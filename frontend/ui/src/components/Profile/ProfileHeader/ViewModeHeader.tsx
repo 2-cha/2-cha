@@ -6,6 +6,8 @@ import { EditIcon, PlusSquareIcon } from '@/components/Icons';
 
 import s from './ViewModeHeader.module.scss';
 import { FollowToggleButton } from '@/components/Buttons';
+import Link from 'next/link';
+import { SettingsIcon } from '@/components/Icons';
 
 interface Props {
   member: Member;
@@ -36,9 +38,17 @@ export default function ViewModeHeader({ member, isMe, setIsEditing }: Props) {
           <h2>{member.prof_msg}</h2>
         </div>
         {isMe ? (
-          <button type="button" onClick={handleClickEditButton}>
-            <EditIcon />
-          </button>
+          <div className={s.buttonWrapper}>
+            <button type="button" onClick={handleClickEditButton}>
+              <EditIcon />
+            </button>
+            <Link
+              href="/profile/settings"
+              className={s.buttonWrapper__settings}
+            >
+              <SettingsIcon />
+            </Link>
+          </div>
         ) : (
           <FollowToggleButton userId={member.id} />
         )}
