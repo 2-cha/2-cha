@@ -58,21 +58,6 @@
     @include mixins.margin(bottom, md);
   }
 
-  &__user {
-    @include mixins.flex(row, flex-start, center);
-
-    & > img {
-      width: 40px;
-      height: 40px;
-      border-radius: 30px;
-      @include mixins.margin(right, md);
-    }
-
-    & > h3 {
-      @include mixins.text_md;
-    }
-  }
-
   &__buttons {
     @include mixins.flex(row, flex-end, center);
 

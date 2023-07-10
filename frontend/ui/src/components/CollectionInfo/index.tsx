@@ -10,6 +10,7 @@ import {
   BookmarkToggleButton,
   FollowToggleButton,
   LikeToggleButton,
+  ProfileButton,
   ShareButton,
 } from '../Buttons';
 import { ArrowIcon, TrashIcon } from '../Icons';
@@ -56,20 +57,26 @@ export default function CollectionInfo({ collectionInfo }: Props) {
       </Swiper>
       <div className={s.metadata}>
         <div className={s.metadata__top}>
-          <div className={s.metadata__user}>
-            <Image
-              src={member.prof_img}
-              width={100}
-              height={100}
-              alt="collection user profile"
-            />
-            <h3>{member.name}</h3>
-          </div>
+          <ProfileButton
+            memberId={member.id}
+            memberName={member.name}
+            imageSrc={member.prof_img}
+            imageSize={100}
+            imageAlt={member.name}
+          />
           <div className={s.metadata__buttons}>
-            <FollowToggleButton
-              userId={member.id}
-              className={s.metadata__buttons__follow}
-            />
+            {member.id === Number(memberId) ? (
+              <DeleteButton
+                itemType="collections"
+                itemId={collectionInfo.id}
+                className={s.metadata__buttons__follow}
+              />
+            ) : (
+              <FollowToggleButton
+                userId={member.id}
+                className={s.metadata__buttons__follow}
+              />
+            )}
             <LikeToggleButton
               itemType="collections"
               itemId={collectionInfo.id}
@@ -87,9 +94,6 @@ export default function CollectionInfo({ collectionInfo }: Props) {
               bookmarkCount={collectionInfo.bookmark_status.count}
               className={s.metadata__buttons__bookmark}
             />
-            {member.id === Number(memberId) && (
-              <DeleteButton itemType="collections" itemId={collectionInfo.id} />
-            )}
           </div>
         </div>
         <h1 className={s.metadata__title}>{collectionInfo.title}</h1>
