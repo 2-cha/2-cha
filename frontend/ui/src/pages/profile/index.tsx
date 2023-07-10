@@ -24,7 +24,7 @@ export default requireAuth(function ProfilePage() {
         <>
           <ProfileHeader member={member} isMe />
           {isLoading || isError ? null : (
-            <ProfileCollection collections={collections} />
+            <ProfileCollection collections={collections} isMe />
           )}
           <ProfileReviewTab memberId={member.id} />
         </>

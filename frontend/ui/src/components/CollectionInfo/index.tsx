@@ -17,7 +17,7 @@ import { ArrowIcon, TrashIcon } from '../Icons';
 
 import 'swiper/css';
 import s from './CollectionInfo.module.scss';
-import DeleteButton from '../Buttons/DeleteButton';
+import { DeleteButton } from '../Buttons';
 
 interface Props {
   collectionInfo: Collection;

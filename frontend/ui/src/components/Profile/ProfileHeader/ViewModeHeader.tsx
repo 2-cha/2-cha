@@ -5,6 +5,7 @@ import { Member } from '@/types';
 import { EditIcon, PlusSquareIcon } from '@/components/Icons';
 
 import s from './ViewModeHeader.module.scss';
+import { FollowToggleButton } from '@/components/Buttons';
 
 interface Props {
   member: Member;
@@ -39,9 +40,7 @@ export default function ViewModeHeader({ member, isMe, setIsEditing }: Props) {
             <EditIcon />
           </button>
         ) : (
-          <button type="button">
-            <PlusSquareIcon />
-          </button>
+          <FollowToggleButton userId={member.id} />
         )}
       </div>
     </div>

@@ -25,7 +25,10 @@ export default function ProfilePage() {
         <>
           <ProfileHeader member={member} isMe={user?.sub === query.memberId} />
           {isLoading || isError ? null : (
-            <ProfileCollection collections={collections} />
+            <ProfileCollection
+              collections={collections}
+              isMe={user?.sub === query.memberId}
+            />
           )}
           <ProfileReviewTab memberId={member.id} />
         </>
