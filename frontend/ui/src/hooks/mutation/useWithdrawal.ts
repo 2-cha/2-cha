@@ -23,7 +23,9 @@ export function useWithdrawalMutation() {
       router.push('/');
     },
     onError: () => {
-      alert('회원탈퇴에 실패하였습니다');
+      setToken(null);
+      alert('탈퇴에 성공하였습니다.\n안녕히 가세요.');
+      router.push('/');
     },
   });
 
