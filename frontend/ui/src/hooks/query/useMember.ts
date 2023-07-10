@@ -8,10 +8,10 @@ async function fetchMember(memberId: string) {
   return data;
 }
 
-export function useMemberQuery(memberId?: string) {
+export function useMemberQuery(memberId?: string | string[]) {
   const result = useQuery({
     queryKey: ['members', memberId],
-    queryFn: () => fetchMember(memberId!),
+    queryFn: () => fetchMember(memberId as string),
     enabled: memberId != null,
   });
 
