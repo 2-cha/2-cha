@@ -3,6 +3,7 @@ import cn from 'classnames';
 import { useRouter } from 'next/router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
+import { useAuth } from '@/hooks';
 import { Collection } from '@/types/collection';
 import ReviewCard from './ReviewCard';
 import {
@@ -11,7 +12,7 @@ import {
   LikeToggleButton,
   ShareButton,
 } from '../Buttons';
-import { ArrowIcon } from '../Icons';
+import { ArrowIcon, TrashIcon } from '../Icons';
 
 import 'swiper/css';
 import s from './CollectionInfo.module.scss';
@@ -22,6 +23,8 @@ interface Props {
 
 export default function CollectionInfo({ collectionInfo }: Props) {
   const { member, reviews } = collectionInfo;
+  const { user } = useAuth();
+  const memberId = user?.sub;
   const router = useRouter();
 
   function handleClickBack() {
@@ -83,6 +86,11 @@ export default function CollectionInfo({ collectionInfo }: Props) {
               bookmarkCount={collectionInfo.bookmark_status.count}
               className={s.metadata__buttons__bookmark}
             />
+            {member.id === Number(memberId) && (
+              <button type="button">
+                <TrashIcon />
+              </button>
+            )}
           </div>
         </div>
         <h1 className={s.metadata__title}>{collectionInfo.title}</h1>
