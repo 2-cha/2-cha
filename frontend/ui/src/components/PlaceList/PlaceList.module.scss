@@ -4,7 +4,6 @@
 $img-height: 360px;
 
 .container {
-  height: calc(100vh - var.$navbar-height);
   width: 100%;
   min-width: 0;
   overflow-y: scroll;
