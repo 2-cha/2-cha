@@ -1,0 +1,12 @@
+@use 'mixins';
+
+.button {
+  background: none;
+  @include mixins.flex(column, center, center);
+
+  &__icon {
+    // stroke: var(--background-inactive-color);
+    fill: var(--background-active-color);
+    transition: color 0.2s ease-in-out;
+  }
+}

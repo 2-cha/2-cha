@@ -1,7 +1,7 @@
 @use 'mixins';
+@use 'var';
 
 .container {
-  color: inherit;
   background-color: var(--background-active-color);
   @include mixins.flex(row, center, center);
   @include mixins.padding(y, 3);

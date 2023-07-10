@@ -3,18 +3,21 @@ import cn from 'classnames';
 import { useRouter } from 'next/router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
+import { useAuth } from '@/hooks';
 import { Collection } from '@/types/collection';
 import ReviewCard from './ReviewCard';
 import {
   BookmarkToggleButton,
   FollowToggleButton,
   LikeToggleButton,
+  ProfileButton,
   ShareButton,
 } from '../Buttons';
-import { ArrowIcon } from '../Icons';
+import { ArrowIcon, TrashIcon } from '../Icons';
 
 import 'swiper/css';
 import s from './CollectionInfo.module.scss';
+import { DeleteButton } from '../Buttons';
 
 interface Props {
   collectionInfo: Collection;
@@ -22,6 +25,8 @@ interface Props {
 
 export default function CollectionInfo({ collectionInfo }: Props) {
   const { member, reviews } = collectionInfo;
+  const { user } = useAuth();
+  const memberId = user?.sub;
   const router = useRouter();
 
   function handleClickBack() {
@@ -52,20 +57,26 @@ export default function CollectionInfo({ collectionInfo }: Props) {
       </Swiper>
       <div className={s.metadata}>
         <div className={s.metadata__top}>
-          <div className={s.metadata__user}>
-            <Image
-              src={member.prof_img}
-              width={100}
-              height={100}
-              alt="collection user profile"
-            />
-            <h3>{member.name}</h3>
-          </div>
+          <ProfileButton
+            memberId={member.id}
+            memberName={member.name}
+            imageSrc={member.prof_img}
+            imageSize={100}
+            imageAlt={member.name}
+          />
           <div className={s.metadata__buttons}>
-            <FollowToggleButton
-              userId={member.id}
-              className={s.metadata__buttons__follow}
-            />
+            {member.id === Number(memberId) ? (
+              <DeleteButton
+                itemType="collections"
+                itemId={collectionInfo.id}
+                className={s.metadata__buttons__follow}
+              />
+            ) : (
+              <FollowToggleButton
+                userId={member.id}
+                className={s.metadata__buttons__follow}
+              />
+            )}
             <LikeToggleButton
               itemType="collections"
               itemId={collectionInfo.id}

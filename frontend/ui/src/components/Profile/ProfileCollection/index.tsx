@@ -11,9 +11,10 @@ import Image from 'next/image';
 
 interface Props {
   collections: CollectionType[];
+  isMe?: boolean;
 }
 
-export default function ProfileCollection({ collections }: Props) {
+export default function ProfileCollection({ collections, isMe }: Props) {
   const width = window.innerWidth;
 
   return (
@@ -24,14 +25,16 @@ export default function ProfileCollection({ collections }: Props) {
         slidesPerView={width < 480 ? 4 : 5}
         scrollbar
       >
-        <SwiperSlide>
-          <Link
-            href="/write/collection"
-            className={cn(s.wrapper__add, s.element)}
-          >
-            <PlusSquareIcon withoutBorder />
-          </Link>
-        </SwiperSlide>
+        {isMe && (
+          <SwiperSlide>
+            <Link
+              href="/write/collection"
+              className={cn(s.wrapper__add, s.element)}
+            >
+              <PlusSquareIcon withoutBorder />
+            </Link>
+          </SwiperSlide>
+        )}
         {collections &&
           collections.map((collection) => (
             <SwiperSlide key={collection.id} className={s.wrapper__element}>
