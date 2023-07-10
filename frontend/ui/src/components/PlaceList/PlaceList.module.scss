@@ -8,12 +8,9 @@ $img-height: 360px;
   width: 100%;
   min-width: 0;
   overflow-y: scroll;
-  scroll-snap-type: y mandatory;
 }
 
 .placeItem {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   position: relative;
   width: 100%;
   height: $img-height;
