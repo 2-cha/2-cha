@@ -9,6 +9,7 @@ import {
 import MetaData from '@/components/MetaData';
 
 export default function ProfilePage() {
+  const { user } = useAuth();
   const { query } = useRouter();
   const { data: member } = useMemberQuery(query.memberId);
   const {
@@ -22,7 +23,7 @@ export default function ProfilePage() {
       <MetaData title={`${member?.name}의 프로필`} />
       {member ? (
         <>
-          <ProfileHeader member={member} />
+          <ProfileHeader member={member} isMe={user?.sub === query.memberId} />
           {isLoading || isError ? null : (
             <ProfileCollection collections={collections} />
           )}
