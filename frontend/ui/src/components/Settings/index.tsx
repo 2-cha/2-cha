@@ -1,4 +1,4 @@
-import { useSignOutMutation } from '@/hooks/mutation';
+import { useSignOutMutation, useWithdrawalMutation } from '@/hooks/mutation';
 import { useRouter } from 'next/router';
 import { ArrowIcon } from '../Icons';
 
@@ -10,7 +10,8 @@ interface Props {
 
 export default function Settings({ userID }: Props) {
   const router = useRouter();
-  const mutation = useSignOutMutation();
+  const signoutMutation = useSignOutMutation();
+  const withdrawalMutation = useWithdrawalMutation();
 
   function handleClickBackButton() {
     router.back();
@@ -18,7 +19,7 @@ export default function Settings({ userID }: Props) {
 
   function handleClickLogout() {
     if (confirm('로그아웃 하시겠습니까?')) {
-      mutation.mutate();
+      signoutMutation.mutate();
     } else {
       return;
     }
@@ -26,7 +27,9 @@ export default function Settings({ userID }: Props) {
 
   function handleClickWithdrawal() {
     if (confirm('정말로 탈퇴 하시겠습니까?\n데이터는 삭제되지 않습니다!')) {
+      withdrawalMutation.mutate();
     } else {
+      return;
     }
   }
 
