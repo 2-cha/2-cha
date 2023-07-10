@@ -1,0 +1,23 @@
+@use 'mixins';
+
+.button {
+  color: inherit;
+  background-color: inherit;
+  @include mixins.flex(column, center, center);
+
+  & > span {
+    // display: inline-block;
+    @include mixins.text-sm;
+    color: var(--background-color);
+    font-weight: 700;
+  }
+
+  &__icon {
+    stroke: var(--background-color);
+    transition: color 0.2s ease-in-out;
+
+    &:hover {
+      color: var(--background-active-color);
+    }
+  }
+}

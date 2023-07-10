@@ -16,6 +16,7 @@ import { ArrowIcon, TrashIcon } from '../Icons';
 
 import 'swiper/css';
 import s from './CollectionInfo.module.scss';
+import DeleteButton from '../Buttons/DeleteButton';
 
 interface Props {
   collectionInfo: Collection;
@@ -87,9 +88,7 @@ export default function CollectionInfo({ collectionInfo }: Props) {
               className={s.metadata__buttons__bookmark}
             />
             {member.id === Number(memberId) && (
-              <button type="button">
-                <TrashIcon />
-              </button>
+              <DeleteButton itemType="collections" itemId={collectionInfo.id} />
             )}
           </div>
         </div>
