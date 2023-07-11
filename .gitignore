@@ -50,5 +50,6 @@ out/
 **/*.cfe
 **/*.cfs
 **/*.si
-**/segments_d*
+**/*.liv
+**/segments_*
 **/write.lock
