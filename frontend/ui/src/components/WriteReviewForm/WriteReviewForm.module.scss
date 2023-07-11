@@ -1,39 +1,61 @@
 @use 'mixins';
-
-.container {
-  width: 100%;
-  gap: 12px;
-
-  @include mixins.flex(column, flex-start, flex-start);
-}
+@use 'var';
 
 .root {
-  @extend .container;
+  width: 100%;
+  height: 100%;
+  max-height: calc(100vh - var.$header-height - var.$navbar-height);
+  flex: 1;
+
+  @include mixins.flex(column, flex-start, flex-start);
   @include mixins.padding(x, lg);
   @include mixins.padding(y, md);
 
   .form {
     width: 100%;
-    gap: 12px;
+    margin-bottom: 48px;
 
-    @extend .container;
-    @include mixins.flex(column, flex-start, flex-start);
-  }
+    @include mixins.flex(column, space-between, flex-start);
 
-  .errorMessage {
-    color: red;
+    hr {
+      width: 100%;
+      margin: 24px 0;
+      height: 1px;
+      border: 0;
+      background-color: var(--background-inactive-color);
+    }
 
-    @include mixins.text-sm;
+    &__wrapper {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    &__group {
+      width: 100%;
+      gap: 12px;
+
+      @include mixins.flex(column, flex-start, flex-start);
+
+      .errorMessage {
+        color: red;
+        padding: 0 16px;
+
+        @include mixins.text-sm;
+      }
+    }
   }
 
   .submit {
     width: 100%;
     height: 42px;
-    margin-bottom: 8px;
+    margin: 16px 0;
     position: sticky;
     bottom: 0;
     background-color: var(--background-active-color);
-    color: var(--text-color);
+    color: var(--background-color);
     border-radius: 14px;
     flex-shrink: 0;
 
@@ -44,38 +66,51 @@
   }
 }
 
-.full {
-  width: 100%;
-}
-
-.paddingTop {
-  @include mixins.padding(y, md);
-}
-
 .label {
   width: 100%;
+  padding: 8px 16px;
   gap: 16px;
-  background-color: var(--background-color);
-  color: var(--text-color);
 
   @include mixins.flex(row, flex-start, center);
   @include mixins.padding(y, md);
 
-  .group {
-    width: 100%;
+  &:where(button) {
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
 
-    @include mixins.flex(column, flex-start, flex-start);
+  span {
+    text-align: start;
+    word-break: break-word;
+    @include mixins.text-lg;
+  }
+
+  .edit {
+    color: var(--background-active-color);
+
+    svg {
+      margin-right: 6px;
+    }
 
     span {
-      text-align: start;
-      word-break: break-word;
-
-      @include mixins.text-md;
-    }
-
-    .description {
       @include mixins.text-sm;
     }
+  }
+}
+
+.placeLabel {
+  width: 100%;
+  padding: 8px 16px;
+
+  @include mixins.flex(column, flex-start, flex-start);
+
+  span {
+    text-align: start;
+    word-break: break-word;
+  }
+
+  .description {
+    @include mixins.text-sm;
   }
 }
 

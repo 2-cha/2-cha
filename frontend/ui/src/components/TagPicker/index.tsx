@@ -30,6 +30,7 @@ export default function TagPicker({
         toggleSelect={toggleSelect}
         resultClassName={resultClassName}
       />
+      <span>선택됨</span>
       <div className={s.tagContainer}>
         {selected.map((tag) => (
           <button
@@ -83,7 +84,7 @@ function TagSearchForm({
           {...register('name')}
           className={s.form__input}
           type="search"
-          placeholder="태그"
+          placeholder="검색"
           onChange={handleChange}
           autoComplete="off"
         />
