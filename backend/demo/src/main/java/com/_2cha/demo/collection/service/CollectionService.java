@@ -15,7 +15,6 @@ import com._2cha.demo.collection.domain.ReviewInCollection;
 import com._2cha.demo.collection.dto.CollectionBriefResponse;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
 import com._2cha.demo.collection.dto.CollectionDetailResponse;
-import com._2cha.demo.collection.dto.CollectionRemovedResponse;
 import com._2cha.demo.collection.dto.CollectionReviewsUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionUpdatedResponse;
 import com._2cha.demo.collection.dto.ReviewInCollectionResponse;
@@ -346,7 +345,7 @@ public class CollectionService {
     return new CollectionCreatedResponse(collection);
   }
 
-  public CollectionRemovedResponse removeCollection(Long memberId, Long collId) {
+  public void removeCollection(Long memberId, Long collId) {
     Collection collection = collectionRepository.findCollectionById(collId);
     if (collection == null) throw new NoSuchCollectionException();
     if (!Objects.equals(collection.getMember().getId(), memberId)) {
@@ -354,7 +353,6 @@ public class CollectionService {
     }
 
     collectionRepository.deleteCollectionById(collection.getId());
-    return new CollectionRemovedResponse(); //TODO: DTO
   }
 
   public CollectionUpdatedResponse updateCollection(Long memberId, Long collId, String title,

@@ -8,7 +8,6 @@ import com._2cha.demo.collection.dto.CollectionBriefResponse;
 import com._2cha.demo.collection.dto.CollectionCreateRequest;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
 import com._2cha.demo.collection.dto.CollectionDetailResponse;
-import com._2cha.demo.collection.dto.CollectionRemovedResponse;
 import com._2cha.demo.collection.dto.CollectionReviewsUpdateRequest;
 import com._2cha.demo.collection.dto.CollectionReviewsUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionUpdateRequest;
@@ -89,9 +88,8 @@ public class CollectionController {
 
   @Auth(MEMBER)
   @DeleteMapping("/collections/{collId}")
-  public CollectionRemovedResponse removeCollection(@Authed Long memberId,
-                                                    @PathVariable Long collId) {
-    return collectionService.removeCollection(memberId, collId);
+  public void removeCollection(@Authed Long memberId, @PathVariable Long collId) {
+    collectionService.removeCollection(memberId, collId);
   }
 
   /**

@@ -9,7 +9,6 @@ import com._2cha.demo.collection.dto.CollectionBriefResponse;
 import com._2cha.demo.collection.dto.CollectionCreateRequest;
 import com._2cha.demo.collection.dto.CollectionCreatedResponse;
 import com._2cha.demo.collection.dto.CollectionDetailResponse;
-import com._2cha.demo.collection.dto.CollectionRemovedResponse;
 import com._2cha.demo.collection.dto.CollectionReviewsUpdateRequest;
 import com._2cha.demo.collection.dto.CollectionReviewsUpdatedResponse;
 import com._2cha.demo.collection.dto.CollectionUpdateRequest;
@@ -424,8 +423,8 @@ public class CollectionTests {
   }
 
 
-  public CollectionRemovedResponse sendRemoveRequest(Long memberId, Long collId) {
-    return collectionController.removeCollection(memberId, collId);
+  public void sendRemoveRequest(Long memberId, Long collId) {
+    collectionController.removeCollection(memberId, collId);
   }
 
 
