@@ -14,12 +14,19 @@
 
 .oauth {
   display: block;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
+  width: fit-content;
+  height: fit-content;
+  transition: scale 0.2s ease-in-out;
 
   &:hover {
     cursor: pointer;
+  }
+
+  &:active {
+    scale: 0.95;
+  }
+
+  img {
+    width: 300px;
   }
 }
