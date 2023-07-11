@@ -1,6 +1,8 @@
 package com._2cha.demo.collection.domain;
 
 
+import static org.hibernate.annotations.OnDeleteAction.CASCADE;
+
 import com._2cha.demo.member.domain.Member;
 import com._2cha.demo.review.domain.Review;
 import jakarta.persistence.Entity;
@@ -12,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
 import org.springframework.lang.Nullable;
 
 @Entity
@@ -30,6 +33,7 @@ public class ReviewInCollection {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "REV_ID")
+  @OnDelete(action = CASCADE)
   private Review review;
 
   @ManyToOne(fetch = FetchType.LAZY)
