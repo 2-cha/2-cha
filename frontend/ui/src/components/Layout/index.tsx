@@ -14,7 +14,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className={s.root}>
-      <div className={s.root__content}>{children}</div>
+      {children}
       <NavBar currentSection={currentSection} />
     </div>
   );
