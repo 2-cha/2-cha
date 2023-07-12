@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
+import NextImage from 'next/image';
 
 import { suggestionsState } from '@/atoms';
 import { isNonNullable } from '@/lib/type';
 import { useImagePicker, type Image } from '@/hooks/useImagePicker';
+import Spinner from '@/components/Spinner';
+import { PlusSquareIcon, XIcon } from '@/components/Icons';
 import { type ReviewFormData } from '@/components/WriteReviewForm';
-import { PlusSquareIcon } from '@/components/Icons';
 
 import s from './ImagePicker.module.scss';
 
@@ -46,18 +48,24 @@ export default function ImagePicker({ name }: ImagePickerProps) {
       {images.map((image) => (
         <div key={image.file.name} className={s.image}>
           {image.url ? (
-            <img src={image.url} alt={image.file.name} />
+            <NextImage
+              src={image.url}
+              alt={image.file.name}
+              width={240}
+              height={240}
+              unoptimized
+            />
           ) : image.isError ? (
-            <div>fail</div>
+            <XIcon className={s.errorIcon} width={40} height={40} />
           ) : (
-            <div>loading</div>
+            <Spinner />
           )}
           <button
             className={s.image__remove}
             type="button"
             onClick={() => removeImage(image.file)}
           >
-            x
+            <XIcon />
           </button>
         </div>
       ))}

@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import cn from 'classnames';
 
 import Drawer from '@/components/Layout/Drawer';
-import TagPicker from '@/components/TagPicker';
+import SearchTagsModal from '@/components/SearchTagsModal';
 import { useModal } from '@/hooks/useModal';
 import { useTagPicker } from '@/hooks/useTagPicker';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
@@ -66,12 +66,13 @@ function SortMenu() {
 }
 
 function TagFilterMenu() {
-  const { isOpen, onOpen, onClose } = useModal();
-  const { selected, setSelected, toggleSelect } = useTagPicker();
+  const modalProps = useModal();
+  const tagPicker = useTagPicker();
 
   const [placeFilterBy, setPlaceFilterBy] = useRecoilState(placeFilterByState);
 
   // 태그가 아닌 다른 필터가 선택되면 TagPicker를 초기화
+  const { setSelected } = tagPicker;
   useEffect(() => {
     if (placeFilterBy && placeFilterBy.filter_by !== 'tag') {
       setSelected([]);
@@ -81,47 +82,28 @@ function TagFilterMenu() {
   const handleSubmit = () => {
     setPlaceFilterBy({
       filter_by: 'tag',
-      filter_values: selected.map((tag) => tag.id).map(String),
+      filter_values: tagPicker.selected.map((tag) => tag.id).map(String),
     });
-    onClose();
   };
 
   const handleReset = () => {
-    setSelected([]);
     setPlaceFilterBy(null);
-    onClose();
   };
 
   return (
     <>
-      <button className={s.item} onClick={onOpen}>
+      <button className={s.item} onClick={modalProps.onOpen}>
         <span>#태그</span>
-        {selected.length > 0 ? <span> {selected.length}</span> : null}
+        {tagPicker.selected.length > 0 ? (
+          <span> {tagPicker.selected.length}</span>
+        ) : null}
       </button>
-      <Drawer
-        isOpen={isOpen}
-        onClose={onClose}
-        header={<p className={s.modal__header}>태그</p>}
-      >
-        <div className={s.scrollable}>
-          <TagPicker
-            selected={selected}
-            toggleSelect={toggleSelect}
-            className={s.tagPicker}
-            resultClassName={s.tagResult}
-          />
-          <button
-            className={s.submit}
-            onClick={handleSubmit}
-            disabled={selected.length === 0}
-          >
-            선택
-          </button>
-          <button className={s.reset} onClick={handleReset}>
-            초기화
-          </button>
-        </div>
-      </Drawer>
+      <SearchTagsModal
+        {...modalProps}
+        {...tagPicker}
+        onSubmit={handleSubmit}
+        onReset={handleReset}
+      />
     </>
   );
 }

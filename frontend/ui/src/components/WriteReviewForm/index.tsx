@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import cn from 'classnames';
 import { useRecoilValue } from 'recoil';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
@@ -9,12 +8,13 @@ import { usePlaceQuery } from '@/hooks/query';
 import { useReviewMutation } from '@/hooks/mutation';
 import { suggestionsState } from '@/atoms';
 import ImagePicker from '@/components/WriteReviewForm/ImagePicker';
-import TagPicker from '@/components/TagPicker';
-import { PlaceIcon, ImagesIcon } from '@/components/Icons';
+import { PlaceIcon, ImagesIcon, HashIcon, EditIcon } from '@/components/Icons';
 import type { Tag } from '@/types';
-import SearchPlaceModal from './SearchPlaceModal';
 
+import SearchPlaceModal from './SearchPlaceModal';
 import s from './WriteReviewForm.module.scss';
+import SearchTagsModal from '../SearchTagsModal';
+import { Tags } from '../Tags';
 
 export interface ReviewFormData {
   placeId: string;
@@ -25,8 +25,23 @@ export interface ReviewFormData {
 export default function WriteReviewForm() {
   const router = useRouter();
   const [placeId, setPlaceId] = useQueryParamState('placeId');
+  const {
+    selected: selectedTags,
+    setSelected: setSelectedTags,
+    toggleSelect: toggleTagSelect,
+  } = useTagPicker();
 
-  const { isOpen, onOpen, onClose } = useModal({ id: 'placePicker' });
+  const {
+    isOpen: isPlaceModalOpen,
+    onOpen: onPlaceModalOpen,
+    onClose: onPlaceModalClose,
+  } = useModal({ id: 'placePicker' });
+
+  const {
+    isOpen: isTagModalOpen,
+    onOpen: onTagModalOpen,
+    onClose: onTagModalClose,
+  } = useModal({ id: 'tagPicker' });
   const suggestions = useRecoilValue(suggestionsState);
 
   const method = useForm<ReviewFormData>();
@@ -54,33 +69,61 @@ export default function WriteReviewForm() {
   return (
     <FormProvider {...method}>
       <div className={s.root}>
-        <form onSubmit={onSubmit} id="write" className={s.form}>
-          <div className={s.full}>
-            <div className={s.label}>
-              <ImagesIcon />
-              <span>사진</span>
+        <div className={s.form__wrapper}>
+          <form onSubmit={onSubmit} id="write" className={s.form}>
+            <div className={s.form__group}>
+              <div className={s.label}>
+                <ImagesIcon width={24} height={24} />
+                <span>사진</span>
+              </div>
+              <ImagePicker name="images" />
+              {errors.images && (
+                <div className={s.errorMessage}>사진을 선택해주세요</div>
+              )}
             </div>
-            {errors.images && (
-              <div className={s.errorMessage}>사진을 선택해주세요</div>
-            )}
-            <ImagePicker name="images" />
-          </div>
-
-          <div className={s.full}>
-            <button type="button" className={s.label} onClick={onOpen}>
-              {/* TODO: add styles when hover, active */}
-              <PlaceIcon />
+            <hr />
+            <div className={s.form__group}>
+              <button
+                type="button"
+                className={s.label}
+                onClick={onPlaceModalOpen}
+              >
+                <div>
+                  <PlaceIcon width={24} height={24} />
+                </div>
+                <span>장소</span>
+                <div className={s.edit}>
+                  <EditIcon width={16} height={16} />
+                  <span>수정</span>
+                </div>
+              </button>
               <PlaceLabel placeId={placeId} />
-            </button>
-            <PlaceInput name="placeId" placeId={placeId} />
-          </div>
-        </form>
-
-        <div className={cn(s.full, s.paddingY)}>
-          {errors.tags && (
-            <div className={s.errorMessage}>태그를 선택해주세요</div>
-          )}
-          <TagInput name="tags" />
+              <HiddenInput name="placeId" value={placeId} required />
+              {errors.placeId && (
+                <div className={s.errorMessage}>장소를 선택해주세요</div>
+              )}
+            </div>
+            <hr />
+            <div className={s.form__group}>
+              <button
+                type="button"
+                className={s.label}
+                onClick={onTagModalOpen}
+              >
+                <HashIcon width={24} height={24} />
+                <span>태그</span>
+                <div className={s.edit}>
+                  <EditIcon width={16} height={16} />
+                  <span>수정</span>
+                </div>
+              </button>
+              <Tags tagList={selectedTags} keyID="tags" />
+              <HiddenInput name="tags" value={selectedTags} required />
+              {errors.tags && (
+                <div className={s.errorMessage}>태그를 선택해주세요</div>
+              )}
+            </div>
+          </form>
         </div>
 
         <button
@@ -92,11 +135,19 @@ export default function WriteReviewForm() {
           작성
         </button>
       </div>
+
       <SearchPlaceModal
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={isPlaceModalOpen}
+        onClose={onPlaceModalClose}
         onSelect={setPlaceId}
         suggestions={suggestions}
+      />
+      <SearchTagsModal
+        isOpen={isTagModalOpen}
+        onClose={onTagModalClose}
+        selected={selectedTags}
+        setSelected={setSelectedTags}
+        toggleSelect={toggleTagSelect}
       />
     </FormProvider>
   );
@@ -106,9 +157,9 @@ function PlaceLabel({ placeId }: { placeId: string }) {
   const { data, isLoading, isError } = usePlaceQuery(placeId);
 
   return (
-    <div className={s.group}>
+    <div className={s.placeLabel}>
       {isError || placeId === '' ? (
-        <span>가게를 찾을 수 없어요</span>
+        <span></span>
       ) : isLoading ? (
         <span>...</span>
       ) : (
@@ -121,33 +172,22 @@ function PlaceLabel({ placeId }: { placeId: string }) {
   );
 }
 
-function PlaceInput({
+function HiddenInput({
   name,
-  placeId,
+  value,
+  type = 'text',
+  required = false,
 }: {
   name: keyof ReviewFormData;
-  placeId: string;
+  value: ReviewFormData[keyof ReviewFormData];
+  type?: React.HTMLInputTypeAttribute;
+  required?: boolean;
 }) {
   const { register, setValue } = useFormContext<ReviewFormData>();
-  setValue(name, placeId);
-
-  return <input type="text" hidden {...register(name, { required: true })} />;
-}
-
-function TagInput({ name }: { name: keyof ReviewFormData }) {
-  const { selected, toggleSelect } = useTagPicker();
-  const { register, setValue } = useFormContext<ReviewFormData>();
-  register(name, { required: true });
 
   useEffect(() => {
-    setValue(name, selected);
-  }, [selected, name, setValue]);
+    setValue(name, value);
+  }, [setValue, name, value]);
 
-  return (
-    <TagPicker
-      selected={selected}
-      toggleSelect={toggleSelect}
-      resultClassName={s.tagSearchResult}
-    />
-  );
+  return <input type={type} hidden {...register(name, { required })} />;
 }

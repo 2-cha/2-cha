@@ -3,18 +3,11 @@
 
 .root {
   @include mixins.flex(column, flex-start, center);
-  // width: 100vw;
+  min-height: 100vh;
   position: relative;
 
   @include mixins.media('>small') {
     max-width: map-get(mixins.$breakpoints, small);
     margin: 0 auto;
-  }
-
-  &__content {
-    @include mixins.flex(column, flex-start, center);
-    position: relative;
-    width: 100%;
-    min-height: calc(100vh - var.$navbar-height);
   }
 }

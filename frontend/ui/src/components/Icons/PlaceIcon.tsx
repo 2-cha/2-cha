@@ -14,7 +14,7 @@ export default memo(function PlaceIcon({
       xmlns="http://www.w3.org/2000/svg"
       width={width}
       height={height}
-      viewBox="0 0 18 18"
+      viewBox="0 0 16 16"
       className={cn(s.fill, className)}
       {...props}
     >
