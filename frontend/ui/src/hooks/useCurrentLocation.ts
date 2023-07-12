@@ -3,8 +3,6 @@ import { useRecoilState } from 'recoil';
 
 import { locationState } from '@/atoms';
 
-const LOCATION_KEY = 'location';
-
 async function getCurrentPosition(timeout = 10000) {
   return Promise.race<Promise<GeolocationPosition>[]>([
     new Promise((resolve, reject) => {
@@ -36,14 +34,8 @@ export function useCurrentLocation() {
 
         setLocation(loc);
         setIsError(false);
-        try {
-          localStorage.setItem(LOCATION_KEY, JSON.stringify(loc));
-        } catch {}
-      } catch (e) {
+      } catch {
         setIsError(true);
-        try {
-          localStorage.removeItem(LOCATION_KEY);
-        } catch {}
       }
 
       setIsLoading(false);
@@ -53,16 +45,9 @@ export function useCurrentLocation() {
 
   useEffect(() => {
     if (!location && !isLoading) {
-      try {
-        // geolocation을 가져오는 동안에는 이전 위치를 보여준다.
-        const stored = localStorage.getItem(LOCATION_KEY);
-        if (stored) {
-          setLocation(JSON.parse(stored));
-        }
-      } catch {}
       requestLocation();
     }
-  }, [location, isLoading, setLocation, requestLocation]);
+  }, [location, isLoading, requestLocation]);
 
   return { location, isLoading, isError, refresh: requestLocation };
 }

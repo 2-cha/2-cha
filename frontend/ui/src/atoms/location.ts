@@ -1,4 +1,5 @@
 import { atom } from 'recoil';
+import { persistAtom } from './persist';
 
 export interface Coordinate {
   lat: number;
@@ -16,5 +17,6 @@ export const locationState = atom<Coordinate | null>({
         }
       });
     },
+    persistAtom,
   ],
 });

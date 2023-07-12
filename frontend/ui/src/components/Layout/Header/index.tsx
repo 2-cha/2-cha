@@ -50,6 +50,7 @@ export default function Header() {
         isOpen={isOpen}
         onClose={onClose}
         onSelect={handleSelect}
+        title="어느 동네를 둘러볼까요?"
       />
     </div>
   );
