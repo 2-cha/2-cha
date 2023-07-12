@@ -14,6 +14,7 @@ interface SearchAddressModalProps {
   onClose: () => void;
   onSelect?: (address: Address) => void;
   type?: Address['address_type'];
+  title?: string;
 }
 
 interface SearchAddressForm {
@@ -25,6 +26,7 @@ export default function SearchAddressModal({
   onClose,
   onSelect,
   type,
+  title,
 }: SearchAddressModalProps) {
   const [query, setQuery] = useState('');
   const { data: addresses } = useAddressQuery(query, type);
@@ -48,9 +50,12 @@ export default function SearchAddressModal({
     onClose();
   };
 
+  const header = title ? <h2 className={s.header}>{title}</h2> : null;
+
   return (
     <Drawer isOpen={isOpen} onClose={onClose}>
       <div className={s.container}>
+        {header}
         <form className={s.searchForm} onSubmit={onSubmit}>
           <SearchInput
             id="address"
