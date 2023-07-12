@@ -29,7 +29,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </Layout>
       </RecoilRoot>
-      <ReactQueryDevtools />
+      <ReactQueryDevtools position="top-right" />
     </QueryClientProvider>
   );
 }
