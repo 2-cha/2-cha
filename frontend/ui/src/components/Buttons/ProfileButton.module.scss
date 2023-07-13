@@ -1,11 +1,23 @@
 @use 'mixins';
 
 .wrapper {
+  width: 100%;
+
   @include mixins.flex(row, flex-start, center);
 
+  $image-size: 40px;
+
+  .noImage {
+    width: $image-size;
+    height: $image-size;
+    border-radius: 30px;
+    overflow: hidden;
+    @include mixins.margin(right, md);
+  }
+
   & > img {
-    width: 40px;
-    height: 40px;
+    width: $image-size;
+    height: $image-size;
     border-radius: 30px;
     @include mixins.margin(right, md);
   }

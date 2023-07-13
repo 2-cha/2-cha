@@ -2,34 +2,41 @@ import Image from 'next/image';
 import Link from 'next/link';
 import cn from 'classnames';
 
+import type { Member } from '@/types';
+
 import s from './ProfileButton.module.scss';
+import NoImage from '../NoImage';
 
 interface Props {
-  imageSrc: string;
+  member: Member | null;
   imageSize: number;
-  imageAlt: string;
-  memberName: string;
-  memberId: string | number;
   className?: string;
 }
 
-export default function ProfileButton({
-  imageSrc,
-  imageSize,
-  imageAlt,
-  memberName,
-  memberId,
-  className,
-}: Props) {
+export default function ProfileButton({ member, imageSize, className }: Props) {
   return (
-    <Link href={`/profile/${memberId}`} className={cn(className, s.wrapper)}>
-      <Image
-        src={imageSrc}
-        width={imageSize}
-        height={imageSize}
-        alt={imageAlt}
-      />
-      <h3>{memberName}</h3>
-    </Link>
+    <>
+      {member ? (
+        <Link
+          href={`/profile/${member.id}`}
+          className={cn(className, s.wrapper)}
+        >
+          <Image
+            src={member.prof_img}
+            width={imageSize}
+            height={imageSize}
+            alt={member.name}
+          />
+          <h3>{member.name}</h3>
+        </Link>
+      ) : (
+        <div className={cn(className, s.wrapper)}>
+          <div className={s.noImage}>
+            <NoImage iconSize={26} />
+          </div>
+          <h3>탈퇴한 회원</h3>
+        </div>
+      )}
+    </>
   );
 }

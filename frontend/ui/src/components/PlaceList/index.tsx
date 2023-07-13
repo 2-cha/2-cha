@@ -107,7 +107,7 @@ export function PlaceItem({ place }: PlaceItemProps) {
           className={s.thumbnail}
         />
       ) : (
-        <NoImage />
+        <NoImage withTitle subtitle="첫 리뷰어가 되어보세요" />
       )}
     </li>
   );
