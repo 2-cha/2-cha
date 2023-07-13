@@ -25,6 +25,7 @@ export default function ProfileButton({ member, imageSize, className }: Props) {
             src={member.prof_img}
             width={imageSize}
             height={imageSize}
+            unoptimized
             alt={member.name}
           />
           <h3>{member.name}</h3>

@@ -21,6 +21,7 @@ export default function ReviewCard({ review }: Props) {
           alt="collection image"
           width={480}
           height={480}
+          unoptimized
           className={s.wrapper__image}
         />
       ) : (

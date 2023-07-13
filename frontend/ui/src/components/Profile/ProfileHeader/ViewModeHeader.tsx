@@ -29,6 +29,7 @@ export default function ViewModeHeader({ member, isMe, setIsEditing }: Props) {
         src={member.prof_img}
         width={100}
         height={100}
+        unoptimized
         alt="member profile pic"
         className={s.image}
       />

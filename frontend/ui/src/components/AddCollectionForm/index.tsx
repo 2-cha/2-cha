@@ -113,6 +113,7 @@ export default function AddCollectionForm() {
                     src={thumbnail}
                     width={360}
                     height={480}
+                    unoptimized
                     alt="collection uploaded image"
                   />
                 ) : (

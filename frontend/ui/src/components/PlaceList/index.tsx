@@ -102,6 +102,7 @@ export function PlaceItem({ place }: PlaceItemProps) {
           src={place.image}
           width={480}
           height={480}
+          unoptimized
           loading="lazy"
           alt={place.name}
           className={s.thumbnail}
