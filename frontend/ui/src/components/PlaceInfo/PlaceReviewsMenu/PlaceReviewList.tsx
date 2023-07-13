@@ -31,21 +31,15 @@ function PlaceReviewItem({ review }: { review: Review }) {
   return (
     <div className={s.reviewItem}>
       <div className={s.header}>
-        <ProfileButton
-          imageSize={50}
-          memberId={review.member.id}
-          memberName={review.member.name}
-          imageSrc={review.member.prof_img}
-          imageAlt={review.member.name}
-        />
-        {Number(memberId) === review.member.id && (
+        <ProfileButton imageSize={50} member={review.member} />
+        {review.member && memberId === String(review.member.id) && (
           <DeleteButton itemType="reviews" itemId={review.id} />
         )}
       </div>
       <ImageSlide
         className={s.image}
         images={review.images}
-        alt={`${review.place.name}-${review.member.name}`}
+        alt={`${review.place.name}-${review.member?.name ?? 'unknwon'}`}
       />
       <Tags limit={3} keyID={review.id.toString()} tagList={review.tags} />
     </div>

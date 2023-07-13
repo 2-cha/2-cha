@@ -57,13 +57,7 @@ export default function CollectionInfo({ collectionInfo }: Props) {
       </Swiper>
       <div className={s.metadata}>
         <div className={s.metadata__top}>
-          <ProfileButton
-            memberId={member.id}
-            memberName={member.name}
-            imageSrc={member.prof_img}
-            imageSize={100}
-            imageAlt={member.name}
-          />
+          <ProfileButton member={member} imageSize={100} />
           <div className={s.metadata__buttons}>
             {member.id === Number(memberId) ? (
               <DeleteButton

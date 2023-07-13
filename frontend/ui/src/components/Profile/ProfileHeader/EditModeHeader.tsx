@@ -97,6 +97,7 @@ export default function EditModeHeader({ member, setIsEditing }: Props) {
             src={image}
             width={120}
             height={120}
+            unoptimized
             alt="member profile pic"
             className={s.image}
           />

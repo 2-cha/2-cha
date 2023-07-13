@@ -21,10 +21,11 @@ export default function ReviewCard({ review }: Props) {
           alt="collection image"
           width={480}
           height={480}
+          unoptimized
           className={s.wrapper__image}
         />
       ) : (
-        <NoImage className={s.noimage} />
+        <NoImage className={s.noimage} withTitle />
       )}
       <div className={s.metadata}>
         <span className={s.metadata__name}>{place.name}</span>

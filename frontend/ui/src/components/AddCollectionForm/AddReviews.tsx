@@ -79,6 +79,7 @@ export default function AddReviews({
                           alt={`${review.place} review`}
                           width={200}
                           height={200}
+                          unoptimized
                         />
                         <div className={s.element__removeIcon}>
                           <span>{selectedReviews.indexOf(review.id) + 1}</span>
@@ -95,6 +96,7 @@ export default function AddReviews({
                           alt={`${review.place} review`}
                           width={200}
                           height={200}
+                          unoptimized
                         />
                         <div className={s.element__addIcon} />
                       </button>

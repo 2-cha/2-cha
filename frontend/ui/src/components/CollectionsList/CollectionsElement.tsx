@@ -19,6 +19,7 @@ export default function CollectionsElement({ collection }: CollectionProps) {
         src={collection.thumbnail}
         width={480}
         height={480}
+        unoptimized
         alt={`${collection.title} thumbnail`}
       />
       <Link href={`/collections/${collection.id}`} className={s.element__cover}>

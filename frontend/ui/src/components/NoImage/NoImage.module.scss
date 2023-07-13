@@ -1,17 +1,18 @@
 @use 'mixins';
 @use 'var';
 
-$img-height: 360px;
-
 .skeleton {
   background: var(--background-skeleton-color);
   width: 100%;
-  height: $img-height;
+  height: 100%;
   @include mixins.flex(column, center, center);
 
   & > svg {
     fill: var(--border-color);
-    @include mixins.margin(bottom, md);
+
+    &.withTitle {
+      @include mixins.margin(bottom, md);
+    }
   }
 
   &__title {

@@ -102,12 +102,13 @@ export function PlaceItem({ place }: PlaceItemProps) {
           src={place.image}
           width={480}
           height={480}
+          unoptimized
           loading="lazy"
           alt={place.name}
           className={s.thumbnail}
         />
       ) : (
-        <NoImage />
+        <NoImage withTitle subtitle="첫 리뷰어가 되어보세요" />
       )}
     </li>
   );

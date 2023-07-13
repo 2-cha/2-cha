@@ -30,6 +30,7 @@ export default forwardRef<HTMLParagraphElement, PlaceInfoProps>(
           <Image
             width={480}
             height={200}
+            unoptimized
             src={placeInfo.image}
             alt={placeInfo.name}
             className={s.thumbnail}

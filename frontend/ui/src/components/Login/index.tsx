@@ -12,6 +12,7 @@ export default function Login() {
           src="/google_signin.png"
           width={400}
           height={100}
+          unoptimized
           alt="google logo"
         />
       </a>

@@ -23,6 +23,7 @@ export default function ReviewList({ pages }: Props) {
                   alt={`${review.place} review`}
                   width={200}
                   height={200}
+                  unoptimized
                 />
               </Link>
             </li>
