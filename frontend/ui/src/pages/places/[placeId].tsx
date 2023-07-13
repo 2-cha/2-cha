@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import NavStackHeader from '@/components/Layout/NavStackHeader';
 import MetaData from '@/components/MetaData';
 import PlaceInfo from '@/components/PlaceInfo';
+import NotFound from '@/components/NotFound';
 import { useIntersection } from '@/hooks';
 import { usePlaceQuery } from '@/hooks/query';
 
@@ -17,7 +18,9 @@ export default function PlaceInfoPage() {
       <NavStackHeader hideTitle={isIntersecting}>
         {placeInfo?.name}
       </NavStackHeader>
-      {isLoading || isError ? null : (
+      {isError ? (
+        <NotFound />
+      ) : isLoading ? null : (
         <PlaceInfo placeInfo={placeInfo} ref={ref} />
       )}
     </>
