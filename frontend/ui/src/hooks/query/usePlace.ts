@@ -14,6 +14,7 @@ export function usePlaceQuery(placeId?: string | string[]) {
     queryFn: () => fetchPlace(placeId as string),
     refetchOnWindowFocus: false,
     enabled: !!placeId,
+    retry: false,
   });
 
   return result;

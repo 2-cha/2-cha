@@ -1,10 +1,11 @@
 import MetaData from '@/components/MetaData';
+import NotFound from '@/components/NotFound';
 
-export default function NotFound() {
+export default function NotFoundPage() {
   return (
     <>
       <MetaData title="404" />
-      <div>Not Found</div>
+      <NotFound />
     </>
   );
 }
