@@ -27,3 +27,8 @@ a {
 button {
   cursor: pointer;
 }
+
+// avoid zooming on ios
+input {
+  font-size: 16px;
+}
