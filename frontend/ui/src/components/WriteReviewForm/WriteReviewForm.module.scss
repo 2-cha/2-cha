@@ -81,7 +81,7 @@
 
   span {
     text-align: start;
-    word-break: break-word;
+    word-break: keep-all;
     @include mixins.text-lg;
   }
 
@@ -106,7 +106,7 @@
 
   span {
     text-align: start;
-    word-break: break-word;
+    word-break: keep-all;
   }
 
   .description {

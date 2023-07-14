@@ -79,6 +79,9 @@
   }
 
   &__address {
+    text-align: left;
+    word-break: keep-all;
+
     @include mixins.text-sm;
   }
 }
