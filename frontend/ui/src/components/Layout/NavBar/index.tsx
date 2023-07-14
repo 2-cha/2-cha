@@ -26,21 +26,23 @@ interface NavBarProps {
 
 export default function NavBar({ currentSection }: NavBarProps) {
   return (
-    <nav className={s.navbar}>
-      {sections.map((section) =>
-        section.name === 'add-review' ? (
-          <ReviewAddButton key={section.name} />
-        ) : (
-          <NavItem
-            key={section.name}
-            url={section.path}
-            isActive={currentSection === section.name}
-          >
-            <section.Icon isActive={currentSection === section.name} />
-          </NavItem>
-        )
-      )}
-    </nav>
+    <div className={s.container}>
+      <nav className={s.navbar}>
+        {sections.map((section) =>
+          section.name === 'add-review' ? (
+            <ReviewAddButton key={section.name} />
+          ) : (
+            <NavItem
+              key={section.name}
+              url={section.path}
+              isActive={currentSection === section.name}
+            >
+              <section.Icon isActive={currentSection === section.name} />
+            </NavItem>
+          )
+        )}
+      </nav>
+    </div>
   );
 }
 
