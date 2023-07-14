@@ -2,19 +2,23 @@
 @use 'var';
 
 .root {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
   z-index: 100;
-  background-color: var(--background-color);
-
-  @include mixins.flex(column, flex-start, center);
-  @include mixins.box-shadow;
 }
 
 .header {
+  background-color: var(--background-color);
+
   @include mixins.header;
+  @include mixins.box-shadow;
   @include mixins.flex(row, space-between, center);
+  @include mixins.media('>small') {
+    max-width: map-get(mixins.$breakpoints, small);
+    margin: 0 auto;
+  }
 
   .location {
     $icon-size: 22px;

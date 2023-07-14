@@ -1,3 +1,5 @@
+@use 'mixins';
+
 .grid {
   display: grid;
   width: 100%;
@@ -5,12 +7,15 @@
 }
 
 .gridItem {
-  height: 100%;
+  width: 100%;
   aspect-ratio: 1;
   overflow: hidden;
 
+  @include mixins.flex;
+
   & img {
-    height: 100%;
+    width: 100%;
+    aspect-ratio: 1;
     object-fit: cover;
   }
 }

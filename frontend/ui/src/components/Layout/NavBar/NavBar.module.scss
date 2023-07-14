@@ -1,17 +1,25 @@
 @use 'mixins';
 @use 'var';
 
-.navbar {
-  position: sticky;
-  bottom: 0;
-  z-index: 100;
+.container {
   width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+}
+
+.navbar {
   margin-top: auto;
   height: var.$navbar-height;
   background: var(--background-color);
 
   @include mixins.flex(row, space-between);
   @include mixins.box-shadow(top);
+  @include mixins.media('>small') {
+    max-width: map-get(mixins.$breakpoints, small);
+    margin: 0 auto;
+  }
 
   &__item {
     flex: 1;
