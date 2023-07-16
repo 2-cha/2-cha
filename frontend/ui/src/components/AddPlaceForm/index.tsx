@@ -57,7 +57,7 @@ function AddPlaceForm() {
   const { register, handleSubmit, setValue, watch } =
     useFormContext<AddPlaceFormData>();
   const router = useRouter();
-  const mutate = useAddPlaceMutation();
+  const mutation = useAddPlaceMutation();
 
   const { isOpen, onOpen, onClose } = useModal();
   const handleSelect = (address: Address) => {
@@ -70,9 +70,9 @@ function AddPlaceForm() {
   const address = watch('address');
 
   const onSubmit = handleSubmit((data) => {
-    mutate.mutate(data, {
-      onSuccess: (data) => {
-        router.push(`/write?placeId=${data.id}`);
+    mutation.mutate(data, {
+      onSuccess: (result) => {
+        router.push(`/write?placeId=${result.id}`);
       },
       onError: console.error,
     });
