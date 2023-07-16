@@ -10,6 +10,7 @@ export { useRegionQuery, useRegion } from './useRegion';
 export { useSearchPlaceQuery } from './useSearchPlaceQuery';
 export { useTagsQuery } from './useTags';
 export { useCollectionsQuery } from './useCollections';
+export { useKeywordQuery } from './useKeyword';
 export {
   useMemberCollectionsQuery,
   type CollectionType,

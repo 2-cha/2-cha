@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import cn from 'classnames';
 
-import { useIntersection } from '@/hooks';
-import { useSearchPlaceQuery } from '@/hooks/query';
+import { useSearchPlaceQuery, useKeywordQuery } from '@/hooks/query';
+import { useAddPlaceMutation } from '@/hooks/mutation';
 import { getCategoryLabel } from '@/lib/placeUtil';
 import Drawer from '@/components/Layout/Drawer';
 import SearchInput from '@/components/SearchInput';
 import List from '@/components/Layout/List';
-import Link from 'next/link';
+import Spinner from '@/components/Spinner';
 import type { Place, SuggestionPlace } from '@/types';
+import { type Place as KakaoPlace } from '@/pages/api/keyword';
 
 import s from './SearchPlaceModal.module.scss';
 
@@ -43,16 +43,12 @@ export default function SearchPlaceModal({
 
   const [query, setQuery] = useState('');
   const { data, fetchNextPage, isFetching } = useSearchPlaceQuery(query);
+  const places = useMemo(() => data?.pages?.flat(), [data?.pages]);
 
-  const handleNextPage = (isIntersecting: boolean) => {
-    if (isIntersecting && !isFetching && query !== '') {
-      fetchNextPage();
-    }
-  };
-  const { ref } = useIntersection({
-    initialState: false,
-    onChange: handleNextPage,
-  });
+  // 쿼리의 결과가 없거나 정확하게 일치하는 장소가 없을 경우
+  const showNewPlaces =
+    query != '' &&
+    (!places?.length || !places.find((place) => place.name === query));
 
   const onSubmit = handleSubmit((data) => {
     setQuery(data.query);
@@ -78,7 +74,7 @@ export default function SearchPlaceModal({
         </form>
         <div className={s.result__container}>
           <SearchPlaceResult
-            pages={data?.pages}
+            places={places}
             suggestions={suggestions}
             onSelect={handleSelect}
           />
@@ -87,19 +83,22 @@ export default function SearchPlaceModal({
               <button
                 className={s.result__footer}
                 onClick={() => fetchNextPage()}
+                disabled={isFetching}
               >
                 더보기
               </button>
-              <div
-                ref={ref}
-                key={data.pages.length}
-                aria-hidden
-                style={{ height: 1 }}
-              />
             </>
           ) : null}
           {isFetching && data?.pages.length && (
-            <div className={s.result__footer}>Loading...</div>
+            <div className={s.result__footer}>
+              <Spinner />
+            </div>
+          )}
+          {showNewPlaces && (
+            <>
+              <div className={s.divider} />
+              <NewPlaceQueryResult query={query} onSelect={onSelect} />
+            </>
           )}
         </div>
       </div>
@@ -108,16 +107,14 @@ export default function SearchPlaceModal({
 }
 
 function SearchPlaceResult({
-  pages,
+  places,
   suggestions,
   onSelect,
 }: {
-  pages?: Place[][];
+  places?: Place[];
   suggestions?: PlacePickerProps['suggestions'];
   onSelect?: PlacePickerProps['onSelect'];
 }) {
-  const result = useMemo(() => pages?.flat(), [pages]);
-
   return (
     <List className={s.result}>
       {suggestions?.length ? (
@@ -136,23 +133,26 @@ function SearchPlaceResult({
           <div className={s.divider} />
         </>
       ) : null}
+
       <List.Subheader>
         <p className={s.description}>검색 결과</p>
       </List.Subheader>
-      {!result?.length ? (
+      {places ? (
+        <>
+          {places.map((place) => (
+            <List.Item
+              key={place.id}
+              onClick={() => onSelect?.(place.id.toString())}
+            >
+              <PlaceItem key={place.id} place={place} />
+            </List.Item>
+          ))}
+        </>
+      ) : (
         <li className={s.noResult}>
           <p>검색 결과가 없습니다</p>
-          <Link href="/write/place">장소 추가하기</Link>
         </li>
-      ) : null}
-      {result?.map((place) => (
-        <List.Item
-          key={place.id}
-          onClick={() => onSelect?.(place.id.toString())}
-        >
-          <PlaceItem key={place.id} place={place} />
-        </List.Item>
-      ))}
+      )}
     </List>
   );
 }
@@ -172,5 +172,71 @@ function PlaceItem({
       </div>
       <span className={s.place__address}>{place.address}</span>
     </div>
+  );
+}
+
+function parseCategory(category: string) {
+  return category.split('>').at(-1);
+}
+
+function NewPlaceQueryResult({
+  query,
+  onSelect,
+}: {
+  query: string;
+  onSelect?: PlacePickerProps['onSelect'];
+}) {
+  const { data } = useKeywordQuery(query);
+  const mutation = useAddPlaceMutation();
+
+  const handleSelect = (place: KakaoPlace) => {
+    mutation.mutate(
+      {
+        name: place.place_name,
+        category: parseCategory(place.category_name),
+        address: place.road_address_name,
+        lot_address: place.address_name,
+        lat: place.y,
+        lon: place.x,
+      },
+      {
+        onSuccess: (result) => {
+          onSelect?.(result.id);
+        },
+        onError: console.error,
+        /* TODO: toast("장소 등록에 실패했어요") */
+      }
+    );
+  };
+
+  if (!data) {
+    return null;
+  }
+
+  return (
+    <List className={s.result}>
+      <List.Subheader>
+        <p className={s.description}>새로운 장소</p>
+      </List.Subheader>
+      {data?.pages.map((response, idx) => (
+        <Fragment key={idx}>
+          {response.documents.map((place) => (
+            <List.Item key={place.id} onClick={() => handleSelect(place)}>
+              <div className={s.place}>
+                <div className={s.place__title}>
+                  <span className={s.place__name}>{place.place_name}</span>
+                  <span className={s.place__category}>
+                    {parseCategory(place.category_name)}
+                  </span>
+                </div>
+                <span className={s.place__address}>
+                  {place.road_address_name}
+                </span>
+              </div>
+            </List.Item>
+          ))}
+        </Fragment>
+      ))}
+    </List>
   );
 }

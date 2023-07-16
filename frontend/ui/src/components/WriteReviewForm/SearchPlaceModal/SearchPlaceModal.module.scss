@@ -33,6 +33,8 @@
     text-align: center;
     width: 100%;
     padding: var.$size-md 0;
+
+    @include mixins.flex;
   }
 
   .noResult {
@@ -46,13 +48,13 @@
   .description {
     @include mixins.text-sm;
   }
+}
 
-  .divider {
-    height: 1px;
-    width: 100%;
-    margin: 8px 0;
-    background-color: var(--border-color);
-  }
+.divider {
+  height: 1px;
+  width: 100%;
+  margin: 8px 0;
+  background-color: var(--border-color);
 }
 
 .place {
