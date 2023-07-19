@@ -40,7 +40,7 @@ fetchClient.interceptors.request.use(
     return config;
   },
   null,
-  { runWhen: (config) => config.url?.startsWith('/auth') != null }
+  { runWhen: (config) => config.url?.startsWith('/auth') == null }
 );
 
 // 401 응답시 토큰 갱신 후 재요청
