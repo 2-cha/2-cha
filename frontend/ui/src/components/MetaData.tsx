@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { useEffect, useState } from 'react';
 
 export interface MetaDataProps {
   title?: string;
@@ -9,6 +10,14 @@ export default function MetaData({
   title,
   description = '2차 어디가지',
 }: MetaDataProps) {
+  const [backgroundColor, setBackgroundColor] = useState('black');
+
+  useEffect(() => {
+    const backgroundColorValue = getComputedStyle(
+      document.documentElement
+    ).getPropertyValue('--background-color');
+    setBackgroundColor(backgroundColorValue);
+  }, []);
   const pageTitle = title ? `${title} - 2cha` : '2cha';
   return (
     <Head>
@@ -53,6 +62,7 @@ export default function MetaData({
         href="/images/icons-16.png"
       />
 
+      <meta name="theme-color" content={backgroundColor} />
       <meta name="apple-touch-fullscreen" content="yes" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-title" content="2cha" />
@@ -227,8 +237,6 @@ export default function MetaData({
         media="screen and (device-width: 744px) and (device-height: 1133px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
         href="/images/splash/8.3__iPad_Mini_portrait.png"
       />
-
-      <meta name="theme-color" content="#ed8672" />
 
       <meta property="og:type" content="website" />
       <meta property="og:url" content="https://2cha.place" />
