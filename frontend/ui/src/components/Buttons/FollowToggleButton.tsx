@@ -1,15 +1,15 @@
 import { ComponentProps, useState } from 'react';
 import cn from 'classnames';
-
+import { FollowIcon } from '../Icons';
 import { useFollowMutation } from '@/hooks/mutation';
-import { CheckIcon, PlusSquareIcon } from '../Icons';
 
-import s from './FollowToggleButton.module.scss';
+import s from './Button.module.scss';
 
 interface FollowButtonProps {
   isFollowed?: boolean;
   userId: string | number;
   isFollowCountShown?: boolean;
+  size?: number;
 }
 
 export default function FollowToggleButton({
@@ -17,6 +17,7 @@ export default function FollowToggleButton({
   userId,
   isFollowCountShown = false,
   className,
+  size = 32,
   ...props
 }: ComponentProps<'button'> & FollowButtonProps) {
   const [isFollowed, setFollowed] = useState(initialIsFollowed);
@@ -40,8 +41,16 @@ export default function FollowToggleButton({
       onClick={handleClick}
       {...props}
     >
-      {isFollowed ? <CheckIcon /> : <PlusSquareIcon withoutBorder />}
-      <span>{isFollowed ? '팔로잉' : '팔로우'}</span>
+      {
+        <FollowIcon
+          width={size}
+          height={size}
+          isFollowed={isFollowed}
+          isFilled={isFollowed}
+          className={cn(s.icon, s.fill)}
+        />
+      }
+      <span>&nbsp;</span>
     </button>
   );
 }

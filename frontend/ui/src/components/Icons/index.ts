@@ -25,7 +25,6 @@ import ShareIcon from './ShareIcon';
 import TrashIcon from './TrashIcon';
 import SettingsIcon from './SettingsIcon';
 import FollowIcon from './FollowIcon';
-import FollowedIcon from './FollowedIcon';
 
 export {
   ArrowIcon,
@@ -55,5 +54,4 @@ export {
   TrashIcon,
   SettingsIcon,
   FollowIcon,
-  FollowedIcon,
 };
