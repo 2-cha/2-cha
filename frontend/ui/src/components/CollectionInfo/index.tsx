@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import cn from 'classnames';
 import { useRouter } from 'next/router';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -8,16 +7,16 @@ import { Collection } from '@/types/collection';
 import ReviewCard from './ReviewCard';
 import {
   BookmarkToggleButton,
+  DeleteButton,
   FollowToggleButton,
   LikeToggleButton,
   ProfileButton,
   ShareButton,
 } from '../Buttons';
-import { ArrowIcon, TrashIcon } from '../Icons';
+import { ArrowIcon } from '../Icons';
 
 import 'swiper/css';
 import s from './CollectionInfo.module.scss';
-import { DeleteButton } from '../Buttons';
 
 interface Props {
   collectionInfo: Collection;
@@ -48,7 +47,12 @@ export default function CollectionInfo({ collectionInfo }: Props) {
           sharedUrl={`${process.env.NEXT_PUBLIC_ORIGIN}/collections/${collectionInfo.id}`}
         />
       </nav>
-      <Swiper scrollbar className={s.carousel} wrapperClass={s.wrapper}>
+      <Swiper
+        scrollbar
+        className={s.carousel}
+        wrapperClass={s.wrapper}
+        autoHeight={false}
+      >
         {reviews.map((review) => (
           <SwiperSlide key={`review-${review.id}`}>
             <ReviewCard review={review} key={`review-${review.id}`} />

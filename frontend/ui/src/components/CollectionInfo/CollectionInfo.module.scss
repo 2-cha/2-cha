@@ -2,6 +2,8 @@
 @use 'var';
 
 .root {
+  --card-ratio: 0.75;
+
   position: relative;
   width: 100%;
   flex: 1;
@@ -40,17 +42,17 @@
 .carousel {
   flex: 1;
   width: 100%;
-
-  @include mixins.flex(row, flex-start, stretch);
+  max-height: calc((100vh - var.$navbar-height) * var(--card-ratio));
 
   .wrapper {
-    height: auto;
+    height: calc((100vh - var.$navbar-height) * var(--card-ratio));
+    @include mixins.flex(row, flex-start, stretch);
   }
 }
 
 .metadata {
   width: 100%;
-  height: fit-content;
+  height: calc((100vh - var.$navbar-height) * (1 - var(--card-ratio)));
   @include mixins.padding(all, lg);
 
   &__top {
