@@ -28,6 +28,8 @@ export default function CollectionInfo({ collectionInfo }: Props) {
   const memberId = user?.sub;
   const router = useRouter();
 
+  const isMine = member.id === Number(memberId);
+
   function handleClickBack() {
     router.back();
   }
@@ -67,12 +69,8 @@ export default function CollectionInfo({ collectionInfo }: Props) {
             className={s.metadata__profile}
           />
           <div className={s.metadata__buttons}>
-            {member.id === Number(memberId) ? (
-              <DeleteButton
-                itemType="collections"
-                itemId={collectionInfo.id}
-                className={s.metadata__buttons__follow}
-              />
+            {isMine ? (
+              <></>
             ) : (
               <FollowToggleButton
                 userId={member.id}
@@ -98,7 +96,22 @@ export default function CollectionInfo({ collectionInfo }: Props) {
             />
           </div>
         </div>
-        <h1 className={s.metadata__title}>{collectionInfo.title}</h1>
+        <div className={s.metadata__bottom}>
+          <div className={s.metadata__buttons}>
+            <span className={s.metadata__title}>{collectionInfo.title}</span>
+            <div className={s.metadata__buttons}>
+              {isMine ? (
+                <DeleteButton
+                  itemType="collections"
+                  itemId={collectionInfo.id}
+                  className={s.metadata__buttons__follow}
+                />
+              ) : (
+                <></>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

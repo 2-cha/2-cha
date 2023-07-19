@@ -60,6 +60,9 @@
     @include mixins.margin(bottom, md);
   }
 
+  &__bottom {
+  }
+
   &__profile {
     @include mixins.margin(bottom, lg);
     h3 {
@@ -70,7 +73,7 @@
   }
 
   &__buttons {
-    @include mixins.flex(row, flex-end, center);
+    @include mixins.flex(row, center, center);
 
     & > svg {
       width: 24px;
@@ -94,6 +97,8 @@
 
   &__title {
     @include mixins.text_lg;
+    @include mixins.margin(all, 5px);
+    @include mixins.padding(top, 3);
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;

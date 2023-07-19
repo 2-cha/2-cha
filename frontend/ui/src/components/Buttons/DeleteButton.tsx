@@ -12,9 +12,10 @@ interface Props {
   size?: number;
   className?: string;
 }
+
 export default function DeleteButton({
   itemType = 'reviews',
-  size = 32,
+  size = 24,
   itemId,
   className,
 }: Props) {
