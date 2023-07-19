@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { useEffect, useState } from 'react';
 
 export interface MetaDataProps {
   title?: string;
@@ -9,6 +10,14 @@ export default function MetaData({
   title,
   description = '2차 어디가지',
 }: MetaDataProps) {
+  const [backgroundColor, setBackgroundColor] = useState('black');
+
+  useEffect(() => {
+    const backgroundColorValue = getComputedStyle(
+      document.documentElement
+    ).getPropertyValue('--background-color');
+    setBackgroundColor(backgroundColorValue);
+  }, []);
   const pageTitle = title ? `${title} - 2cha` : '2cha';
   return (
     <Head>
@@ -53,7 +62,7 @@ export default function MetaData({
         href="/images/icons-16.png"
       />
 
-      <meta name="theme-color" content="#ed8672" />
+      <meta name="theme-color" content={backgroundColor} />
 
       <meta property="og:type" content="website" />
       <meta property="og:url" content="https://2cha.place" />
