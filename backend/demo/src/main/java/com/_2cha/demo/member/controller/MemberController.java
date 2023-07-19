@@ -1,5 +1,6 @@
 package com._2cha.demo.member.controller;
 
+import static com._2cha.demo.member.domain.Role.GUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import com._2cha.demo.global.annotation.Auth;
@@ -43,7 +44,7 @@ public class MemberController {
   private final MemberService memberService;
   private final ImageUploadService imageUploadService;
 
-  @Auth
+  @Auth(GUEST)
   @GetMapping("/{memberId}")
   public MemberProfileResponse getMemberProfile(@PathVariable Long memberId) {
     return memberService.getMemberProfileById(memberId);
