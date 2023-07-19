@@ -160,9 +160,9 @@ public class MemberService {
 
     follower.follow(following);
 
-    if (following.getFollowers().size() == 1) {
-      addAchievement(followingId, 1L);
-    }
+//    if (following.getFollowers().size() == 1) {
+//      addAchievement(followingId, 1L);
+//    }
 
     return new RelationshipOperationResponse(followerId, followingId);
   }
