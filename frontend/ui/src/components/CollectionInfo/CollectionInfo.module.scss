@@ -60,6 +60,15 @@
     @include mixins.margin(bottom, md);
   }
 
+  &__profile {
+    @include mixins.margin(bottom, lg);
+    h3 {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
   &__buttons {
     @include mixins.flex(row, flex-end, center);
 
