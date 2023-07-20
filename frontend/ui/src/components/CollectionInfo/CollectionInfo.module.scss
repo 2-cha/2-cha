@@ -119,6 +119,30 @@
 
 .bottom {
   width: 100%;
+
+  &__header {
+    @include mixins.text_lg;
+    @include mixins.padding(all, lg);
+    height: var.$header-height;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  &__recommendation_container {
+    position: relative;
+    height: calc(100vh - var.$header-height - var.$navbar-height);
+    //@include mixins.flex(column, center, center)
+  }
+
+  &__recommendation_wrapper {
+  }
+
+  &__recommendation {
+    @include mixins.flex(row, center, center);
+    @include mixins.margin(all, lg);
+  }
 }
 
 .bounce {

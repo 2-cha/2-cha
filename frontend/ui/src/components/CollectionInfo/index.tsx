@@ -155,24 +155,31 @@ export default function CollectionInfo({
           </div>
         </SwiperSlide>
         <SwiperSlide className={s.bottom}>
-          <Swiper
-            scrollbar
-            modules={[EffectCards]}
-            effect={'cards'}
-            cardsEffect={{ slideShadows: false }}
-            loop={true}
-          >
-            {collectionRecommendations?.map((c) => (
-              <SwiperSlide key={`collection-recommendation-${c.id}`}>
-                <CollectionsElement
-                  collection={c}
+          <p className={s.bottom__header}>비슷한 컬렉션들이 있어요.</p>
+          <div className={s.bottom__recommendation_container}>
+            <Swiper
+              scrollbar
+              modules={[EffectCards]}
+              effect={'cards'}
+              cardsEffect={{ slideShadows: false }}
+              loop={true}
+              autoHeight={false}
+              wrapperClass={s.bottom__recommendation_wrapper}
+            >
+              {collectionRecommendations?.map((c) => (
+                <SwiperSlide
                   key={`collection-recommendation-${c.id}`}
                   className={s.bottom__recommendation}
-                  style={{}}
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                >
+                  <CollectionsElement
+                    collection={c}
+                    key={`collection-recommendation-${c.id}`}
+                    style={{}}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
         </SwiperSlide>
       </Swiper>
     </div>
