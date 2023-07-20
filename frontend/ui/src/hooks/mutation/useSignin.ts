@@ -8,7 +8,7 @@ import { fetchClient } from '@/lib/fetchClient';
 
 async function signin(code: string | string[]) {
   const { data } = await fetchClient.post<Token>('/auth/openid/google/signin', {
-    code: code + '__dev',
+    code,
   });
 
   return data;
