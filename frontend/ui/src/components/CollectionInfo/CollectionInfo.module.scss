@@ -2,6 +2,8 @@
 @use 'var';
 
 .root {
+  --card-ratio: 0.75;
+
   position: relative;
   width: 100%;
   flex: 1;
@@ -40,17 +42,17 @@
 .carousel {
   flex: 1;
   width: 100%;
-
-  @include mixins.flex(row, flex-start, stretch);
+  max-height: calc((100vh - var.$navbar-height) * var(--card-ratio));
 
   .wrapper {
-    height: auto;
+    height: calc((100vh - var.$navbar-height) * var(--card-ratio));
+    @include mixins.flex(row, flex-start, stretch);
   }
 }
 
 .metadata {
   width: 100%;
-  height: fit-content;
+  height: calc((100vh - var.$navbar-height) * (1 - var(--card-ratio)));
   @include mixins.padding(all, lg);
 
   &__top {
@@ -58,8 +60,20 @@
     @include mixins.margin(bottom, md);
   }
 
+  &__bottom {
+  }
+
+  &__profile {
+    @include mixins.margin(bottom, lg);
+    h3 {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
   &__buttons {
-    @include mixins.flex(row, flex-end, center);
+    @include mixins.flex(row, center, center);
 
     & > svg {
       width: 24px;
@@ -83,6 +97,8 @@
 
   &__title {
     @include mixins.text_lg;
+    @include mixins.margin(all, 5px);
+    @include mixins.padding(top, 3);
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;

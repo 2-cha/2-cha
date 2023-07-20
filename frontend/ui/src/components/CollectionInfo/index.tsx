@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import cn from 'classnames';
 import { useRouter } from 'next/router';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -8,16 +7,16 @@ import { Collection } from '@/types/collection';
 import ReviewCard from './ReviewCard';
 import {
   BookmarkToggleButton,
+  DeleteButton,
   FollowToggleButton,
   LikeToggleButton,
   ProfileButton,
   ShareButton,
 } from '../Buttons';
-import { ArrowIcon, TrashIcon } from '../Icons';
+import { ArrowIcon } from '../Icons';
 
 import 'swiper/css';
 import s from './CollectionInfo.module.scss';
-import { DeleteButton } from '../Buttons';
 
 interface Props {
   collectionInfo: Collection;
@@ -28,6 +27,8 @@ export default function CollectionInfo({ collectionInfo }: Props) {
   const { user } = useAuth();
   const memberId = user?.sub;
   const router = useRouter();
+
+  const isMine = member.id === Number(memberId);
 
   function handleClickBack() {
     router.back();
@@ -48,7 +49,12 @@ export default function CollectionInfo({ collectionInfo }: Props) {
           sharedUrl={`${process.env.NEXT_PUBLIC_ORIGIN}/collections/${collectionInfo.id}`}
         />
       </nav>
-      <Swiper scrollbar className={s.carousel} wrapperClass={s.wrapper}>
+      <Swiper
+        scrollbar
+        className={s.carousel}
+        wrapperClass={s.wrapper}
+        autoHeight={false}
+      >
         {reviews.map((review) => (
           <SwiperSlide key={`review-${review.id}`}>
             <ReviewCard review={review} key={`review-${review.id}`} />
@@ -57,14 +63,14 @@ export default function CollectionInfo({ collectionInfo }: Props) {
       </Swiper>
       <div className={s.metadata}>
         <div className={s.metadata__top}>
-          <ProfileButton member={member} imageSize={100} />
+          <ProfileButton
+            member={member}
+            imageSize={100}
+            className={s.metadata__profile}
+          />
           <div className={s.metadata__buttons}>
-            {member.id === Number(memberId) ? (
-              <DeleteButton
-                itemType="collections"
-                itemId={collectionInfo.id}
-                className={s.metadata__buttons__follow}
-              />
+            {isMine ? (
+              <></>
             ) : (
               <FollowToggleButton
                 userId={member.id}
@@ -90,7 +96,22 @@ export default function CollectionInfo({ collectionInfo }: Props) {
             />
           </div>
         </div>
-        <h1 className={s.metadata__title}>{collectionInfo.title}</h1>
+        <div className={s.metadata__bottom}>
+          <div className={s.metadata__buttons}>
+            <span className={s.metadata__title}>{collectionInfo.title}</span>
+            <div className={s.metadata__buttons}>
+              {isMine ? (
+                <DeleteButton
+                  itemType="collections"
+                  itemId={collectionInfo.id}
+                  className={s.metadata__buttons__follow}
+                />
+              ) : (
+                <></>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
