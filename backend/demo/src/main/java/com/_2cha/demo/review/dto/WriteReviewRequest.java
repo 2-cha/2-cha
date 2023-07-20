@@ -10,8 +10,9 @@ import lombok.Data;
 public class WriteReviewRequest {
 
   @NotNull
-  @Size(min = 1, max = 5)
+  @Size(min = 1, max = 10)
   List<Long> tagIds;
   @NotNull
+  @Size(min = 1, max = 10)
   List<String> imgUrls;
 }
