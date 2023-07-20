@@ -3,12 +3,16 @@ import {
   GlobeIcon,
   ExternalLinkIcon,
   CopyIcon,
+  NaverIcon,
 } from '@/components/Icons';
+import { useNaverMapUrl } from '@/hooks';
 import type { Place } from '@/types';
 
 import s from './PlaceDetailMenu.module.scss';
 
 export default function PlaceDetail({ placeInfo }: { placeInfo: Place }) {
+  const naverMapUrl = useNaverMapUrl(placeInfo);
+
   return (
     <div className={s.root}>
       <DetailItem Icon={LocationIcon}>
@@ -35,6 +39,15 @@ export default function PlaceDetail({ placeInfo }: { placeInfo: Place }) {
           </a>
         </DetailItem>
       ) : null}
+
+      <DetailItem Icon={NaverIcon}>
+        <a className={s.site} href={naverMapUrl}>
+          <div className={s.item__group}>
+            <span>네이버 지도로 이동</span>
+            <ExternalLinkIcon className={s.icon__secondary} />
+          </div>
+        </a>
+      </DetailItem>
     </div>
   );
 }
