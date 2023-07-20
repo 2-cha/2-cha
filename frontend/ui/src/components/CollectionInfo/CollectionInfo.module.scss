@@ -3,11 +3,15 @@
 
 .root {
   --card-ratio: 0.75;
-
   position: relative;
   width: 100%;
   flex: 1;
   @include mixins.flex(column, flex-start, flex-start);
+}
+
+.top {
+  width: 100%;
+  min-width: 100%;
 
   &__nav {
     background: linear-gradient(
@@ -104,4 +108,8 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
   }
+}
+
+.bottom {
+  width: 100%;
 }
