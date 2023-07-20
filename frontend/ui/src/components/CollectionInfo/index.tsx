@@ -26,7 +26,7 @@ import CollectionsElement from '@/components/CollectionsList/CollectionsElement'
 
 interface Props {
   collectionInfo: Collection;
-  collectionRecommendations: Collection[];
+  collectionRecommendations?: Collection[];
 }
 
 export default function CollectionInfo({
