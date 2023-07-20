@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import { useRouter } from 'next/router';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
+import { EffectCards, Navigation } from 'swiper';
 
 import { useAuth } from '@/hooks';
 import { Collection } from '@/types/collection';
@@ -20,8 +21,7 @@ import 'swiper/css/effect-cards';
 import 'swiper/css/navigation';
 import s from './CollectionInfo.module.scss';
 
-import React from 'react';
-import { EffectCards, Navigation } from 'swiper';
+import React, { useEffect, useRef } from 'react';
 import CollectionsElement from '@/components/CollectionsList/CollectionsElement';
 
 interface Props {
@@ -39,6 +39,11 @@ export default function CollectionInfo({
   const router = useRouter();
 
   const isMine = member.id === Number(memberId);
+  const swiperRef = useRef<SwiperRef>(null);
+  useEffect(() => {
+    swiperRef?.current?.swiper?.slideTo(0);
+    console.log(swiperRef?.current?.swiper);
+  }, [router.asPath]);
 
   function handleClickBack() {
     router.back();
@@ -47,6 +52,7 @@ export default function CollectionInfo({
   return (
     <div className={s.root}>
       <Swiper
+        ref={swiperRef}
         className={s.root}
         direction={'vertical'}
         autoHeight={true}
