@@ -78,7 +78,11 @@ export default function WriteReviewForm() {
               </div>
               <ImagePicker name="images" />
               {errors.images && (
-                <div className={s.errorMessage}>사진을 선택해주세요</div>
+                <div className={s.errorMessage}>
+                  {errors.images.type === 'validate'
+                    ? '10장 이하의 사진을 선택해세요'
+                    : '사진을 선택해주세요'}
+                </div>
               )}
             </div>
             <hr />
@@ -118,9 +122,18 @@ export default function WriteReviewForm() {
                 </div>
               </button>
               <Tags tagList={selectedTags} keyID="tags" />
-              <HiddenInput name="tags" value={selectedTags} required />
+              <HiddenInput
+                name="tags"
+                value={selectedTags}
+                required
+                validate={(tags) => tags.length <= 10}
+              />
               {errors.tags && (
-                <div className={s.errorMessage}>태그를 선택해주세요</div>
+                <div className={s.errorMessage}>
+                  {errors.tags.type === 'validate'
+                    ? '10개 이하의 태그를 선택해주세요'
+                    : '태그를 선택해주세요'}
+                </div>
               )}
             </div>
           </form>
@@ -177,11 +190,16 @@ function HiddenInput({
   value,
   type = 'text',
   required = false,
+  validate,
 }: {
   name: keyof ReviewFormData;
   value: ReviewFormData[keyof ReviewFormData];
   type?: React.HTMLInputTypeAttribute;
   required?: boolean;
+  validate?: (
+    value: ReviewFormData[keyof ReviewFormData],
+    formValues: ReviewFormData
+  ) => boolean;
 }) {
   const { register, setValue } = useFormContext<ReviewFormData>();
 
@@ -189,5 +207,7 @@ function HiddenInput({
     setValue(name, value);
   }, [setValue, name, value]);
 
-  return <input type={type} hidden {...register(name, { required })} />;
+  return (
+    <input type={type} hidden {...register(name, { required, validate })} />
+  );
 }

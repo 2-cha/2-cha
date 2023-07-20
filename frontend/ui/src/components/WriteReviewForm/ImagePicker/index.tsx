@@ -18,7 +18,7 @@ interface ImagePickerProps {
 
 export default function ImagePicker({ name }: ImagePickerProps) {
   const { register, setValue } = useFormContext<ReviewFormData>();
-  register(name, { required: true });
+  register(name, { required: true, validate: (images) => images.length <= 10 });
 
   const setSuggestions = useSetRecoilState(suggestionsState);
   useEffect(() => {
