@@ -1,14 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
-import { useModal, useQueryParamState, useTagPicker } from '@/hooks';
+import {
+  useModal,
+  useQueryParamState,
+  useImagePicker,
+  useTagPicker,
+} from '@/hooks';
 import { usePlaceQuery } from '@/hooks/query';
 import { useReviewMutation } from '@/hooks/mutation';
 import { suggestionsState } from '@/atoms';
 import ImagePicker from '@/components/WriteReviewForm/ImagePicker';
 import { PlaceIcon, ImagesIcon, HashIcon, EditIcon } from '@/components/Icons';
+import { isNonNullable } from '@/lib/type';
 import type { Tag } from '@/types';
 
 import SearchPlaceModal from './SearchPlaceModal';
@@ -24,26 +30,6 @@ export interface ReviewFormData {
 
 export default function WriteReviewForm() {
   const router = useRouter();
-  const [placeId, setPlaceId] = useQueryParamState('placeId');
-  const {
-    selected: selectedTags,
-    setSelected: setSelectedTags,
-    toggleSelect: toggleTagSelect,
-  } = useTagPicker();
-
-  const {
-    isOpen: isPlaceModalOpen,
-    onOpen: onPlaceModalOpen,
-    onClose: onPlaceModalClose,
-  } = useModal({ id: 'placePicker' });
-
-  const {
-    isOpen: isTagModalOpen,
-    onOpen: onTagModalOpen,
-    onClose: onTagModalClose,
-  } = useModal({ id: 'tagPicker' });
-  const suggestions = useRecoilValue(suggestionsState);
-
   const method = useForm<ReviewFormData>();
   const {
     handleSubmit,
@@ -66,6 +52,33 @@ export default function WriteReviewForm() {
     (errors) => console.log(errors)
   );
 
+  const imagePickerProps = useImagePicker();
+  const imageUrls = useMemo(
+    () =>
+      imagePickerProps.images.map((image) => image.url).filter(isNonNullable),
+    [imagePickerProps.images]
+  );
+
+  const [placeId, setPlaceId] = useQueryParamState('placeId');
+  const {
+    selected: selectedTags,
+    setSelected: setSelectedTags,
+    toggleSelect: toggleTagSelect,
+  } = useTagPicker();
+
+  const {
+    isOpen: isPlaceModalOpen,
+    onOpen: onPlaceModalOpen,
+    onClose: onPlaceModalClose,
+  } = useModal({ id: 'placePicker' });
+
+  const {
+    isOpen: isTagModalOpen,
+    onOpen: onTagModalOpen,
+    onClose: onTagModalClose,
+  } = useModal({ id: 'tagPicker' });
+  const suggestions = useRecoilValue(suggestionsState);
+
   return (
     <FormProvider {...method}>
       <div className={s.root}>
@@ -76,9 +89,19 @@ export default function WriteReviewForm() {
                 <ImagesIcon width={24} height={24} />
                 <span>사진</span>
               </div>
-              <ImagePicker name="images" />
+              <ImagePicker {...imagePickerProps} />
+              <HiddenInput
+                name="images"
+                value={imageUrls}
+                required
+                validate={(images) => images.length <= 10}
+              />
               {errors.images && (
-                <div className={s.errorMessage}>사진을 선택해주세요</div>
+                <div className={s.errorMessage}>
+                  {errors.images.type === 'validate'
+                    ? '10장 이하의 사진을 선택해세요'
+                    : '사진을 선택해주세요'}
+                </div>
               )}
             </div>
             <hr />
@@ -118,9 +141,18 @@ export default function WriteReviewForm() {
                 </div>
               </button>
               <Tags tagList={selectedTags} keyID="tags" />
-              <HiddenInput name="tags" value={selectedTags} required />
+              <HiddenInput
+                name="tags"
+                value={selectedTags}
+                required
+                validate={(tags) => tags.length <= 10}
+              />
               {errors.tags && (
-                <div className={s.errorMessage}>태그를 선택해주세요</div>
+                <div className={s.errorMessage}>
+                  {errors.tags.type === 'validate'
+                    ? '10개 이하의 태그를 선택해주세요'
+                    : '태그를 선택해주세요'}
+                </div>
               )}
             </div>
           </form>
@@ -177,11 +209,16 @@ function HiddenInput({
   value,
   type = 'text',
   required = false,
+  validate,
 }: {
   name: keyof ReviewFormData;
   value: ReviewFormData[keyof ReviewFormData];
   type?: React.HTMLInputTypeAttribute;
   required?: boolean;
+  validate?: (
+    value: ReviewFormData[keyof ReviewFormData],
+    formValues: ReviewFormData
+  ) => boolean;
 }) {
   const { register, setValue } = useFormContext<ReviewFormData>();
 
@@ -189,5 +226,7 @@ function HiddenInput({
     setValue(name, value);
   }, [setValue, name, value]);
 
-  return <input type={type} hidden {...register(name, { required })} />;
+  return (
+    <input type={type} hidden {...register(name, { required, validate })} />
+  );
 }
