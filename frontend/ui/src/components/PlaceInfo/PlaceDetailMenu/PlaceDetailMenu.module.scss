@@ -4,7 +4,7 @@
 .root {
   width: 100%;
   min-height: var.$place-info-menu-min-height;
-  gap: var.$size-md;
+  gap: 16px;
 
   @include mixins.flex(column, flex-start, flex-start);
   @include mixins.padding(x, lg);
@@ -12,6 +12,8 @@
   @include mixins.margin(top, md);
 
   .item {
+    word-break: break-all;
+
     @include mixins.flex(row, $align: flex-start);
 
     &__group {

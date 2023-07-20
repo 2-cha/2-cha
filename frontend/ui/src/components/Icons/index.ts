@@ -11,6 +11,7 @@ import HashIcon from './HashIcon';
 import HeartIcon from './HeartIcon';
 import ImagesIcon from './ImagesIcon';
 import LocationIcon from './LocationIcon';
+import NaverIcon from './NaverIcon';
 import PinIcon from './PinIcon';
 import PlaceIcon from './PlaceIcon';
 import PlusSquareIcon from './PlusSquareIcon';
@@ -40,6 +41,7 @@ export {
   HeartIcon,
   ImagesIcon,
   LocationIcon,
+  NaverIcon,
   PinIcon,
   PlaceIcon,
   PlusSquareIcon,
