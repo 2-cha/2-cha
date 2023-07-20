@@ -12,6 +12,8 @@
 .top {
   width: 100%;
   min-width: 100%;
+  height: calc(100vh - var.$navbar-height);
+  max-height: calc(100vh - var.$navbar-height);
 
   &__nav {
     background: linear-gradient(
@@ -119,6 +121,8 @@
 
 .bottom {
   width: 100%;
+  height: calc(100vh - var.$navbar-height);
+  max-height: calc(100vh - var.$navbar-height);
 
   &__header {
     @include mixins.text_lg;
