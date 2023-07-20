@@ -67,8 +67,15 @@
   &__bottom {
   }
 
+  &__footer {
+    bottom: 0;
+    left: 50%;
+    position: absolute;
+  }
+
   &__profile {
     @include mixins.margin(bottom, lg);
+
     h3 {
       white-space: nowrap;
       overflow: hidden;
@@ -112,4 +119,24 @@
 
 .bottom {
   width: 100%;
+}
+
+.bounce {
+  animation: bounce 2s ease infinite;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
 }

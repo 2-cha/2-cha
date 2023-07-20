@@ -13,10 +13,13 @@ import {
   ProfileButton,
   ShareButton,
 } from '../Buttons';
-import { ArrowIcon } from '../Icons';
+import { ArrowIcon, SimpleArrowIcon } from '../Icons';
 
 import 'swiper/css';
+import 'swiper/css/effect-cards';
+import 'swiper/css/navigation';
 import s from './CollectionInfo.module.scss';
+
 import React from 'react';
 import { EffectCards, Navigation } from 'swiper';
 import CollectionsElement from '@/components/CollectionsList/CollectionsElement';
@@ -127,6 +130,20 @@ export default function CollectionInfo({
                     <></>
                   )}
                 </div>
+              </div>
+            </div>
+            <div className={s.metadata__footer}>
+              <div className={s.bounce}>
+                <button
+                  className={'next'}
+                  style={{
+                    transform: 'rotate(180deg)',
+                    color: 'var(--border-color)',
+                    background: 'none',
+                  }}
+                >
+                  <SimpleArrowIcon />
+                </button>
               </div>
             </div>
           </div>
