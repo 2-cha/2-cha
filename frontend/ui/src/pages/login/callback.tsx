@@ -4,8 +4,8 @@ import { useSignInMutation } from '@/hooks/mutation';
 import MetaData from '@/components/MetaData';
 
 export default function Callback() {
-  const router = useRouter();
-  const { code } = router.query;
+  const { query } = useRouter();
+  const code = Array.isArray(query.code) ? query.code[0] : query.code;
   useSignInMutation(code);
 
   // TODO: 로그인 중.. 홈으로 가기

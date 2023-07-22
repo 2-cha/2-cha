@@ -6,7 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { type Token, tokenState } from '@/atoms';
 import { fetchClient } from '@/lib/fetchClient';
 
-async function signin(code: string | string[]) {
+async function signin(code: string) {
   const { data } = await fetchClient.post<Token>('/auth/openid/google/signin', {
     code,
   });
@@ -14,13 +14,13 @@ async function signin(code: string | string[]) {
   return data;
 }
 
-export function useSignInMutation(code?: string | string[]) {
+export function useSignInMutation(code: string | undefined) {
   const setToken = useSetRecoilState(tokenState);
   const router = useRouter();
 
   const mutation = useMutation({
     mutationKey: ['auth', 'signin'],
-    mutationFn: (code: string | string[]) => signin(code),
+    mutationFn: (code: string) => signin(code),
     onSuccess: (data) => {
       setToken(data);
       router.push('/');
@@ -34,7 +34,9 @@ export function useSignInMutation(code?: string | string[]) {
     if (!code) return;
 
     if (mutation.isIdle) {
-      mutation.mutate(code);
+      const _code =
+        process.env.NODE_ENV === 'production' ? code : code + '__dev';
+      mutation.mutate(_code);
     }
   }, [code, mutation]);
 }
