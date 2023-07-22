@@ -3,13 +3,19 @@
 
 .container {
   position: sticky;
-  top: calc(var.$header-height);
+  top: var.$header-height;
   z-index: 10;
-  width: 100%;
-  gap: 8px;
-  padding: 8px;
+  margin-right: auto;
+  overflow-x: auto;
 
   @include mixins.flex(row, flex-start);
+
+  .wrapper {
+    padding: 8px;
+    gap: 8px;
+
+    @include mixins.flex(row, flex-start);
+  }
 }
 
 .hide {
@@ -17,6 +23,7 @@
 }
 
 .item {
+  flex-shrink: 0;
   padding: 6px 16px;
   border: 1px solid var(--border-color);
   border-radius: 999px;
@@ -34,6 +41,7 @@
 
   .menuWrapper {
     width: 100%;
+
     @include mixins.margin('y', 24px);
     @include mixins.flex(column, flex-start, flex-start);
   }

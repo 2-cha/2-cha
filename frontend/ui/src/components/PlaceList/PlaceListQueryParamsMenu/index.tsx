@@ -17,9 +17,11 @@ export default function PlaceListQueryParamsMenu() {
 
   return (
     <div className={cn(s.container, { [s.hide]: scrollDirection === 'down' })}>
-      <SortMenu />
-      <CategoryFilterMenu />
-      <TagFilterMenu />
+      <div className={s.wrapper}>
+        <SortMenu />
+        <CategoryFilterMenu />
+        <TagFilterMenu />
+      </div>
     </div>
   );
 }
