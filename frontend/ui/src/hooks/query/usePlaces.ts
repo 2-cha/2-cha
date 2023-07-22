@@ -42,7 +42,6 @@ export function usePlacesQuery(params: PlacesQueryParams = {}) {
     getNextPageParam: (lastPage, pages) =>
       lastPage?.length ? pages.length : undefined,
     enabled: !!location,
-    retry: false,
   });
   return result;
 }

@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import PlaceList from '@/components/PlaceList';
 import MetaData from '@/components/MetaData';
+import Error from '@/components/Error';
 import Header from '@/components/Layout/Header';
 import PlaceListQueryParamsMenu from '@/components/PlaceList/PlaceListQueryParamsMenu';
 import Skeleton from '@/components/Skeleton';
@@ -32,7 +33,7 @@ export default function Places() {
           ))}
         </>
       ) : isError ? (
-        <div>error</div>
+        <Error title=":(" description="데이터를 가져올 수 없어요" />
       ) : (
         <>
           <PlaceList pages={data.pages} />
