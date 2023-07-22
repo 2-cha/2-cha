@@ -16,10 +16,6 @@
 .icon {
   stroke: var(--background-color);
   transition: color 0.2s ease-in-out;
-
-  &:hover {
-    color: var(--background-active-color);
-  }
 }
 
 .fill {
