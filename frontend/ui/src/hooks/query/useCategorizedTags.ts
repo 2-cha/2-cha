@@ -16,7 +16,6 @@ export function useCategorizedTagsQuery(query: string) {
   const result = useQuery({
     queryKey: ['tags', 'categorized', query],
     queryFn: () => fetchTags(query),
-    retry: false,
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 60 * 24 * 7, // 7 days
   });

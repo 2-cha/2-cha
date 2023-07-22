@@ -21,7 +21,6 @@ export function useCollectionsQuery(distance?: string) {
   const result = useQuery({
     queryKey: ['collections'],
     queryFn: () => fetchCollections({ location, distance }),
-    retry: false,
     enabled: !!location,
   });
 
