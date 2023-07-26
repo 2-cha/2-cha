@@ -20,7 +20,7 @@ public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
   public boolean supports(MethodParameter returnType,
                           Class<? extends HttpMessageConverter<?>> converterType) {
 
-    return ResponseEntity.class.isAssignableFrom(returnType.getParameterType()) ||
+    return ResponseEntity.class.isAssignableFrom(returnType.getParameterType()) &&
            MappingJackson2HttpMessageConverter.class.isAssignableFrom(converterType);
 
     /**
