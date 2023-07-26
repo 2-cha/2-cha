@@ -2,11 +2,13 @@ package com._2cha.demo.global.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
@@ -34,10 +36,13 @@ public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
                                 Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                 ServerHttpRequest request, ServerHttpResponse response) {
 
-    // ExceptionHandler has higher priority
+    // ExceptionHandler has higher priority,
+    // so if exception was thrown `ResponseEntity#body` was already wrapped as ApiError
     if (body instanceof ApiError<?>) {
       return body;
     }
-    return new ApiResponse<>(body); //TODO: set status
+    ServletServerHttpResponse servletResponse = (ServletServerHttpResponse) response;
+    int status = servletResponse.getServletResponse().getStatus();
+    return new ApiResponse<>(HttpStatusCode.valueOf(status), body);
   }
 }
