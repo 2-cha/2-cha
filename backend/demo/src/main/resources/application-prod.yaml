@@ -12,6 +12,7 @@ spring:
     import[2]: "aws-parameterstore:/config/demo/prod/security/"
     import[3]: "aws-parameterstore:/config/demo/prod/notification/"
     import[4]: "aws-parameterstore:/config/demo/prod/storage/"
+    import[5]: "aws-parameterstore:/config/demo/prod/actuator/"
   jpa:
     hibernate:
       ddl-auto: none
