@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 @Getter
@@ -13,8 +12,8 @@ import org.springframework.http.HttpStatusCode;
 public class ApiError<Ex extends Exception> {
 
   private boolean success = false;
-  private HttpStatusCode status = HttpStatus.INTERNAL_SERVER_ERROR;
-  private String code = "internalServerError";
+  private HttpStatusCode status;
+  private String code;
   private Object message;
   private LocalDateTime timestamp = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
