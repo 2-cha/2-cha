@@ -269,8 +269,10 @@ public class CollectionService {
                                                                    fileStorageService.getBaseUrl());
     detail.setBookmarkStatus(getBookmarkStatus(memberId, collId));
     detail.setLikeStatus(likeService.getLikeStatus(memberId, collId));
-    eventPublisher.publishEvent(
-        new CollectionInteractionEvent(this, memberId, collId, Interaction.VIEW));
+    if (memberId != null) {
+      eventPublisher.publishEvent(
+          new CollectionInteractionEvent(this, memberId, collId, Interaction.VIEW));
+    }
     return detail;
   }
 
