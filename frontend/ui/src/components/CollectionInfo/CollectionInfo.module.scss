@@ -3,11 +3,17 @@
 
 .root {
   --card-ratio: 0.75;
-
   position: relative;
   width: 100%;
   flex: 1;
   @include mixins.flex(column, flex-start, flex-start);
+}
+
+.top {
+  width: 100%;
+  min-width: 100%;
+  height: calc(100vh - var.$navbar-height);
+  max-height: calc(100vh - var.$navbar-height);
 
   &__nav {
     background: linear-gradient(
@@ -63,8 +69,15 @@
   &__bottom {
   }
 
+  &__footer {
+    bottom: 0;
+    left: 50%;
+    position: absolute;
+  }
+
   &__profile {
     @include mixins.margin(bottom, lg);
+
     h3 {
       white-space: nowrap;
       overflow: hidden;
@@ -103,5 +116,55 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
+  }
+}
+
+.bottom {
+  width: 100%;
+  height: calc(100vh - var.$navbar-height);
+  max-height: calc(100vh - var.$navbar-height);
+
+  &__header {
+    @include mixins.text_lg;
+    @include mixins.padding(all, lg);
+    height: var.$header-height;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  &__recommendation_container {
+    position: relative;
+    height: calc(100vh - var.$header-height - var.$navbar-height);
+    //@include mixins.flex(column, center, center)
+  }
+
+  &__recommendation_wrapper {
+  }
+
+  &__recommendation {
+    @include mixins.flex(row, center, center);
+    @include mixins.margin(all, lg);
+  }
+}
+
+.bounce {
+  animation: bounce 2s ease infinite;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
   }
 }

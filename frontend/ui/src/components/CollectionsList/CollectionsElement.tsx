@@ -5,16 +5,24 @@ import { Collection } from '@/types/collection';
 
 import s from './CollectionsElement.module.scss';
 import { BookmarkIcon, HeartIcon } from '../Icons';
+import { CSSProperties } from 'react';
+import classNames from 'classnames';
 
 interface CollectionProps {
   collection: Collection;
+  style?: CSSProperties;
+  className?: string;
 }
 
-export default function CollectionsElement({ collection }: CollectionProps) {
+export default function CollectionsElement({
+  collection,
+  style,
+  className,
+}: CollectionProps) {
   const { like_status, bookmark_status } = collection;
 
   return (
-    <li className={s.element}>
+    <div className={classNames(className, s.element)}>
       <Image
         src={collection.thumbnail}
         width={480}
@@ -41,6 +49,6 @@ export default function CollectionsElement({ collection }: CollectionProps) {
           </div>
         </div>
       </Link>
-    </li>
+    </div>
   );
 }

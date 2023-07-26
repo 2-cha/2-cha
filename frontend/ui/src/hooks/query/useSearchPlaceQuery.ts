@@ -29,7 +29,6 @@ export function useSearchPlaceQuery(query: string) {
     enabled: query !== '',
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
-    retry: false,
   });
 
   return result;

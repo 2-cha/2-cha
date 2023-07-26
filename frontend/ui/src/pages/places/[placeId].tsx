@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import NavStackHeader from '@/components/Layout/NavStackHeader';
 import MetaData from '@/components/MetaData';
 import PlaceInfo from '@/components/PlaceInfo';
-import NotFound from '@/components/NotFound';
+import Error from '@/components/Error';
 import { useIntersection } from '@/hooks';
 import { usePlaceQuery } from '@/hooks/query';
 
@@ -19,7 +19,7 @@ export default function PlaceInfoPage() {
         {placeInfo?.name}
       </NavStackHeader>
       {isError ? (
-        <NotFound />
+        <Error title="404" description="Not Found" />
       ) : isLoading ? null : (
         <PlaceInfo placeInfo={placeInfo} ref={ref} />
       )}
