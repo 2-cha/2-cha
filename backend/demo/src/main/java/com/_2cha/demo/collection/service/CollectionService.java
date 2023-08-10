@@ -162,17 +162,22 @@ public class CollectionService {
                                                   .map(RecommendedItem::getItemID)
                                                   .toList();
     recommendedCount = recommended.size();
-
+    log.info("recommended collections: {}", recommended);
     Deque<CollectionBriefResponse> result = new LinkedList<>(
         collectionQueryRepository.getCollectionsByIdIn(recommended,
                                                        fileStorageService.getBaseUrl()));
+    log.info("result: {}", result.stream().map(CollectionBriefResponse::getId).toList());
     // fill up with nearby / latest collections
     if (result.size() < RECOMMENDATION_SIZE) {
+      log.info("Recommendation limit: {}, result size: {}, gap: {}", RECOMMENDATION_SIZE,
+               result.size(), RECOMMENDATION_SIZE - result.size());
       getNearbyCollections(lat, lon, distance).stream()
                                               .filter(not(result::contains))
                                               .limit(RECOMMENDATION_SIZE - result.size())
                                               .forEach(result::addLast);
       nearbyCount = result.size() - recommendedCount;
+
+      log.info("after nearby: {}", result.stream().map(CollectionBriefResponse::getId).toList());
     }
     if (result.size() < RECOMMENDATION_SIZE) {
       getLatestCollections(memberId, Pageable.ofSize(RECOMMENDATION_SIZE))
