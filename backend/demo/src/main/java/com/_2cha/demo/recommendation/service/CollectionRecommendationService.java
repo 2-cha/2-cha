@@ -133,27 +133,36 @@ public class CollectionRecommendationService {
 
 
   //Collaborative Filtering (item-item)
-  public List<RecommendedItem> recommend(Long itemId, int size) {
+  public List<Long> recommend(Long itemId, int size) {
     try {
-      return recommender.mostSimilarItems(itemId, size);
+      return recommender.mostSimilarItems(itemId, size).stream()
+                        .map(RecommendedItem::getItemID)
+                        .toList();
     } catch (TasteException e) {
       return List.of();
     }
   }
 
   //Collaborative Filtering (item-item)
-  public List<RecommendedItem> recommend(List<Long> itemIds, int size) {
-    Set<RecommendedItem> items = new HashSet<>() {};
+  public List<Long> recommend(List<Long> itemIds, int size) {
+    Set<Long> recommendedItemIds = new HashSet<>();
+    List<RecommendedItem> recommendedItems = new ArrayList<>();
     itemIds.forEach(id -> {
       try {
-        items.addAll(recommender.mostSimilarItems(id, size));
+        recommendedItems.addAll(recommender.mostSimilarItems(id, size));
       } catch (TasteException ignored) {}
     });
 
-    return items.stream()
-                .sorted((a, b) -> -Float.compare(a.getValue(), b.getValue()))
-                .limit(size)
-                .toList();
+    // sort by score and remove duplicate items.
+    // if itemId is same, only the highest score item is remained.
+    recommendedItems.stream()
+                    .sorted((a, b) -> -Float.compare(a.getValue(), b.getValue()))
+                    .filter(item -> !recommendedItemIds.contains(item.getItemID()))
+                    .forEach(item -> recommendedItemIds.add(item.getItemID()));
+
+    return recommendedItemIds.stream()
+                             .limit(size)
+                             .toList();
   }
 
 

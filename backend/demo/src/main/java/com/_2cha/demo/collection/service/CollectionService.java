@@ -56,7 +56,6 @@ import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -157,10 +156,7 @@ public class CollectionService {
     }
 
     List<Long> recommended = recommendationService.recommend(collIds.stream().toList(),
-                                                             RECOMMENDATION_SIZE)
-                                                  .stream()
-                                                  .map(RecommendedItem::getItemID)
-                                                  .toList();
+                                                             RECOMMENDATION_SIZE);
     recommendedCount = recommended.size();
 
     Deque<CollectionBriefResponse> result = new LinkedList<>(
