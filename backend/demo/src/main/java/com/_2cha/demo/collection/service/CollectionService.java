@@ -187,7 +187,7 @@ public class CollectionService {
       collection.setLikeStatus(likeStatus.get(collection.getId()));
       collection.setBookmarkStatus(bookmarkStatus.get(collection.getId()));
     });
-    log.info("For member <{}>, Recommended: {}, Nearby: {}, Latest: {}",
+    log.info("[Collection Listing] Member <{}>, Recommended: {}, Nearby: {}, Latest: {}",
              memberId, recommendedCount, nearbyCount, latestCount);
     return result.stream().toList();
   }
