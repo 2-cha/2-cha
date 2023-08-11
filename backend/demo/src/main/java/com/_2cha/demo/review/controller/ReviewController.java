@@ -4,7 +4,6 @@ import static com._2cha.demo.member.domain.Role.GUEST;
 import static com._2cha.demo.member.domain.Role.MEMBER;
 import static com._2cha.demo.util.GeomUtils.lat;
 import static com._2cha.demo.util.GeomUtils.lon;
-import static java.util.concurrent.CompletableFuture.completedFuture;
 
 import com._2cha.demo.global.annotation.Auth;
 import com._2cha.demo.global.annotation.Authed;
@@ -23,7 +22,6 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Pageable;
@@ -89,24 +87,44 @@ public class ReviewController {
     reviewService.deleteReview(memberId, reviewId);
   }
 
+//  @Auth(MEMBER)
+//  @PostMapping(value = "/reviews/images")
+//  public CompletableFuture<ImageUrlWithSuggestionResponse> saveReviewImage(
+//      @RequestParam @ImageMime MultipartFile file)
+//      throws IOException {
+//    Point point;
+//    byte[] imageBytes = file.getBytes();
+//    CompletableFuture<ImageSavedResponse> save = imageUploadService.save(imageBytes, true);
+//    CompletableFuture<List<PlaceSuggestionResponse>> suggestion = completedFuture(
+//        new ArrayList<>());
+//    if ((point = ImageUtils.getGeoPoint(imageBytes)) != null) {
+//      suggestion = placeService.suggestNearbyPlacesAsync(lat(point), lon(point));
+//    }
+//
+//    return save.thenCombine(suggestion,
+//                            (res1, res2) -> new ImageUrlWithSuggestionResponse(res1.getUrl(), res2)
+//                           );
+//  }
+
+
   @Auth(MEMBER)
   @PostMapping(value = "/reviews/images")
-  public CompletableFuture<ImageUrlWithSuggestionResponse> saveReviewImage(
+  public ImageUrlWithSuggestionResponse saveReviewImageSequentially(
       @RequestParam @ImageMime MultipartFile file)
       throws IOException {
-    Point point;
     byte[] imageBytes = file.getBytes();
-    CompletableFuture<ImageSavedResponse> save = imageUploadService.save(imageBytes, true);
-    CompletableFuture<List<PlaceSuggestionResponse>> suggestion = completedFuture(
-        new ArrayList<>());
-    if ((point = ImageUtils.getGeoPoint(imageBytes)) != null) {
-      suggestion = placeService.suggestNearbyPlacesAsync(lat(point), lon(point));
+
+    ImageSavedResponse savedResponse = imageUploadService.save(imageBytes, true).join();
+
+    Point point = ImageUtils.getGeoPoint(imageBytes);
+    List<PlaceSuggestionResponse> suggestions = new ArrayList<>();
+    if (point != null) {
+      suggestions = placeService.suggestNearbyPlacesAsync(lat(point), lon(point)).join();
     }
 
-    return save.thenCombine(suggestion,
-                            (res1, res2) -> new ImageUrlWithSuggestionResponse(res1.getUrl(), res2)
-                           );
+    return new ImageUrlWithSuggestionResponse(savedResponse.getUrl(), suggestions);
   }
+
 
   @Auth(MEMBER)
   @GetMapping("/bookmarks/reviews")
