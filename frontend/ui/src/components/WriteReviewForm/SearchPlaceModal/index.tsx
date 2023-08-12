@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { useSearchPlaceQuery, useKeywordQuery } from '@/hooks/query';
+import { useKeywordQuery, useSearchPlaceQuery } from '@/hooks/query';
 import { useAddPlaceMutation } from '@/hooks/mutation';
 import { getCategoryLabel } from '@/lib/placeUtil';
 import Drawer from '@/components/Layout/Drawer';
@@ -179,6 +179,17 @@ function parseCategory(category: string) {
   return category.split('>').at(-1);
 }
 
+function convertCategory(category: string | undefined) {
+  switch (category) {
+    case '와인바':
+      return 'WINE_BAR';
+    case '위스키바':
+      return 'WHISKY_BAR';
+    default:
+      return 'COCKTAIL_BAR';
+  }
+}
+
 function NewPlaceQueryResult({
   query,
   onSelect,
@@ -193,7 +204,7 @@ function NewPlaceQueryResult({
     mutation.mutate(
       {
         name: place.place_name,
-        category: parseCategory(place.category_name),
+        category: convertCategory(parseCategory(place.category_name)),
         address: place.road_address_name,
         lot_address: place.address_name,
         lat: place.y,
