@@ -8,4 +8,6 @@ public interface MemberCollectionPreferenceRepository extends
 
   MemberCollectionPreference findByMemberIdAndCollectionIdAndPreference(Long memberId, Long collId,
                                                                         Float preference);
+
+  MemberCollectionPreference findByMemberIdAndCollectionId(Long memberId, Long collId);
 }

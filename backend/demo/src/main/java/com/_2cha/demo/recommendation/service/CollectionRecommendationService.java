@@ -112,9 +112,16 @@ public class CollectionRecommendationService {
     Collection collection = collectionRepository.findCollectionById(event.getCollId());
     if (collection == null) return;
 
-    MemberCollectionPreference preference = new MemberCollectionPreference(member,
-                                                                           collection,
-                                                                           event.getInteraction());
+    MemberCollectionPreference preference = memberCollectionPreferenceRepository.
+        findByMemberIdAndCollectionId(event.getMemberId(), event.getCollId());
+
+    if (preference != null) {
+      preference.updatePreferenceIfHigher(event.getInteraction().value);
+    } else {
+      preference = new MemberCollectionPreference(member,
+                                                  collection,
+                                                  event.getInteraction());
+    }
     memberCollectionPreferenceRepository.save(preference);
   }
 

@@ -11,6 +11,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +21,11 @@ import org.hibernate.annotations.OnDelete;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"MEMBER_ID", "COLL_ID"},
+            name = "uk_member_collection_preference_member_id_coll_id")
+    })
 public class MemberCollectionPreference {
 
   @Id
@@ -43,5 +50,11 @@ public class MemberCollectionPreference {
     this.member = member;
     this.collection = collection;
     this.preference = interaction.value;
+  }
+
+  public void updatePreferenceIfHigher(float preference) {
+    if (this.preference < preference) {
+      this.preference = preference;
+    }
   }
 }
