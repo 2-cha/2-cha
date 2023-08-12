@@ -25,9 +25,9 @@ public class AsyncConfig {
   @Bean
   Executor imageUploadTaskExecutor() {
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-    executor.setCorePoolSize(3);
-    executor.setMaxPoolSize(3);
-    executor.setQueueCapacity(10);
+    executor.setCorePoolSize(5);
+    executor.setMaxPoolSize(5);
+    executor.setQueueCapacity(20);
     executor.setThreadNamePrefix("img-uploader");
 
     return executor;
