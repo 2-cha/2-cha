@@ -120,9 +120,10 @@ public class PlaceQueryRepository {
   public PlaceBriefWithDistanceResponse getPlaceBriefWithDistance(Long id, Point<G2D> location,
                                                                   String imgBaseUrl) {
     NumberTemplate<Double> distance = Expressions.numberTemplate(Double.class,
-                                                                 "function('ST_DistanceSphere', {0}, {1})",
+                                                                 "ST_Distance({0}, geography({1}))",
                                                                  place.location,
                                                                  location);
+    
     return queryFactory.select(constructor(PlaceBriefWithDistanceResponse.class,
                                            place.id,
                                            place.name,

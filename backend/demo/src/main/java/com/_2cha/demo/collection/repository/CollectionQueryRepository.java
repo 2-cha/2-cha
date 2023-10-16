@@ -9,8 +9,8 @@ import static com.querydsl.core.types.Projections.constructor;
 
 import com._2cha.demo.collection.dto.CollectionBriefResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.BooleanTemplate;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -79,17 +79,17 @@ public class CollectionQueryRepository {
   // get place count of each collection, that is within `distance` m from the given location
   public Map<Long, Long> getNearbyPlaceCount(Point<G2D> location, Double distance) {
 
-    NumberTemplate<Double> distanceSphere = Expressions.numberTemplate(Double.class,
-                                                                       "function('ST_DistanceSphere', {0}, {1})",
-                                                                       place.location,
-                                                                       location);
+    BooleanTemplate dwithin = Expressions.booleanTemplate("ST_DWithin({0}, geography({1}), {2})",
+                                                          place.location,
+                                                          location,
+                                                          distance);
 
     return queryFactory.select(reviewInCollection.collection.id, place.id.count())
                        .from(reviewInCollection)
                        .join(reviewInCollection.review, review)
                        .join(review.place, place)
                        .where(collection.isExposed.eq(true),
-                              distanceSphere.loe(distance))
+                              dwithin.isTrue())
                        .groupBy(reviewInCollection.collection.id)
                        .transform(groupBy(reviewInCollection.collection.id).as(place.id.count()));
   }
