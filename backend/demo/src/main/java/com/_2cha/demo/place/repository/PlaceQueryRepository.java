@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.locationtech.jts.geom.Point;
+import org.geolatte.geom.G2D;
+import org.geolatte.geom.Point;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
 
@@ -116,12 +117,13 @@ public class PlaceQueryRepository {
    * @param id
    * @return PlaceBriefWithDistanceResponse, without tagSummary
    */
-  public PlaceBriefWithDistanceResponse getPlaceBriefWithDistance(Long id, Point location,
+  public PlaceBriefWithDistanceResponse getPlaceBriefWithDistance(Long id, Point<G2D> location,
                                                                   String imgBaseUrl) {
     NumberTemplate<Double> distance = Expressions.numberTemplate(Double.class,
-                                                                 "function('ST_DistanceSphere', {0}, {1})",
+                                                                 "ST_Distance({0}, geography({1}))",
                                                                  place.location,
                                                                  location);
+    
     return queryFactory.select(constructor(PlaceBriefWithDistanceResponse.class,
                                            place.id,
                                            place.name,

@@ -10,7 +10,8 @@ import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.locationtech.jts.geom.Point;
+import org.geolatte.geom.G2D;
+import org.geolatte.geom.Point;
 
 @Entity
 @Getter
@@ -36,8 +37,8 @@ public class Place {
   @Column
   private String lotAddress;
 
-  @Column(nullable = false, columnDefinition = "geometry(point,  4326)") // long, lat
-  private Point location;
+  @Column(nullable = false, columnDefinition = "geography(point,  4326)") // long, lat
+  private Point<G2D> location;
 
 
   @Enumerated(EnumType.STRING)

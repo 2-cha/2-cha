@@ -2,24 +2,23 @@ package com._2cha.demo.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
+import org.geolatte.geom.G2D;
+import org.geolatte.geom.Geometries;
+import org.geolatte.geom.Point;
+import org.geolatte.geom.crs.CoordinateReferenceSystems;
 
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GeomUtils {
 
-  private static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
-
-  public static Point createPoint(Double latitude, Double longitude) {
-    return geometryFactory.createPoint(new Coordinate(longitude, latitude));
+  public static Point<G2D> createPoint(Double latitude, Double longitude) {
+    return Geometries.mkPoint(new G2D(longitude, latitude),
+                              CoordinateReferenceSystems.WGS84);
   }
 
-  public static Double lat(Point point) {return point.getY();}
+  public static Double lat(Point<G2D> point) {return point.getPosition().getCoordinate(1);}
 
-  public static Double lon(Point point) {return point.getX();}
+  public static Double lon(Point<G2D> point) {return point.getPosition().getCoordinate(0);}
 
   public static Double calcDistance(Double lat1, Double lon1, Double lat2, Double lon2, char unit) {
     Double theta = lon1 - lon2;

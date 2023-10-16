@@ -42,7 +42,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.locationtech.jts.geom.Point;
+import org.geolatte.geom.G2D;
+import org.geolatte.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Pageable;
@@ -140,7 +141,7 @@ public class PlaceService {
 
   public PlaceBriefWithDistanceResponse getPlaceBriefWithDistance(Long placeId, Double lat,
                                                                   Double lon, Integer summarySize) {
-    Point cur = GeomUtils.createPoint(lat, lon);
+    Point<G2D> cur = GeomUtils.createPoint(lat, lon);
     PlaceBriefWithDistanceResponse brief = placeQueryRepository.getPlaceBriefWithDistance(placeId,
                                                                                           cur,
                                                                                           fileStorageService.getBaseUrl());

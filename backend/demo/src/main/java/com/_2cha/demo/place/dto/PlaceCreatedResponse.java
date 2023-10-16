@@ -2,6 +2,7 @@ package com._2cha.demo.place.dto;
 
 import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.place.domain.Place;
+import com._2cha.demo.util.GeomUtils;
 import lombok.Data;
 
 @Data
@@ -24,7 +25,7 @@ public class PlaceCreatedResponse {
     this.address = place.getAddress();
     this.lotAddress = place.getLotAddress();
     this.image = place.getImageUrlPath() != null ? baseUrl + place.getImageUrlPath() : null;
-    this.lat = place.getLocation().getY();
-    this.lon = place.getLocation().getX();
+    this.lat = GeomUtils.lat(place.getLocation());
+    this.lon = GeomUtils.lon(place.getLocation());
   }
 }

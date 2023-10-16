@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
-import org.locationtech.jts.geom.Point;
+import org.geolatte.geom.G2D;
+import org.geolatte.geom.Point;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -94,7 +95,7 @@ public class ReviewController {
   public CompletableFuture<ImageUrlWithSuggestionResponse> saveReviewImage(
       @RequestParam @ImageMime MultipartFile file)
       throws IOException {
-    Point point;
+    Point<G2D> point;
     byte[] imageBytes = file.getBytes();
     CompletableFuture<ImageSavedResponse> save = imageUploadService.save(imageBytes, true);
     CompletableFuture<List<PlaceSuggestionResponse>> suggestion = completedFuture(

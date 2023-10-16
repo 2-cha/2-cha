@@ -22,3 +22,6 @@ spring:
           type: elasticsearch
           uris: ${ELASTICSEARCH_URI}  # ex: http://localhost:9200
           analysis.configurer: class:com._2cha.demo.recommendation.config.ElasticsearchAnalyzerConf
+  sql:
+    init:
+      mode: never

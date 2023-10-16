@@ -16,7 +16,8 @@ import net.coobird.thumbnailator.tasks.UnsupportedFormatException;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
-import org.locationtech.jts.geom.Point;
+import org.geolatte.geom.G2D;
+import org.geolatte.geom.Point;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -52,7 +53,7 @@ public class ImageUtils {
     return actualExt;
   }
 
-  public static Point getGeoPoint(byte[] imageBytes) {
+  public static Point<G2D> getGeoPoint(byte[] imageBytes) {
     try (InputStream inputStream = new ByteArrayInputStream(imageBytes)) {
       Metadata metadata = ImageMetadataReader.readMetadata(inputStream);
       GeoLocation geoLocation;

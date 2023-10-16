@@ -74,9 +74,10 @@ public class CollectionController {
   @Auth(MEMBER)
   @GetMapping("/collections/nearby")
   public List<CollectionBriefResponse> nbCollection(
+      @RequestParam(name = "max_dist", required = false, defaultValue = "1000.0") Double maxDist,
       @RequestParam Double lat,
       @RequestParam Double lon) {
-    return collectionService.getNearbyCollections(lat, lon, 1000.0);
+    return collectionService.getNearbyCollections(lat, lon, maxDist);
   }
 
   @Auth(GUEST)
