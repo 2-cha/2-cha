@@ -17,7 +17,8 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.locationtech.jts.geom.Point;
+import org.geolatte.geom.G2D;
+import org.geolatte.geom.Point;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -76,7 +77,7 @@ public class CollectionQueryRepository {
   }
 
   // get place count of each collection, that is within `distance` m from the given location
-  public Map<Long, Long> getNearbyPlaceCount(Point location, Double distance) {
+  public Map<Long, Long> getNearbyPlaceCount(Point<G2D> location, Double distance) {
 
     NumberTemplate<Double> distanceSphere = Expressions.numberTemplate(Double.class,
                                                                        "function('ST_DistanceSphere', {0}, {1})",

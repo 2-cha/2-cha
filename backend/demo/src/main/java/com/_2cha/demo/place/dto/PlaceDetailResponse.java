@@ -3,11 +3,13 @@ package com._2cha.demo.place.dto;
 import com._2cha.demo.bookmark.dto.BookmarkStatus;
 import com._2cha.demo.place.domain.Category;
 import com._2cha.demo.review.dto.TagCountResponse;
+import com._2cha.demo.util.GeomUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;
 import lombok.Data;
-import org.locationtech.jts.geom.Point;
+import org.geolatte.geom.G2D;
+import org.geolatte.geom.Point;
 
 @Data
 public class PlaceDetailResponse {
@@ -28,7 +30,7 @@ public class PlaceDetailResponse {
 
   public PlaceDetailResponse(Long id, String name, Category category, String address,
                              String lotAddress,
-                             String imageUrl, String site, Point location) {
+                             String imageUrl, String site, Point<G2D> location) {
     this.id = id;
     this.name = name;
     this.category = category;
@@ -36,7 +38,7 @@ public class PlaceDetailResponse {
     this.address = address;
     this.image = imageUrl;
     this.site = site;
-    this.lat = location.getY();
-    this.lon = location.getX();
+    this.lat = GeomUtils.lat(location);
+    this.lon = GeomUtils.lon(location);
   }
 }

@@ -12,7 +12,8 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.locationtech.jts.geom.Point;
+import org.geolatte.geom.G2D;
+import org.geolatte.geom.Point;
 
 @Slf4j
 public class FilterSortContext {
@@ -30,7 +31,7 @@ public class FilterSortContext {
     this.sortStrategy = sortStrategy;
   }
 
-  public List<Tuple> execute(Point location, Double maxDist,
+  public List<Tuple> execute(Point<G2D> location, Double maxDist,
                              Long offset, Integer pageSize,
                              List<?> filterValues, SortOrder sortOrder) {
     NumberTemplate<Double> distanceSphere = Expressions.numberTemplate(Double.class,
