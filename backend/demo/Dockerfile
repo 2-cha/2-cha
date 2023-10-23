@@ -1,10 +1,10 @@
-FROM eclipse-temurin:19-jdk-alpine As Builder
+FROM eclipse-temurin:17-jdk-alpine AS Builder
 WORKDIR /project
 COPY . .
 RUN chmod +x ./gradlew
 RUN ./gradlew assemble
 
-FROM eclipse-temurin:19-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 RUN apk add dumb-init
 WORKDIR /app
 RUN addgroup --system javauser && adduser -S -s /usr/sbin/nologin -G javauser javauser
