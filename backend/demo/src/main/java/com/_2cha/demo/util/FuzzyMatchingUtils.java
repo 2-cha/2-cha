@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class FuzzyMatchingUtils {
 
   public static String makeFuzzyRegex(String queryText) {
@@ -44,15 +46,15 @@ public class FuzzyMatchingUtils {
     if (pattern == null) return Collections.emptyList();
     List<Integer> ret = new ArrayList<>(target.length());
 
-    int targetIdx = 0;
+    int nextSearchIdx = 0;
     for (int i = 0; i < pattern.length(); i++) {
       char ch = pattern.charAt(i);
       int matched = HangulUtils.isCho(ch) ?
-                    findFirstMatchingInitial(target, ch, targetIdx) :
-                    findFirstMatching(target, ch, i);
+                    findFirstMatchingInitial(target, ch, nextSearchIdx) :
+                    findFirstMatching(target, ch, nextSearchIdx);
 
       ret.add(matched);
-      targetIdx = matched + 1;
+      nextSearchIdx = matched + 1;
     }
     return ret;
   }
